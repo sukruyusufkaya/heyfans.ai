@@ -28,6 +28,16 @@ Her karar: tarih · karar · gerekçe · durum. "KULLANICI ONAYI" işaretli kara
 | D-20 | 2026-10-19 | Koleksiyon sadeleştirmeleri: `creatorCategories` → `creatorProfiles.categories[]` (çok anahtarlı indeks); `aiTwinSettings` → `aiTwins.draft` + `aiTwinVersions.snapshot`; `userRoles` → `users.roles[]`. Eklenenler: `paymentWebhookEvents`, `giftCatalog`, `helpArticles`, `cookieConsents`, `rateLimits`, `devOutbox`. | Tek belge içinde atomik okuma/yazma; webhook tekilleştirme ve yardım araması için gerekli. |
 | D-21 | 2026-10-19 | Yerel geliştirme DB'si: makinedeki **MongoDB 8.2** tek düğümlü replika seti (port 27047, `.data/mongo`) → transaction destekli. Testler `mongodb-memory-server` (yerel ikili ile). | Paylaşımlı Atlas kümesi 500 koleksiyon sınırına yakın (bkz. KULLANICI ONAYI K-06). |
 | D-22 | 2026-10-19 | Tasarım referanslarındaki `assets/*.jpg` dosyaları UI parçaları içeren ekran kırpıntıları → **kullanılmadı**. Seed medyası için temsili görseller (bkz. K-11). | Talimat: ekran görüntüsü kırpılarak kullanılmaz. |
+| D-23 | 2026-10-19 | Sayfalar 5 paralel geliştirme hattında (Public+Destek, Auth, Fan, Studio, Admin) dosya sahipliği ayrılarak geliştirildi; ortak servis/model değişiklikleri yalnız ana oturumda. | Çakışmasız paralel ilerleme, tutarlı servis katmanı. |
+| D-24 | 2026-10-19 | Creator'lar hayranlarıyla yapılan AI sohbetlerinin **içeriğini göremez**; Studio'da yalnız anonim ("Hayran #A1B2") üst veri ve toplamlar. İçerik erişimi yalnız moderasyonda, izin + vaka + gerekçe + denetim kaydıyla. | Spesifikasyondaki gizlilik gereksinimi. |
+| D-25 | 2026-10-19 | Ödeme sayfasında kart alanı yok; kart bilgileri ödeme kuruluşunun barındırılan sayfasında alınır. | PCI DSS kapsamını küçültür (tasarımdan bilinçli sapma). |
+| D-26 | 2026-10-19 | Kullanım Şartları/Gizlilik onayı e-posta kaydında sunucuda zorunlu ve `termsAcceptedAt` ile saklanır. | Rıza kanıtı istemci kontrolüne bırakılmaz. |
+| D-27 | 2026-10-19 | `getSession` durum/rol/admin rolü/2FA alanlarını her istekte DB'den tazeler. | Better Auth çerez önbelleği (5 dk) askıya alma ve rol kaldırmayı geciktiriyordu. |
+| D-28 | 2026-10-19 | Bakım modu genel/hayran/stüdyo alanlarını kapatır (yöneticiler hariç), sohbet ve ödeme başlatmayı durdurur; AI aylık bütçesi (0 = sınırsız) aşılınca gerçek sağlayıcı çağrıları durur. | Ayarlar paneli değerlerinin gerçekten uygulanması. |
+| D-29 | 2026-10-19 | `/dev/outbox` ve `EMAIL_PROVIDER=outbox` yalnız `APP_MODE=development`. | Barındırılan demoda doğrulama/sıfırlama bağlantıları herkese açılmasın. |
+| D-30 | 2026-10-19 | Bildirilen sohbetler `reported` durumunda kalır ama hayran kullanmaya devam eder. | Bildirim yapan hayranın sohbetini kaybetmesi hataydı. |
+| D-31 | 2026-10-19 | Taslak yasal sayfalar `noindex` ve site haritası dışı; onaylanınca dahil edilir. | Taslak metinlerin kesin belge gibi indekslenmemesi. |
+
 
 ## KULLANICI ONAYI bekleyen kararlar (varsayılanla ilerleniyor)
 

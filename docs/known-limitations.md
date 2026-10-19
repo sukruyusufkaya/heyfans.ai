@@ -27,6 +27,15 @@
 - Gelir paylaşımı (%70/%30) "net" tanımı varsayılan değerlerle (`platformSettings.revenue`); finansal onay gerekli (K-05).
 - Yetişkin içerik kapsamı: kapalı (K-04).
 
+## Ajan doğrulamalarından çıkan açık noktalar
+- Bildirim tercihleri (e-posta/push) kaydedilir; e-posta/push dağıtımı henüz yok, bildirimler uygulama içidir.
+- `security.sessionMaxAgeDays` ve `security.maxLoginAttempts` ayarları kaydedilir ama Better Auth yapılandırması statik olduğundan dinamik uygulanmaz (değişiklik dağıtım gerektirir; arayüz uyarır).
+- AI ikizi kalite puanları (`twin.quality`) için otomatik değerlendirme hattı yok; Test Alanı uydurma puan göstermez.
+- Keşfet'te konum filtresi yok (creator konumu serbest metin).
+- Admin CMS ana sayfa bölümlerinin sırasını değiştirmez (yalnız metin/CTA).
+- Sesli/görüntülü görüşmenin canlı yolu (LiveKit istemcisi + dakika faturalaması) derlenir ama RTC anahtarı olmadan uçtan uca denenemedi.
+- Admin sayfalarında `loading.tsx` olduğundan izin reddi HTTP 200 + akışlı yönlendirme ile döner (içerik sızmaz).
+
 ## Teknik sınırlar
 - Seed creator görselleri temsili degrade kompozisyonlardır (tasarım ZIP'lerindeki görseller UI içeren ekran kırpıntıları olduğu için kullanılmadı). Gerçek creator yüklemeleri otomatik olarak görünür.
 - Hız sınırı MongoDB üzerinde; çok yüksek trafikte Redis adaptörü önerilir.
