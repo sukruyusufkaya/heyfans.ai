@@ -7,7 +7,6 @@ import { CreatorTile } from "@/components/creator/creator-cards";
 import { CtaBand, HeroStats, PolaroidStack, PrimaryCta, PublicHero, Section, SeeAll, stat } from "@/components/public/marketing";
 import { Card, SectionTitle } from "@/components/ui/card";
 import { EmptyState } from "@/components/ui/display";
-import { isDemo } from "@/config/env";
 import { formatNumber } from "@/lib/utils";
 import { listCategories, listCreators, platformCounters } from "@/services/creators/public";
 import { categoryTopTags } from "@/services/public/discover";
@@ -50,7 +49,6 @@ export default async function CategoriesPage() {
         actions={<PrimaryCta href="#populer">Şimdi Kategorileri Keşfet</PrimaryCta>}
         stats={
           <HeroStats
-            demo={isDemo()}
             items={[
               { icon: <LayoutGrid />, value: formatNumber(all.length), label: "İçerik Kategorisi" },
               { icon: <Users />, value: stat(counters.creators), label: "İçerik Üreticisi" },

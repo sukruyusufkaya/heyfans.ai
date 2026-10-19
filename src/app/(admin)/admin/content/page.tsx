@@ -6,7 +6,7 @@ import { CAMPAIGN_AUDIENCE_LABELS, CAMPAIGN_STATUS_LABELS, CAMPAIGN_STATUS_TONES
 import { AdminPage, KpiGrid, Notice, StatusPill, TabLinks, href } from "@/components/admin/ui";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Avatar, DataTable, DemoDataNotice, EmptyState, StatCard, Td, Th } from "@/components/ui/display";
+import { Avatar, DataTable, EmptyState, StatCard, Td, Th } from "@/components/ui/display";
 import { setCreatorFeaturedAction } from "@/features/admin/creators-actions";
 import { deleteCampaignAction, deleteCategoryAction, deleteHelpArticleAction, saveCampaignAction, saveCategoryAction, saveHelpArticleAction, updateHomeSectionAction } from "@/features/admin/content-actions";
 import { LegalPageEditor } from "@/features/admin/legal-page-editor";
@@ -15,7 +15,7 @@ import { can } from "@/lib/permissions";
 import { formatDate, formatDateTime, formatNumber } from "@/lib/utils";
 import { CATEGORY_ICONS, getCmsSummary, listCampaignsAdmin, listCategoriesAdmin, listCmsPagesAdmin, listHelpArticlesAdmin, listHomeSections } from "@/services/admin/cms";
 import { listFeaturedCreators } from "@/services/admin/creators";
-import { hasDemoData, pickEnum, type SearchParams } from "@/services/admin/shared";
+import { pickEnum, type SearchParams } from "@/services/admin/shared";
 
 export const metadata: Metadata = { title: "CMS ve Kampanyalar" };
 
@@ -30,7 +30,7 @@ export default async function AdminContentPage({ searchParams }: { searchParams:
   const { user } = await requireAdmin("cms.manage");
   const sp = await searchParams;
   const tab = pickEnum(sp, "tab", TABS, "home");
-  const [summary, demo] = await Promise.all([getCmsSummary(), hasDemoData()]);
+  const [summary] = await Promise.all([getCmsSummary()]);
 
   return (
     <AdminPage
@@ -38,7 +38,6 @@ export default async function AdminContentPage({ searchParams }: { searchParams:
       description="Ana sayfa vitrini, kategoriler, içerik yayınları ve pazarlama kampanyalarını yönetin."
       actions={
         <>
-          {demo && <DemoDataNotice />}
           <Button asChild variant="outline" size="md">
             <Link href="/" target="_blank" rel="noopener noreferrer">
               <ExternalLink /> Yayın Önizlemesi

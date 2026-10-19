@@ -5,10 +5,8 @@ import { PostCover } from "@/components/public/post-cover";
 import { CtaBand, HeroStats, PublicHero, Section, stat } from "@/components/public/marketing";
 import { Badge } from "@/components/ui/badge";
 import { Card, SectionTitle } from "@/components/ui/card";
-import { DataTable, DemoDataNotice, EmptyState, Td, Th } from "@/components/ui/display";
-import { isDemo } from "@/config/env";
+import { DataTable, EmptyState, Td, Th } from "@/components/ui/display";
 import { PricingPlans, type PlanCardData } from "@/features/public/pricing-plans";
-import { paymentsConfigured } from "@/lib/payments/provider";
 import { cn, formatMoney, formatNumber } from "@/lib/utils";
 import { TIER_LABELS } from "@/services/content/access";
 import { platformCounters } from "@/services/creators/public";
@@ -45,7 +43,6 @@ export default async function PricingPage() {
   const [plans, settings, content, counters] = await Promise.all([listPlatformPlans(), getPlatformSettings(), listPurchasableContent(4), platformCounters()]);
   const savingPct = yearlySavingPct(plans);
   const canYearly = plans.some((p) => p.tier !== "free" && p.priceYearlyMinor);
-  const pay = paymentsConfigured();
   const packs = settings.credits.packs;
   const perMessage = Math.max(1, settings.chat.defaultMessageCredits);
   const rows = entitlementRows(plans);
@@ -98,7 +95,6 @@ export default async function PricingPage() {
               ))}
             </ul>
             <HeroStats
-              demo={isDemo()}
               items={[
                 { icon: <Crown />, value: stat(counters.creators), label: "İçerik Üreticisi" },
                 { icon: <Sparkles />, value: stat(counters.liveTwins, ""), label: "Yayındaki AI İkizi" },
@@ -109,16 +105,6 @@ export default async function PricingPage() {
       />
 
       <Section className="pt-10">
-        {!pay.configured && (
-          <p role="status" className="mx-auto mb-6 max-w-3xl rounded-xl border border-[#f9d9aa] bg-[#fff7e9] px-4 py-3 text-center text-xs font-semibold text-[#9a4f00]">
-            Ödeme altyapısı bu ortamda henüz yapılandırılmadı; satın alma adımları şu an tamamlanamayabilir.
-          </p>
-        )}
-        {pay.configured && pay.isTest && (
-          <p role="status" className="mx-auto mb-6 max-w-3xl rounded-xl border border-[#f9d9aa] bg-[#fff7e9] px-4 py-3 text-center text-xs font-semibold text-[#9a4f00]">
-            Test ödeme ortamı: gerçek ödeme alınmaz, işlemler deneme amaçlıdır.
-          </p>
-        )}
         {plans.length ? (
           <PricingPlans plans={cards} savingPct={savingPct} canYearly={canYearly} />
         ) : (
@@ -256,7 +242,6 @@ export default async function PricingPage() {
                 <EmptyState compact icon={<Lock />} title="Şu anda satın alınabilir içerik yok" description="İçerik üreticileri tek seferlik satın alınabilir içerik yayınladığında burada görünür." />
               </Card>
             )}
-            {isDemo() && <DemoDataNotice className="mt-3">Demo ortam: içerikler ve fiyatlar örnek veridir</DemoDataNotice>}
           </section>
         </div>
       </Section>

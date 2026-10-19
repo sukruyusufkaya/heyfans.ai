@@ -229,13 +229,3 @@ export function Th({ className, ...props }: React.ThHTMLAttributes<HTMLTableCell
 export function Td({ className, ...props }: React.TdHTMLAttributes<HTMLTableCellElement>) {
   return <td className={cn("border-b border-line-soft px-3 py-3 align-middle text-ink-soft", className)} {...props} />;
 }
-
-/* ─── Demo veri rozeti ───────────────────────────────────── */
-export function DemoDataNotice({ className, children }: { className?: string; children?: React.ReactNode }) {
-  return (
-    <span className={cn("inline-flex items-center gap-1.5 rounded-full border border-[#f9d9aa] bg-[#fff7e9] px-3 py-1.5 text-[10px] font-extrabold text-[#9a4f00]", className)}>
-      <span className="size-1.5 rounded-full bg-[#e7a33d]" aria-hidden />
-      {children ?? "DEMO VERİLER"}
-    </span>
-  );
-}

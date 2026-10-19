@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Crown, Gift, Heart, UserPlus, Users } from "lucide-react";
 import { AreaTrend, Donut } from "@/components/charts/charts";
-import { Avatar, DemoDataNotice, EmptyState, PageHeader, StatCard } from "@/components/ui/display";
+import { Avatar, EmptyState, PageHeader, StatCard } from "@/components/ui/display";
 import { Card, CardHeader } from "@/components/ui/card";
 import { STUDIO_EYEBROW } from "@/components/studio/studio-ui";
 import { requireCreator } from "@/lib/auth/session";
@@ -18,7 +18,7 @@ export default async function FansPage() {
 
   return (
     <div className="mx-auto max-w-[1280px]">
-      <PageHeader eyebrow={STUDIO_EYEBROW} title="Hayranlar ve Kitle" description="Hayranlarını tanı, segmentlerini keşfet ve etkileşimi analiz et." actions={d.creator.isDemo ? <DemoDataNotice /> : undefined} />
+      <PageHeader eyebrow={STUDIO_EYEBROW} title="Hayranlar ve Kitle" description="Hayranlarını tanı, segmentlerini keşfet ve etkileşimi analiz et." />
 
       <section aria-label="Kitle göstergeleri" className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <StatCard label="Takipçi" icon={<Users />} value={formatNumber(d.followers)} foot="Profil sayacı" />

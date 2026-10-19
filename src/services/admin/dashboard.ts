@@ -1,7 +1,7 @@
 import "server-only";
 import mongoose from "mongoose";
 import { aiStatus } from "@/lib/ai/provider";
-import { integrationStatus, isDemo } from "@/config/env";
+import { integrationStatus } from "@/config/env";
 import { connectDb } from "@/lib/db/mongo";
 import { can, type Actor, type Permission } from "@/lib/permissions";
 import { AiTwin, AiTwinVersion, IngestionJob } from "@/models/ai";
@@ -10,7 +10,7 @@ import { User } from "@/models/identity";
 import { PayoutRequest, PaymentTransaction } from "@/models/monetization";
 import { AnalyticsEvent, SupportTicket } from "@/models/platform";
 import { Appeal, AuditLog, ModerationCase, Report } from "@/models/safety";
-import { daysAgo, hasDemoData, loadUsers, monthBuckets, monthKeyExpr, pctDelta } from "./shared";
+import { daysAgo, loadUsers, monthBuckets, monthKeyExpr, pctDelta } from "./shared";
 
 /** Brüt hacme sayılan ödeme durumları: başarıyla tahsil edilmiş (sonradan iade edilenler dahil). */
 export const GROSS_STATUSES = ["succeeded", "partially_refunded", "refunded"] as const;
@@ -170,7 +170,6 @@ export async function getDashboardData(user: Pick<Actor, "roles" | "adminRole">)
   });
 
   return {
-    demo: isDemo() || (await hasDemoData()),
     kpis: {
       totalUsers,
       usersDelta: pctDelta(users30, usersPrev30),

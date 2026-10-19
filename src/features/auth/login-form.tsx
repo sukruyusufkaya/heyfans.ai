@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { ShieldCheck } from "lucide-react";
 import { AuthField, AuthHeading, FormAlert, linkCls, PrimaryButton, TextDivider } from "@/components/auth/auth-ui";
 import { PasswordInput } from "@/components/auth/password-field";
-import { SocialAuth, type SocialFlags } from "@/components/auth/social-auth";
+import { hasSocialProviders, SocialAuth, type SocialFlags } from "@/components/auth/social-auth";
 import { Checkbox, Input } from "@/components/ui/form-controls";
 import { authClient } from "@/lib/auth/client";
 import { postLoginRedirect } from "@/features/auth/actions";
@@ -74,8 +74,12 @@ export function LoginForm({
 
       <div className="mt-8 space-y-5">
         {notice === "reset" && <FormAlert tone="success">Şifren güncellendi. Yeni şifrenle giriş yapabilirsin.</FormAlert>}
-        <SocialAuth flags={flags} callbackURL={continueUrl(next)} onError={setFormError} />
-        <TextDivider>veya e-posta ile devam et</TextDivider>
+        {hasSocialProviders(flags) && (
+          <>
+            <SocialAuth flags={flags} callbackURL={continueUrl(next)} onError={setFormError} />
+            <TextDivider>veya e-posta ile devam et</TextDivider>
+          </>
+        )}
 
         <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-5" aria-describedby={errId}>
           {formError && (

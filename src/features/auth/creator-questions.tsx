@@ -226,7 +226,7 @@ export function QPhone({ draft, set, errors, qRef, number, total }: QProps) {
       <div className="flex items-start gap-3 rounded-2xl border border-brand-150 bg-brand-50 p-4 text-xs leading-relaxed text-muted-strong">
         <Lock className="mt-0.5 size-4 shrink-0 text-brand-500" aria-hidden />
         <p>
-          Numaran <strong className="text-ink">şifrelenerek</strong> saklanır, profilinde ve hayranlara <strong className="text-ink">asla görünmez</strong>. SMS ile doğrulama henüz yapılandırılmadı; gerekirse ekibimiz bu numaradan seninle iletişime geçer.
+          Numaran <strong className="text-ink">şifrelenerek</strong> saklanır, profilinde ve hayranlara <strong className="text-ink">asla görünmez</strong>. Gerekirse ekibimiz bu numaradan seninle iletişime geçer.
         </p>
       </div>
     </QuestionFrame>
@@ -407,7 +407,7 @@ export function QPrimary({ view, draft, set, errors, qRef, number, total, onEdit
         <FormAlert tone="info">
           <p className="font-extrabold">Sahiplik doğrulaması</p>
           <p className="mt-1 font-medium">
-            Hesaplarını otomatik bağlama (OAuth) henüz yapılandırılmadı; ekibimiz sahipliği elle doğrular. Şu kodu ana platformundaki biyografine ekle ve inceleme bitene kadar kaldırma:{" "}
+            Ekibimiz hesap sahipliğini doğrular. Şu kodu ana platformundaki biyografine ekle ve inceleme bitene kadar kaldırma:{" "}
             <code className="rounded bg-white px-1.5 py-0.5 font-extrabold text-brand-600">{view.socialCode}</code>
           </p>
         </FormAlert>

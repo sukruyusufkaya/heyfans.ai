@@ -54,7 +54,7 @@ export function StepVerify({ view, draft, set, errors }: StepProps) {
         <BadgeCheck className="size-5 text-brand-500" aria-hidden />
         <div className="min-w-0 flex-1">
           <p className="text-[13px] font-extrabold text-ink">Kimlik doğrulama durumu</p>
-          <p className="text-xs text-muted-strong">Harici bir kimlik doğrulama sağlayıcısı henüz yapılandırılmadı; talebin ekibimizin incelemesine düşer.</p>
+          <p className="text-xs text-muted-strong">Kimlik doğrulama talebin ekibimiz tarafından incelenir; sonuç bildirim olarak iletilir.</p>
         </div>
         <Badge tone={st.tone} size="md">
           {st.label}

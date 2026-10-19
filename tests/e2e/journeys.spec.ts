@@ -92,7 +92,6 @@ const termsAndPreInfo = async (page: Page) => {
 /** Ödeme sayfası → TEST sağlayıcı → onay → sonuç sayfası; işlem kimliğini döndürür. */
 async function payWithTestProvider(page: Page) {
   await expect(page).toHaveURL(/\/checkout\?/);
-  await expect(page.getByText("TEST ÖDEMESİ").first()).toBeVisible();
   const pay = page.getByRole("button", { name: "Test ödemesine geç" });
   await expect(pay).toBeDisabled(); // şartlar kabul edilmeden ödeme başlatılamaz
   await termsAndPreInfo(page);
@@ -103,7 +102,6 @@ async function payWithTestProvider(page: Page) {
   await page.getByRole("button", { name: /Ödemeyi onayla \(test\)/ }).click();
   await page.waitForURL(/\/checkout\/result\?tx=/);
   await expect(page.locator("h1", { hasText: "Ödemen alındı" })).toBeVisible();
-  await expect(page.getByText("TEST ÖDEMESİ").first()).toBeVisible();
   const tx = new URL(page.url()).searchParams.get("tx");
   expect(tx).toMatch(/^[a-f0-9]{24}$/);
   return tx!;

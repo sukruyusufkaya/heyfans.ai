@@ -3,8 +3,6 @@ import Link from "next/link";
 import { ArrowDown, ArrowRight, BadgeCheck, Eye, Flag, Globe2, Heart, KeyRound, Lightbulb, Lock, MessageCircle, Rocket, Scale, ShieldCheck, Sparkles, Target, Users, UsersRound, Crown } from "lucide-react";
 import { CtaBand, HeroStats, PolaroidStack, PrimaryCta, PublicHero, Section, stat } from "@/components/public/marketing";
 import { Card, SectionTitle } from "@/components/ui/card";
-import { DemoDataNotice } from "@/components/ui/display";
-import { isDemo } from "@/config/env";
 import { formatNumber } from "@/lib/utils";
 import { listCreators, platformCounters } from "@/services/creators/public";
 
@@ -38,7 +36,6 @@ const ROADMAP = [
 
 export default async function AboutPage() {
   const [counters, featured] = await Promise.all([platformCounters(), listCreators("featured", 3)]);
-  const demo = isDemo();
   return (
     <>
       <PublicHero
@@ -60,7 +57,6 @@ export default async function AboutPage() {
         }
         stats={
           <HeroStats
-            demo={demo}
             items={[
               { icon: <Users />, value: stat(counters.users), label: "Aktif Kullanıcı" },
               { icon: <MessageCircle />, value: stat(counters.messages), label: "Gönderilen Mesaj" },
@@ -143,7 +139,7 @@ export default async function AboutPage() {
       </Section>
 
       <Section className="py-4">
-        <SectionTitle title="Platform Bugün" icon={<Globe2 />} subtitle="Veritabanındaki güncel sayılar." action={demo ? <DemoDataNotice>Demo ortam: örnek veri</DemoDataNotice> : undefined} />
+        <SectionTitle title="Platform Bugün" icon={<Globe2 />} subtitle="Veritabanındaki güncel sayılar." />
         <ul className="grid grid-cols-2 gap-3 lg:grid-cols-4">
           {[
             { label: "Aktif kullanıcı", value: formatNumber(counters.users) },

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Crown, Users, Wallet } from "lucide-react";
 import { Card, CardHeader } from "@/components/ui/card";
-import { DemoDataNotice, PageHeader, Progress, StatCard } from "@/components/ui/display";
+import { PageHeader, Progress, StatCard } from "@/components/ui/display";
 import { STUDIO_EYEBROW } from "@/components/studio/studio-ui";
 import { PlanManager, type PlanView } from "@/features/studio/plan-manager";
 import { requireCreator } from "@/lib/auth/session";
@@ -44,7 +44,6 @@ export default async function MembershipsPage() {
         eyebrow={STUDIO_EYEBROW}
         title="Üyelik Yönetimi"
         description="Planları, fiyatları, hakları ve hayran aboneliklerini yönet."
-        actions={o.creator.isDemo ? <DemoDataNotice /> : undefined}
       />
       <section aria-label="Üyelik göstergeleri" className="mb-6 grid gap-4 md:grid-cols-3">
         <StatCard label="Aktif abonelik" icon={<Users />} value={formatNumber(o.totals.subscribers)} />

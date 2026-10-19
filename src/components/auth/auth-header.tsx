@@ -34,7 +34,6 @@ export function AuthHeader({ accountHref }: { accountHref: string | null }) {
             </DropdownMenuTrigger>
             <DropdownMenuContent className="min-w-40">
               <DropdownMenuItem>Türkçe</DropdownMenuItem>
-              <DropdownMenuItem disabled>English (yakında)</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
           <Link href="/help" className="hidden rounded-full px-2 py-1.5 text-xs font-bold text-ink-soft hover:text-brand-600 sm:inline">

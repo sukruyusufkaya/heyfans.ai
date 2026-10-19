@@ -195,7 +195,7 @@ export function KnowledgeManager({ sources, enabled, aiAvailable }: { sources: K
             <Loader2 className="size-3.5 animate-spin" aria-hidden /> {processing} kaynak işleniyor; durum otomatik güncellenir.
           </p>
         )}
-        {!aiAvailable && <Notice tone="warn" className="mt-3" title="AI sağlayıcısı yapılandırılmadı">İndeksleme (gömme) adımı sağlayıcı olmadan tamamlanmayabilir; kaynaklar kuyrukta bekler veya hata verir.</Notice>}
+        {!aiAvailable && <Notice tone="warn" className="mt-3" title="İndeksleme beklemede">Kaynakların kaydedildi; AI yanıtları açıldığında otomatik olarak indekslenir.</Notice>}
       </Card>
 
       <div className="grid content-start gap-5">

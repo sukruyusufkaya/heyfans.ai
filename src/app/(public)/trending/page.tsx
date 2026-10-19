@@ -9,8 +9,7 @@ import { Sparkline } from "@/components/charts/charts";
 import { HeroStats, PrimaryCta, PublicHero, Section, SecondaryCta, SeeAll, stat } from "@/components/public/marketing";
 import { Badge } from "@/components/ui/badge";
 import { Card, SectionTitle } from "@/components/ui/card";
-import { DemoDataNotice, EmptyState, Progress, StatCard } from "@/components/ui/display";
-import { isDemo } from "@/config/env";
+import { EmptyState, Progress, StatCard } from "@/components/ui/display";
 import { TrendChart } from "@/features/public/trend-chart";
 import { getSession } from "@/lib/auth/session";
 import { cn, formatCompact, formatNumber } from "@/lib/utils";
@@ -32,7 +31,6 @@ function trendLabel(c: TrendingCreator): { text: string; tone: "solid" | "pink" 
 
 export default async function TrendingPage() {
   const [session, trending, summary, counters, categories] = await Promise.all([getSession(), trendingCreators(7, 10), trendingSummary(30), platformCounters(), listCategories()]);
-  const demo = isDemo();
   const authed = Boolean(session);
 
   const risers = [...trending].filter((c) => c.newFollowers > 0).sort((a, b) => b.newFollowers - a.newFollowers || (b.growthPct ?? -1) - (a.growthPct ?? -1)).slice(0, 3);
@@ -72,7 +70,6 @@ export default async function TrendingPage() {
         }
         stats={
           <HeroStats
-            demo={demo}
             items={[
               { icon: <Users />, value: stat(counters.users), label: "Aktif Kullanıcı" },
               { icon: <MessageCircle />, value: stat(counters.messages), label: "Gönderilen Mesaj" },
@@ -230,7 +227,6 @@ export default async function TrendingPage() {
             title="Trend İstatistikleri"
             icon={<BarChart3 />}
             subtitle="Son 30 gün"
-            action={demo ? <DemoDataNotice>Örnek veri</DemoDataNotice> : undefined}
           />
           <Card>
             {summary.chats + summary.follows + summary.contentViews > 0 ? (

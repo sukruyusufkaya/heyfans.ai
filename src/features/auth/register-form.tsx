@@ -7,7 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Check, Crown, Heart } from "lucide-react";
 import { AuthField, AuthHeading, FormAlert, linkCls, PrimaryButton } from "@/components/auth/auth-ui";
 import { PasswordInput, PasswordStrength } from "@/components/auth/password-field";
-import { SocialAuth, type SocialFlags } from "@/components/auth/social-auth";
+import { hasSocialProviders, SocialAuth, type SocialFlags } from "@/components/auth/social-auth";
 import { Checkbox, Input } from "@/components/ui/form-controls";
 import { authClient } from "@/lib/auth/client";
 import { cn } from "@/lib/utils";
@@ -176,10 +176,12 @@ export function RegisterForm({ flags, defaultIntent, next }: { flags: SocialFlag
           Hesap Oluştur
         </PrimaryButton>
 
-        <div className="space-y-3">
-          <p className="text-center text-xs text-muted">veya bu hesaplarla kaydol</p>
-          <SocialAuth flags={flags} callbackURL={continueUrl(next)} variant="icons" onError={setFormError} />
-        </div>
+        {hasSocialProviders(flags) && (
+          <div className="space-y-3">
+            <p className="text-center text-xs text-muted">veya bu hesaplarla kaydol</p>
+            <SocialAuth flags={flags} callbackURL={continueUrl(next)} variant="icons" onError={setFormError} />
+          </div>
+        )}
 
         <p className="text-center text-[13px] text-muted-strong">
           Zaten hesabın var mı?{" "}

@@ -4,9 +4,8 @@ import { z } from "zod";
 import { LinkTabs, buildHref, flattenSearchParams } from "@/components/fan/link-tabs";
 import { Card, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { DemoDataNotice, EmptyState, PageHeader } from "@/components/ui/display";
+import { EmptyState, PageHeader } from "@/components/ui/display";
 import { NewRequestDialog, RequestRow } from "@/features/fan/experiences-client";
-import { isDemo } from "@/config/env";
 import { requireUser } from "@/lib/auth/session";
 import { getFanRequestViews, listFollowedCreatorOptions } from "@/services/fan/experiences";
 import { ensureWallet } from "@/services/wallet/wallet";
@@ -35,7 +34,7 @@ export default async function ExperiencesPage({ searchParams }: { searchParams: 
 
   return (
     <div className="mx-auto max-w-[1320px]">
-      <PageHeader eyebrow="HEYFANS / DENEYİM MERKEZİ" title="Özel Deneyimlerim" description="Kişiselleştirilmiş içerikler talep et ve sürecini takip et." actions={isDemo() ? <DemoDataNotice /> : undefined} />
+      <PageHeader eyebrow="HEYFANS / DENEYİM MERKEZİ" title="Özel Deneyimlerim" description="Kişiselleştirilmiş içerikler talep et ve sürecini takip et." />
 
       <div className="grid gap-4 lg:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)]">
         <Card>

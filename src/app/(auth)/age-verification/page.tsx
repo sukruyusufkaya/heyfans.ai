@@ -31,7 +31,7 @@ export default async function AgeVerificationPage({ searchParams }: { searchPara
         />
       }
     >
-      <AgeVerification state={status.state} recordedAt={status.record?.at ?? null} providerConfigured={status.provider.configured} next={next} todayIso={todayIso} />
+      <AgeVerification state={status.state} recordedAt={status.record?.at ?? null} next={next} todayIso={todayIso} />
     </AuthShell>
   );
 }

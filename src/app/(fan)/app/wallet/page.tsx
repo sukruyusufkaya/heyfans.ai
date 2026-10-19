@@ -5,8 +5,7 @@ import { z } from "zod";
 import { LinkTabs, buildHref, flattenSearchParams } from "@/components/fan/link-tabs";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardHeader } from "@/components/ui/card";
-import { DataTable, DemoDataNotice, EmptyState, PageHeader, Pagination, Progress, Td, Th } from "@/components/ui/display";
-import { isDemo } from "@/config/env";
+import { DataTable, EmptyState, PageHeader, Pagination, Progress, Td, Th } from "@/components/ui/display";
 import { requireUser } from "@/lib/auth/session";
 import { cn, formatDateTime, formatMoney, formatNumber } from "@/lib/utils";
 import { getWalletPage, type LedgerRowView } from "@/services/fan/wallet";
@@ -38,7 +37,6 @@ export default async function WalletPage({ searchParams }: { searchParams: Promi
         eyebrow="HEYFANS / CÜZDAN"
         title="Kredi ve Cüzdanım"
         description="Kredi bakiyeni yönet, paketleri incele ve işlemlerini takip et."
-        actions={isDemo() ? <DemoDataNotice /> : undefined}
       />
 
       <div className="grid gap-4 lg:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)]">

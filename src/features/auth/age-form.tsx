@@ -3,7 +3,7 @@ import * as React from "react";
 import Link from "next/link";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { CalendarDays, CheckCircle2, ShieldAlert, ShieldCheck, ShieldQuestion } from "lucide-react";
+import { CalendarDays, CheckCircle2, ShieldAlert, ShieldCheck } from "lucide-react";
 import { AuthField, AuthHeading, FormAlert, IconBadge, linkCls, PrimaryButton } from "@/components/auth/auth-ui";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox, Input } from "@/components/ui/form-controls";
@@ -15,29 +15,11 @@ import { birthDateSchema, type BirthDateValues } from "@/features/auth/schemas";
 export interface AgeFormProps {
   state: "none" | "declared_adult" | "under_18";
   recordedAt: string | null;
-  providerConfigured: boolean;
   next: string | null;
   todayIso: string;
 }
 
-function ProviderNote({ configured }: { configured: boolean }) {
-  return (
-    <div className="rounded-xl border border-line bg-soft/60 p-4 text-left">
-      <div className="flex items-center justify-between gap-3">
-        <p className="flex items-center gap-2 text-[13px] font-extrabold text-ink">
-          <ShieldQuestion className="size-4 text-brand-500" aria-hidden /> Güçlü yaş doğrulaması
-        </p>
-        <Badge tone={configured ? "green" : "gray"}>{configured ? "Etkin" : "Yapılandırılmadı"}</Badge>
-      </div>
-      <p className="mt-1.5 text-xs leading-relaxed text-muted-strong">
-        Bu sayfadaki doğum tarihi <strong className="text-ink">bir beyandır (düşük güvence)</strong>; kimlik veya belgeyle doğrulama yapılmaz. Güçlü yaş doğrulaması için harici bir yaş güvencesi sağlayıcısı gerekir.
-        {!configured && " Sağlayıcı yapılandırılana kadar yetişkin içerikleri ve özellikleri devre dışı kalır."}
-      </p>
-    </div>
-  );
-}
-
-export function AgeVerification({ state, recordedAt, providerConfigured, next, todayIso }: AgeFormProps) {
+export function AgeVerification({ state, recordedAt, next, todayIso }: AgeFormProps) {
   const [formError, setFormError] = React.useState<string | null>(null);
   const [blocked, setBlocked] = React.useState(state === "under_18");
   const [busy, setBusy] = React.useState(false);
@@ -124,7 +106,6 @@ export function AgeVerification({ state, recordedAt, providerConfigured, next, t
           </Badge>
         </div>
         <div className="mt-5">
-          <ProviderNote configured={providerConfigured} />
         </div>
         {formError && (
           <FormAlert className="mt-4 text-left">
@@ -171,7 +152,6 @@ export function AgeVerification({ state, recordedAt, providerConfigured, next, t
         <PrimaryButton type="submit" loading={isSubmitting}>
           Beyanı Kaydet
         </PrimaryButton>
-        <ProviderNote configured={providerConfigured} />
         <p className="flex items-start gap-2 text-[11px] leading-snug text-muted">
           <ShieldCheck className="mt-0.5 size-3.5 shrink-0" aria-hidden />
           18 yaşından küçükseniz hesabınız askıya alınır ve doğum tarihiniz saklanmaz.

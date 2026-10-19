@@ -6,13 +6,13 @@ import { AI_KIND_LABELS, JOB_STATUS_LABELS, JOB_TYPE_LABELS } from "@/components
 import { AdminPage, DetailRow, KpiGrid, Notice, ScoreBar, StatusPill, TabLinks, href } from "@/components/admin/ui";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader } from "@/components/ui/card";
-import { DataTable, DemoDataNotice, EmptyState, StatCard, Td, Th } from "@/components/ui/display";
+import { DataTable, EmptyState, StatCard, Td, Th } from "@/components/ui/display";
 import { retryJobAction, updateAiSettingsAction } from "@/features/admin/ai-ops-actions";
 import { requireAdmin } from "@/lib/auth/session";
 import { can } from "@/lib/permissions";
 import { formatCompact, formatDateTime, formatNumber } from "@/lib/utils";
 import { AI_RANGES, getAiOpsData, getQueueData, type AiRangeKey } from "@/services/admin/ai-ops";
-import { hasDemoData, pickEnum, type SearchParams } from "@/services/admin/shared";
+import { pickEnum, type SearchParams } from "@/services/admin/shared";
 
 export const metadata: Metadata = { title: "AI Operasyonları" };
 
@@ -25,7 +25,7 @@ export default async function AdminAiOperationsPage({ searchParams }: { searchPa
   const sp = await searchParams;
   const range = pickEnum(sp, "range", ["7", "30", "90"] as const, "30");
   const canManage = can(user, "ai_ops.manage");
-  const [data, queue, demo] = await Promise.all([getAiOpsData(AI_RANGES[range]), getQueueData(), hasDemoData()]);
+  const [data, queue] = await Promise.all([getAiOpsData(AI_RANGES[range]), getQueueData()]);
   const { status, totals, budget } = data;
   const budgetPct = budget.monthlyUsd > 0 ? (budget.monthToDateUsd / budget.monthlyUsd) * 100 : null;
 
@@ -43,7 +43,6 @@ export default async function AdminAiOperationsPage({ searchParams }: { searchPa
       description="Model yönlendirme, kullanım maliyetleri, gecikme ve hata oranlarını izleyin."
       actions={
         <>
-          {demo && <DemoDataNotice />}
           <TabLinks label="Dönem" active={range} tabs={(["7", "30", "90"] as const).map((r) => ({ key: r, label: RANGE_LABELS[r], href: href("/admin/ai-operations", { range: r === "30" ? null : r }) }))} className="mb-0" />
         </>
       }

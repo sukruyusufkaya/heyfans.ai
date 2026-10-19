@@ -7,14 +7,14 @@ import { AdminPage, DetailRow, FilterForm, KpiGrid, Notice, ResultCount, ScoreBa
 import { AiTwinLabel } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader } from "@/components/ui/card";
-import { Avatar, DataTable, DemoDataNotice, EmptyState, Pagination, Progress, StatCard, Td, Th } from "@/components/ui/display";
+import { Avatar, DataTable, EmptyState, Pagination, Progress, StatCard, Td, Th } from "@/components/ui/display";
 import { reviewTwinVersionAction, setTwinStatusAction } from "@/features/admin/twins-actions";
 import { requireAdmin } from "@/lib/auth/session";
 import { can } from "@/lib/permissions";
 import { canTransition, TWIN_STATUS_LABELS, TWIN_TRANSITIONS } from "@/lib/state-machines";
 import { formatDate, formatDateTime, formatNumber } from "@/lib/utils";
 import { getAdminTwinDetail, getTwinKpis, listAdminTwins, TWIN_TABS, type TwinTab } from "@/services/admin/twins";
-import { hasDemoData, pick, pickEnum, pickId, pickPage, type SearchParams } from "@/services/admin/shared";
+import { pick, pickEnum, pickId, pickPage, type SearchParams } from "@/services/admin/shared";
 
 export const metadata: Metadata = { title: "AI İkizleri" };
 
@@ -63,7 +63,7 @@ export default async function AdminAiTwinsPage({ searchParams }: { searchParams:
   const canReview = can(user, "twins.review");
   const canManage = can(user, "twins.manage");
 
-  const [kpis, list, demo] = await Promise.all([getTwinKpis(), listAdminTwins({ tab, q, page }), hasDemoData()]);
+  const [kpis, list] = await Promise.all([getTwinKpis(), listAdminTwins({ tab, q, page })]);
   const selectedId = pickId(sp, "sel") ?? list.items[0]?.id ?? null;
   const detail = selectedId ? await getAdminTwinDetail(selectedId, { consents: can(user, "consents.read") }) : null;
   const hrefFor = (extra: Record<string, string | number | null>) => href("/admin/ai-twins", { status: tab === "all" ? null : tab, q: q || null, ...extra });
@@ -75,7 +75,6 @@ export default async function AdminAiTwinsPage({ searchParams }: { searchParams:
       description="AI ikizlerinin izinlerini, yayın durumlarını ve kalite ölçümlerini denetleyin."
       actions={
         <>
-          {demo && <DemoDataNotice />}
           <Button asChild variant="outline" size="md">
             <Link href={href("/admin/ai-twins", { status: "pending_review" })}>Onay Kuyruğu</Link>
           </Button>

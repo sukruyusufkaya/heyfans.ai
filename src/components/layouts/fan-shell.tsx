@@ -4,7 +4,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 import { Bell, Coins, Heart, LogOut, MessageCircle, Search, Settings, Shield, Sparkles, Star, User } from "lucide-react";
 import { LogoLink } from "@/components/brand/logo";
-import { Avatar, DemoDataNotice } from "@/components/ui/display";
+import { Avatar } from "@/components/ui/display";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/overlays";
 import { FAN_BOTTOM_NAV, FAN_SIDEBAR, FAN_TOP_NAV, isActive } from "@/config/navigation";
 import { authClient } from "@/lib/auth/client";
@@ -16,11 +16,10 @@ export interface FanShellProps {
   unreadNotifications: number;
   unreadChats: number;
   membershipLabel: string;
-  isDemo: boolean;
   children: React.ReactNode;
 }
 
-export function FanShell({ user, credits, unreadNotifications, unreadChats, membershipLabel, isDemo, children }: FanShellProps) {
+export function FanShell({ user, credits, unreadNotifications, unreadChats, membershipLabel, children }: FanShellProps) {
   const pathname = usePathname();
   const router = useRouter();
   const [q, setQ] = useState("");
@@ -56,7 +55,6 @@ export function FanShell({ user, credits, unreadNotifications, unreadChats, memb
             })}
           </nav>
           <div className="ml-auto flex items-center gap-3 lg:ml-0">
-            {isDemo && <DemoDataNotice className="hidden 2xl:inline-flex" />}
             <form
               role="search"
               className="hidden md:block"

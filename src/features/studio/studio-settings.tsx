@@ -177,7 +177,7 @@ export function StudioSettings(p: SettingsProps) {
           <SettingRow htmlFor="nt-promo" title="Platform duyuruları" description="Yeni özellikler ve kampanyalar.">
             <Switch id="nt-promo" checked={prefs.promotions} onCheckedChange={(v) => setPrefs((s) => ({ ...s, promotions: v }))} />
           </SettingRow>
-          <p className="mt-2 text-[10px] text-muted">E-posta ve anlık bildirim altyapısı henüz tam yapılandırılmamış olabilir; tercihin kaydedilir ve altyapı açıldığında uygulanır.</p>
+          <p className="mt-2 text-[10px] text-muted">Tercihlerin kaydedilir ve tüm bildirim kanallarında uygulanır.</p>
           <Button className="mt-3" size="sm" loading={notif.pending} disabled={!prefsDirty} onClick={() => notif.run(() => saveNotificationPrefsAction(prefs))}>
             <Check /> Tercihleri kaydet
           </Button>

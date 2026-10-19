@@ -6,8 +6,7 @@ import { CreatorCardTall } from "@/components/creator/creator-cards";
 import { ContentTypeIcon } from "@/components/fan/content-parts";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardHeader, SectionTitle } from "@/components/ui/card";
-import { Avatar, DemoDataNotice, EmptyState } from "@/components/ui/display";
-import { isDemo } from "@/config/env";
+import { Avatar, EmptyState } from "@/components/ui/display";
 import { requireUser } from "@/lib/auth/session";
 import { formatNumber, formatRelative } from "@/lib/utils";
 import { getFanHome } from "@/services/fan/feed";
@@ -74,7 +73,7 @@ export default async function FanHomePage() {
         </section>
 
         <Card>
-          <CardHeader title="Senin etkinliğin" action={isDemo() ? <DemoDataNotice /> : <Badge tone="pink">Canlı veri</Badge>} />
+          <CardHeader title="Senin etkinliğin" />
           <ul className="grid grid-cols-2 gap-2.5">
             {stats.map((s) => (
               <li key={s.label}>

@@ -90,7 +90,6 @@ export function TestLab({
   creatorName,
   avatarUrl,
   aiAvailable,
-  aiMock,
   twinStatus,
   version,
   quality,
@@ -100,7 +99,6 @@ export function TestLab({
   creatorName: string;
   avatarUrl: string | null;
   aiAvailable: boolean;
-  aiMock: boolean;
   twinStatus: string;
   version: number;
   quality: { personaScore: number | null; knowledgeScore: number | null; safetyScore: number | null; lastTestAt: string | null };
@@ -198,8 +196,8 @@ export function TestLab({
     <div className="mx-auto max-w-[1280px]">
       <PageHeader eyebrow={STUDIO_EYEBROW} title="AI İkizi Test Alanı" description="Yayınlamadan önce AI ikizinin yanıtlarını, kişiliğini ve sınırlarını dene." />
       {disabled && (
-        <Notice tone="warn" className="mb-5" title="AI sağlayıcısı yapılandırılmadı">
-          Test sohbeti, bir AI sağlayıcısı bağlanana kadar kullanılamaz. Yönetici panelinden AI_PROVIDER ayarlarının yapılması gerekir.
+        <Notice tone="warn" className="mb-5" title="Test sohbeti şu anda kapalı">
+          AI yanıtları yeniden açıldığında ikizini buradan deneyebilirsin.
         </Notice>
       )}
 
@@ -219,7 +217,7 @@ export function TestLab({
               </div>
               <div>
                 <dt className="text-[10px] font-bold text-muted">Sağlayıcı</dt>
-                <dd className="mt-1">{aiAvailable ? (aiMock ? "Örnek (mock) sağlayıcı · yanıtlar “Test yanıtı”" : "Gerçek AI sağlayıcısı") : "Yapılandırılmadı"}</dd>
+                <dd className="mt-1">{aiAvailable ? "Etkin" : "Kapalı"}</dd>
               </div>
             </dl>
             <p className="mt-3 text-[11px] leading-relaxed text-muted">Test sohbeti, kaydettiğin en güncel kişilik ve sınır taslağını kullanır; kredi harcamaz ve hayranlara gösterilmez.</p>
@@ -337,7 +335,7 @@ export function TestLab({
               rows={1}
               maxLength={4000}
               disabled={disabled}
-              placeholder={disabled ? "AI sağlayıcısı yapılandırılmadı" : "Test mesajını yaz…"}
+              placeholder={disabled ? "Test sohbeti şu anda kapalı" : "Test mesajını yaz…"}
               className="max-h-32 min-h-11 flex-1 resize-none rounded-2xl border border-line bg-white px-4 py-3 text-[13px] outline-none placeholder:text-[#b2a6b3] focus:border-brand-300 focus:ring-4 focus:ring-brand-100 disabled:bg-soft"
             />
             <Button type="submit" size="icon" disabled={disabled || sending || !input.trim()} aria-label="Gönder">

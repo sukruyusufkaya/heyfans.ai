@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Eye, Heart, MessageCircle, MousePointerClick } from "lucide-react";
 import { AreaTrend, Bars, type Point } from "@/components/charts/charts";
 import { Card, CardHeader } from "@/components/ui/card";
-import { DemoDataNotice, EmptyState, PageHeader, Progress, StatCard } from "@/components/ui/display";
+import { EmptyState, PageHeader, Progress, StatCard } from "@/components/ui/display";
 import { STUDIO_EYEBROW } from "@/components/studio/studio-ui";
 import { CONTENT_TYPE_LABELS } from "@/features/studio/labels";
 import { requireCreator } from "@/lib/auth/session";
@@ -36,7 +36,6 @@ export default async function AnalyticsPage({ searchParams }: { searchParams: Pr
         description="Profil, hayran ve içerik performansını tek merkezden analiz et."
         actions={
           <>
-            {a.creator.isDemo && <DemoDataNotice />}
             <nav aria-label="Zaman aralığı" className="flex gap-1.5">
               {ANALYTICS_RANGES.map((r) => (
                 <Link key={r} href={`/studio/analytics?range=${r}`} aria-current={days === r ? "page" : undefined} className={cn("rounded-full px-3.5 py-2 text-[11px] font-extrabold transition-colors", days === r ? "bg-brand-500 text-white" : "bg-soft text-muted-strong hover:text-ink")}>

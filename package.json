@@ -21,6 +21,7 @@
     "db:samples:prod": "tsx --conditions=react-server --env-file=.env.production.local scripts/db/samples.ts",
     "db:demo-accounts:prod": "tsx --conditions=react-server --env-file=.env.production.local scripts/db/demo-accounts.ts",
     "admin:create": "tsx --conditions=react-server --env-file=.env scripts/db/create-admin.ts",
+    "auth:apple-secret": "node scripts/auth/apple-client-secret.mjs",
     "jobs:run": "tsx --conditions=react-server --env-file=.env scripts/jobs/run-once.ts",
     "test": "vitest run",
     "test:watch": "vitest",

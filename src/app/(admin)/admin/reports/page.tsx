@@ -21,7 +21,7 @@ import {
 import { AdminPage, DetailRow, FilterForm, KpiGrid, Notice, ResultCount, SplitLayout, StatusPill, TabLinks, Timeline, href } from "@/components/admin/ui";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader } from "@/components/ui/card";
-import { DataTable, DemoDataNotice, EmptyState, Pagination, StatCard, Td, Th } from "@/components/ui/display";
+import { DataTable, EmptyState, Pagination, StatCard, Td, Th } from "@/components/ui/display";
 import { decideAppealAction, replyTicketAction, setTicketStatusAction, updateReportStatusAction } from "@/features/admin/reports-actions";
 import { requireAdmin } from "@/lib/auth/session";
 import { can } from "@/lib/permissions";
@@ -39,7 +39,7 @@ import {
   REPORT_STATUS_FILTERS,
   TICKET_STATUS_FILTERS,
 } from "@/services/admin/reports";
-import { hasDemoData, pick, pickEnum, pickId, pickPage, type SearchParams } from "@/services/admin/shared";
+import { pick, pickEnum, pickId, pickPage, type SearchParams } from "@/services/admin/shared";
 import { REPORT_REASONS } from "@/models/safety";
 
 export const metadata: Metadata = { title: "Raporlar ve İtirazlar" };
@@ -55,7 +55,7 @@ export default async function AdminReportsPage({ searchParams }: { searchParams:
   const q = pick(sp, "q");
   const sel = pickId(sp, "sel");
 
-  const [kpis, counts, ticketCounts, sla, demo] = await Promise.all([getReportKpis(), getReportCounts(), canSupport ? getTicketCounts() : Promise.resolve(null), getSlaMetrics(canSupport), hasDemoData()]);
+  const [kpis, counts, ticketCounts, sla] = await Promise.all([getReportKpis(), getReportCounts(), canSupport ? getTicketCounts() : Promise.resolve(null), getSlaMetrics(canSupport)]);
   const tabs = [
     { key: "reports", label: "Raporlar", count: counts.reports.all ?? 0, href: href("/admin/reports", {}) },
     { key: "appeals", label: "İtirazlar", count: counts.appeals.all ?? 0, href: href("/admin/reports", { tab: "appeals" }) },
@@ -65,7 +65,7 @@ export default async function AdminReportsPage({ searchParams }: { searchParams:
   const nText = (m: { pct: number; n: number } | null) => (m ? `${m.n} örnek` : "örnek yok");
 
   return (
-    <AdminPage title="Raporlar ve İtirazlar" description="Güvenlik bildirimlerini, kullanıcı şikâyetlerini ve itiraz süreçlerini takip edin." actions={demo ? <DemoDataNotice /> : null}>
+    <AdminPage title="Raporlar ve İtirazlar" description="Güvenlik bildirimlerini, kullanıcı şikâyetlerini ve itiraz süreçlerini takip edin.">
       <KpiGrid>
         <StatCard label="Açık Rapor" value={formatNumber(kpis.openReports)} icon={<Flag />} tone="pink" foot={`bugün +${formatNumber(kpis.newToday)}`} />
         <StatCard label="İtiraz Bekleyen" value={formatNumber(kpis.pendingAppeals)} icon={<Scale />} tone="orange" foot={`son 7 günde ${formatNumber(kpis.newAppeals)} yeni`} />

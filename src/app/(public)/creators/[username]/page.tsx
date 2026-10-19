@@ -11,8 +11,7 @@ import { FollowButton } from "@/components/creator/social-buttons";
 import { AiTwinLabel, Badge, SampleProfileLabel } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { DemoDataNotice, EmptyState, Pagination } from "@/components/ui/display";
-import { isDemo } from "@/config/env";
+import { EmptyState, Pagination } from "@/components/ui/display";
 import { AboutCard, PlansCard, PostGrid, SeeAllLink, TwinTeaserCard, TYPE_LABELS } from "@/features/public/profile-sections";
 import { ProfileMenu } from "@/features/public/profile-menu";
 import { SocialIcon, socialHref, socialLabel } from "@/features/public/social-icon";
@@ -81,7 +80,6 @@ export default async function CreatorProfilePage({ params, searchParams }: Props
     postsQuery ? listCreatorPosts(viewer, creator.id, postsQuery) : Promise.resolve(null),
   ]);
   const following = relations.following.has(creator.id);
-  const demo = isDemo() && creator.isDemo;
   const hrefFor = (t: TabKey, extra?: Record<string, string>) => {
     const p = new URLSearchParams();
     if (t !== "overview") p.set("tab", t);
@@ -224,7 +222,6 @@ export default async function CreatorProfilePage({ params, searchParams }: Props
                 </div>
               </div>
             </dl>
-            {demo && <DemoDataNotice className="mt-3">Demo ortam: sayılar örnek veridir</DemoDataNotice>}
           </div>
         </div>
 

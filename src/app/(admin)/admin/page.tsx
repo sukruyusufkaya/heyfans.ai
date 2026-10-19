@@ -7,7 +7,7 @@ import { AdminPage, DeniedNotice, KpiGrid, Notice, StatusPill } from "@/componen
 import { Donut } from "@/components/charts/charts";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardHeader } from "@/components/ui/card";
-import { DemoDataNotice, EmptyState, StatCard } from "@/components/ui/display";
+import { EmptyState, StatCard } from "@/components/ui/display";
 import { requireAdmin } from "@/lib/auth/session";
 import { can } from "@/lib/permissions";
 import { formatDateTime, formatMoney, formatNumber, formatRelative } from "@/lib/utils";
@@ -36,7 +36,7 @@ export default async function AdminDashboardPage({ searchParams }: { searchParam
   const missing = health.integrations.filter((i) => !i.configured);
 
   return (
-    <AdminPage title="Platform Genel Bakış" description="Kullanıcı, creator, gelir ve sistem operasyonlarını tek noktadan takip edin." actions={data.demo ? <DemoDataNotice>Demo verileri içerir</DemoDataNotice> : null}>
+    <AdminPage title="Platform Genel Bakış" description="Kullanıcı, creator, gelir ve sistem operasyonlarını tek noktadan takip edin.">
       {pick(sp, "denied") === "1" && <DeniedNotice />}
 
       <KpiGrid>

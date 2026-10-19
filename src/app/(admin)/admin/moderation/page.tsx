@@ -6,7 +6,7 @@ import { CASE_ACTION_LABELS, CASE_SOURCE_LABELS, CASE_STATUS_LABELS, CASE_STATUS
 import { AdminPage, DetailRow, FilterForm, KpiGrid, Notice, ResultCount, SplitLayout, StatusPill, TabLinks, Timeline, href } from "@/components/admin/ui";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader } from "@/components/ui/card";
-import { Avatar, DataTable, DemoDataNotice, EmptyState, Pagination, StatCard, Td, Th } from "@/components/ui/display";
+import { Avatar, DataTable, EmptyState, Pagination, StatCard, Td, Th } from "@/components/ui/display";
 import { decideCaseAction } from "@/features/admin/moderation-actions";
 import { SensitiveConversationAccess } from "@/features/admin/sensitive-conversation";
 import { requireAdmin } from "@/lib/auth/session";
@@ -14,7 +14,7 @@ import { can } from "@/lib/permissions";
 import { TWIN_STATUS_LABELS } from "@/lib/state-machines";
 import { formatDateTime, formatNumber } from "@/lib/utils";
 import { availableCaseActions, CASE_TABS, getCaseDetail, getModerationKpis, listCases, type CaseTab } from "@/services/admin/moderation";
-import { hasDemoData, msToHuman, pick, pickEnum, pickId, pickPage, type SearchParams } from "@/services/admin/shared";
+import { msToHuman, pick, pickEnum, pickId, pickPage, type SearchParams } from "@/services/admin/shared";
 
 export const metadata: Metadata = { title: "İçerik Moderasyonu" };
 
@@ -42,7 +42,7 @@ export default async function AdminModerationPage({ searchParams }: { searchPara
   const canAct = can(user, "moderation.act");
   const canSensitive = can(user, "conversations.read_sensitive");
 
-  const [kpis, list, demo] = await Promise.all([getModerationKpis(), listCases({ tab, q, priority: priority === "all" ? "" : priority, target, page }), hasDemoData()]);
+  const [kpis, list] = await Promise.all([getModerationKpis(), listCases({ tab, q, priority: priority === "all" ? "" : priority, target, page })]);
   const selectedId = pickId(sp, "sel") ?? list.items[0]?.id ?? null;
   const detail = selectedId ? await getCaseDetail(selectedId, { includeConversations: canSensitive }) : null;
   const base = { tab: tab === "open" ? null : tab, priority: priority === "all" ? null : priority, target: target === "all" ? null : target, q: q || null };
@@ -52,7 +52,7 @@ export default async function AdminModerationPage({ searchParams }: { searchPara
   const pct = (v: number | null, suffix = "") => (v === null ? "—" : `%${v.toLocaleString("tr-TR")}${suffix}`);
 
   return (
-    <AdminPage title="İçerik Moderasyonu" description="AI destekli inceleme, insan onayı ve politika uygulamalarını yönetin." actions={demo ? <DemoDataNotice /> : null}>
+    <AdminPage title="İçerik Moderasyonu" description="AI destekli inceleme, insan onayı ve politika uygulamalarını yönetin.">
       <KpiGrid>
         <StatCard label="Bekleyen İnceleme" value={formatNumber(kpis.pending)} icon={<Inbox />} tone="pink" foot={`${formatNumber(kpis.counts.in_review ?? 0)} inceleniyor · ${formatNumber(kpis.counts.escalated ?? 0)} eskale`} />
         <StatCard label="Yüksek Riskli" value={formatNumber(kpis.highRisk)} icon={<AlertOctagon />} tone="orange" foot="yüksek / kritik öncelik" />

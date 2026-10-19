@@ -5,7 +5,7 @@ import { CreatorPhoto } from "@/components/creator/creator-photo";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardHeader } from "@/components/ui/card";
-import { DemoDataNotice, EmptyState, PageHeader, StatCard } from "@/components/ui/display";
+import { EmptyState, PageHeader, StatCard } from "@/components/ui/display";
 import { Meter, Notice, STUDIO_EYEBROW, TwinStatusBadge } from "@/components/studio/studio-ui";
 import { Avatar } from "@/components/ui/display";
 import { EarningsTrend } from "@/features/studio/earnings-trend";
@@ -37,7 +37,6 @@ export default async function StudioDashboardPage() {
         description="Kazançlarını, hayranlarını ve AI ikizinin performansını tek merkezden yönet."
         actions={
           <>
-            {creator.isDemo && <DemoDataNotice />}
             <Button asChild>
               <Link href="/studio/content/new">
                 <Plus /> Yeni içerik oluştur

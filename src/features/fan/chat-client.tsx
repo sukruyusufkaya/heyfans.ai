@@ -98,7 +98,7 @@ export function ChatClient({ conversationId, creator, twin, initialMessages, ini
   const needCredits = billing.mode === "credits" ? billing.credits || messagePrice : 0;
   const lowBalance = billing.mode === "credits" && balance < needCredits;
   const blockedReason = !ai.available
-    ? "AI sağlayıcısı henüz yapılandırılmadığı için sohbet şu anda kapalı. Geçmiş mesajlarını okuyabilirsin."
+    ? "Sohbet şu anda kapalı. Geçmiş mesajlarını okuyabilirsin; sohbet yeniden açıldığında kaldığın yerden devam edersin."
     : billing.mode === "blocked"
       ? (billing.reason ?? "Bugünlük mesaj sınırına ulaştın. Yarın tekrar görüşelim!")
       : null;

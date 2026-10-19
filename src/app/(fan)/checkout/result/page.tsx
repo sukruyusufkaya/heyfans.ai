@@ -1,11 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { CheckCircle2, Clock, FlaskConical, Undo2, XCircle } from "lucide-react";
+import { CheckCircle2, Clock, Undo2, XCircle } from "lucide-react";
 import { z } from "zod";
 import { AutoRefresh } from "@/components/fan/auto-refresh";
 import { flattenSearchParams } from "@/components/fan/link-tabs";
-import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { requireUser } from "@/lib/auth/session";
 import { AppError } from "@/lib/errors";
@@ -69,11 +68,6 @@ export default async function CheckoutResultPage({ searchParams }: { searchParam
           {title}
         </h1>
         <p className="mx-auto mt-2 max-w-sm text-xs leading-relaxed text-muted-strong">{text}</p>
-        {tx.isTest && (
-          <Badge tone="warn" size="lg" className="mt-3">
-            <FlaskConical /> TEST ÖDEMESİ
-          </Badge>
-        )}
 
         <dl className="mt-6 grid gap-3 rounded-2xl border border-line-soft bg-[#fbf9fc] p-4 text-left text-xs">
           <div className="flex items-start justify-between gap-4">

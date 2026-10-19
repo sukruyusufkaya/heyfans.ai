@@ -71,10 +71,10 @@ export function VoiceStudio(p: VoiceStudioProps) {
 
         <Card>
           <CardHeader title="Benzerlik özellikleri" hint="Açık rıza + kimlik doğrulaması olmadan açılamaz." />
-          <Notice tone="warn" className="mb-3" title="Sağlayıcılar henüz yapılandırılmadı">
-            Ses sentezi, görsel üretim ve görüntülü benzerlik sağlayıcıları bu ortamda bağlı değil. Anahtarları açman tercihini kaydeder; ancak özellikler sağlayıcı bağlanıp platform bayrakları açılana kadar hayranlara sunulmaz.
+          <Notice tone="info" className="mb-3" title="Tercihlerin kaydedilir">
+            Anahtarları açman tercihini kaydeder; özellikler platformda etkinleştirildiğinde hayranlarına sunulur.
           </Notice>
-          <SettingRow htmlFor="lk-voice" title="Ses benzerliği" description={has("voice_likeness") ? (p.rtcConfigured ? "Ses altyapısı bağlı." : "Ses altyapısı (RTC) yapılandırılmadı.") : "Önce ses benzerliği iznini ver."}>
+          <SettingRow htmlFor="lk-voice" title="Ses benzerliği" description={has("voice_likeness") ? (p.rtcConfigured ? "Ses altyapısı bağlı." : "Sesli görüşme şu anda kapalı.") : "Önce ses benzerliği iznini ver."}>
             <Switch id="lk-voice" checked={flags.voice} disabled={p.locked || pending || !has("voice_likeness")} onCheckedChange={(v) => toggle("voice", v)} aria-label="Ses benzerliğini aç/kapat" />
           </SettingRow>
           <SettingRow htmlFor="lk-image" title="Görsel benzerlik" description={has("image_likeness") ? "Yeni görsel üretimi için sağlayıcı gerekir." : "Önce görsel benzerlik iznini ver."}>

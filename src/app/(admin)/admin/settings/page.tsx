@@ -5,7 +5,7 @@ import { AUDIT_SEVERITY_LABELS, AUDIT_SEVERITY_TONES } from "@/components/admin/
 import { PERMISSION_GROUPS } from "@/components/admin/permission-labels";
 import { AdminPage, DetailRow, Notice, ResultCount, StatusPill, TabLinks, href } from "@/components/admin/ui";
 import { Card, CardHeader } from "@/components/ui/card";
-import { DataTable, DemoDataNotice, EmptyState, Pagination, Td, Th } from "@/components/ui/display";
+import { DataTable, EmptyState, Pagination, Td, Th } from "@/components/ui/display";
 import { CreditPacksEditor } from "@/features/admin/credit-packs-editor";
 import { updateSettingsAction } from "@/features/admin/settings-actions";
 import { env, integrationStatus } from "@/config/env";
@@ -14,7 +14,7 @@ import { ADMIN_ROLE_LABELS, ADMIN_ROLE_PERMISSIONS, can } from "@/lib/permission
 import { formatDateTime } from "@/lib/utils";
 import { ADMIN_ROLES } from "@/models/identity";
 import { ADULT_CONFIRM_PHRASE, getSettingsView, listAuditLogs, MFA_CONFIRM_PHRASE } from "@/services/admin/settings";
-import { hasDemoData, pick, pickEnum, pickPage, type SearchParams } from "@/services/admin/shared";
+import { pick, pickEnum, pickPage, type SearchParams } from "@/services/admin/shared";
 
 export const metadata: Metadata = { title: "Platform Ayarları" };
 
@@ -28,11 +28,11 @@ export default async function AdminSettingsPage({ searchParams }: { searchParams
   const canAudit = can(user, "audit.read");
   const tab = pickEnum(sp, "tab", canAudit ? TABS : (TABS.filter((t) => t !== "audit") as readonly Tab[]), "general");
   const canManage = can(user, "settings.manage");
-  const [s, demo] = await Promise.all([getSettingsView(), hasDemoData()]);
+  const [s] = await Promise.all([getSettingsView()]);
   const tabs = TABS.filter((t) => t !== "audit" || canAudit);
 
   return (
-    <AdminPage title="Platform Ayarları" description="Finansal kurallar, özellik bayrakları, güvenlik, servis yapılandırması ve denetim kayıtları." actions={demo ? <DemoDataNotice /> : null}>
+    <AdminPage title="Platform Ayarları" description="Finansal kurallar, özellik bayrakları, güvenlik, servis yapılandırması ve denetim kayıtları.">
       {!canManage && <Notice tone="neutral">Ayarları görüntüleyebilirsiniz; değiştirmek için &quot;settings.manage&quot; izni (Süper Yönetici) gerekir.</Notice>}
       <Card>
         <TabLinks label="Ayar grupları" active={tab} tabs={tabs.map((t) => ({ key: t, label: TAB_LABELS[t], href: href("/admin/settings", { tab: t === "general" ? null : t }) }))} className="mb-5" />

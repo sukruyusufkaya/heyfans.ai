@@ -20,7 +20,6 @@ export default async function TestPage() {
       creatorName={creator.displayName}
       avatarUrl={creator.avatarUrl ?? null}
       aiAvailable={ai.available}
-      aiMock={ai.mock}
       twinStatus={TWIN_STATUS_LABELS[twin.status]}
       version={twin.currentVersion}
       quality={{ personaScore: twin.quality.personaScore, knowledgeScore: twin.quality.knowledgeScore, safetyScore: twin.quality.safetyScore, lastTestAt: twin.quality.lastTestAt ? new Date(twin.quality.lastTestAt).toISOString() : null }}

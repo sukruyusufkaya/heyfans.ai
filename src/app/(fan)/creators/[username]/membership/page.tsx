@@ -153,7 +153,7 @@ export default async function MembershipPage({ params, searchParams }: { params:
                       </li>
                     ))
                   ) : (
-                    <li className="text-muted">Plan avantajları yakında eklenecek.</li>
+                    <li className="text-muted">Plan avantajlarını creator belirler.</li>
                   )}
                 </ul>
                 {data.creator.isOwner ? (

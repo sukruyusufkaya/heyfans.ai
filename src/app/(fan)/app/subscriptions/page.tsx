@@ -6,9 +6,8 @@ import { Verified } from "@/components/creator/creator-cards";
 import { LinkTabs, buildHref, flattenSearchParams } from "@/components/fan/link-tabs";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardHeader } from "@/components/ui/card";
-import { Avatar, DataTable, DemoDataNotice, EmptyState, PageHeader, Pagination, StatCard, Td, Th } from "@/components/ui/display";
+import { Avatar, DataTable, EmptyState, PageHeader, Pagination, StatCard, Td, Th } from "@/components/ui/display";
 import { SubscriptionActions } from "@/features/fan/subscription-actions";
-import { isDemo } from "@/config/env";
 import { requireUser } from "@/lib/auth/session";
 import { cn, formatDate, formatDateTime, formatMoney } from "@/lib/utils";
 import { listSubscriptionViews, type SubscriptionView } from "@/services/fan/subscriptions";
@@ -107,7 +106,7 @@ export default async function SubscriptionsPage({ searchParams }: { searchParams
 
   return (
     <div className="mx-auto max-w-[1320px]">
-      <PageHeader eyebrow="HEYFANS / ÜYELİK YÖNETİMİ" title="Aboneliklerim" description="Aktif üyeliklerini, bitiş tarihlerini ve avantajlarını tek yerden yönet." actions={isDemo() ? <DemoDataNotice /> : undefined} />
+      <PageHeader eyebrow="HEYFANS / ÜYELİK YÖNETİMİ" title="Aboneliklerim" description="Aktif üyeliklerini, bitiş tarihlerini ve avantajlarını tek yerden yönet." />
 
       <div className="grid gap-3 sm:grid-cols-3">
         <StatCard label="Aktif üyelik" value={active.length} icon={<Layers />} />

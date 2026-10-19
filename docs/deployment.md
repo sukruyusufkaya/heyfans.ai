@@ -44,7 +44,7 @@
 2. Ortam değişkenlerini **Production** ve **Preview** için ayrı girin (bkz. `docs/environment.md`). Preview için ayrı bir Atlas veritabanı kullanın.
 3. Medya: Cloudflare R2 kovası (özel) + CORS (`PUT` ve `GET`, origin = APP_URL). Vercel fonksiyonları 4,5 MB gövde sınırına sahip olduğundan yüklemeler **imzalı URL ile doğrudan R2'ye** yapılır.
 4. Ödeme webhook adresi: `https://<alan>/api/webhooks/payments/<iyzico|stripe>`.
-5. OAuth dönüş adresleri: `https://<alan>/api/auth/callback/google` ve `/apple`.
+5. Google / Apple ile giriş: adım adım kurulum [`docs/social-login.md`](social-login.md) (dönüş adresleri `https://<alan>/api/auth/callback/google` ve `/apple`; Apple gizli anahtarı `npm run auth:apple-secret`).
 6. Cron: `vercel.json` → `/api/cron/jobs` her 10 dk; `CRON_SECRET` tanımlı olmalı.
 7. Gerçek zamanlı görüşme: LiveKit Cloud projesi + ses ajanı (LiveKit Agents) ayrı çalışan olarak; Vercel'de WebSocket sunucusu çalıştırılmaz.
 

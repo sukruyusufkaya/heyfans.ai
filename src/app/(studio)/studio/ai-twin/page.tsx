@@ -48,7 +48,7 @@ export default async function TwinPage() {
 
   const features = [
     { label: "AI ikizi sohbeti", desc: live ? "Hayranlar şu anda sohbet başlatabilir." : "Yalnız yayındayken hayranlara açıktır.", on: live && twin.features.chat },
-    { label: "Sesli mesaj / görüşme", desc: rtc.configured ? "Sesli görüşme altyapısı hazır." : "Ses altyapısı henüz yapılandırılmadı.", on: twin.features.voice && rtc.configured },
+    { label: "Sesli mesaj / görüşme", desc: rtc.configured ? "Sesli görüşme altyapısı hazır." : "Sesli görüşme şu anda kapalı.", on: twin.features.voice && rtc.configured },
     { label: "Görsel benzerlik", desc: "Yalnız kimlik doğrulaması + açık rıza ile.", on: twin.draft.voice.imageLikenessEnabled },
     { label: "Görüntülü etkileşim", desc: "Yayınlama için ayrıca onay ve sağlayıcı gerekir.", on: twin.features.video && rtc.configured },
   ];
@@ -69,13 +69,8 @@ export default async function TwinPage() {
       />
 
       {!ai.available && (
-        <Notice tone="warn" title="AI sağlayıcısı yapılandırılmadı" className="mb-5">
-          Şu anda ikizin yanıt üretemez; test sohbeti ve hayran sohbetleri sağlayıcı bağlanana kadar kapalıdır. Durum: <b>{ai.provider}</b>.
-        </Notice>
-      )}
-      {ai.mock && (
-        <Notice tone="info" title="Test yanıtları" className="mb-5">
-          Geliştirme ortamında AI yanıtları örnek (mock) sağlayıcıdan gelir ve “Test yanıtı” olarak işaretlenir.
+        <Notice tone="warn" title="AI yanıtları şu anda kapalı" className="mb-5">
+          İkizin şu anda yanıt üretemez; test sohbeti ve hayran sohbetleri yeniden açıldığında kendiliğinden etkinleşir.
         </Notice>
       )}
 

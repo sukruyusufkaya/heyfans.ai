@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { AlertTriangle, Check, CreditCard, FlaskConical, ShieldCheck, TicketCheck } from "lucide-react";
+import { AlertTriangle, Check, CreditCard, ShieldCheck, TicketCheck } from "lucide-react";
 import { Verified } from "@/components/creator/creator-cards";
 import { flattenSearchParams } from "@/components/fan/link-tabs";
 import { Badge } from "@/components/ui/badge";
@@ -59,7 +59,7 @@ export default async function CheckoutPage({ searchParams }: { searchParams: Pro
   }
   const { priced, creator, benefits } = summary;
   const pay = paymentsConfigured();
-  const unavailable = pay.configured ? null : "Ödemeler şu anda alınamıyor: ödeme altyapısı henüz yapılandırılmadı.";
+  const unavailable = pay.configured ? null : "Şu anda ödeme kabul edemiyoruz. Lütfen daha sonra tekrar dene.";
   const isPlan = params.type === "plan";
   const kindTitle = params.type === "credit_pack" ? "Kredi Paketi" : isPlan ? "Üyelik Özeti" : "İçerik Satın Alma";
 
@@ -67,21 +67,12 @@ export default async function CheckoutPage({ searchParams }: { searchParams: Pro
     <div className="mx-auto max-w-[1100px]">
       <PageHeader eyebrow="HEYFANS / GÜVENLİ ÖDEME" title="Ödeme" description="Seçtiğin ürünü güvenle tamamla." actions={<Badge tone="green" size="lg"><ShieldCheck /> Güvenli ödeme</Badge>} />
 
-      {pay.configured && pay.isTest && (
-        <div role="note" className="mb-4 flex items-start gap-3 rounded-2xl border border-[#f3dca8] bg-warning-soft px-4 py-3.5">
-          <FlaskConical className="mt-0.5 size-5 shrink-0 text-warning" aria-hidden />
-          <div>
-            <p className="text-xs font-black tracking-wider text-warning">TEST ÖDEMESİ</p>
-            <p className="mt-0.5 text-xs leading-relaxed text-ink-soft">Bu ortamda test ödeme sağlayıcısı kullanılıyor. Gerçek kart bilgisi istenmez ve gerçek para tahsil edilmez.</p>
-          </div>
-        </div>
-      )}
       {!pay.configured && (
         <div role="alert" className="mb-4 flex items-start gap-3 rounded-2xl border border-danger/25 bg-danger-soft px-4 py-3.5">
           <AlertTriangle className="mt-0.5 size-5 shrink-0 text-danger" aria-hidden />
           <div>
             <p className="text-xs font-black text-danger">Ödemeler şu anda alınamıyor</p>
-            <p className="mt-0.5 text-xs leading-relaxed text-ink-soft">Ödeme altyapısı henüz yapılandırılmadığı için satın alma tamamlanamaz. Hiçbir ücret alınmaz.</p>
+            <p className="mt-0.5 text-xs leading-relaxed text-ink-soft">Şu anda ödeme kabul edemiyoruz; hiçbir ücret alınmaz. Lütfen daha sonra tekrar dene.</p>
           </div>
         </div>
       )}

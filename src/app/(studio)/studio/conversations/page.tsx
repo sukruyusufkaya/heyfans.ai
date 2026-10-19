@@ -4,7 +4,7 @@ import { Activity, Flag, Lock, MessageCircle, ShieldAlert, Users } from "lucide-
 import { AreaTrend, Bars } from "@/components/charts/charts";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardHeader } from "@/components/ui/card";
-import { DataTable, DemoDataNotice, EmptyState, PageHeader, Pagination, StatCard, Td, Th } from "@/components/ui/display";
+import { DataTable, EmptyState, PageHeader, Pagination, StatCard, Td, Th } from "@/components/ui/display";
 import { Notice, STUDIO_EYEBROW } from "@/components/studio/studio-ui";
 import { requireCreator } from "@/lib/auth/session";
 import { cn, formatDateTime, formatNumber } from "@/lib/utils";
@@ -39,7 +39,6 @@ export default async function ConversationsPage({ searchParams }: { searchParams
         eyebrow={STUDIO_EYEBROW}
         title="Sohbetler"
         description="AI ikizinin hayranlarla konuşma performansını gizliliği koruyarak takip et."
-        actions={d.creator.isDemo ? <DemoDataNotice /> : undefined}
       />
 
       <Notice tone="safe" icon={<Lock />} title="Gizlilik önceliklidir" className="mb-5">

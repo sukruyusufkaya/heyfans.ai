@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { FanShell } from "@/components/layouts/fan-shell";
-import { isDemo } from "@/config/env";
 import { MaintenanceScreen } from "@/components/layouts/maintenance-screen";
 import { requireUser } from "@/lib/auth/session";
 import { maintenanceState } from "@/services/platform/guards";
@@ -14,7 +13,7 @@ export default async function FanLayout({ children }: { children: React.ReactNod
   if (maintenance.blocked) return <MaintenanceScreen message={maintenance.message} />;
   const shell = await getFanShellData(user.id);
   return (
-    <FanShell user={{ name: user.name, image: user.image, roles: user.roles }} isDemo={isDemo()} {...shell}>
+    <FanShell user={{ name: user.name, image: user.image, roles: user.roles }} {...shell}>
       {children}
     </FanShell>
   );

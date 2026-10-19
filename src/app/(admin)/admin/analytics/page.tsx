@@ -4,11 +4,11 @@ import { CountArea, MoneyBars } from "@/components/admin/charts";
 import { AdminPage, KpiGrid, Notice, ScoreBar, StatusPill, TabLinks, href } from "@/components/admin/ui";
 import { Donut } from "@/components/charts/charts";
 import { Card, CardHeader } from "@/components/ui/card";
-import { DataTable, DemoDataNotice, EmptyState, StatCard, Td, Th } from "@/components/ui/display";
+import { DataTable, EmptyState, StatCard, Td, Th } from "@/components/ui/display";
 import { requireAdmin } from "@/lib/auth/session";
 import { formatMoney, formatNumber } from "@/lib/utils";
 import { ANALYTICS_RANGES, getAnalyticsData, METRICS, type AnalyticsRangeKey, type Metric } from "@/services/admin/analytics";
-import { hasDemoData, pickEnum, type SearchParams } from "@/services/admin/shared";
+import { pickEnum, type SearchParams } from "@/services/admin/shared";
 
 export const metadata: Metadata = { title: "Platform Analitiği" };
 
@@ -42,7 +42,7 @@ export default async function AdminAnalyticsPage({ searchParams }: { searchParam
   const sp = await searchParams;
   const range = pickEnum(sp, "range", ["30", "90", "365"] as const, "30");
   const metric = pickEnum(sp, "metric", METRICS, "users");
-  const [d, demo] = await Promise.all([getAnalyticsData(ANALYTICS_RANGES[range], metric), hasDemoData()]);
+  const [d] = await Promise.all([getAnalyticsData(ANALYTICS_RANGES[range], metric)]);
   const { kpis } = d;
   const donut = d.intents.map((i) => ({ name: INTENT_LABELS[i.intent] ?? i.intent, value: i.n }));
   const top = d.funnel[0]?.n ?? 0;
@@ -54,7 +54,6 @@ export default async function AdminAnalyticsPage({ searchParams }: { searchParam
       description="Büyüme, dönüşüm, kullanıcı tutundurma ve birim ekonomisini karşılaştırın."
       actions={
         <>
-          {demo && <DemoDataNotice />}
           <TabLinks label="Dönem" active={range} tabs={(["30", "90", "365"] as const).map((r) => ({ key: r, label: RANGE_LABELS[r], href: href("/admin/analytics", { metric: metric === "users" ? null : metric, range: r === "30" ? null : r }) }))} className="mb-0" />
         </>
       }

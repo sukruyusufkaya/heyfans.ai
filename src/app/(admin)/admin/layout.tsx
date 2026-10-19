@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
 import { ShieldCheck } from "lucide-react";
 import { AdminShell } from "@/components/admin/admin-shell";
-import { DemoDataNotice } from "@/components/ui/display";
-import { isDemo } from "@/config/env";
 import { requireAdmin } from "@/lib/auth/session";
 import { permissionsFor, ADMIN_ROLE_LABELS } from "@/lib/permissions";
 import { getAdminShellData } from "@/services/shell";
@@ -31,7 +29,6 @@ export default async function AdminLayout({ children }: { children: React.ReactN
         ),
       }}
       user={{ name: user.name, image: user.image, subtitle: user.adminRole ? ADMIN_ROLE_LABELS[user.adminRole] : "Yönetici" }}
-      headerStatus={isDemo() ? <DemoDataNotice className="hidden sm:inline-flex" /> : null}
       searchPlaceholder="Kullanıcı, içerik üreticisi veya işlem ara..."
       searchAction="/admin/users"
       notificationsHref="/admin/reports"

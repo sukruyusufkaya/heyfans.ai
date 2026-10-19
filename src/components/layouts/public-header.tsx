@@ -82,7 +82,6 @@ export function PublicHeader({ user, extraNav }: { user: HeaderUser | null; extr
             </DropdownMenuTrigger>
             <DropdownMenuContent className="min-w-36">
               <DropdownMenuItem>Türkçe</DropdownMenuItem>
-              <DropdownMenuItem disabled>English (yakında)</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
           {user ? (

@@ -7,14 +7,14 @@ import { AdminPage, DetailRow, FilterForm, KpiGrid, Notice, ResultCount, ScoreBa
 import { Donut } from "@/components/charts/charts";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader } from "@/components/ui/card";
-import { Avatar, DataTable, DemoDataNotice, EmptyState, Pagination, StatCard, Td, Th } from "@/components/ui/display";
+import { Avatar, DataTable, EmptyState, Pagination, StatCard, Td, Th } from "@/components/ui/display";
 import { setAdminRoleAction, setUserStatusAction } from "@/features/admin/users-actions";
 import { requireAdmin } from "@/lib/auth/session";
 import { ADMIN_ROLE_LABELS, can } from "@/lib/permissions";
 import { formatDateTime, formatNumber, formatRelative } from "@/lib/utils";
 import { ADMIN_ROLES } from "@/models/identity";
 import { getAdminUserDetail, getSecuritySummary, getUserKpis, getUserSegments, listAdminUsers, USER_TABS, type UserTab } from "@/services/admin/users";
-import { hasDemoData, pick, pickEnum, pickId, pickPage, pctDelta, type SearchParams } from "@/services/admin/shared";
+import { pick, pickEnum, pickId, pickPage, pctDelta, type SearchParams } from "@/services/admin/shared";
 
 export const metadata: Metadata = { title: "Kullanıcılar" };
 
@@ -33,12 +33,11 @@ export default async function AdminUsersPage({ searchParams }: { searchParams: P
   const canManage = can(me, "users.manage");
   const isSuper = me.adminRole === "super_admin";
 
-  const [kpis, list, segments, security, demo] = await Promise.all([
+  const [kpis, list, segments, security] = await Promise.all([
     getUserKpis(),
     listAdminUsers({ tab, q, role: role === "all" ? "" : role, page }),
     getUserSegments(),
     getSecuritySummary(),
-    hasDemoData(),
   ]);
   const selectedId = pickId(sp, "sel") ?? list.items[0]?.id ?? null;
   const detail = selectedId ? await getAdminUserDetail(selectedId) : null;
@@ -47,7 +46,7 @@ export default async function AdminUsersPage({ searchParams }: { searchParams: P
   const protectedTarget = detail ? detail.id === me.id || (detail.roles.includes("admin") && !isSuper) : true;
 
   return (
-    <AdminPage title="Kullanıcı Yönetimi" description="Kullanıcı hesapları, erişim izinleri ve hesap güvenliğini yönetin." actions={demo ? <DemoDataNotice /> : null}>
+    <AdminPage title="Kullanıcı Yönetimi" description="Kullanıcı hesapları, erişim izinleri ve hesap güvenliğini yönetin.">
       <KpiGrid>
         <StatCard label="Toplam Kullanıcı" value={formatNumber(kpis.total)} icon={<Users />} tone="pink" />
         <StatCard label="Aktif Abonelik" value={formatNumber(kpis.activeSubs)} icon={<CreditCard />} tone="teal" foot="platform + creator abonelikleri" />

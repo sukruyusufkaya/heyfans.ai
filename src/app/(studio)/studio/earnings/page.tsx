@@ -6,7 +6,7 @@ import { MoneyBars } from "@/components/studio/money-charts";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader } from "@/components/ui/card";
-import { DataTable, DemoDataNotice, EmptyState, PageHeader, Pagination, StatCard, Td, Th } from "@/components/ui/display";
+import { DataTable, EmptyState, PageHeader, Pagination, StatCard, Td, Th } from "@/components/ui/display";
 import { Notice, STUDIO_EYEBROW } from "@/components/studio/studio-ui";
 import { requireCreator } from "@/lib/auth/session";
 import { cn, formatDate, formatMoney, formatPercent } from "@/lib/utils";
@@ -43,7 +43,6 @@ export default async function EarningsPage({ searchParams }: { searchParams: Pro
         description="Creator kazançlarını kaynaklarına göre analiz et ve performansını izle."
         actions={
           <>
-            {e.hasDemo && <DemoDataNotice />}
             <Button asChild variant="outline">
               <Link href="/studio/payouts">
                 <Send /> Ödemeler

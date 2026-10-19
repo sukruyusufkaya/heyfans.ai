@@ -2,7 +2,6 @@ import Link from "next/link";
 import { ArrowRight, Heart, Lock, Send, Sparkles, Zap } from "lucide-react";
 import { CreatorPhoto } from "@/components/creator/creator-photo";
 import { AiTwinLabel } from "@/components/ui/badge";
-import { DemoDataNotice } from "@/components/ui/display";
 import { cn, formatCompact } from "@/lib/utils";
 
 /** Pembe degrade hero (tüm public sayfalarda ortak iskelet). */
@@ -58,7 +57,7 @@ export function PublicHero({
   );
 }
 
-export function HeroStats({ items, demo }: { items: { icon: React.ReactNode; value: string; label: string }[]; demo?: boolean }) {
+export function HeroStats({ items }: { items: { icon: React.ReactNode; value: string; label: string }[] }) {
   // Henüz oluşmamış sayılar (0) "0 içerik üreticisi" gibi gösterilmez; hiçbiri yoksa satır hiç çizilmez.
   const shown = items.filter((s) => s.value !== "0");
   if (!shown.length) return null;
@@ -76,7 +75,6 @@ export function HeroStats({ items, demo }: { items: { icon: React.ReactNode; val
           </div>
         ))}
       </dl>
-      {demo && <DemoDataNotice className="mt-4">Demo ortam: sayılar örnek veriden hesaplanır</DemoDataNotice>}
     </div>
   );
 }

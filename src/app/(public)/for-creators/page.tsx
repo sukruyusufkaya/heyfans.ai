@@ -5,7 +5,6 @@ import { CreatorTile } from "@/components/creator/creator-cards";
 import { CtaBand, HeroStats, PrimaryCta, PublicHero, Section, SecondaryCta, stat } from "@/components/public/marketing";
 import { AiTwinLabel } from "@/components/ui/badge";
 import { Card, SectionTitle } from "@/components/ui/card";
-import { isDemo } from "@/config/env";
 import { formatMoney, formatNumber, formatPercent } from "@/lib/utils";
 import { splitDirectPayment } from "@/services/billing/revenue";
 import { listCreators, platformCounters } from "@/services/creators/public";
@@ -69,7 +68,6 @@ export default async function ForCreatorsPage() {
         }
         stats={
           <HeroStats
-            demo={isDemo()}
             items={[
               { icon: <Users />, value: stat(counters.creators), label: "İçerik Üreticisi" },
               { icon: <Sparkles />, value: stat(counters.liveTwins, ""), label: "Yayındaki AI İkizi" },
@@ -137,7 +135,7 @@ export default async function ForCreatorsPage() {
           </dl>
           {!settings.features.payouts && (
             <p role="note" className="mt-4 flex items-start gap-2.5 rounded-xl border border-[#f9d9aa] bg-[#fff7e9] px-4 py-3 text-xs text-[#7d4300]">
-              <Info className="mt-0.5 size-4 shrink-0" aria-hidden /> Ödeme talepleri bu ortamda henüz etkinleştirilmedi; hak edişler kayıt altına alınır, ödeme özelliği açıldığında talep edebilirsin.
+              <Info className="mt-0.5 size-4 shrink-0" aria-hidden /> Hak edişlerin Creator Studio&apos;da kayıt altına alınır; ödeme talepleri açıldığında tek tıkla talep edebilirsin.
             </p>
           )}
         </section>

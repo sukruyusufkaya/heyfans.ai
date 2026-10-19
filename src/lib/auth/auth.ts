@@ -27,7 +27,8 @@ function buildAuth(db: Db, client: MongoClient) {
     baseURL: e.APP_URL,
     secret: e.BETTER_AUTH_SECRET,
     database: mongodbAdapter(db, { client, usePlural: true }),
-    trustedOrigins: [e.APP_URL],
+    // Apple, giriş dönüşünü appleid.apple.com'dan form POST ile gönderir; bu kaynak güvenilir olmalı.
+    trustedOrigins: [e.APP_URL, ...(socialProviders.apple ? ["https://appleid.apple.com"] : [])],
     emailAndPassword: {
       enabled: true,
       requireEmailVerification: true,

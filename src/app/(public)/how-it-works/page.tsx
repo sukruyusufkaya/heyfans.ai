@@ -4,7 +4,6 @@ import { ArrowRight, BadgeCheck, BarChart3, Camera, Crown, Eye, Heart, Lock, Mes
 import { CreatorTile } from "@/components/creator/creator-cards";
 import { CtaBand, HeroStats, PhoneChatMockup, PolaroidStack, PublicHero, Section, stat } from "@/components/public/marketing";
 import { SectionTitle } from "@/components/ui/card";
-import { isDemo } from "@/config/env";
 import { cn } from "@/lib/utils";
 import { listCreators, platformCounters } from "@/services/creators/public";
 
@@ -135,7 +134,6 @@ export default async function HowItWorksPage() {
       <Section className="py-4">
         <div className="hf-card hf-gradient-pink p-5">
           <HeroStats
-            demo={isDemo()}
             items={[
               { icon: <Users />, value: stat(counters.users), label: "Aktif Kullanıcı" },
               { icon: <MessageCircle />, value: stat(counters.messages), label: "Gönderilen Mesaj" },

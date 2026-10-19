@@ -10,7 +10,6 @@ import { AiTwinLabel } from "@/components/ui/badge";
 import { CtaBand, HeroStats, PublicHero, Section, SeeAll } from "@/components/public/marketing";
 import { Card, SectionTitle } from "@/components/ui/card";
 import { EmptyState } from "@/components/ui/display";
-import { isDemo } from "@/config/env";
 import { getSession } from "@/lib/auth/session";
 import { formatCompact, formatNumber } from "@/lib/utils";
 import { exploreCreators, listCategories, viewerRelations } from "@/services/creators/public";
@@ -88,7 +87,6 @@ export default async function CategoryDetailPage({ params }: Props) {
         description={category.heroText ?? category.description ?? `${category.name} kategorisindeki içerik üreticileri ve AI ikizleriyle tanış.`}
         stats={
           <HeroStats
-            demo={isDemo()}
             items={[
               { icon: <Users />, value: formatNumber(featured.total), label: `${category.name} İçerik Üreticisi` },
               { icon: <Bot />, value: formatNumber(category.liveTwinCount), label: "Yayındaki AI İkizi" },

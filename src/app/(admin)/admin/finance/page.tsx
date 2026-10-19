@@ -8,13 +8,13 @@ import { AdminPage, DetailRow, FilterForm, KpiGrid, Notice, ResultCount, StatusP
 import { Donut } from "@/components/charts/charts";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader } from "@/components/ui/card";
-import { DataTable, DemoDataNotice, EmptyState, Pagination, StatCard, Td, Th } from "@/components/ui/display";
+import { DataTable, EmptyState, Pagination, StatCard, Td, Th } from "@/components/ui/display";
 import { refundTransactionAction, updatePayoutAction, verifyPayoutAccountAction } from "@/features/admin/finance-actions";
 import { requireAdmin } from "@/lib/auth/session";
 import { can } from "@/lib/permissions";
 import { formatDateTime, formatMoney, formatNumber, formatPercent } from "@/lib/utils";
 import { getFinanceOverview, getReconciliation, listPayoutAccountsForReview, listPayouts, listTransactions, PAYOUT_FILTERS, RANGES, TX_KINDS, TX_STATUSES, type RangeKey } from "@/services/admin/finance";
-import { hasDemoData, pick, pickEnum, pickPage, type SearchParams } from "@/services/admin/shared";
+import { pick, pickEnum, pickPage, type SearchParams } from "@/services/admin/shared";
 
 export const metadata: Metadata = { title: "Finans ve İşlemler" };
 
@@ -29,7 +29,7 @@ export default async function AdminFinancePage({ searchParams }: { searchParams:
   const range = pickEnum(sp, "range", ["30", "90", "365"] as const, "30");
   const canRefund = can(user, "finance.refund");
   const canPayout = can(user, "payouts.manage");
-  const [ov, demo] = await Promise.all([getFinanceOverview(RANGES[range]), hasDemoData()]);
+  const [ov] = await Promise.all([getFinanceOverview(RANGES[range])]);
   const donut = ov.byKind.map((k) => ({ name: TX_KIND_LABELS[k.kind] ?? k.kind, value: k.value }));
   const keep = { range: range === "30" ? null : range };
 
@@ -39,7 +39,6 @@ export default async function AdminFinancePage({ searchParams }: { searchParams:
       description="Abonelik, kredi, creator hakediş, iade ve finans mutabakatını izleyin."
       actions={
         <>
-          {demo && <DemoDataNotice />}
           <TabLinks label="Dönem" active={range} tabs={(["30", "90", "365"] as const).map((r) => ({ key: r, label: RANGE_LABELS[r], href: href("/admin/finance", { tab: tab === "transactions" ? null : tab, range: r === "30" ? null : r }) }))} className="mb-0" />
         </>
       }

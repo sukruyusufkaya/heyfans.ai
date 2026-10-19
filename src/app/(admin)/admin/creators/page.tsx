@@ -14,7 +14,7 @@ import {
 import { AdminPage, DetailRow, FilterForm, KpiGrid, Notice, ResultCount, SplitLayout, StatusPill, TabLinks, Timeline, href } from "@/components/admin/ui";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader } from "@/components/ui/card";
-import { Avatar, DataTable, DemoDataNotice, EmptyState, Pagination, StatCard, Td, Th } from "@/components/ui/display";
+import { Avatar, DataTable, EmptyState, Pagination, StatCard, Td, Th } from "@/components/ui/display";
 import { decideApplicationAction, setCreatorFeaturedAction, setCreatorSuspendedAction } from "@/features/admin/creators-actions";
 import { CreatorPhoneReveal } from "@/features/admin/creator-phone-reveal";
 import { SocialIcon, socialLabel } from "@/features/public/social-icon";
@@ -25,7 +25,7 @@ import { TWIN_STATUS_LABELS } from "@/lib/state-machines";
 import { formatDate, formatDateTime, formatNumber } from "@/lib/utils";
 import { SampleProfileLabel } from "@/components/ui/badge";
 import { CREATOR_TABS, getAdminCreatorDetail, getCreatorCounts, listAdminCreators, type CreatorTab } from "@/services/admin/creators";
-import { hasDemoData, pick, pickEnum, pickId, pickPage, type SearchParams } from "@/services/admin/shared";
+import { pick, pickEnum, pickId, pickPage, type SearchParams } from "@/services/admin/shared";
 
 export const metadata: Metadata = { title: "İçerik Üreticileri" };
 
@@ -55,14 +55,14 @@ export default async function AdminCreatorsPage({ searchParams }: { searchParams
   const canVerify = can(user, "creators.verify");
   const canManage = can(user, "creators.manage");
 
-  const [{ counts, pendingApps }, list, demo] = await Promise.all([getCreatorCounts(), listAdminCreators({ tab, q, page }), hasDemoData()]);
+  const [{ counts, pendingApps }, list] = await Promise.all([getCreatorCounts(), listAdminCreators({ tab, q, page })]);
   const selectedId = pickId(sp, "sel") ?? list.items[0]?.id ?? null;
   const detail = selectedId ? await getAdminCreatorDetail(selectedId, { finance: can(user, "finance.read"), consents: can(user, "consents.read"), evidence: canVerify || canManage }) : null;
   const base = { status: tab === "all" ? null : tab, q: q || null };
   const hrefFor = (extra: Record<string, string | number | null>) => href("/admin/creators", { ...base, ...extra });
 
   return (
-    <AdminPage title="İçerik Üreticisi Yönetimi" description="Başvuruları inceleyin, kimlikleri doğrulayın ve creator hesaplarını yönetin." actions={demo ? <DemoDataNotice /> : null}>
+    <AdminPage title="İçerik Üreticisi Yönetimi" description="Başvuruları inceleyin, kimlikleri doğrulayın ve creator hesaplarını yönetin.">
       <KpiGrid>
         <StatCard label="Toplam Creator" value={formatNumber(counts.all)} icon={<Users />} tone="pink" />
         <StatCard label="Aktif (Onaylı)" value={formatNumber(counts.approved)} icon={<UserCheck />} tone="teal" />

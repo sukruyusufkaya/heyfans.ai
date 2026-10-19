@@ -59,7 +59,7 @@ export function TwinTeaserCard({ creator, ai }: { creator: PublicCreatorProfile;
             </Link>
           ) : (
             <p role="status" className="mt-3 rounded-xl border border-[#f9d9aa] bg-[#fff7e9] px-3.5 py-2.5 text-[11px] font-semibold text-[#9a4f00]">
-              AI sohbeti bu ortamda şu anda kullanılamıyor (AI sağlayıcısı yapılandırılmadı).
+              AI sohbeti şu anda kapalı; kısa süre içinde yeniden açılacak.
             </p>
           )}
           {ai.available && ai.mock && <p className="mt-2 text-[10px] font-semibold text-muted">Test ortamı: yanıtlar “Test yanıtı” olarak etiketlenir.</p>}
