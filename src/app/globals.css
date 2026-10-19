@@ -1,0 +1,141 @@
+@import "tailwindcss";
+
+/*
+ * HEYFANS tasarım token'ları — referans HTML'lerden (design-references/pages/*.html) ölçüldü.
+ * Fuşya: #EC0088 (referanslarda #E90086–#F00088 aralığı), koyu yan menü: #191623 → #12101B.
+ */
+@theme {
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+  --font-display: var(--font-jakarta), var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-script: var(--font-caveat), "Segoe Script", cursive;
+
+  --color-brand-50: #fff5fa;
+  --color-brand-100: #fff0f9;
+  --color-brand-150: #ffe3f1;
+  --color-brand-200: #fbd0e8;
+  --color-brand-300: #f6b6d8;
+  --color-brand-400: #ff6abc;
+  --color-brand-500: #ec0088;
+  --color-brand-600: #d6007b;
+  --color-brand-700: #b60067;
+  --color-brand-800: #8a0050;
+
+  --color-ink: #19111d;
+  --color-ink-soft: #3c3541;
+  --color-muted: #8e8593;
+  --color-muted-strong: #6d6470;
+  --color-line: #eee8f0;
+  --color-line-soft: #f4eff4;
+  --color-soft: #f8f7fa;
+  --color-canvas: #f9f8fb;
+
+  --color-night: #191623;
+  --color-night-deep: #12101b;
+  --color-night-card: #262330;
+  --color-night-line: #302a39;
+  --color-night-text: #b7afbf;
+  --color-night-muted: #6b6474;
+
+  --color-success: #10a572;
+  --color-success-soft: #e8f9f0;
+  --color-warning: #b67a11;
+  --color-warning-soft: #fff5e3;
+  --color-danger: #e2474d;
+  --color-danger-soft: #ffeef0;
+  --color-violet: #773cee;
+  --color-violet-soft: #f1eaff;
+  --color-teal: #13a58d;
+  --color-teal-soft: #e9faf6;
+  --color-orange: #e7a33d;
+  --color-orange-soft: #fff5e6;
+
+  --radius-card: 16px;
+  --radius-control: 10px;
+  --radius-xl2: 20px;
+
+  --shadow-card: 0 9px 28px rgb(25 16 34 / 0.035);
+  --shadow-card-hover: 0 14px 34px rgb(25 16 34 / 0.08);
+  --shadow-pink: 0 8px 18px rgb(233 0 134 / 0.22);
+  --shadow-header: 0 2px 15px rgb(22 19 32 / 0.03);
+
+  --animate-fade-up: fade-up 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+  --animate-pulse-soft: pulse-soft 2s ease-in-out infinite;
+
+  @keyframes fade-up {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes pulse-soft {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.45; }
+  }
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-rendering: optimizeLegibility;
+  }
+  body {
+    @apply bg-white text-ink font-sans antialiased;
+  }
+  ::selection {
+    background: var(--color-brand-150);
+    color: var(--color-brand-800);
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-brand-500);
+    outline-offset: 2px;
+    border-radius: 6px;
+  }
+  h1, h2, h3, h4 {
+    letter-spacing: -0.02em;
+  }
+  input::placeholder,
+  textarea::placeholder {
+    color: #b2a6b3;
+  }
+}
+
+@layer components {
+  .eyebrow {
+    @apply text-[10px] font-black uppercase tracking-[0.16em] text-brand-500;
+  }
+  .hf-card {
+    @apply rounded-[var(--radius-card)] border border-line bg-white shadow-[var(--shadow-card)];
+  }
+  .hf-gradient-hero {
+    background: radial-gradient(circle at 78% 8%, #ffe2f2 0%, #fff6fb 36%, #fff 72%);
+  }
+  .hf-gradient-pink {
+    background: linear-gradient(130deg, #fff1f9, #f7eaf7);
+  }
+  .hf-gradient-night {
+    background: linear-gradient(180deg, var(--color-night), var(--color-night-deep));
+  }
+  .hf-text-gradient {
+    background: linear-gradient(90deg, #ec0088, #ff4fae);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: #e5dbe6 transparent;
+  }
+  .no-scrollbar {
+    scrollbar-width: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

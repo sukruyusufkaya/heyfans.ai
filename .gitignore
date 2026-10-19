@@ -1,0 +1,23 @@
+# deps
+node_modules/
+# next
+.next/
+out/
+next-env.d.ts
+*.tsbuildinfo
+# env
+.env
+.env.local
+.env.*.local
+!.env.example
+# local data (mongo dbpath, local uploads, dev outbox)
+.data/
+# tests
+test-results/
+playwright-report/
+tests/.auth/
+coverage/
+# misc
+.DS_Store
+*.log
+.vercel

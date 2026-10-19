@@ -1,0 +1,137 @@
+import "server-only";
+import { betterAuth } from "better-auth";
+import { mongodbAdapter } from "better-auth/adapters/mongodb";
+import { nextCookies } from "better-auth/next-js";
+import { twoFactor } from "better-auth/plugins";
+import { ObjectId, type Db, type MongoClient } from "mongodb";
+import { env } from "@/config/env";
+import { connectDb } from "@/lib/db/mongo";
+import { sendAuthEmail } from "@/lib/email";
+import { onUserCreated } from "@/services/users/lifecycle";
+
+function buildAuth(db: Db, client: MongoClient) {
+  const e = env();
+  const socialProviders: Record<string, { clientId: string; clientSecret: string }> = {};
+  if (e.AUTH_GOOGLE_ID && e.AUTH_GOOGLE_SECRET) {
+    socialProviders.google = { clientId: e.AUTH_GOOGLE_ID, clientSecret: e.AUTH_GOOGLE_SECRET };
+  }
+  if (e.AUTH_APPLE_ID && e.AUTH_APPLE_SECRET) {
+    socialProviders.apple = { clientId: e.AUTH_APPLE_ID, clientSecret: e.AUTH_APPLE_SECRET };
+  }
+
+  return betterAuth({
+    appName: "HEYFANS",
+    baseURL: e.APP_URL,
+    secret: e.BETTER_AUTH_SECRET,
+    database: mongodbAdapter(db, { client, usePlural: true }),
+    trustedOrigins: [e.APP_URL],
+    emailAndPassword: {
+      enabled: true,
+      requireEmailVerification: true,
+      minPasswordLength: 8,
+      maxPasswordLength: 128,
+      autoSignIn: false,
+      revokeSessionsOnPasswordReset: true,
+      resetPasswordTokenExpiresIn: 60 * 30,
+      sendResetPassword: async ({ user, url }) => {
+        await sendAuthEmail({ kind: "reset_password", to: user.email, name: user.name, url });
+      },
+    },
+    emailVerification: {
+      sendOnSignUp: true,
+      autoSignInAfterVerification: true,
+      expiresIn: 60 * 60 * 24,
+      sendVerificationEmail: async ({ user, url }) => {
+        await sendAuthEmail({ kind: "verify_email", to: user.email, name: user.name, url });
+      },
+    },
+    socialProviders,
+    account: {
+      accountLinking: { enabled: true, trustedProviders: ["google", "apple"] },
+    },
+    session: {
+      expiresIn: 60 * 60 * 24 * 30,
+      updateAge: 60 * 60 * 24,
+      cookieCache: { enabled: true, maxAge: 60 * 5 },
+    },
+    user: {
+      additionalFields: {
+        username: { type: "string", required: false, input: false },
+        roles: { type: "string[]", required: false, input: false, defaultValue: ["fan"] },
+        adminRole: { type: "string", required: false, input: false },
+        status: { type: "string", required: false, input: false, defaultValue: "active" },
+        signupIntent: { type: "string", required: false, input: true },
+        isDemo: { type: "boolean", required: false, input: false, defaultValue: false },
+      },
+    },
+    databaseHooks: {
+      user: {
+        create: {
+          before: async (user) => {
+            // Kayıttan yalnız fan|creator niyeti gelebilir; admin rolü asla buradan atanamaz.
+            const intent = (user as { signupIntent?: unknown }).signupIntent === "creator" ? "creator" : "fan";
+            return { data: { ...user, signupIntent: intent, roles: ["fan"], adminRole: null, status: "active" } };
+          },
+          after: async (user) => {
+            await onUserCreated({ userId: user.id, intent: (user as { signupIntent?: string }).signupIntent === "creator" ? "creator" : "fan" });
+          },
+        },
+      },
+      session: {
+        create: {
+          before: async (session) => {
+            // Askıya alınmış / yasaklı hesap oturum açamaz.
+            if (!ObjectId.isValid(session.userId)) return { data: session };
+            const u = await db.collection("users").findOne({ _id: new ObjectId(session.userId) }, { projection: { status: 1 } });
+            if (u && (u.status === "banned" || u.status === "suspended" || u.status === "deleted")) return false;
+            return { data: session };
+          },
+        },
+      },
+    },
+    rateLimit: {
+      enabled: true,
+      window: 60,
+      max: 100,
+      storage: "database",
+      customRules: {
+        "/sign-in/email": { window: 60, max: 8 },
+        "/sign-up/email": { window: 60, max: 5 },
+        "/request-password-reset": { window: 300, max: 5 },
+        "/send-verification-email": { window: 300, max: 5 },
+        "/two-factor/verify-totp": { window: 60, max: 6 },
+      },
+    },
+    advanced: {
+      useSecureCookies: e.APP_URL.startsWith("https://"),
+      cookiePrefix: "hf",
+      ipAddress: { ipAddressHeaders: ["x-forwarded-for", "x-real-ip"] },
+    },
+    telemetry: { enabled: false },
+    plugins: [
+      twoFactor({
+        issuer: "HEYFANS",
+        skipVerificationOnEnable: false,
+      }),
+      nextCookies(),
+    ],
+  });
+}
+
+export type Auth = ReturnType<typeof buildAuth>;
+
+const g = globalThis as unknown as { __heyfansAuth?: Promise<Auth> };
+
+/** Mongoose ile aynı MongoClient'ı kullanan tekil Better Auth örneği. */
+export function getAuth(): Promise<Auth> {
+  g.__heyfansAuth ??= (async () => {
+    const m = await connectDb();
+    const db = m.connection.db;
+    if (!db) throw new Error("MongoDB bağlantısı hazır değil");
+    return buildAuth(db as unknown as Db, m.connection.getClient() as unknown as MongoClient);
+  })().catch((err) => {
+    g.__heyfansAuth = undefined;
+    throw err;
+  });
+  return g.__heyfansAuth;
+}
