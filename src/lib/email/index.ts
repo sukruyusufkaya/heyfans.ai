@@ -49,7 +49,8 @@ export function getEmailProvider(): EmailProvider {
     if (!e.RESEND_API_KEY) throw new Error("EMAIL_PROVIDER=resend için RESEND_API_KEY gerekli");
     return new ResendProvider(e.RESEND_API_KEY);
   }
-  if (e.APP_MODE === "production") throw new Error("Üretimde EMAIL_PROVIDER=outbox kullanılamaz");
+  // outbox yalnız yerel geliştirmede: e-postalar /dev/outbox'ta görünür. Demo/üretimde gerçek gönderim şart.
+  if (e.APP_MODE !== "development") throw new Error("EMAIL_PROVIDER=outbox yalnız APP_MODE=development iken kullanılabilir");
   return new OutboxProvider();
 }
 

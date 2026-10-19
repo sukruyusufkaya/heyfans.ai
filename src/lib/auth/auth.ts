@@ -3,6 +3,7 @@ import { betterAuth } from "better-auth";
 import { mongodbAdapter } from "better-auth/adapters/mongodb";
 import { nextCookies } from "better-auth/next-js";
 import { twoFactor } from "better-auth/plugins";
+import { APIError } from "better-auth/api";
 import { ObjectId, type Db, type MongoClient } from "mongodb";
 import { env } from "@/config/env";
 import { connectDb } from "@/lib/db/mongo";
@@ -11,6 +12,8 @@ import { onUserCreated } from "@/services/users/lifecycle";
 
 function buildAuth(db: Db, client: MongoClient) {
   const e = env();
+  // Yerelde istekler IP taşımaz (tek kova); geliştirme/testte sınırlar gevşetilir, üretimde aynen uygulanır.
+  const devFactor = e.APP_MODE === "development" ? 10 : 1;
   const socialProviders: Record<string, { clientId: string; clientSecret: string }> = {};
   if (e.AUTH_GOOGLE_ID && e.AUTH_GOOGLE_SECRET) {
     socialProviders.google = { clientId: e.AUTH_GOOGLE_ID, clientSecret: e.AUTH_GOOGLE_SECRET };
@@ -61,16 +64,25 @@ function buildAuth(db: Db, client: MongoClient) {
         adminRole: { type: "string", required: false, input: false },
         status: { type: "string", required: false, input: false, defaultValue: "active" },
         signupIntent: { type: "string", required: false, input: true },
+        acceptTerms: { type: "boolean", required: false, input: true },
+        termsAcceptedAt: { type: "date", required: false, input: false },
         isDemo: { type: "boolean", required: false, input: false, defaultValue: false },
       },
     },
     databaseHooks: {
       user: {
         create: {
-          before: async (user) => {
+          before: async (user, ctx) => {
             // Kayıttan yalnız fan|creator niyeti gelebilir; admin rolü asla buradan atanamaz.
-            const intent = (user as { signupIntent?: unknown }).signupIntent === "creator" ? "creator" : "fan";
-            return { data: { ...user, signupIntent: intent, roles: ["fan"], adminRole: null, status: "active" } };
+            const { acceptTerms, ...rest } = user as typeof user & { acceptTerms?: unknown; signupIntent?: unknown };
+            const intent = rest.signupIntent === "creator" ? "creator" : "fan";
+            // E-posta ile kayıtta Kullanım Şartları + Gizlilik onayı sunucuda zorunlu ve zaman damgasıyla saklanır.
+            if (ctx?.path === "/sign-up/email" && acceptTerms !== true) {
+              throw new APIError("BAD_REQUEST", { message: "Kullanım Şartları ve Gizlilik Politikası onaylanmalı.", code: "TERMS_REQUIRED" });
+            }
+            return {
+              data: { ...rest, signupIntent: intent, roles: ["fan"], adminRole: null, status: "active", termsAcceptedAt: acceptTerms === true ? new Date() : null },
+            };
           },
           after: async (user) => {
             await onUserCreated({ userId: user.id, intent: (user as { signupIntent?: string }).signupIntent === "creator" ? "creator" : "fan" });
@@ -92,14 +104,14 @@ function buildAuth(db: Db, client: MongoClient) {
     rateLimit: {
       enabled: true,
       window: 60,
-      max: 100,
+      max: 100 * devFactor,
       storage: "database",
       customRules: {
-        "/sign-in/email": { window: 60, max: 8 },
-        "/sign-up/email": { window: 60, max: 5 },
-        "/request-password-reset": { window: 300, max: 5 },
-        "/send-verification-email": { window: 300, max: 5 },
-        "/two-factor/verify-totp": { window: 60, max: 6 },
+        "/sign-in/email": { window: 60, max: 8 * devFactor },
+        "/sign-up/email": { window: 60, max: 5 * devFactor },
+        "/request-password-reset": { window: 300, max: 5 * devFactor },
+        "/send-verification-email": { window: 300, max: 5 * devFactor },
+        "/two-factor/verify-totp": { window: 60, max: 6 * devFactor },
       },
     },
     advanced: {

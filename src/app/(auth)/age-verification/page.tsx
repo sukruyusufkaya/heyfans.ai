@@ -1,0 +1,37 @@
+import type { Metadata } from "next";
+import { ShieldCheck } from "lucide-react";
+import { AuthShell, AuthVisual, VisualNote } from "@/components/auth/auth-shell";
+import { AgeVerification } from "@/features/auth/age-form";
+import { firstParam, safeNext } from "@/features/auth/next-url";
+import { requireUser } from "@/lib/auth/session";
+import { getAgeStatus } from "@/services/auth/age";
+
+export const metadata: Metadata = { title: "Yaş Doğrulama" };
+
+export default async function AgeVerificationPage({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
+  const sp = await searchParams;
+  const next = safeNext(firstParam(sp.next));
+  const { user } = await requireUser("/age-verification");
+  const status = await getAgeStatus(user.id);
+  const now = new Date();
+  const todayIso = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
+
+  return (
+    <AuthShell
+      mode="merged"
+      ratio="verify"
+      inner
+      visual={
+        <AuthVisual
+          art="portrait-left"
+          eyebrow="Güvenli bir topluluk"
+          lines={[{ text: "Yalnızca" }, { text: "yetişkinler için.", accent: true }]}
+          body="HEYFANS 18 yaşını doldurmuş kişilere hizmet verir. Bu adım, topluluğu ve seni korumamıza yardım eder."
+          footer={<VisualNote icon={<ShieldCheck />}>Özel. Güvenli. Tam sana göre.</VisualNote>}
+        />
+      }
+    >
+      <AgeVerification state={status.state} recordedAt={status.record?.at ?? null} providerConfigured={status.provider.configured} next={next} todayIso={todayIso} />
+    </AuthShell>
+  );
+}

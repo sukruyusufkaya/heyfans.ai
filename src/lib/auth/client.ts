@@ -12,6 +12,8 @@ export const authClient = createAuthClient({
         adminRole: { type: "string", required: false, input: false },
         status: { type: "string", required: false, input: false },
         signupIntent: { type: "string", required: false, input: true },
+        acceptTerms: { type: "boolean", required: false, input: true },
+        termsAcceptedAt: { type: "date", required: false, input: false },
         isDemo: { type: "boolean", required: false, input: false },
       },
     }),
@@ -37,6 +39,7 @@ export function authErrorMessage(code?: string, fallback?: string): string {
     INVALID_CODE: "Doğrulama kodu hatalı.",
     INVALID_TWO_FACTOR_CODE: "Doğrulama kodu hatalı.",
     TOO_MANY_REQUESTS: "Çok fazla deneme yaptın. Biraz sonra tekrar dene.",
+    TERMS_REQUIRED: "Devam etmek için Kullanım Şartları ve Gizlilik Politikası'nı onaylamalısın.",
     FAILED_TO_CREATE_SESSION: "Hesabın şu anda oturum açamıyor. Destek ile iletişime geç.",
     INVALID_PASSWORD: "Şifre hatalı.",
   };
