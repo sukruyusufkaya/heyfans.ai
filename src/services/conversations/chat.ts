@@ -16,6 +16,7 @@ import { AnalyticsEvent } from "@/models/platform";
 import { Conversation, Message, type IConversation, type IMessage } from "@/models/social";
 import { recordCreditEarning } from "@/services/billing/earnings";
 import { getPlatformSettings } from "@/services/platform/settings";
+import { assertAiBudget, assertNotInMaintenance } from "@/services/platform/guards";
 import { debitWallet, ensureWallet, reverseLedgerEntry } from "@/services/wallet/wallet";
 
 export type ChatEvent =
@@ -116,6 +117,8 @@ export async function sendChatMessage(params: { userId: string; conversationId: 
   }
 
   const provider = getAiProvider(); // yapılandırma yoksa FeatureUnavailableError
+  if (!isTest) await assertNotInMaintenance(null);
+  await assertAiBudget();
   await rateLimit("chat", params.userId, isTest ? 60 : 20, 60);
 
   // Mükerrer gönderim: aynı anahtar → mevcut mesajın sonucu

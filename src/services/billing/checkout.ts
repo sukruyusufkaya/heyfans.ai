@@ -22,6 +22,7 @@ import {
 import { AnalyticsEvent } from "@/models/platform";
 import { notify } from "@/services/notifications/notifications";
 import { getPlatformSettings } from "@/services/platform/settings";
+import { assertNotInMaintenance } from "@/services/platform/guards";
 import { creditWallet, debitWallet } from "@/services/wallet/wallet";
 import { recordPaymentEarning, reverseEarning } from "./earnings";
 
@@ -107,6 +108,7 @@ export async function priceItem(userId: string, item: CheckoutItem): Promise<Pri
  * Aynı istemci anahtarıyla tekrar çağrı yeni işlem açmaz.
  */
 export async function startCheckout(user: { id: string; email: string; name: string }, item: CheckoutItem, clientKey?: string) {
+  await assertNotInMaintenance(null);
   const priced = await priceItem(user.id, item);
   const provider = getPaymentProvider();
   const idempotencyKey = `checkout:${user.id}:${clientKey ?? randomUUID()}`;

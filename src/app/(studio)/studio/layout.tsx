@@ -2,7 +2,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { StudioShell } from "@/components/studio/studio-shell";
+import { MaintenanceScreen } from "@/components/layouts/maintenance-screen";
 import { requireCreator } from "@/lib/auth/session";
+import { maintenanceState } from "@/services/platform/guards";
 import { getStudioShellData } from "@/services/shell";
 
 export const metadata: Metadata = { title: { default: "Creator Studio", template: "%s · Creator Studio | HEYFANS" }, robots: { index: false, follow: false } };
@@ -19,6 +21,8 @@ const TWIN_STATUS: Record<string, { label: string; cls: string }> = {
 
 export default async function StudioLayout({ children }: { children: React.ReactNode }) {
   const { user } = await requireCreator("/studio");
+  const maintenance = await maintenanceState(user);
+  if (maintenance.blocked) return <MaintenanceScreen message={maintenance.message} />;
   const shell = await getStudioShellData(user.id);
   if (!shell) redirect("/onboarding/creator");
   const status = TWIN_STATUS[shell.twinStatus ?? "draft"] ?? TWIN_STATUS.draft!;

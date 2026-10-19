@@ -4,8 +4,10 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { env } from "@/config/env";
 import { getAuth } from "@/lib/auth/auth";
+import { ObjectId } from "mongodb";
+import { connectDb } from "@/lib/db/mongo";
 import { can, ForbiddenError, UnauthorizedError, type Permission } from "@/lib/permissions";
-import type { AdminRole, UserRole, UserStatus } from "@/models/identity";
+import { User, type AdminRole, type UserRole, type UserStatus } from "@/models/identity";
 
 export interface SessionUser {
   id: string;
@@ -43,12 +45,29 @@ function normalize(raw: Record<string, unknown>): SessionUser {
   };
 }
 
-/** İstek başına önbelleklenmiş oturum (React cache). */
+/**
+ * İstek başına önbelleklenmiş oturum (React cache).
+ * Better Auth oturum çerezi önbelleği (5 dk) rolleri/durumu bayat taşıyabilir; bu yüzden yetkiyle ilgili
+ * alanlar (durum, roller, admin rolü, 2FA) her istekte veritabanından tazelenir — askıya alma/rol
+ * kaldırma anında etkili olur.
+ */
 export const getSession = cache(async (): Promise<AppSession | null> => {
   const auth = await getAuth();
   const result = await auth.api.getSession({ headers: await headers() });
   if (!result) return null;
   const user = normalize(result.user as unknown as Record<string, unknown>);
+  if (ObjectId.isValid(user.id)) {
+    await connectDb();
+    const fresh = await User.findById(user.id, { status: 1, roles: 1, adminRole: 1, twoFactorEnabled: 1, name: 1, image: 1, username: 1 }).lean();
+    if (!fresh) return null;
+    user.status = fresh.status;
+    user.roles = fresh.roles;
+    user.adminRole = fresh.adminRole ?? null;
+    user.twoFactorEnabled = Boolean(fresh.twoFactorEnabled);
+    user.name = fresh.name;
+    user.image = fresh.image ?? null;
+    user.username = fresh.username ?? null;
+  }
   if (user.status !== "active") return null;
   return { user, sessionId: result.session.id };
 });
