@@ -1,0 +1,71 @@
+"use client";
+import { useActionState, useState } from "react";
+import { Send } from "lucide-react";
+import Link from "next/link";
+import { Field, Input, NativeSelect, Textarea } from "@/components/ui/form-controls";
+import { submitContactAction, type FormState } from "./actions";
+import { fieldError, FormError, Honeypot, SubmitButton, SuccessPanel } from "./form-bits";
+
+type Props = { categories: { value: string; label: string }[]; defaults: { name: string; email: string }; defaultCategory?: string; defaultSubject?: string };
+
+export function ContactForm(props: Props) {
+  const [version, setVersion] = useState(0);
+  return <ContactFormInner key={version} {...props} onReset={() => setVersion((v) => v + 1)} />;
+}
+
+function ContactFormInner({ categories, defaults, defaultCategory, defaultSubject, onReset }: Props & { onReset: () => void }) {
+  const [state, action, pending] = useActionState<FormState, FormData>(submitContactAction, null);
+
+  if (state?.ok) {
+    return (
+      <SuccessPanel title="Talebin bize ulaştı" reference={state.data.reference} referenceLabel="Talep numaran" onReset={onReset} resetLabel="Yeni bir mesaj gönder">
+        Bu numarayı not et; talebinle ilgili yazışmalarda kullanabilirsin. Yanıtımızı forma yazdığın e-posta adresine ileteceğiz.
+      </SuccessPanel>
+    );
+  }
+
+  return (
+    <form action={action} className="relative grid gap-4" noValidate>
+      <Honeypot />
+      <div className="grid gap-4 sm:grid-cols-2">
+        <Field label="Ad soyad" htmlFor="contact-name" required error={fieldError(state, "name")}>
+          <Input id="contact-name" name="name" required minLength={2} maxLength={120} autoComplete="name" defaultValue={defaults.name} placeholder="Adını ve soyadını yaz" aria-invalid={Boolean(fieldError(state, "name"))} aria-describedby={fieldError(state, "name") ? "contact-name-error" : undefined} />
+        </Field>
+        <Field label="E-posta" htmlFor="contact-email" required error={fieldError(state, "email")}>
+          <Input id="contact-email" name="email" type="email" required maxLength={200} autoComplete="email" defaultValue={defaults.email} placeholder="E-posta adresin" aria-invalid={Boolean(fieldError(state, "email"))} aria-describedby={fieldError(state, "email") ? "contact-email-error" : undefined} />
+        </Field>
+      </div>
+      <Field label="Konu seç" htmlFor="contact-category" required error={fieldError(state, "category")}>
+        <NativeSelect id="contact-category" name="category" required defaultValue={defaultCategory ?? ""} aria-invalid={Boolean(fieldError(state, "category"))}>
+          <option value="" disabled>
+            Hesap ve üyelik / İçerik / Güvenlik / Diğer
+          </option>
+          {categories.map((c) => (
+            <option key={c.value} value={c.value}>
+              {c.label}
+            </option>
+          ))}
+        </NativeSelect>
+      </Field>
+      <Field label="Başlık" htmlFor="contact-subject" required error={fieldError(state, "subject")}>
+        <Input id="contact-subject" name="subject" required minLength={3} maxLength={200} defaultValue={defaultSubject} placeholder="Talebini kısaca özetle" aria-invalid={Boolean(fieldError(state, "subject"))} aria-describedby={fieldError(state, "subject") ? "contact-subject-error" : undefined} />
+      </Field>
+      <Field label="Mesajın" htmlFor="contact-message" required error={fieldError(state, "message")} hint="Ödeme sorunlarında işlem numarasını, hesap sorunlarında kullanıcı adını eklemen süreci hızlandırır. Şifre veya kart bilgisi yazma.">
+        <Textarea id="contact-message" name="message" required minLength={10} maxLength={5000} rows={6} placeholder="Sorununu veya talebini ayrıntılarıyla açıklayabilirsin…" aria-invalid={Boolean(fieldError(state, "message"))} aria-describedby={fieldError(state, "message") ? "contact-message-error" : "contact-message-hint"} />
+      </Field>
+      <FormError state={state} />
+      <div className="flex flex-col-reverse items-stretch justify-between gap-4 sm:flex-row sm:items-center">
+        <p className="text-[11px] text-muted">
+          Göndermeden önce{" "}
+          <Link href="/privacy" className="font-bold text-brand-600 underline underline-offset-2">
+            gizlilik bilgilendirmesini
+          </Link>{" "}
+          incele.
+        </p>
+        <SubmitButton pending={pending}>
+          Mesajımı Gönder <Send aria-hidden />
+        </SubmitButton>
+      </div>
+    </form>
+  );
+}

@@ -46,14 +46,14 @@ export function CreatorPhoto({
   const h = hash(name);
   const [a, b, c] = PALETTES[h % PALETTES.length]!;
   const x1 = 20 + (h % 50);
-  const y1 = 15 + ((h >> 3) % 40);
-  const x2 = 55 + ((h >> 5) % 35);
-  const y2 = 50 + ((h >> 7) % 40);
+  const y1 = 15 + ((h >>> 3) % 40);
+  const x2 = 55 + ((h >>> 5) % 35);
+  const y2 = 50 + ((h >>> 7) % 40);
   return (
     <span
       role="img"
       aria-label={`${name} için temsili görsel`}
-      className={cn("relative block size-full overflow-hidden", rounded, className)}
+      className={cn("relative block size-full overflow-hidden [container-type:inline-size]", rounded, className)}
       style={{
         background: `radial-gradient(circle at ${x1}% ${y1}%, ${a} 0%, transparent 48%), radial-gradient(circle at ${x2}% ${y2}%, ${b} 0%, transparent 55%), linear-gradient(150deg, ${a}, ${b} 55%, ${c})`,
       }}
@@ -67,7 +67,7 @@ export function CreatorPhoto({
       <span className="absolute -bottom-[18%] left-1/2 block h-[62%] w-[70%] -translate-x-1/2 rounded-[50%_50%_0_0] bg-white/15 blur-[1px]" aria-hidden />
       <span className="absolute bottom-[36%] left-1/2 block aspect-square w-[34%] -translate-x-1/2 rounded-full bg-white/20" aria-hidden />
       {showMonogram && (
-        <span className="absolute inset-0 grid place-items-center font-display text-[clamp(18px,22cqw,72px)] font-extrabold tracking-tight text-white/90 drop-shadow-[0_2px_12px_rgba(0,0,0,0.18)] [container-type:inline-size]">
+        <span className="absolute inset-0 grid place-items-center font-display text-[clamp(12px,26cqw,72px)] font-extrabold tracking-tight text-white/90 drop-shadow-[0_2px_12px_rgba(0,0,0,0.18)]">
           {initials(name)}
         </span>
       )}
@@ -82,7 +82,7 @@ export function ContentCover({ src, title, type, locked, className }: { src?: st
     return <img src={src} alt={title} loading="lazy" className={cn("size-full object-cover", className)} />;
   }
   const h = hash(title + type);
-  const [a, b, c] = PALETTES[(h >> 2) % PALETTES.length]!;
+  const [a, b, c] = PALETTES[(h >>> 2) % PALETTES.length]!;
   return (
     <span
       role="img"
