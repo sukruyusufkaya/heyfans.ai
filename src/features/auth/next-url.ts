@@ -27,7 +27,11 @@ export function firstParam(value: string | string[] | undefined): string | undef
 }
 
 /** Sosyal girişten dönüşte çalışacak karar sayfası (yaş beyanı/karşılama/rol kuralları uygulanır). */
-export function continueUrl(next: string | null | undefined): string {
+export function continueUrl(next: string | null | undefined, intent?: "fan" | "creator"): string {
   const safe = safeNext(next);
-  return safe ? `/login/continue?next=${encodeURIComponent(safe)}` : "/login/continue";
+  const q = new URLSearchParams();
+  if (safe) q.set("next", safe);
+  if (intent === "creator") q.set("intent", "creator");
+  const qs = q.toString();
+  return qs ? `/login/continue?${qs}` : "/login/continue";
 }

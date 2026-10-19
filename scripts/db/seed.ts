@@ -93,6 +93,7 @@ async function main() {
       status: "active",
       signupIntent: input.intent ?? "fan",
       twoFactorEnabled: false,
+      termsAcceptedAt: created,
       isDemo: true,
       createdAt: created,
       updatedAt: created,

@@ -35,6 +35,8 @@ export interface IUser {
   status: UserStatus;
   statusReason?: string | null;
   signupIntent?: "fan" | "creator" | null;
+  /** Kullanım Şartları + Gizlilik onayı (e-posta kaydında formda, Google/Apple kaydında /consent ekranında). */
+  termsAcceptedAt?: Date | null;
   twoFactorEnabled?: boolean;
   birthDate?: Date | null;
   lastSeenAt?: Date | null;
@@ -55,6 +57,7 @@ const UserSchema = new Schema<IUser>(
     status: { type: String, enum: USER_STATUSES, default: "active" },
     statusReason: { type: String, default: null, maxlength: 1000 },
     signupIntent: { type: String, enum: ["fan", "creator", null], default: null },
+    termsAcceptedAt: { type: Date, default: null },
     twoFactorEnabled: { type: Boolean, default: false },
     birthDate: { type: Date, default: null },
     lastSeenAt: { type: Date, default: null },

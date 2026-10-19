@@ -58,10 +58,11 @@ const escapeHtml = (s: string) => s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", 
 
 function layout(title: string, intro: string, ctaLabel: string, url: string, outro: string) {
   const safeUrl = escapeHtml(url);
+  const logo = escapeHtml(`${env().APP_URL.replace(/\/$/, "")}/brand/heyfans-mark.png`);
   const html = `<!doctype html><html lang="tr"><body style="margin:0;background:#f8f7fa;font-family:Arial,sans-serif;color:#19111d">
 <table width="100%" cellpadding="0" cellspacing="0"><tr><td align="center" style="padding:32px 16px">
 <table width="560" cellpadding="0" cellspacing="0" style="background:#fff;border:1px solid #eee8f0;border-radius:16px;padding:32px">
-<tr><td style="font-size:26px;font-weight:900;letter-spacing:-1px">HEY<span style="color:#ec0088">FANS</span></td></tr>
+<tr><td><img src="${logo}" width="38" height="32" alt="" style="border:0;vertical-align:middle"/> <span style="font-size:26px;font-weight:800;letter-spacing:-1px;vertical-align:middle;color:#1d1328">Hey<span style="color:#ec0088">fans</span></span></td></tr>
 <tr><td style="padding-top:20px;font-size:20px;font-weight:800">${escapeHtml(title)}</td></tr>
 <tr><td style="padding-top:12px;font-size:14px;line-height:1.6;color:#5f5764">${escapeHtml(intro)}</td></tr>
 <tr><td style="padding:24px 0"><a href="${safeUrl}" style="background:#ec0088;color:#fff;text-decoration:none;font-weight:800;padding:14px 22px;border-radius:10px;display:inline-block">${escapeHtml(ctaLabel)}</a></td></tr>

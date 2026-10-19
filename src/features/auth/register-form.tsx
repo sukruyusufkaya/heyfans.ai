@@ -179,7 +179,7 @@ export function RegisterForm({ flags, defaultIntent, next }: { flags: SocialFlag
         {hasSocialProviders(flags) && (
           <div className="space-y-3">
             <p className="text-center text-xs text-muted">veya bu hesaplarla kaydol</p>
-            <SocialAuth flags={flags} callbackURL={continueUrl(next)} variant="icons" onError={setFormError} />
+            <SocialAuth flags={flags} callbackURL={continueUrl(next, intent)} variant="icons" onError={setFormError} />
           </div>
         )}
 

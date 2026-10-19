@@ -27,6 +27,27 @@ export async function postLoginRedirect(next?: string | null): Promise<ActionRes
   }
 }
 
+/**
+ * Google/Apple ile kayıt olan kullanıcının Kullanım Şartları + Gizlilik onayı (e-posta kaydındaki onayla eşdeğer).
+ * Onay zaman damgasıyla saklanır; ardından normal giriş sonrası akışına devam edilir.
+ */
+export async function acceptTermsAction(input: unknown): Promise<ActionResult<{ to: string }>> {
+  try {
+    const { user } = await assertUser();
+    const v = z.object({ accept: z.literal(true, { error: "Devam etmek için şartları kabul etmelisin." }), next: nextSchema }).parse(input);
+    void v.accept;
+    const { connectDb } = await import("@/lib/db/mongo");
+    const { User } = await import("@/models/identity");
+    const { oid } = await import("@/lib/validation/common");
+    await connectDb();
+    await User.updateOne({ _id: oid(user.id), termsAcceptedAt: null }, { $set: { termsAcceptedAt: new Date() } });
+    const to = await resolvePostLoginDestination(user, safeNext(v.next));
+    return { ok: true, data: { to } };
+  } catch (err) {
+    return toActionError(err);
+  }
+}
+
 /* ─── Hayran karşılama ──────────────────────────────────── */
 export async function saveFanStepAction(step: 0 | 1 | 2, data: unknown): Promise<ActionResult> {
   try {

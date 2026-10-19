@@ -2,6 +2,10 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { firstParam, safeNext } from "@/features/auth/next-url";
 import { requireUser } from "@/lib/auth/session";
+import { connectDb } from "@/lib/db/mongo";
+import { oid } from "@/lib/validation/common";
+import { CreatorProfile } from "@/models/creator";
+import { User } from "@/models/identity";
 import { resolvePostLoginDestination } from "@/services/auth/post-login";
 
 export const metadata: Metadata = { title: "Devam Et" };
@@ -14,5 +18,11 @@ export default async function LoginContinuePage({ searchParams }: { searchParams
   const sp = await searchParams;
   const next = safeNext(firstParam(sp.next));
   const { user } = await requireUser();
+  // Kayıt sayfasında "İçerik Üreticisiyim" seçilip Google/Apple ile gelindiyse, henüz creator profili yoksa niyet creator olur.
+  if (firstParam(sp.intent) === "creator" && !user.roles.includes("admin")) {
+    await connectDb();
+    const uid = oid(user.id);
+    if (!(await CreatorProfile.exists({ userId: uid }))) await User.updateOne({ _id: uid, signupIntent: { $ne: "creator" } }, { $set: { signupIntent: "creator" } });
+  }
   redirect(await resolvePostLoginDestination(user, next));
 }

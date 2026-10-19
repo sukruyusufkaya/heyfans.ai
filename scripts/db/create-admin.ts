@@ -48,7 +48,7 @@ async function main() {
     const hash = await (await auth.$context).password.hash(password);
     const _id = new Types.ObjectId();
     const now = new Date();
-    await db.collection("users").insertOne({ _id, name: nameParts.join(" ") || "Yönetici", email: email.toLowerCase(), emailVerified: true, image: null, roles: ["fan", "admin"], adminRole: role, status: "active", signupIntent: "fan", twoFactorEnabled: false, isDemo: false, createdAt: now, updatedAt: now });
+    await db.collection("users").insertOne({ _id, name: nameParts.join(" ") || "Yönetici", email: email.toLowerCase(), emailVerified: true, image: null, roles: ["fan", "admin"], adminRole: role, status: "active", signupIntent: "fan", twoFactorEnabled: false, termsAcceptedAt: now, isDemo: false, createdAt: now, updatedAt: now });
     await db.collection("accounts").insertOne({ _id: new Types.ObjectId(), accountId: _id.toHexString(), providerId: "credential", userId: _id, password: hash, createdAt: now, updatedAt: now });
     await ensureWallet(_id);
     console.log(`✓ Admin hesabı oluşturuldu: ${email} (${role}). İlk girişte 2FA kurulumu zorunludur.`);

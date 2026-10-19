@@ -4,11 +4,12 @@ import { connectDb } from "@/lib/db/mongo";
 import type { SessionUser } from "@/lib/auth/session";
 import { oid } from "@/lib/validation/common";
 import { CreatorProfile, type ICreatorProfile } from "@/models/creator";
-import { AgeVerificationRecord, UserPreferences } from "@/models/identity";
+import { AgeVerificationRecord, User, UserPreferences } from "@/models/identity";
 
 /**
  * Girişten (veya e-posta doğrulamasından) sonra kullanıcının gideceği yeri belirler.
- * Sıra: admin → yaş beyanı yok → creator başvurusu açık → hayran karşılaması → creator paneli → hayran paneli.
+ * Sıra: admin → şart onayı yok (Google/Apple kaydı) → yaş beyanı yok → creator başvurusu açık → hayran karşılaması → creator paneli → hayran paneli.
+ * Şart onayı ve kayıt niyeti oturum çerezi önbelleğinden değil, veritabanından okunur (onaydan hemen sonra döngü olmaz).
  * `next` yalnız aynı origin'e ait göreli yol ise ve tüm ön koşullar sağlandıysa kullanılır.
  *
  * Hayran karşılaması "Şimdilik geç" ile atlanmışsa `fanOnboarding.step = -1` olarak işaretlenir ve tekrar sorulmaz.
@@ -21,9 +22,12 @@ export async function resolvePostLoginDestination(user: SessionUser, nextRaw?: s
   await connectDb();
   const uid = oid(user.id);
   const isCreator = user.roles.includes("creator");
+  const fresh = await User.findById(uid, { termsAcceptedAt: 1, signupIntent: 1 }).lean();
+  if (!fresh?.termsAcceptedAt) return withNext("/consent", next);
+  const intent = fresh.signupIntent === "creator" ? "creator" : user.signupIntent;
   const [adult, profile, prefs] = await Promise.all([
     AgeVerificationRecord.exists({ userId: uid, over18: true }),
-    isCreator || user.signupIntent === "creator" ? CreatorProfile.findOne({ userId: uid }, { status: 1, "verification.identity": 1 }).lean<{ status: ICreatorProfile["status"]; verification?: { identity?: string } }>() : null,
+    isCreator || intent === "creator" ? CreatorProfile.findOne({ userId: uid }, { status: 1, "verification.identity": 1 }).lean<{ status: ICreatorProfile["status"]; verification?: { identity?: string } }>() : null,
     UserPreferences.findOne({ userId: uid }, { fanOnboarding: 1 }).lean(),
   ]);
 
@@ -33,7 +37,7 @@ export async function resolvePostLoginDestination(user: SessionUser, nextRaw?: s
 
   // Creator yolculuğu: başvuru tamamlanmadıysa/incelemedeyse/reddedildiyse karşılama sayfası durumu gösterir.
   if (profile && profile.status !== "approved" && profile.status !== "suspended") return "/onboarding/creator";
-  if (!profile && user.signupIntent === "creator" && !isCreator) return "/onboarding/creator";
+  if (!profile && intent === "creator" && !isCreator) return "/onboarding/creator?start=1";
 
   if (!isCreator) {
     const fo = prefs?.fanOnboarding;
