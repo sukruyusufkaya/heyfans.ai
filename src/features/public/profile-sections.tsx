@@ -44,7 +44,7 @@ export function TwinTeaserCard({ creator, ai }: { creator: PublicCreatorProfile;
             </div>
           </div>
           <p className="mt-4 text-[11px] leading-relaxed text-muted-strong">
-            Günde {twin.freeMessagesPerDay} mesaj ücretsiz · sonrası mesaj başına {twin.messageCredits} kredi. Yanıtlar yapay zekâ tarafından üretilir.
+            Günde {twin.freeMessagesPerDay} mesaj ücretsiz · {creator.isSample ? "örnek profilde kredili sohbet yok" : `sonrası mesaj başına ${twin.messageCredits} kredi`}. Yanıtlar yapay zekâ tarafından üretilir.
           </p>
           {ai.available ? (
             <Link
@@ -92,7 +92,7 @@ export function PlansCard({ creator, activeTier, isOwner, full }: { creator: Pub
       {creator.plans.length ? (
         <ul className={cn("grid gap-3", full ? "md:grid-cols-3" : "sm:grid-cols-3 lg:grid-cols-1 xl:grid-cols-3")}>
           {creator.plans.map((p) => (
-            <PlanItem key={p.id} plan={p} username={creator.username} activeTier={activeTier} isOwner={isOwner} full={full} />
+            <PlanItem key={p.id} plan={p} username={creator.username} activeTier={activeTier} isOwner={isOwner} full={full} sample={creator.isSample} />
           ))}
         </ul>
       ) : (
@@ -102,7 +102,7 @@ export function PlansCard({ creator, activeTier, isOwner, full }: { creator: Pub
   );
 }
 
-function PlanItem({ plan, username, activeTier, isOwner, full }: { plan: PublicPlan; username: string; activeTier: string; isOwner: boolean; full?: boolean }) {
+function PlanItem({ plan, username, activeTier, isOwner, full, sample }: { plan: PublicPlan; username: string; activeTier: string; isOwner: boolean; full?: boolean; sample?: boolean }) {
   const Icon = TIER_ICONS[plan.tier] ?? Heart;
   const active = activeTier === plan.tier;
   return (
@@ -133,7 +133,11 @@ function PlanItem({ plan, username, activeTier, isOwner, full }: { plan: PublicP
           </li>
         )}
       </ul>
-      {isOwner ? (
+      {sample ? (
+        <span className="grid h-9 place-items-center rounded-full bg-soft text-center text-[11px] font-extrabold text-muted" title="Örnek profillerde abonelik kapalıdır">
+          Örnek profil · abonelik kapalı
+        </span>
+      ) : isOwner ? (
         <span className="grid h-9 place-items-center rounded-full bg-soft text-[11px] font-extrabold text-muted">Senin planın</span>
       ) : active ? (
         <span className="grid h-9 place-items-center rounded-full bg-success-soft text-[11px] font-extrabold text-success">Aktif planın</span>
@@ -224,19 +228,20 @@ export function AboutCard({ creator }: { creator: PublicCreatorProfile }) {
 const TYPE_ICONS = { photo: ImageIcon, video: Video, audio: Mic, text: FileText, collection: Layers } as const;
 export const TYPE_LABELS: Record<string, string> = { photo: "Fotoğraf", video: "Video", audio: "Ses", text: "Yazı", collection: "Koleksiyon" };
 
-function lockText(p: PublicPost) {
+function lockText(p: PublicPost, sample?: boolean) {
   if (p.decision.allowed) return null;
+  if (sample) return "Örnek içerik · satın alma kapalı";
   if (p.access === "purchase") return p.priceMinor ? `${formatMoney(p.priceMinor, "TRY", { decimals: false })} ile aç` : "Satın alarak aç";
   if (p.access === "subscribers") return `${TIER_LABELS[p.minPlanTier ?? "basic"]}+ abonelere özel`;
   return ACCESS_LABELS[p.access] ?? "Özel içerik";
 }
 
-export function PostGrid({ posts, className }: { posts: PublicPost[]; className?: string }) {
+export function PostGrid({ posts, className, sample }: { posts: PublicPost[]; className?: string; sample?: boolean }) {
   return (
     <ul className={cn("grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-6", className)}>
       {posts.map((p) => {
         const Icon = TYPE_ICONS[p.type] ?? ImageIcon;
-        const lock = lockText(p);
+        const lock = lockText(p, sample);
         return (
           <li key={p.id} className="group relative overflow-hidden rounded-2xl bg-soft shadow-[var(--shadow-card)]">
             <Link href={`/content/${p.id}`} className="relative block aspect-[4/5]" aria-label={lock ? `${p.title} — ${lock}` : p.title}>

@@ -46,7 +46,7 @@ export async function generateMetadata({ searchParams }: { searchParams: Promise
   const filtered = ["q", "c", "price", "online", "verified", "sort", "page"].some((k) => sp[k] !== undefined);
   return {
     title: "Keşfet — İçerik Üreticilerini ve AI İkizlerini Bul",
-    description: "Binlerce yetenekli içerik üreticisini kategoriye, fiyata ve çevrimiçi durumuna göre keşfet; AI ikizleriyle sohbet et ve özel içeriklere eriş.",
+    description: "Yetenekli içerik üreticilerini kategoriye, fiyata ve çevrimiçi durumuna göre keşfet; AI ikizleriyle sohbet et ve özel içeriklere eriş.",
     alternates: { canonical: "/explore" },
     openGraph: { title: "Keşfet | HEYFANS", description: "İlgi alanlarına uygun içerik üreticilerini keşfet, takip et ve onlarla daha yakın bir bağ kur.", url: "/explore", type: "website" },
     robots: filtered ? { index: false, follow: true } : undefined,
@@ -102,7 +102,7 @@ export default async function ExplorePage({ searchParams }: { searchParams: Prom
             İçerik Üreticilerini <span className="text-brand-500">Keşfet.</span>
           </>
         }
-        description="Binlerce yetenekli ve özel içerik üreticisiyle tanış. İlgi alanlarına uygun içerik üreticilerini keşfet, takip et ve onlarla daha yakın bir bağ kur."
+        description="Yetenekli ve özel içerik üreticileriyle tanış. İlgi alanlarına uygun içerik üreticilerini keşfet, takip et ve onlarla daha yakın bir bağ kur."
         actions={
           <Form action="/explore" role="search" className="flex w-full max-w-xl items-center gap-2 rounded-full border border-brand-150 bg-white p-1.5 pl-5 shadow-[var(--shadow-card)] focus-within:ring-4 focus-within:ring-brand-100">
             <Search className="size-5 shrink-0 text-muted" aria-hidden />
@@ -127,7 +127,7 @@ export default async function ExplorePage({ searchParams }: { searchParams: Prom
             </div>
           ) : undefined
         }
-        note="Binlerce içerik üreticisi keşfet"
+        note="Yeni içerik üreticilerini keşfet"
         art={heroPeople.length ? <PolaroidStack people={heroPeople.map((c) => ({ name: c.displayName, image: c.avatarUrl }))} caption="Senin için burada" /> : undefined}
       />
 

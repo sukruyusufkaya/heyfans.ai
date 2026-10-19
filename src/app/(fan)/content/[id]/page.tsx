@@ -24,6 +24,7 @@ const LOCK_COPY: Record<string, { title: string; text: string }> = {
   purchase: { title: "Bu içerik sana özel olabilir.", text: "İçeriğin tamamını görüntülemek için tek seferlik satın alma ile kilidi aç." },
   subscribe: { title: "Bu içerik üyelere özel.", text: "İçeriği görüntülemek için içerik üreticisinin üyelik planlarından birini seç." },
   follow: { title: "Bu içerik takipçilere özel.", text: "İçerik üreticisini takip ederek bu içeriğe hemen erişebilirsin." },
+  sample: { title: "Örnek içerik", text: "Bu içerik kurgusal bir örnek profile ait; örnek profillerde abonelik ve satın alma kapalıdır." },
 };
 
 export default async function ContentPage({ params }: { params: Promise<{ id: string }> }) {
@@ -188,7 +189,7 @@ export default async function ContentPage({ params }: { params: Promise<{ id: st
             </Card>
           )}
 
-          {!isOwner && (
+          {!isOwner && !post.creator.isSample && (
             <Card>
               <p className="text-sm font-extrabold">Üyelikle daha fazlasını aç</p>
               <ul className="mt-3 grid gap-2 text-xs text-ink-soft">

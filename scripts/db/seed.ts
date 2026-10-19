@@ -4,9 +4,7 @@
  * - Demo hesap parolası .env içindeki SEED_DEMO_PASSWORD'dan okunur (koda gömülmez).
  */
 import { existsSync, readFileSync } from "node:fs";
-import path from "node:path";
 import { Types } from "mongoose";
-import type { TwinBoundaries, TwinPersona, TwinVoiceLikeness } from "@/models/ai";
 import { env } from "@/config/env";
 import { getAuth } from "@/lib/auth/auth";
 import { connectDb } from "@/lib/db/mongo";
@@ -19,8 +17,6 @@ import {
   AnalyticsEvent,
   Appeal,
   Campaign,
-  Category,
-  CmsPage,
   ContentAccessGrant,
   ContentItem,
   Conversation,
@@ -32,9 +28,6 @@ import {
   Favorite,
   Follow,
   Gift,
-  GiftCatalogItem,
-  HelpArticle,
-  HomepageSection,
   KnowledgeSource,
   MembershipPlan,
   Message,
@@ -55,25 +48,10 @@ import { creditWallet, debitWallet, ensureWallet } from "@/services/wallet/walle
 import { encryptField, maskIban } from "@/lib/security/crypto";
 import { getStorage } from "@/lib/storage";
 import { MediaAsset } from "@/models/content";
-import { CATEGORIES, GIFTS, HELP_ARTICLES, LEGAL_PAGES, PLATFORM_PLANS } from "./seed-data";
-
-interface CharacterFile {
-  creators: {
-    username: string; displayName: string; email: string; age: number; city: string; categories: string[]; followers: number; featuredRank?: number; daysAgo: number; online: boolean; pending?: boolean;
-    headline: string; bio: string; plans: [number, number, number];
-    persona: { warmth: number; formality: number; humor: number; energy: number; emoji: TwinPersona["emojiUsage"]; length: TwinPersona["messageLength"]; style: string; greeting: string; catchphrases: string[]; samples: string[] };
-    knowledge: { title: string; text: string }[];
-    content: { type: "photo" | "video" | "audio" | "text" | "collection"; access: "public" | "followers" | "subscribers" | "purchase"; tier?: "basic" | "premium" | "vip"; price?: number; title: string; caption: string; img?: string; person?: boolean }[];
-  }[];
-  fans: { email: string; name: string }[];
-  admins: { email: string; name: string; role: string }[];
-}
-const CHARACTERS = JSON.parse(readFileSync(path.join("scripts", "db", "characters.json"), "utf8")) as CharacterFile;
-const categoryNames = new Map(CATEGORIES.map((c) => [c.slug, c.name]));
+import { GIFTS } from "./seed-data";
+import { CHARACTERS, contentImageFile, ensureReferenceData, NO_VOICE, seedImage, TIER_INFO, twinBoundaries, twinPersona } from "./shared";
 
 const DAY = 86400_000;
-/** Üretilmiş temsili görsel (public/images/seed) varsa URL'si, yoksa null (arayüz degrade görsele düşer). */
-const seedImage = (rel: string) => (existsSync(path.join("public/images/seed", rel)) ? `/images/seed/${rel}` : null);
 const ago = (days: number, hours = 0) => new Date(Date.now() - days * DAY - hours * 3600_000);
 const rand = (seed: number) => {
   let s = seed;
@@ -125,30 +103,9 @@ async function main() {
     return _id;
   }
 
-  // ── Platform ayarları, kategoriler, hediyeler, platform planları ──
+  // ── Platform ayarları + temel veriler (kategoriler, hediyeler, platform planları, yasal sayfalar, ana sayfa, yardım) ──
   const settings = await getPlatformSettings();
-  for (const c of CATEGORIES) await Category.updateOne({ slug: c.slug }, { $set: { ...c, coverUrl: seedImage(`categories/${c.slug}.webp`), isActive: true, isDemo: true } }, { upsert: true });
-  for (const g of GIFTS) await GiftCatalogItem.updateOne({ key: g.key }, { $set: { ...g, isActive: true } }, { upsert: true });
-  for (const [i, p] of PLATFORM_PLANS.entries()) {
-    await MembershipPlan.updateOne(
-      { scope: "platform", creatorId: null, tier: p.tier },
-      {
-        $set: {
-          name: p.name,
-          description: p.description,
-          benefits: p.benefits,
-          entitlements: p.entitlements,
-          priceMonthly: { amountMinor: p.priceMinor, currency: "TRY" },
-          priceYearly: p.priceMinor ? { amountMinor: Math.round(p.priceMinor * 12 * 0.8), currency: "TRY" } : null,
-          isPopular: Boolean((p as { isPopular?: boolean }).isPopular),
-          status: "active",
-          order: i,
-          isDemo: true,
-        },
-      },
-      { upsert: true },
-    );
-  }
+  await ensureReferenceData({ isDemo: true, overwrite: true });
 
   // ── Yöneticiler ──
   const adminIds = new Map<string, Types.ObjectId>();
@@ -159,11 +116,6 @@ async function main() {
   const creatorIds = new Map<string, Types.ObjectId>();
   const twinIds = new Map<string, Types.ObjectId>();
   const storage = getStorage();
-  const TIER_INFO = {
-    basic: { name: "Temel", benefits: ["Genel gönderilere erişim", "AI ikiziyle günlük 10 mesaj", "Abonelere özel hikâyeler"], entitlements: { contentAccess: "basic" as const, unlimitedChat: false, dailyChatAllowance: 10, monthlyCredits: 0, customRequests: false, prioritySupport: false } },
-    premium: { name: "Premium", benefits: ["Tüm gönderilere erişim", "AI ikiziyle sınırsız sohbet", "Premium seriler ve rehberler", "Erken erişim"], entitlements: { contentAccess: "premium" as const, unlimitedChat: true, dailyChatAllowance: 0, monthlyCredits: 0, customRequests: true, prioritySupport: false } },
-    vip: { name: "VIP", benefits: ["Tüm Premium avantajları", "Sesli içerikler ve podcast", "Özel isteklerde öncelik", "Aylık 100 kredi"], entitlements: { contentAccess: "vip" as const, unlimitedChat: true, dailyChatAllowance: 0, monthlyCredits: 100, customRequests: true, prioritySupport: true } },
-  };
   for (const c of CHARACTERS.creators) {
     const isPending = Boolean(c.pending);
     const userId = await ensureUser({ email: c.email, name: c.displayName, roles: ["fan", "creator"], intent: "creator", daysAgo: c.daysAgo });
@@ -218,34 +170,9 @@ async function main() {
       );
     }
 
-    const persona: TwinPersona = {
-      displayName: c.displayName,
-      shortBio: c.bio,
-      greeting: c.persona.greeting,
-      warmth: c.persona.warmth,
-      formality: c.persona.formality,
-      humor: c.persona.humor,
-      energy: c.persona.energy,
-      messageLength: c.persona.length,
-      pace: "normal",
-      language: "tr",
-      emojiUsage: c.persona.emoji,
-      speakingStyle: c.persona.style,
-      catchphrases: c.persona.catchphrases,
-      sampleReplies: c.persona.samples,
-    };
-    const boundaries: TwinBoundaries = {
-      allowedTopics: c.categories.map((x) => categoryNames.get(x) ?? x),
-      blockedTopics: ["siyaset", "ev adresi", "telefon numarası", "özel hayatın detayları"],
-      customRules: ["Ücretli içerikleri yalnız HEYFANS içinden öner", "Tıbbi veya hukuki konularda uzmana yönlendir"],
-      allowFlirt: false,
-      allowPersonalQuestions: true,
-      allowMediaRequests: false,
-      allowCustomRequests: true,
-      escalateOnDistress: true,
-      maxMessagesPerFanPerDay: 200,
-    };
-    const voice: TwinVoiceLikeness = { voiceEnabled: false, videoEnabled: false, imageLikenessEnabled: false, voiceProfileStatus: "none", voiceSampleAssetIds: [], pitch: 0, speed: 100, tone: "neutral" };
+    const persona = twinPersona(c);
+    const boundaries = twinBoundaries(c);
+    const voice = NO_VOICE;
     let twin = await AiTwin.findOne({ creatorId: profile!._id });
     if (!twin) {
       twin = await AiTwin.create({
@@ -297,7 +224,7 @@ async function main() {
         // İçerik görseli: ücretli/özel içeriklerde özel depolamada, herkese açıkta açık görünürlükte (erişim kontrolü /api/media üzerinden)
         let mediaAssetIds: Types.ObjectId[] = [];
         let coverUrl: string | null = null;
-        const file = path.join("scripts/db/seed-media/content", `${c.username}-${i}.webp`);
+        const file = contentImageFile(c.username, i);
         if (item.img && existsSync(file)) {
           const body = readFileSync(file);
           const visibility = item.access === "public" ? "public" : "private";
@@ -583,27 +510,13 @@ async function main() {
     ]);
   }
 
-  // CMS: yasal taslaklar, ana sayfa bölümleri, kampanyalar, yardım makaleleri
-  for (const p of LEGAL_PAGES) {
-    await CmsPage.updateOne(
-      { slug: p.slug, locale: "tr" },
-      { $set: { kind: "legal", title: p.title, summary: p.summary, sections: p.sections.map((s, i) => ({ ...s, id: s.id ?? `s${i + 1}` })), status: "published", legalReview: "draft_requires_legal_review", publishedAt: new Date(), isDemo: true } },
-      { upsert: true },
-    );
-  }
-  const homeSections = [
-    { key: "hero", type: "hero", title: "Gerçek İçerik Üreticileri. AI İkizler. Gerçek Bağlantılar.", subtitle: "Sevdiğin içerik üreticilerinin AI ikizleriyle 7/24 sohbet et, ipuçları al, özel içeriklere eriş ve onlarla her zamankinden daha yakın bir bağ kur.", config: { badge: "AI ile daha yakın, daha gerçek bağlantılar", primaryCta: { label: "İçerik Üreticilerini Keşfet", href: "/explore" }, secondaryCta: { label: "Nasıl Çalışır?", href: "/how-it-works" } }, order: 1 },
-    { key: "featured", type: "featured_creators", title: "Öne Çıkan İçerik Üreticileri", config: { limit: 6 }, order: 2 },
-    { key: "announcement", type: "announcement", title: "Şimdi HEYFANS topluluğuna katıl.", subtitle: "Binlerce içerik üreticisini keşfet, AI ikizlerle sohbet et ve sana özel içeriklere eriş.", config: { ctaLabel: "Hemen Başla", ctaHref: "/register" }, order: 9 },
-  ];
-  for (const s of homeSections) await HomepageSection.updateOne({ page: "home", key: s.key }, { $set: { ...s, page: "home", isActive: true, isDemo: true } }, { upsert: true });
+  // CMS: demo kampanyaları (yasal sayfalar, ana sayfa bölümleri ve yardım makaleleri ensureReferenceData'da)
   if (!(await Campaign.exists({ isDemo: true }))) {
     await Campaign.insertMany([
       { name: "Hoş geldin kredisi", type: "credit_bonus", status: "active", startsAt: ago(10), endsAt: new Date(Date.now() + 20 * DAY), audience: "new_users", config: { headline: "İlk kredi alımında %20 bonus", bonusPercent: 20 }, metrics: { impressions: 12840, clicks: 1520, conversions: 212 }, createdBy: admin, isDemo: true },
       { name: "Yaz koleksiyonları", type: "banner", status: "scheduled", startsAt: new Date(Date.now() + 5 * DAY), endsAt: new Date(Date.now() + 35 * DAY), audience: "fans", config: { headline: "Yaz koleksiyonları yayında", ctaLabel: "Keşfet", ctaUrl: "/explore" }, createdBy: admin, isDemo: true },
     ]);
   }
-  for (const [i, a] of HELP_ARTICLES.entries()) await HelpArticle.updateOne({ slug: a.slug }, { $set: { ...a, order: i, isPublished: true } }, { upsert: true });
 
   console.log("✓ Seed tamamlandı.");
   console.log(`  Demo hesapları (parola: .env → SEED_DEMO_PASSWORD): fan@heyfans.local · melis@heyfans.local · admin@heyfans.local (super_admin) · moderator@ · finance@ · creators@ · selin@ (başvuru incelemede)`);

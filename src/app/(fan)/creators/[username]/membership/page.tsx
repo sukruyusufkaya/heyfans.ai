@@ -6,7 +6,7 @@ import { z } from "zod";
 import { categoryLabel } from "@/components/creator/category-icon";
 import { Verified } from "@/components/creator/creator-cards";
 import { LinkTabs, buildHref, flattenSearchParams } from "@/components/fan/link-tabs";
-import { Badge } from "@/components/ui/badge";
+import { Badge, SampleProfileLabel } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Avatar, EmptyState } from "@/components/ui/display";
 import { requireUser } from "@/lib/auth/session";
@@ -52,18 +52,24 @@ export default async function MembershipPage({ params, searchParams }: { params:
               {data.creator.displayName} {data.creator.verified && <Verified className="size-5" />}
             </Link>
             <p className="mt-1 text-xs text-muted">
-              Resmî AI ikizi{data.creator.categories.length ? ` · ${data.creator.categories.slice(0, 3).map(categoryLabel).join(", ")}` : ""}
+              {data.creator.isSample ? "Örnek profil · AI ikizi" : "Resmî AI ikizi"}{data.creator.categories.length ? ` · ${data.creator.categories.slice(0, 3).map(categoryLabel).join(", ")}` : ""}
             </p>
           </div>
-          <Badge tone="pink" size="lg" className="sm:ml-3">
-            Üreticiye özel üyelik
-          </Badge>
+          {data.creator.isSample ? (
+            <SampleProfileLabel size="md" className="sm:ml-3" />
+          ) : (
+            <Badge tone="pink" size="lg" className="sm:ml-3">
+              Üreticiye özel üyelik
+            </Badge>
+          )}
         </div>
+        {!data.creator.isSample && (
         <div>
           <h2 className="text-2xl font-black tracking-[-0.035em]">Sana en uygun üyeliği seç</h2>
           <p className="mt-1.5 text-xs text-muted">Daha kişisel sohbetler, daha özel içerikler ve kesintisiz AI deneyimi.</p>
         </div>
-        {anyYearly && (
+        )}
+        {anyYearly && !data.creator.isSample && (
           <LinkTabs
             label="Faturalandırma dönemi"
             className="justify-center"
@@ -86,7 +92,16 @@ export default async function MembershipPage({ params, searchParams }: { params:
         </p>
       )}
 
-      {data.plans.length ? (
+      {data.creator.isSample ? (
+        <Card className="mt-5">
+          <EmptyState
+            icon={<Crown />}
+            title="Örnek profillerde abonelik kapalı"
+            description={`${data.creator.displayName} gerçek bir kişi değil; HEYFANS'ın nasıl çalıştığını gösteren kurgusal bir örnek profil. Takip edebilir ve AI ikiziyle günlük ücretsiz mesaj hakkınla sohbet edebilirsin.`}
+            action={<SampleProfileLabel size="md" />}
+          />
+        </Card>
+      ) : data.plans.length ? (
         <div className={cn("mt-5 grid gap-4", data.plans.length >= 3 ? "md:grid-cols-3" : data.plans.length === 2 ? "md:grid-cols-2" : "mx-auto max-w-md")}>
           {data.plans.map((p) => {
             const yearly = interval === "year" && p.yearlyMinor ? p.yearlyMinor : null;

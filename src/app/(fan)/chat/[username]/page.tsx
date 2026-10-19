@@ -49,7 +49,7 @@ export default async function ChatPage({ params }: { params: Promise<{ username:
   return (
     <div className="mx-auto max-w-[1320px]">
       <div className="max-lg:hidden">
-        <PageHeader eyebrow="HEYFANS / FAN EXPERIENCE" title="AI İkiziyle Sohbet" description={`${data.creator.displayName} adlı içerik üreticisinin yetkilendirilmiş AI ikiziyle kişiselleştirilmiş sohbet.`} />
+        <PageHeader eyebrow="HEYFANS / FAN EXPERIENCE" title="AI İkiziyle Sohbet" description={data.creator.isSample ? `${data.creator.displayName} kurgusal bir örnek profildir; AI ikiziyle günlük ücretsiz mesaj hakkınla sohbet edebilirsin.` : `${data.creator.displayName} adlı içerik üreticisinin yetkilendirilmiş AI ikiziyle kişiselleştirilmiş sohbet.`} />
       </div>
       <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_340px]">
         <ChatClient

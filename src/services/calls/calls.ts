@@ -7,6 +7,7 @@ import { AiTwin, type ITwin } from "@/models/ai";
 import { CreatorProfile, type ICreatorProfile } from "@/models/creator";
 import { CallSession, type ICallSession } from "@/models/social";
 import { recordCreditEarning } from "@/services/billing/earnings";
+import { assertNotSample, SAMPLE_PURCHASE_MESSAGE } from "@/services/creators/sample";
 import { getPlatformSettings } from "@/services/platform/settings";
 import { debitWallet, ensureWallet } from "@/services/wallet/wallet";
 
@@ -20,6 +21,7 @@ export async function getCallAvailability(userId: string, username: string, kind
   const wallet = await ensureWallet(userId);
   const rate = kind === "voice" ? (twin?.pricing.voicePerMinuteCredits ?? 0) : (twin?.pricing.videoPerMinuteCredits ?? 0);
   const reasons: string[] = [];
+  if (creator.isSample) reasons.push(SAMPLE_PURCHASE_MESSAGE);
   if (!twin || twin.status !== "live") reasons.push("AI ikizi yayında değil.");
   if (kind === "voice" && (!twin?.features.voice || !settings.features.voiceCalls)) reasons.push("Bu creator sesli görüşmeyi etkinleştirmedi.");
   if (kind === "video" && (!twin?.features.video || !settings.features.videoCalls)) reasons.push("Bu creator görüntülü görüşmeyi etkinleştirmedi.");
@@ -30,6 +32,7 @@ export async function getCallAvailability(userId: string, username: string, kind
 
 export async function startCall(user: { id: string; name: string }, username: string, kind: "voice" | "video") {
   const a = await getCallAvailability(user.id, username, kind);
+  assertNotSample(a.creator);
   if (!a.available) throw new FeatureUnavailableError(a.reasons.join(" "), a.rtc.missing);
   if (a.balance < a.ratePerMinute) throw new AppError("Görüşmeyi başlatmak için en az 1 dakikalık kredin olmalı.", "insufficient_credits", 402);
   await CallSession.updateMany({ userId: oid(user.id), status: "active" }, { $set: { status: "ended", endedAt: new Date(), endReason: "Yeni görüşme başlatıldı" } });

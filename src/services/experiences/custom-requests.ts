@@ -9,6 +9,7 @@ import { MediaAsset } from "@/models/content";
 import { CustomRequest, type CustomRequestStatus, type ICustomRequest } from "@/models/monetization";
 import { AiTwin } from "@/models/ai";
 import { recordCreditEarning } from "@/services/billing/earnings";
+import { assertNotSample } from "@/services/creators/sample";
 import { notify } from "@/services/notifications/notifications";
 import { debitWallet, reverseLedgerEntry } from "@/services/wallet/wallet";
 
@@ -32,6 +33,7 @@ export async function createCustomRequest(userId: string, raw: unknown) {
   const creator = await CreatorProfile.findOne({ username: input.username, status: "approved" }).lean<ICreatorProfile>();
   if (!creator) throw new NotFoundError("İçerik üreticisi bulunamadı.");
   if (creator.userId.equals(oid(userId))) throw new AppError("Kendine özel talep gönderemezsin.", "self_request");
+  assertNotSample(creator);
   const twin = await AiTwin.findOne({ creatorId: creator._id }, { draft: 1 }).lean();
   if (twin && twin.draft?.boundaries?.allowCustomRequests === false) throw new AppError("Bu creator şu anda özel talep kabul etmiyor.", "requests_closed", 403);
 

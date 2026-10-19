@@ -37,7 +37,7 @@
 - Admin sayfalarında `loading.tsx` olduğundan izin reddi HTTP 200 + akışlı yönlendirme ile döner (içerik sızmaz).
 
 ## Teknik sınırlar
-- Demo creator'lar ve görselleri kurgusaldır (yapay zekâ ile üretilmiş, `isDemo`). Canlıda gerçek creator'lar katıldıkça demo verisi kaldırılmalı veya "Örnek profil" olarak işaretli tutulmalıdır. İçerik görselleri canlı ortamda R2 olmadan sunulamaz (yerel disk Vercel'de kalıcı değil).
+- Demo creator'lar ve görselleri kurgusaldır (yapay zekâ ile üretilmiş). Canlıda `npm run db:samples` ile "Örnek profil" olarak (satın alınamaz) yayınlanırlar (D-35); gerçek creator'lar katıldıkça `npm run db:samples -- --remove --yes` ile kaldırılmalıdır. Örnek profillerin AI ikiziyle sohbet (günlük ücretsiz hak) platforma AI maliyeti doğurur; aylık AI bütçesi bunu da kapsar. İçerik görselleri canlı ortamda R2 olmadan sunulamaz (yerel disk Vercel'de kalıcı değil).
 - Hız sınırı MongoDB üzerinde; çok yüksek trafikte Redis adaptörü önerilir.
 - Trend skorları analitik olaylarından basit ağırlıklı hesapla üretilir; anomali/bot filtrelemesi yok.
 - AI hafıza çıkarımı kural tabanlıdır (LLM çağrısı yok); kullanıcı düzenleyip silebilir.

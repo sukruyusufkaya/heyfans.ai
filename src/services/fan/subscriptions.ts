@@ -73,6 +73,7 @@ export async function getMembershipPage(userId: string, username: string) {
       verified: creator.verification?.identity === "verified",
       categories: creator.categories ?? [],
       isOwner: creator.userId.toString() === userId,
+      isSample: Boolean(creator.isSample),
     },
     following: Boolean(following),
     plans: plans.map((p) => ({

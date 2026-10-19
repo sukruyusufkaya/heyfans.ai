@@ -133,6 +133,7 @@ Genel kurallar: tüm belgelerde `createdAt/updatedAt`; para alanları `{ amountM
 | `payoutsEnabled` | Boolean |  |  |
 | `defaultCurrency` | String |  |  |
 | `isDemo` | Boolean |  |  |
+| `isSample` | Boolean | ✓ (indeks) | Platformun kurgusal örnek profili (`db:samples`); "Örnek profil" etiketi, satın alma sunucuda kapalı (D-35) |
 | `_id` | ObjectId |  |  |
 | `createdAt` | Date |  |  |
 | `updatedAt` | Date |  |  |

@@ -8,7 +8,7 @@ import { z } from "zod";
 import { CreatorPhoto } from "@/components/creator/creator-photo";
 import { Verified } from "@/components/creator/creator-cards";
 import { FollowButton } from "@/components/creator/social-buttons";
-import { AiTwinLabel, Badge } from "@/components/ui/badge";
+import { AiTwinLabel, Badge, SampleProfileLabel } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { DemoDataNotice, EmptyState, Pagination } from "@/components/ui/display";
@@ -148,6 +148,7 @@ export default async function CreatorProfilePage({ params, searchParams }: Props
                 </Badge>
               )}
               {creator.twin?.live && <AiTwinLabel size="md" />}
+              {creator.isSample && <SampleProfileLabel size="md" />}
             </div>
           </div>
 
@@ -181,6 +182,11 @@ export default async function CreatorProfilePage({ params, searchParams }: Props
           <div className="min-w-0">
             {creator.headline && <p className="text-sm font-extrabold text-ink-soft">{creator.headline}</p>}
             {creator.bio && <p className="mt-2 max-w-3xl whitespace-pre-line text-sm leading-relaxed text-ink-soft">{creator.bio}</p>}
+            {creator.isSample && (
+              <p className="mt-3 max-w-3xl rounded-xl border border-warning/30 bg-warning-soft px-3.5 py-2.5 text-xs leading-relaxed text-ink-soft" role="note">
+                <strong className="font-extrabold">Örnek profil:</strong> {creator.displayName} gerçek bir kişi değildir; HEYFANS&apos;ın nasıl çalıştığını göstermek için hazırlanmış kurgusal bir karakterdir. Takip edebilir ve AI ikiziyle günlük ücretsiz mesaj hakkınla sohbet edebilirsin; abonelik, satın alma ve hediye kapalıdır.
+              </p>
+            )}
             <ul className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs font-bold">
               {creator.location && <li className="text-muted-strong">{creator.location}</li>}
               {socials.map((s) => (
@@ -256,7 +262,7 @@ export default async function CreatorProfilePage({ params, searchParams }: Props
                   </h2>
                   {posts && posts.total > 0 && <SeeAllLink href={hrefFor("posts")}>Tüm Gönderileri Gör</SeeAllLink>}
                 </div>
-                {posts?.items.length ? <PostGrid posts={posts.items} /> : <PostsEmpty name={creator.displayName} />}
+                {posts?.items.length ? <PostGrid posts={posts.items} sample={creator.isSample} /> : <PostsEmpty name={creator.displayName} />}
               </section>
             </div>
           )}
@@ -278,7 +284,7 @@ export default async function CreatorProfilePage({ params, searchParams }: Props
               </div>
               {posts.items.length ? (
                 <>
-                  <PostGrid posts={posts.items} className="xl:grid-cols-6" />
+                  <PostGrid posts={posts.items} className="xl:grid-cols-6" sample={creator.isSample} />
                   <Pagination className="mt-8" page={posts.page} pageCount={posts.pageCount} hrefFor={(p) => hrefFor(tab, { ...(type ? { type } : {}), ...(p > 1 ? { page: String(p) } : {}) })} />
                 </>
               ) : (
@@ -308,7 +314,7 @@ export default async function CreatorProfilePage({ params, searchParams }: Props
                         <b className="text-ink">Görüntülü görüşme:</b> {creator.twin.features.video ? "Açık" : "Kapalı"}
                       </li>
                       <li>
-                        <b className="text-ink">Ücretlendirme:</b> günde {creator.twin.freeMessagesPerDay} ücretsiz mesaj, sonrası mesaj başına {creator.twin.messageCredits} kredi
+                        <b className="text-ink">Ücretlendirme:</b> günde {creator.twin.freeMessagesPerDay} ücretsiz mesaj, {creator.isSample ? "örnek profilde kredili sohbet yok" : `sonrası mesaj başına ${creator.twin.messageCredits} kredi`}
                       </li>
                     </ul>
                     <p className="rounded-xl bg-soft p-3.5">

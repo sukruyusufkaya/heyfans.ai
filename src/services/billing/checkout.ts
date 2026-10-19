@@ -20,6 +20,7 @@ import {
   type IPaymentTransaction,
 } from "@/models/monetization";
 import { AnalyticsEvent } from "@/models/platform";
+import { assertNotSample } from "@/services/creators/sample";
 import { notify } from "@/services/notifications/notifications";
 import { getPlatformSettings } from "@/services/platform/settings";
 import { assertNotInMaintenance } from "@/services/platform/guards";
@@ -69,8 +70,9 @@ export async function priceItem(userId: string, item: CheckoutItem): Promise<Pri
     if (!price) throw new AppError("Bu plan için yıllık seçenek yok.", "no_yearly");
     let creatorName: string | undefined;
     if (plan.scope === "creator") {
-      const creator = await CreatorProfile.findOne({ _id: plan.creatorId, status: "approved" }, { displayName: 1, userId: 1 }).lean();
+      const creator = await CreatorProfile.findOne({ _id: plan.creatorId, status: "approved" }, { displayName: 1, userId: 1, isSample: 1 }).lean();
       if (!creator) throw new NotFoundError("İçerik üreticisi bulunamadı.");
+      assertNotSample(creator);
       if (creator.userId.equals(oid(userId))) throw new AppError("Kendi planına abone olamazsın.", "self_subscribe");
       creatorName = creator.displayName;
     }
@@ -89,7 +91,8 @@ export async function priceItem(userId: string, item: CheckoutItem): Promise<Pri
   if (!content || !content.price) throw new NotFoundError("Satın alınabilir içerik bulunamadı.");
   const owned = await ContentAccessGrant.exists({ userId: oid(userId), contentId: content._id, revokedAt: null });
   if (owned) throw new ConflictError("Bu içeriğe zaten erişimin var.", "already_owned");
-  const creator = await CreatorProfile.findById(content.creatorId, { displayName: 1, userId: 1 }).lean();
+  const creator = await CreatorProfile.findById(content.creatorId, { displayName: 1, userId: 1, isSample: 1 }).lean();
+  assertNotSample(creator);
   if (creator?.userId.equals(oid(userId))) throw new AppError("Kendi içeriğini satın alamazsın.", "self_purchase");
   return {
     kind: "content_purchase",

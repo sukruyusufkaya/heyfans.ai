@@ -15,6 +15,7 @@ import { Subscription, MembershipPlan, type IMembershipPlan } from "@/models/mon
 import { AnalyticsEvent } from "@/models/platform";
 import { Conversation, Message, type IConversation, type IMessage } from "@/models/social";
 import { recordCreditEarning } from "@/services/billing/earnings";
+import { SampleProfileError } from "@/services/creators/sample";
 import { getPlatformSettings } from "@/services/platform/settings";
 import { assertAiBudget, assertNotInMaintenance } from "@/services/platform/guards";
 import { debitWallet, ensureWallet, reverseLedgerEntry } from "@/services/wallet/wallet";
@@ -33,8 +34,8 @@ function startOfDay() {
   return d;
 }
 
-/** Fan için creator sohbet hakkı: abonelik → günlük ücretsiz → kredi. */
-export async function resolveBilling(userId: Types.ObjectId, creator: Pick<ICreatorProfile, "_id">, twin: Pick<ITwin, "pricing" | "draft">) {
+/** Fan için creator sohbet hakkı: abonelik → günlük ücretsiz → kredi. Örnek profilde yalnız günlük ücretsiz hak vardır. */
+export async function resolveBilling(userId: Types.ObjectId, creator: Pick<ICreatorProfile, "_id" | "isSample">, twin: Pick<ITwin, "pricing" | "draft">) {
   const settings = await getPlatformSettings();
   const today = startOfDay();
   const [sentToday, freeUsedToday, sub] = await Promise.all([
@@ -52,6 +53,7 @@ export async function resolveBilling(userId: Types.ObjectId, creator: Pick<ICrea
   }
   const freePerDay = twin.pricing?.freeMessagesPerDay ?? settings.chat.freeMessagesPerDay;
   if (freeUsedToday < freePerDay) return { mode: "free_daily" as BillingMode, credits: 0, freeLeft: freePerDay - freeUsedToday };
+  if (creator.isSample) throw new SampleProfileError("Bu örnek profilde bugünkü ücretsiz mesaj hakkın doldu; kredili sohbet örnek profillerde kapalıdır. Yarın tekrar yazabilirsin.");
   if (price === 0) return { mode: "free_daily" as BillingMode, credits: 0, freeLeft: null };
   return { mode: "credits" as BillingMode, credits: price, freeLeft: 0 };
 }
@@ -220,6 +222,7 @@ export async function sendChatMessage(params: { userId: string; conversationId: 
           memories,
           adultContentEnabled: settings.features.adultContent,
           mode: isTest ? "test" : "fan",
+          isSampleProfile: Boolean(creator.isSample),
         });
         const messages: ChatMessage[] = [
           { role: "system", content: system },
@@ -287,7 +290,7 @@ export async function listConversations(userId: string, opts: { filter?: "all" |
   const q: Record<string, unknown> = { userId: oid(userId), kind: "fan", status: { $in: ["active", "archived", "reported"] } };
   if (opts.filter === "unread") q.unreadForUser = { $gt: 0 };
   const convs = await Conversation.find(q).sort({ lastMessageAt: -1, updatedAt: -1 }).limit(100).lean<IConversation[]>();
-  const creators = await CreatorProfile.find({ _id: { $in: convs.map((c) => c.creatorId) } }, { displayName: 1, username: 1, avatarUrl: 1, isOnline: 1, verification: 1 }).lean();
+  const creators = await CreatorProfile.find({ _id: { $in: convs.map((c) => c.creatorId) } }, { displayName: 1, username: 1, avatarUrl: 1, isOnline: 1, verification: 1, isSample: 1 }).lean();
   const map = new Map(creators.map((c) => [c._id.toString(), c]));
   let rows = convs.map((c) => ({ conversation: c, creator: map.get(c.creatorId.toString()) })).filter((r) => r.creator);
   if (opts.q) {

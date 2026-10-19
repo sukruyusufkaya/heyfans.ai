@@ -3,7 +3,11 @@
 ## 1. MongoDB Atlas
 1. **Bu proje için ayrı bir küme/proje** açın (mevcut paylaşımlı küme 500 koleksiyon sınırına yakın; bu uygulama ~57 koleksiyon kullanır). Bölge: Frankfurt (Vercel `fra1` ile aynı).
 2. Veritabanı kullanıcısı (yalnız bu DB'ye `readWrite`), ağ erişimi: Vercel için `0.0.0.0/0` + güçlü parola veya Vercel Secure Compute.
-3. İlk kurulum (indeksler + varsayılan ayarlar): yerelden `MONGODB_URI=<atlas> npm run db:init`.
+3. İlk kurulum (indeksler + varsayılan ayarlar + temel veriler: kategoriler, hediye kataloğu, platform planları, yasal taslaklar, ana sayfa bölümleri, yardım makaleleri). Üretim değişkenlerini depoya girmeyen `.env.production.local` dosyasına yazıp yerelden çalıştırın:
+   ```bash
+   npx tsx --conditions=react-server --env-file=.env.production.local scripts/db/init.ts
+   ```
+   Tekrar çalıştırılabilir; yalnız eksik kayıtları ekler, admin panelindeki düzenlemelerin üzerine yazmaz.
 4. RAG için Atlas Vector Search indeksi `knowledgeChunks` koleksiyonunda, adı `knowledge_vector`:
    ```json
    { "fields": [
@@ -12,7 +16,15 @@
      { "type": "filter", "path": "active" } ] }
    ```
    ve `VECTOR_SEARCH_MODE=atlas`.
-5. İlk süper yönetici: `npm run admin:create -- admin@alanadi.com super_admin` (parola terminalde sorulur; ilk girişte 2FA kurulumu zorunlu).
+5. **Örnek profiller** (kurgusal Türk karakterler, "Örnek profil" etiketli, satın alınamaz — D-35). R2 değişkenleri `.env.production.local`'da tanımlı olmalı (içerik görselleri R2'ye yüklenir); AI sağlayıcısı tanımlıysa bilgi tabanı da indekslenir:
+   ```bash
+   npx tsx --conditions=react-server --env-file=.env.production.local scripts/db/samples.ts
+   ```
+   AI sağlayıcısı sonradan bağlanırsa aynı komutu `--reindex` ile; gerçek creator'lar katılınca `--remove --yes` ile kaldırın.
+6. İlk süper yönetici (parola terminalde sorulur; ilk girişte 2FA kurulumu zorunlu):
+   ```bash
+   npx tsx --conditions=react-server --env-file=.env.production.local scripts/db/create-admin.ts admin@alanadi.com super_admin
+   ```
 
 ## 2. Vercel
 1. Depoyu Vercel projesine bağlayın (Framework: Next.js; `vercel.json` bölge `fra1` ve cron tanımı içerir).
@@ -32,6 +44,7 @@
 - [ ] E-posta alan adı (SPF/DKIM) doğrulandı
 - [ ] R2 kovası özel; herkese açık okuma yalnız `public/` öneki için (CDN)
 - [ ] Seed çalıştırılmadı (üretimde engellidir); demo hesap yok
+- [ ] `db:init` + (isteğe bağlı) örnek profiller içe aktarıldı; bir örnek profilde "Örnek profil" etiketi görünüyor, abonelik/satın alma "Bu ürün satın alınamıyor" diyor
 - [ ] Canlı ortam duman testi: `/`, `/explore`, kayıt → doğrulama e-postası, giriş, `/app`, `/admin` (2FA)
 
 ## 4. Canlı ortam duman testi (smoke)

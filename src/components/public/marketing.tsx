@@ -59,10 +59,13 @@ export function PublicHero({
 }
 
 export function HeroStats({ items, demo }: { items: { icon: React.ReactNode; value: string; label: string }[]; demo?: boolean }) {
+  // Henüz oluşmamış sayılar (0) "0 içerik üreticisi" gibi gösterilmez; hiçbiri yoksa satır hiç çizilmez.
+  const shown = items.filter((s) => s.value !== "0");
+  if (!shown.length) return null;
   return (
     <div>
       <dl className="flex flex-wrap gap-x-7 gap-y-4">
-        {items.map((s, i) => (
+        {shown.map((s, i) => (
           <div key={s.label} className={cn("flex items-center gap-3", i > 0 && "sm:border-l sm:border-brand-150 sm:pl-7")}>
             <span className="text-brand-500 [&_svg]:size-6">{s.icon}</span>
             <div>

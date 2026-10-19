@@ -110,7 +110,7 @@ export default async function ChatInboxPage({ searchParams }: { searchParams: Pr
                     {selected.creator.displayName} {selected.creator.verified && <Verified />}
                     <AiTwinLabel />
                   </p>
-                  <p className="mt-0.5 text-[11px] font-semibold text-success">● Yetkilendirilmiş AI ikizi</p>
+                  <p className="mt-0.5 text-[11px] font-semibold text-success">● {selected.creator.isSample ? "Örnek profil · AI ikizi" : "Yetkilendirilmiş AI ikizi"}</p>
                 </div>
                 <Link href={`/chat/${selected.creator.username}`} className="inline-flex h-10 items-center gap-2 rounded-full bg-brand-500 px-5 text-xs font-extrabold text-white shadow-[var(--shadow-pink)] hover:bg-brand-600">
                   Sohbeti aç <ArrowRight className="size-4" />
@@ -118,7 +118,7 @@ export default async function ChatInboxPage({ searchParams }: { searchParams: Pr
               </div>
               <div className="min-h-0 flex-1 space-y-3 overflow-y-auto bg-[radial-gradient(circle_at_80%_10%,#fff3fa_0%,#fff_55%)] px-6 py-5 scrollbar-thin" aria-label="Son mesajlar">
                 <div className="mx-auto flex w-fit items-center gap-1.5 rounded-full border border-brand-200 bg-white/80 px-3.5 py-1.5 text-[10px] font-bold text-brand-600">
-                  <ShieldCheck className="size-3.5" aria-hidden /> Bu görüşme yetkilendirilmiş bir AI ikiziyle yapılmaktadır.
+                  <ShieldCheck className="size-3.5" aria-hidden /> {selected.creator.isSample ? "Bu görüşme kurgusal bir örnek profilin AI ikiziyle yapılmaktadır." : "Bu görüşme yetkilendirilmiş bir AI ikiziyle yapılmaktadır."}
                 </div>
                 {preview.length ? (
                   preview.map((m) => (

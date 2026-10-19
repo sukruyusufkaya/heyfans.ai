@@ -15,6 +15,7 @@
     "db:start": "node scripts/dev/mongo-local.mjs",
     "db:init": "tsx --conditions=react-server --env-file=.env scripts/db/init.ts",
     "db:seed": "tsx --conditions=react-server --env-file=.env scripts/db/seed.ts",
+    "db:samples": "tsx --conditions=react-server --env-file=.env scripts/db/samples.ts",
     "admin:create": "tsx --conditions=react-server --env-file=.env scripts/db/create-admin.ts",
     "jobs:run": "tsx --conditions=react-server --env-file=.env scripts/jobs/run-once.ts",
     "test": "vitest run",

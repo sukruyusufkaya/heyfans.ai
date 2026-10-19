@@ -15,6 +15,8 @@ export interface CreatorBrief {
   avatarUrl: string | null;
   verified: boolean;
   isOnline: boolean;
+  /** Kurgusal örnek profil: satın alma/abonelik kapalı. */
+  isSample: boolean;
 }
 
 export async function creatorBriefMap(ids: (string | Types.ObjectId)[]): Promise<Map<string, CreatorBrief>> {
@@ -23,7 +25,7 @@ export async function creatorBriefMap(ids: (string | Types.ObjectId)[]): Promise
   if (!unique.length) return new Map();
   const rows = await CreatorProfile.find(
     { _id: { $in: unique.map((i) => oid(i)) }, status: "approved" },
-    { username: 1, displayName: 1, avatarUrl: 1, verification: 1, isOnline: 1 },
+    { username: 1, displayName: 1, avatarUrl: 1, verification: 1, isOnline: 1, isSample: 1 },
   ).lean();
   return new Map(
     rows.map((c) => [
@@ -35,6 +37,7 @@ export async function creatorBriefMap(ids: (string | Types.ObjectId)[]): Promise
         avatarUrl: c.avatarUrl ?? null,
         verified: c.verification?.identity === "verified",
         isOnline: Boolean(c.isOnline),
+        isSample: Boolean(c.isSample),
       },
     ]),
   );
@@ -77,6 +80,7 @@ export async function creatorCardsByIds(ids: string[]): Promise<CreatorCard[]> {
         startingPriceMinor: priceMap.get(c._id.toString()) ?? null,
         createdAt: new Date(c.createdAt).toISOString(),
         isDemo: Boolean(c.isDemo),
+        isSample: Boolean(c.isSample),
       },
     ]),
   );

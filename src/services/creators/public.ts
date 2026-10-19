@@ -8,6 +8,7 @@ import { CreatorProfile, type ICreatorProfile } from "@/models/creator";
 import { MembershipPlan } from "@/models/monetization";
 import { AnalyticsEvent } from "@/models/platform";
 import { Favorite, Follow } from "@/models/social";
+import { sampleCreatorIds } from "./sample";
 
 /** Herkese açık creator kartı — yalnız yayına alınmış (approved) profiller. */
 export interface CreatorCard {
@@ -26,13 +27,15 @@ export interface CreatorCard {
   startingPriceMinor: number | null;
   createdAt: string;
   isDemo: boolean;
+  /** Platformun kurgusal örnek profili (satın alma kapalı). */
+  isSample: boolean;
 }
 
 const PUBLIC_FILTER: QueryFilter<ICreatorProfile> = { status: "approved" };
 
 type LeanCreator = Pick<
   ICreatorProfile,
-  "_id" | "username" | "displayName" | "headline" | "avatarUrl" | "coverUrl" | "categories" | "stats" | "isOnline" | "verification" | "createdAt" | "isDemo"
+  "_id" | "username" | "displayName" | "headline" | "avatarUrl" | "coverUrl" | "categories" | "stats" | "isOnline" | "verification" | "createdAt" | "isDemo" | "isSample"
 >;
 
 async function decorate(creators: LeanCreator[]): Promise<CreatorCard[]> {
@@ -63,6 +66,7 @@ async function decorate(creators: LeanCreator[]): Promise<CreatorCard[]> {
     startingPriceMinor: priceMap.get(c._id.toString()) ?? null,
     createdAt: new Date(c.createdAt).toISOString(),
     isDemo: Boolean(c.isDemo),
+    isSample: Boolean(c.isSample),
   }));
 }
 
@@ -78,6 +82,7 @@ const CARD_PROJECTION = {
   verification: 1,
   createdAt: 1,
   isDemo: 1,
+  isSample: 1,
 } as const;
 
 export interface ExploreQuery {
@@ -309,11 +314,13 @@ export async function platformCounters() {
   await connectDb();
   const { User } = await import("@/models/identity");
   const { Message } = await import("@/models/social");
+  // Örnek (kurgusal) profiller gerçek kullanıcı/creator sayılmaz.
+  const samples = await sampleCreatorIds();
   const [users, creators, messages, liveTwins] = await Promise.all([
-    User.countDocuments({ status: "active" }),
-    CreatorProfile.countDocuments({ status: "approved" }),
+    User.countDocuments({ status: "active", _id: { $nin: samples.userIds } }),
+    CreatorProfile.countDocuments({ status: "approved", isSample: { $ne: true } }),
     Message.estimatedDocumentCount(),
-    AiTwin.countDocuments({ status: "live" }),
+    AiTwin.countDocuments({ status: "live", creatorId: { $nin: samples.creatorIds } }),
   ]);
   return { users, creators, messages, liveTwins };
 }

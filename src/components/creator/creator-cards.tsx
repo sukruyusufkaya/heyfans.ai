@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { BadgeCheck, MessageCircle, ArrowRight, Users } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
+import { Badge, SampleProfileLabel } from "@/components/ui/badge";
 import { CreatorPhoto } from "@/components/creator/creator-photo";
 import { FavoriteButton } from "@/components/creator/social-buttons";
 import { categoryLabel } from "@/components/creator/category-icon";
@@ -32,6 +32,7 @@ export function CreatorTile({ creator, className, href }: { creator: CreatorCard
       <div className="pointer-events-none absolute right-2.5 top-2.5">
         <OnlinePill online={creator.isOnline} />
       </div>
+      {creator.isSample && <SampleProfileLabel tone="white" className="pointer-events-none absolute left-2.5 top-2.5" />}
       <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-2 p-3">
         <div className="min-w-0 text-white">
           {creator.categories[0] && (
@@ -72,7 +73,8 @@ export function CreatorCardTall({
         <Link href={`/creators/${creator.username}`} aria-label={`${creator.displayName} profili`} className="block size-full">
           <CreatorPhoto src={creator.avatarUrl ?? creator.coverUrl} name={creator.displayName} rounded="rounded-none" />
         </Link>
-        <div className="absolute left-2.5 top-2.5">
+        <div className="absolute left-2.5 top-2.5 flex items-center gap-1.5">
+          {creator.isSample && <SampleProfileLabel tone="white" />}
           <OnlinePill online={creator.isOnline} />
         </div>
         <FavoriteButton targetId={creator.id} initial={Boolean(favorite)} authed={authed} className="absolute right-2.5 top-2.5" />
@@ -132,9 +134,13 @@ export function CreatorCardCompact({ creator, favorite, authed, badge, rank }: {
               {categoryLabel(c)}
             </Badge>
           ))}
-          <Badge tone="pink" size="sm" className="ml-auto">
-            {creator.startingPriceMinor ? `${formatMoney(creator.startingPriceMinor, "TRY", { decimals: false })}/ay` : "Ücretsiz"}
-          </Badge>
+          {creator.isSample ? (
+            <SampleProfileLabel className="ml-auto" />
+          ) : (
+            <Badge tone="pink" size="sm" className="ml-auto">
+              {creator.startingPriceMinor ? `${formatMoney(creator.startingPriceMinor, "TRY", { decimals: false })}/ay` : "Ücretsiz"}
+            </Badge>
+          )}
         </div>
         <Link href={`/creators/${creator.username}`} className="mt-2.5 flex h-8 items-center justify-center rounded-full border border-brand-300 text-[11px] font-extrabold text-brand-600 hover:bg-brand-50">
           Profili Gör
@@ -144,7 +150,7 @@ export function CreatorCardCompact({ creator, favorite, authed, badge, rank }: {
   );
 }
 
-export function CreatorMiniRow({ creator, right }: { creator: Pick<CreatorCard, "username" | "displayName" | "avatarUrl" | "verified" | "followers">; right?: React.ReactNode }) {
+export function CreatorMiniRow({ creator, right }: { creator: Pick<CreatorCard, "username" | "displayName" | "avatarUrl" | "verified" | "followers"> & { isSample?: boolean }; right?: React.ReactNode }) {
   return (
     <div className="flex items-center gap-3">
       <Link href={`/creators/${creator.username}`} className="size-12 shrink-0 overflow-hidden rounded-xl">
@@ -153,6 +159,7 @@ export function CreatorMiniRow({ creator, right }: { creator: Pick<CreatorCard, 
       <div className="min-w-0 flex-1">
         <Link href={`/creators/${creator.username}`} className="flex items-center gap-1 truncate text-[13px] font-extrabold hover:text-brand-600">
           {creator.displayName} {creator.verified && <Verified className="size-3.5" />}
+          {creator.isSample && <SampleProfileLabel />}
         </Link>
         <p className="flex items-center gap-1 text-[11px] text-muted">
           <Users className="size-3" /> {formatCompact(creator.followers)} takipçi

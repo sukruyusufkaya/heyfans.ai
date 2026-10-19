@@ -8,7 +8,8 @@ import { Favorite, Follow } from "@/models/social";
 import { decideContentAccess, decideManyContentAccess, type AccessDecision, type Viewer } from "@/services/content/access";
 import { creatorBriefMap, type CreatorBrief } from "./creators";
 
-export type LockReason = "login" | "follow" | "subscribe" | "purchase" | "unavailable";
+/** "sample": örnek profilin ücretli içeriği — açılamaz (abonelik/satın alma kapalı). */
+export type LockReason = "login" | "follow" | "subscribe" | "purchase" | "unavailable" | "sample";
 
 /** Akış/galeri kartı için içerik özeti — kilit durumu sunucuda hesaplanır, kilitli içerikte kapak sızdırılmaz. */
 export interface PostView {
@@ -91,7 +92,7 @@ export async function buildPostViews(viewer: Viewer, items: ContentLean[], decis
       priceMinor: i.price?.amountMinor ?? null,
       currency: i.price?.currency ?? "TRY",
       locked,
-      lockReason: d && !d.allowed ? d.reason : null,
+      lockReason: d && !d.allowed ? (creator.isSample && (d.reason === "purchase" || d.reason === "subscribe") ? "sample" : d.reason) : null,
       publishedAt: i.publishedAt ? new Date(i.publishedAt).toISOString() : null,
       likes: i.stats?.likes ?? 0,
       comments: i.stats?.comments ?? 0,

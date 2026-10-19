@@ -55,6 +55,8 @@ export interface PublicCreatorProfile {
   stats: { followers: number; posts: number; likes: number; conversations: number; subscribers: number };
   createdAt: string;
   isDemo: boolean;
+  /** Platformun kurgusal örnek profili: satın alma/abonelik/hediye kapalı. */
+  isSample: boolean;
   twin: PublicTwin | null;
   plans: PublicPlan[];
 }
@@ -99,7 +101,7 @@ export const getPublicCreator = cache(async (username: string): Promise<PublicCr
     location: c.location ?? null,
     languages: c.languages ?? [],
     // Kurgusal demo creator'ların kullanıcı adları gerçek hesaplara bağlantı üretmesin (taklit riski).
-    socialLinks: c.isDemo ? [] : (c.socialLinks ?? []).map((s) => ({ platform: s.platform, handle: s.handle, url: s.url ?? null, verified: Boolean(s.verified) })),
+    socialLinks: c.isDemo || c.isSample ? [] : (c.socialLinks ?? []).map((s) => ({ platform: s.platform, handle: s.handle, url: s.url ?? null, verified: Boolean(s.verified) })),
     verified: c.verification?.identity === "verified",
     isOnline: Boolean(c.isOnline),
     stats: {
@@ -111,6 +113,7 @@ export const getPublicCreator = cache(async (username: string): Promise<PublicCr
     },
     createdAt: new Date(c.createdAt).toISOString(),
     isDemo: Boolean(c.isDemo),
+    isSample: Boolean(c.isSample),
     twin: twinView,
     plans: plans.map((p) => ({
       id: p._id.toString(),

@@ -24,7 +24,8 @@ export async function listFollowedCreatorOptions(userId: string): Promise<Follow
   const follows = await Follow.find({ followerId: oid(userId) }).sort({ createdAt: -1 }).limit(300).lean();
   const ids = follows.map((f) => f.creatorId);
   const [creators, twins] = await Promise.all([
-    CreatorProfile.find({ _id: { $in: ids }, status: "approved" }, { username: 1, displayName: 1, avatarUrl: 1 }).lean(),
+    // Örnek profillere hediye/özel talep gönderilemez (services/creators/sample.ts).
+    CreatorProfile.find({ _id: { $in: ids }, status: "approved", isSample: { $ne: true } }, { username: 1, displayName: 1, avatarUrl: 1 }).lean(),
     AiTwin.find({ creatorId: { $in: ids } }, { creatorId: 1, "draft.boundaries.allowCustomRequests": 1 }).lean<{ creatorId: Types.ObjectId; draft?: { boundaries?: { allowCustomRequests?: boolean } } }[]>(),
   ]);
   const closed = new Set(twins.filter((t) => t.draft?.boundaries?.allowCustomRequests === false).map((t) => t.creatorId.toString()));
@@ -86,7 +87,7 @@ export async function getGiftsPage(userId: string, to?: string) {
   const [catalog, history, balance, creators] = await Promise.all([listGiftCatalog(), listSentGifts(userId, 30), ensureWallet(userId), listFollowedCreatorOptions(userId)]);
   // Takip edilmeyen bir creator'a (ör. sohbet ekranından) hediye gönderilebilir: seçim listesine eklenir.
   if (to && !creators.some((c) => c.username === to.toLowerCase())) {
-    const extra = await CreatorProfile.findOne({ username: to.toLowerCase(), status: "approved" }, { username: 1, displayName: 1, avatarUrl: 1 }).lean();
+    const extra = await CreatorProfile.findOne({ username: to.toLowerCase(), status: "approved", isSample: { $ne: true } }, { username: 1, displayName: 1, avatarUrl: 1 }).lean();
     if (extra) creators.unshift({ username: extra.username, displayName: extra.displayName, avatarUrl: extra.avatarUrl ?? null, acceptsRequests: true });
   }
   return {

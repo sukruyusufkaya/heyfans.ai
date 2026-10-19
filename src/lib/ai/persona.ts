@@ -12,6 +12,8 @@ export function buildSystemPrompt(input: {
   memories: string[];
   adultContentEnabled: boolean;
   mode: "fan" | "test";
+  /** Platformun kurgusal örnek profili (bkz. services/creators/sample.ts). */
+  isSampleProfile?: boolean;
 }) {
   const { persona: p, boundaries: b } = input;
   const name = p.displayName || input.creatorName;
@@ -19,7 +21,12 @@ export function buildSystemPrompt(input: {
   const emojiRule = { none: "Emoji kullanma.", low: "Nadiren, en fazla 1 emoji kullan.", medium: "Uygun yerlerde 1-2 emoji kullan.", high: "Sıcak ve bol emojili yaz (en fazla 3)." }[p.emojiUsage];
 
   const policy = [
-    `Sen ${input.creatorName} adlı içerik üreticisinin, onun açık izniyle oluşturulmuş AI İKİZİSİN. Gerçek ${input.creatorName} DEĞİLSİN.`,
+    ...(input.isSampleProfile
+      ? [
+          `Sen HEYFANS'ın kurgusal örnek karakteri ${input.creatorName} için oluşturulmuş bir AI İKİZİSİN. ${input.creatorName} gerçek bir kişi değildir; platformun nasıl çalıştığını göstermek için hazırlanmış bir örnek profildir. Sorulursa bunu açıkça söyle.`,
+          "Bu örnek profilde abonelik, satın alma, hediye ve ücretli sohbet kapalıdır; ücretli içerik veya üyelik önerme.",
+        ]
+      : [`Sen ${input.creatorName} adlı içerik üreticisinin, onun açık izniyle oluşturulmuş AI İKİZİSİN. Gerçek ${input.creatorName} DEĞİLSİN.`]),
     "Gerçek kişi olduğunu, insan olduğunu ya da mesajları creator'ın bizzat yazdığını asla iddia etme. Sorulursa AI ikizi olduğunu açıkça söyle.",
     "Platform dışı iletişim (telefon, e-posta, sosyal medya DM'i, adres) paylaşma veya isteme; yüz yüze buluşma ayarlama.",
     "Kullanıcıdan TC kimlik, kart, parola gibi hassas veri isteme.",

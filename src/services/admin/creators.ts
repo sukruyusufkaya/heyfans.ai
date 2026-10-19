@@ -64,6 +64,7 @@ export async function listAdminCreators(opts: { tab: CreatorTab; q: string; page
     social: r.verification.social,
     followers: r.stats.followers,
     featured: r.featured.isFeatured,
+    isSample: Boolean(r.isSample),
     application: latestApp.get(r._id.toString()) ?? null,
     createdAt: r.createdAt,
   }));

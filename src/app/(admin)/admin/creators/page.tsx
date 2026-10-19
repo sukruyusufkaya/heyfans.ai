@@ -20,6 +20,7 @@ import { requireAdmin } from "@/lib/auth/session";
 import { can } from "@/lib/permissions";
 import { TWIN_STATUS_LABELS } from "@/lib/state-machines";
 import { formatDate, formatDateTime, formatNumber } from "@/lib/utils";
+import { SampleProfileLabel } from "@/components/ui/badge";
 import { CREATOR_TABS, getAdminCreatorDetail, getCreatorCounts, listAdminCreators, type CreatorTab } from "@/services/admin/creators";
 import { hasDemoData, pick, pickEnum, pickId, pickPage, type SearchParams } from "@/services/admin/shared";
 
@@ -104,6 +105,7 @@ export default async function AdminCreatorsPage({ searchParams }: { searchParams
                               <b className="block truncate text-ink">
                                 {c.displayName}
                                 {c.featured && <Star className="ml-1 inline size-3 fill-orange text-orange" aria-label="Öne çıkan" />}
+                                {c.isSample && <SampleProfileLabel className="ml-1.5 align-middle" />}
                               </b>
                               <small className="block truncate text-[10px] text-muted">@{c.username}</small>
                             </span>

@@ -38,7 +38,7 @@ export interface ChatBilling {
 
 interface Props {
   conversationId: string;
-  creator: { username: string; displayName: string; avatarUrl: string | null; verified: boolean; isOnline: boolean };
+  creator: { username: string; displayName: string; avatarUrl: string | null; verified: boolean; isOnline: boolean; isSample?: boolean };
   twin: { voice: boolean; video: boolean };
   initialMessages: ChatMsg[];
   initialBilling: ChatBilling;
@@ -274,7 +274,7 @@ export function ChatClient({ conversationId, creator, twin, initialMessages, ini
             <AiTwinLabel className="ml-1 shrink-0" />
           </p>
           <p className="mt-0.5 flex items-center gap-1.5 text-[11px] font-semibold text-success">
-            <span className="size-1.5 rounded-full bg-success" aria-hidden /> Yetkilendirilmiş AI ikizi{creator.isOnline ? " · Çevrimiçi" : ""}
+            <span className="size-1.5 rounded-full bg-success" aria-hidden /> {creator.isSample ? "Örnek profil · AI ikizi" : "Yetkilendirilmiş AI ikizi"}{creator.isOnline ? " · Çevrimiçi" : ""}
           </p>
         </div>
         <div className="flex items-center gap-1.5">
@@ -375,7 +375,7 @@ export function ChatClient({ conversationId, creator, twin, initialMessages, ini
         aria-label="Sohbet mesajları"
       >
         <div className="mx-auto flex w-fit max-w-full items-center gap-1.5 rounded-full border border-brand-200 bg-white/80 px-3.5 py-1.5 text-[10px] font-bold text-brand-600">
-          <ShieldCheck className="size-3.5 shrink-0" aria-hidden /> Bu görüşme yetkilendirilmiş bir AI ikiziyle yapılmaktadır.
+          <ShieldCheck className="size-3.5 shrink-0" aria-hidden /> {creator.isSample ? "Bu görüşme kurgusal bir örnek profilin AI ikiziyle yapılmaktadır." : "Bu görüşme yetkilendirilmiş bir AI ikiziyle yapılmaktadır."}
         </div>
         {memoryEnabled && (
           <p className="text-center text-[10px] text-muted">

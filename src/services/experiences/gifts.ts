@@ -6,6 +6,7 @@ import { oid } from "@/lib/validation/common";
 import { CreatorProfile, type ICreatorProfile } from "@/models/creator";
 import { Gift, GiftCatalogItem, type IGift } from "@/models/monetization";
 import { recordCreditEarning } from "@/services/billing/earnings";
+import { assertNotSample } from "@/services/creators/sample";
 import { notify } from "@/services/notifications/notifications";
 import { debitWallet } from "@/services/wallet/wallet";
 
@@ -20,6 +21,7 @@ export async function sendGift(userId: string, input: { username: string; kind: 
   const creator = await CreatorProfile.findOne({ username: input.username.toLowerCase(), status: "approved" }).lean<ICreatorProfile>();
   if (!creator) throw new NotFoundError("İçerik üreticisi bulunamadı.");
   if (creator.userId.equals(oid(userId))) throw new AppError("Kendine hediye gönderemezsin.", "self_gift");
+  assertNotSample(creator);
   let credits: number;
   let label: string;
   if (input.kind === "gift") {

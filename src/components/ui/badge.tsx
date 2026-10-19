@@ -56,6 +56,15 @@ export function AiTwinLabel({ className, size = "sm" }: { className?: string; si
   );
 }
 
+/** Platformun kurgusal örnek profilleri (gerçek kişi değil; satın alma kapalı). */
+export function SampleProfileLabel({ className, size = "sm", tone = "warn" }: { className?: string; size?: "sm" | "md"; tone?: "warn" | "white" }) {
+  return (
+    <Badge tone={tone} size={size} className={cn("uppercase tracking-wider", className)} title="Platformun kurgusal örnek profili; gerçek bir kişi değildir ve satın alma kapalıdır">
+      Örnek profil
+    </Badge>
+  );
+}
+
 export function OnlineDot({ online, className }: { online: boolean; className?: string }) {
   return (
     <span

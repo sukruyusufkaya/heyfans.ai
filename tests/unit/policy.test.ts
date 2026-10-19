@@ -84,6 +84,22 @@ describe("güvenlik motoru", () => {
     expect(prompt).toContain("AI İKİZİSİN");
     expect(prompt).toContain("siyaset");
   });
+  it("örnek profil istemi kurgusal olduğunu söyler, izin iddiası ve ücretli öneri içermez", () => {
+    const base = {
+      creatorName: "Melis",
+      persona: { displayName: "Melis", shortBio: "", greeting: "Selam", warmth: 80, formality: 20, humor: 50, energy: 60, messageLength: "short", pace: "normal", language: "tr", emojiUsage: "low", speakingStyle: "", catchphrases: [], sampleReplies: [] },
+      boundaries: { allowedTopics: [], blockedTopics: [], customRules: [], allowFlirt: false, allowPersonalQuestions: true, allowMediaRequests: false, allowCustomRequests: true, escalateOnDistress: true, maxMessagesPerFanPerDay: 100 },
+      knowledge: [],
+      memories: [],
+      adultContentEnabled: false,
+      mode: "fan",
+    } satisfies Parameters<typeof buildSystemPrompt>[0];
+    const sample = buildSystemPrompt({ ...base, isSampleProfile: true });
+    expect(sample).toContain("kurgusal örnek karakteri");
+    expect(sample).toContain("ücretli içerik veya üyelik önerme");
+    expect(sample).not.toContain("açık izniyle");
+    expect(buildSystemPrompt(base)).toContain("açık izniyle");
+  });
 });
 
 describe("bilgi tabanı yardımcıları", () => {

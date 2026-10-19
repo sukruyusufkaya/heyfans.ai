@@ -122,7 +122,7 @@ export function ContentTile({ post, favorite, big, authed = true }: { post: Post
         <span className="pointer-events-none absolute left-2.5 top-2.5">
           {post.locked ? (
             <Badge tone="solid" size="sm">
-              <Lock /> {post.access === "purchase" ? "Satın alınabilir" : post.access === "followers" ? "Takipçilere özel" : "Üyelere özel"}
+              <Lock /> {post.lockReason === "sample" ? "Örnek içerik" : post.access === "purchase" ? "Satın alınabilir" : post.access === "followers" ? "Takipçilere özel" : "Üyelere özel"}
             </Badge>
           ) : (
             <Badge tone="white" size="sm">

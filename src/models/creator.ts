@@ -48,6 +48,8 @@ export interface ICreatorProfile {
   payoutsEnabled: boolean;
   defaultCurrency: string;
   isDemo: boolean;
+  /** Platformun kurgusal örnek profili: "Örnek profil" etiketlenir, hiçbir şey satın alınamaz (bkz. services/creators/sample.ts). */
+  isSample: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -116,6 +118,7 @@ const CreatorProfileSchema = new Schema<ICreatorProfile>(
     payoutsEnabled: { type: Boolean, default: false },
     defaultCurrency: { type: String, default: "TRY" },
     isDemo: { type: Boolean, default: false },
+    isSample: { type: Boolean, default: false, index: true },
   },
   { ...baseOptions, minimize: false },
 );

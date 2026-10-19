@@ -66,6 +66,7 @@ export async function getChatPage(userId: string, username: string) {
       isOnline: Boolean(data.creator.isOnline),
       followers: data.creator.stats?.followers ?? 0,
       conversations: data.creator.stats?.conversations ?? 0,
+      isSample: Boolean(data.creator.isSample),
     },
     twin: {
       rating: data.twin.stats?.avgRating ?? null,
@@ -116,7 +117,7 @@ export async function startNewConversation(userId: string, username: string) {
 
 export interface ChatListRow {
   conversationId: string;
-  creator: { username: string; displayName: string; avatarUrl: string | null; verified: boolean; isOnline: boolean };
+  creator: { username: string; displayName: string; avatarUrl: string | null; verified: boolean; isOnline: boolean; isSample: boolean };
   preview: string | null;
   lastAt: string | null;
   unread: number;
@@ -135,7 +136,7 @@ export async function getChatList(userId: string, opts: { filter: "all" | "unrea
     const c = r.creator!;
     list.push({
       conversationId: r.conversation._id.toString(),
-      creator: { username: c.username, displayName: c.displayName, avatarUrl: c.avatarUrl ?? null, verified: c.verification?.identity === "verified", isOnline: Boolean(c.isOnline) },
+      creator: { username: c.username, displayName: c.displayName, avatarUrl: c.avatarUrl ?? null, verified: c.verification?.identity === "verified", isOnline: Boolean(c.isOnline), isSample: Boolean(c.isSample) },
       preview: r.conversation.lastMessagePreview ?? null,
       lastAt: r.conversation.lastMessageAt ? new Date(r.conversation.lastMessageAt).toISOString() : null,
       unread: r.conversation.unreadForUser ?? 0,

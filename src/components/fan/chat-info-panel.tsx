@@ -3,23 +3,25 @@ import { ChevronRight, Gift, ImageIcon, Mic, Video } from "lucide-react";
 import { categoryLabel } from "@/components/creator/category-icon";
 import { Verified } from "@/components/creator/creator-cards";
 import { CreatorPhoto } from "@/components/creator/creator-photo";
-import { AiTwinLabel, Badge } from "@/components/ui/badge";
+import { AiTwinLabel, Badge, SampleProfileLabel } from "@/components/ui/badge";
 import { Card, CardHeader } from "@/components/ui/card";
 import { formatCompact, formatNumber } from "@/lib/utils";
 
 interface Props {
-  creator: { username: string; displayName: string; avatarUrl: string | null; coverUrl: string | null; categories: string[]; verified: boolean; followers: number; conversations: number };
+  creator: { username: string; displayName: string; avatarUrl: string | null; coverUrl: string | null; categories: string[]; verified: boolean; followers: number; conversations: number; isSample?: boolean };
   twin: { rating: number | null; voice: boolean; video: boolean; voicePerMinute: number; videoPerMinute: number };
 }
 
 /** Sohbet ekranı sağ paneli: creator kartı + hızlı bağlantılar (yalnız gerçek veriler). */
 export function ChatInfoPanel({ creator, twin }: Props) {
-  const links = [
+  const allLinks = [
     { href: `/experiences/voice/${creator.username}`, label: "Sesli görüşme başlat", icon: Mic, hint: twin.voice ? `${formatNumber(twin.voicePerMinute)} kredi / dk` : "Şu an kapalı" },
     { href: `/experiences/video/${creator.username}`, label: "Görüntülü görüşme", icon: Video, hint: twin.video ? `${formatNumber(twin.videoPerMinute)} kredi / dk` : "Şu an kapalı" },
     { href: `/creators/${creator.username}/content`, label: "Özel içerikleri keşfet", icon: ImageIcon, hint: null },
     { href: `/app/gifts?to=${creator.username}`, label: "Hediye gönder", icon: Gift, hint: null },
   ];
+  // Örnek profilde ücretli görüşme ve hediye kapalı.
+  const links = creator.isSample ? allLinks.filter((l) => l.icon === ImageIcon) : allLinks;
   return (
     <div className="grid content-start gap-4">
       <article className="hf-card overflow-hidden">
@@ -28,6 +30,7 @@ export function ChatInfoPanel({ creator, twin }: Props) {
           <span className="absolute left-3 top-3">
             <AiTwinLabel size="md" className="bg-white/90" />
           </span>
+          {creator.isSample && <SampleProfileLabel size="md" tone="white" className="absolute right-3 top-3" />}
         </div>
         <div className="p-5">
           <Link href={`/creators/${creator.username}`} className="flex items-center gap-1.5 text-xl font-black tracking-[-0.03em] hover:text-brand-600">
