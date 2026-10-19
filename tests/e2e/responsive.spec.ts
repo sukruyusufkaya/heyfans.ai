@@ -8,20 +8,20 @@ import { DEMO_PASSWORD, expectNoHorizontalScroll, loginViaApi } from "./helpers"
 type Role = "guest" | "fan" | "creator" | "admin";
 const EMAIL: Record<Exclude<Role, "guest">, string> = {
   fan: "fan@heyfans.local",
-  creator: "sophie@heyfans.local",
+  creator: "melis@heyfans.local",
   admin: "admin@heyfans.local",
 };
 
 const ROUTES: { role: Role; path: string }[] = [
   { role: "guest", path: "/" },
   { role: "guest", path: "/explore" },
-  { role: "guest", path: "/creators/sophielane" },
+  { role: "guest", path: "/creators/meliserturk" },
   { role: "guest", path: "/pricing" },
   { role: "guest", path: "/help" },
   { role: "guest", path: "/login" },
   { role: "guest", path: "/register" },
   { role: "fan", path: "/app" },
-  { role: "fan", path: "/chat/sophielane" },
+  { role: "fan", path: "/chat/meliserturk" },
   { role: "fan", path: "/app/wallet" },
   { role: "fan", path: "/checkout?type=credit_pack&pack=credits_100" },
   { role: "creator", path: "/studio" },

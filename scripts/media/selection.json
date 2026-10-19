@@ -1,0 +1,597 @@
+[
+ {
+  "group": "portraits",
+  "key": "adasahin",
+  "idx": 2
+ },
+ {
+  "group": "portraits",
+  "key": "cerenyildiz",
+  "idx": 0
+ },
+ {
+  "group": "portraits",
+  "key": "damladeniz",
+  "idx": 2
+ },
+ {
+  "group": "portraits",
+  "key": "defnearas",
+  "idx": 2
+ },
+ {
+  "group": "portraits",
+  "key": "deryaakin",
+  "idx": 2
+ },
+ {
+  "group": "portraits",
+  "key": "ecekaraca",
+  "idx": 2
+ },
+ {
+  "group": "portraits",
+  "key": "elifkaya",
+  "idx": 2
+ },
+ {
+  "group": "portraits",
+  "key": "gizemaydin",
+  "idx": 2
+ },
+ {
+  "group": "portraits",
+  "key": "meliserturk",
+  "idx": 2
+ },
+ {
+  "group": "portraits",
+  "key": "mervearslan",
+  "idx": 1
+ },
+ {
+  "group": "portraits",
+  "key": "nilaycoskun",
+  "idx": 2
+ },
+ {
+  "group": "portraits",
+  "key": "selinkaya",
+  "idx": 2
+ },
+ {
+  "group": "portraits",
+  "key": "sudeyilmaz",
+  "idx": 1
+ },
+ {
+  "group": "portraits",
+  "key": "zeynepdemir",
+  "idx": 1
+ },
+ {
+  "group": "covers",
+  "key": "adasahin",
+  "idx": 0
+ },
+ {
+  "group": "covers",
+  "key": "cerenyildiz",
+  "idx": 1
+ },
+ {
+  "group": "covers",
+  "key": "damladeniz",
+  "idx": 0
+ },
+ {
+  "group": "covers",
+  "key": "defnearas",
+  "idx": 1
+ },
+ {
+  "group": "covers",
+  "key": "deryaakin",
+  "idx": 0
+ },
+ {
+  "group": "covers",
+  "key": "ecekaraca",
+  "idx": 1
+ },
+ {
+  "group": "covers",
+  "key": "elifkaya",
+  "idx": 0
+ },
+ {
+  "group": "covers",
+  "key": "gizemaydin",
+  "idx": 1
+ },
+ {
+  "group": "covers",
+  "key": "meliserturk",
+  "idx": 1
+ },
+ {
+  "group": "covers",
+  "key": "mervearslan",
+  "idx": 0
+ },
+ {
+  "group": "covers",
+  "key": "nilaycoskun",
+  "idx": 1
+ },
+ {
+  "group": "covers",
+  "key": "selinkaya",
+  "idx": 1
+ },
+ {
+  "group": "covers",
+  "key": "sudeyilmaz",
+  "idx": 1
+ },
+ {
+  "group": "covers",
+  "key": "zeynepdemir",
+  "idx": 1
+ },
+ {
+  "group": "categories",
+  "key": "egitim",
+  "idx": 1
+ },
+ {
+  "group": "categories",
+  "key": "ev-yasam",
+  "idx": 0
+ },
+ {
+  "group": "categories",
+  "key": "evcil-dostlar",
+  "idx": 0
+ },
+ {
+  "group": "categories",
+  "key": "fitness",
+  "idx": 1
+ },
+ {
+  "group": "categories",
+  "key": "is-dunyasi",
+  "idx": 1
+ },
+ {
+  "group": "categories",
+  "key": "moda",
+  "idx": 0
+ },
+ {
+  "group": "categories",
+  "key": "muzik",
+  "idx": 0
+ },
+ {
+  "group": "categories",
+  "key": "oyun",
+  "idx": 0
+ },
+ {
+  "group": "categories",
+  "key": "sanat",
+  "idx": 0
+ },
+ {
+  "group": "categories",
+  "key": "seyahat",
+  "idx": 1
+ },
+ {
+  "group": "categories",
+  "key": "wellness",
+  "idx": 1
+ },
+ {
+  "group": "categories",
+  "key": "yasam-tarzi",
+  "idx": 1
+ },
+ {
+  "group": "categories",
+  "key": "yemek",
+  "idx": 0
+ },
+ {
+  "group": "content",
+  "key": "adasahin-0",
+  "idx": 0
+ },
+ {
+  "group": "content",
+  "key": "adasahin-1",
+  "idx": 0
+ },
+ {
+  "group": "content",
+  "key": "adasahin-2",
+  "idx": 0
+ },
+ {
+  "group": "content",
+  "key": "adasahin-3",
+  "idx": 0
+ },
+ {
+  "group": "content",
+  "key": "adasahin-4",
+  "idx": 0
+ },
+ {
+  "group": "content",
+  "key": "adasahin-5",
+  "idx": 0
+ },
+ {
+  "group": "content",
+  "key": "cerenyildiz-0",
+  "idx": 0
+ },
+ {
+  "group": "content",
+  "key": "cerenyildiz-1",
+  "idx": 0
+ },
+ {
+  "group": "content",
+  "key": "cerenyildiz-2",
+  "idx": 0
+ },
+ {
+  "group": "content",
+  "key": "cerenyildiz-3",
+  "idx": 0
+ },
+ {
+  "group": "content",
+  "key": "cerenyildiz-4",
+  "idx": 0
+ },
+ {
+  "group": "content",
+  "key": "cerenyildiz-5",
+  "idx": 0
+ },
+ {
+  "group": "content",
+  "key": "damladeniz-0",
+  "idx": 0
+ },
+ {
+  "group": "content",
+  "key": "damladeniz-1",
+  "idx": 0
+ },
+ {
+  "group": "content",
+  "key": "damladeniz-2",
+  "idx": 0
+ },
+ {
+  "group": "content",
+  "key": "damladeniz-3",
+  "idx": 0
+ },
+ {
+  "group": "content",
+  "key": "damladeniz-4",
+  "idx": 0
+ },
+ {
+  "group": "content",
+  "key": "damladeniz-5",
+  "idx": 0
+ },
+ {
+  "group": "content",
+  "key": "defnearas-0",
+  "idx": 0
+ },
+ {
+  "group": "content",
+  "key": "defnearas-1",
+  "idx": 0
+ },
+ {
+  "group": "content",
+  "key": "defnearas-2",
+  "idx": 0
+ },
+ {
+  "group": "content",
+  "key": "defnearas-3",
+  "idx": 0
+ },
+ {
+  "group": "content",
+  "key": "defnearas-4",
+  "idx": 0
+ },
+ {
+  "group": "content",
+  "key": "defnearas-5",
+  "idx": 0
+ },
+ {
+  "group": "content",
+  "key": "deryaakin-0",
+  "idx": 0
+ },
+ {
+  "group": "content",
+  "key": "deryaakin-1",
+  "idx": 0
+ },
+ {
+  "group": "content",
+  "key": "deryaakin-2",
+  "idx": 0
+ },
+ {
+  "group": "content",
+  "key": "deryaakin-3",
+  "idx": 0
+ },
+ {
+  "group": "content",
+  "key": "deryaakin-4",
+  "idx": 0
+ },
+ {
+  "group": "content",
+  "key": "deryaakin-5",
+  "idx": 0
+ },
+ {
+  "group": "content",
+  "key": "ecekaraca-0",
+  "idx": 0
+ },
+ {
+  "group": "content",
+  "key": "ecekaraca-1",
+  "idx": 0
+ },
+ {
+  "group": "content",
+  "key": "ecekaraca-2",
+  "idx": 0
+ },
+ {
+  "group": "content",
+  "key": "ecekaraca-3",
+  "idx": 0
+ },
+ {
+  "group": "content",
+  "key": "ecekaraca-4",
+  "idx": 0
+ },
+ {
+  "group": "content",
+  "key": "ecekaraca-5",
+  "idx": 1
+ },
+ {
+  "group": "content",
+  "key": "elifkaya-0",
+  "idx": 0
+ },
+ {
+  "group": "content",
+  "key": "elifkaya-1",
+  "idx": 0
+ },
+ {
+  "group": "content",
+  "key": "elifkaya-2",
+  "idx": 0
+ },
+ {
+  "group": "content",
+  "key": "elifkaya-3",
+  "idx": 0
+ },
+ {
+  "group": "content",
+  "key": "elifkaya-4",
+  "idx": 0
+ },
+ {
+  "group": "content",
+  "key": "elifkaya-5",
+  "idx": 0
+ },
+ {
+  "group": "content",
+  "key": "gizemaydin-0",
+  "idx": 0
+ },
+ {
+  "group": "content",
+  "key": "gizemaydin-1",
+  "idx": 0
+ },
+ {
+  "group": "content",
+  "key": "gizemaydin-2",
+  "idx": 0
+ },
+ {
+  "group": "content",
+  "key": "gizemaydin-3",
+  "idx": 1
+ },
+ {
+  "group": "content",
+  "key": "gizemaydin-4",
+  "idx": 0
+ },
+ {
+  "group": "content",
+  "key": "gizemaydin-5",
+  "idx": 0
+ },
+ {
+  "group": "content",
+  "key": "meliserturk-0",
+  "idx": 0
+ },
+ {
+  "group": "content",
+  "key": "meliserturk-1",
+  "idx": 0
+ },
+ {
+  "group": "content",
+  "key": "meliserturk-2",
+  "idx": 1
+ },
+ {
+  "group": "content",
+  "key": "meliserturk-3",
+  "idx": 0
+ },
+ {
+  "group": "content",
+  "key": "meliserturk-4",
+  "idx": 0
+ },
+ {
+  "group": "content",
+  "key": "meliserturk-5",
+  "idx": 0
+ },
+ {
+  "group": "content",
+  "key": "mervearslan-0",
+  "idx": 0
+ },
+ {
+  "group": "content",
+  "key": "mervearslan-1",
+  "idx": 0
+ },
+ {
+  "group": "content",
+  "key": "mervearslan-2",
+  "idx": 0
+ },
+ {
+  "group": "content",
+  "key": "mervearslan-3",
+  "idx": 0
+ },
+ {
+  "group": "content",
+  "key": "mervearslan-4",
+  "idx": 0
+ },
+ {
+  "group": "content",
+  "key": "mervearslan-5",
+  "idx": 0
+ },
+ {
+  "group": "content",
+  "key": "nilaycoskun-0",
+  "idx": 0
+ },
+ {
+  "group": "content",
+  "key": "nilaycoskun-1",
+  "idx": 0
+ },
+ {
+  "group": "content",
+  "key": "nilaycoskun-2",
+  "idx": 0
+ },
+ {
+  "group": "content",
+  "key": "nilaycoskun-3",
+  "idx": 0
+ },
+ {
+  "group": "content",
+  "key": "nilaycoskun-4",
+  "idx": 0
+ },
+ {
+  "group": "content",
+  "key": "nilaycoskun-5",
+  "idx": 0
+ },
+ {
+  "group": "content",
+  "key": "sudeyilmaz-0",
+  "idx": 0
+ },
+ {
+  "group": "content",
+  "key": "sudeyilmaz-1",
+  "idx": 0
+ },
+ {
+  "group": "content",
+  "key": "sudeyilmaz-2",
+  "idx": 0
+ },
+ {
+  "group": "content",
+  "key": "sudeyilmaz-3",
+  "idx": 0
+ },
+ {
+  "group": "content",
+  "key": "sudeyilmaz-4",
+  "idx": 0
+ },
+ {
+  "group": "content",
+  "key": "sudeyilmaz-5",
+  "idx": 1
+ },
+ {
+  "group": "content",
+  "key": "zeynepdemir-0",
+  "idx": 0
+ },
+ {
+  "group": "content",
+  "key": "zeynepdemir-1",
+  "idx": 0
+ },
+ {
+  "group": "content",
+  "key": "zeynepdemir-2",
+  "idx": 0
+ },
+ {
+  "group": "content",
+  "key": "zeynepdemir-3",
+  "idx": 0
+ },
+ {
+  "group": "content",
+  "key": "zeynepdemir-4",
+  "idx": 0
+ },
+ {
+  "group": "content",
+  "key": "zeynepdemir-5",
+  "idx": 0
+ }
+]

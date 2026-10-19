@@ -26,7 +26,7 @@ export function CreatorTile({ creator, className, href }: { creator: CreatorCard
   return (
     <article className={cn("group relative overflow-hidden rounded-[15px] shadow-[var(--shadow-card)]", className)}>
       <Link href={href ?? `/creators/${creator.username}`} className="block aspect-[4/3.1]" aria-label={`${creator.displayName} profili`}>
-        <CreatorPhoto src={creator.coverUrl ?? creator.avatarUrl} name={creator.displayName} rounded="rounded-none" className="transition-transform duration-500 group-hover:scale-[1.04]" />
+        <CreatorPhoto src={creator.avatarUrl ?? creator.coverUrl} name={creator.displayName} rounded="rounded-none" className="transition-transform duration-500 group-hover:scale-[1.04]" />
         <span className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black/70 via-black/25 to-transparent" aria-hidden />
       </Link>
       <div className="pointer-events-none absolute right-2.5 top-2.5">
@@ -70,7 +70,7 @@ export function CreatorCardTall({
     <article className={cn("hf-card flex flex-col overflow-hidden transition-shadow hover:shadow-[var(--shadow-card-hover)]", className)}>
       <div className="relative aspect-[4/3]">
         <Link href={`/creators/${creator.username}`} aria-label={`${creator.displayName} profili`} className="block size-full">
-          <CreatorPhoto src={creator.coverUrl ?? creator.avatarUrl} name={creator.displayName} rounded="rounded-none" />
+          <CreatorPhoto src={creator.avatarUrl ?? creator.coverUrl} name={creator.displayName} rounded="rounded-none" />
         </Link>
         <div className="absolute left-2.5 top-2.5">
           <OnlinePill online={creator.isOnline} />
@@ -115,7 +115,7 @@ export function CreatorCardCompact({ creator, favorite, authed, badge, rank }: {
     <article className="hf-card overflow-hidden">
       <div className="relative aspect-[16/10]">
         <Link href={`/creators/${creator.username}`} className="block size-full" aria-label={`${creator.displayName} profili`}>
-          <CreatorPhoto src={creator.coverUrl ?? creator.avatarUrl} name={creator.displayName} rounded="rounded-none" />
+          <CreatorPhoto src={creator.avatarUrl ?? creator.coverUrl} name={creator.displayName} rounded="rounded-none" />
         </Link>
         {badge && <Badge tone="solid" size="sm" className="absolute left-2 top-2">{badge}</Badge>}
         {rank != null && <span className="absolute left-2 top-2 grid size-6 place-items-center rounded-full bg-brand-500 text-[11px] font-black text-white">{rank}</span>}

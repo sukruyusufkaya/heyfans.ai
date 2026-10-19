@@ -79,11 +79,11 @@ export default async function HomePage() {
         art={
           <div className="relative flex h-full items-center justify-center gap-4 lg:justify-end">
             <div className="absolute inset-y-6 left-[8%] right-[38%] hidden overflow-hidden rounded-[40px] shadow-2xl lg:block">
-              <CreatorPhoto src={lead?.coverUrl ?? lead?.avatarUrl} name={lead?.displayName ?? "HEYFANS"} rounded="rounded-[40px]" priority />
+              <CreatorPhoto src={lead?.avatarUrl ?? lead?.coverUrl} name={lead?.displayName ?? "HEYFANS"} rounded="rounded-[40px]" priority />
             </div>
             <PhoneChatMockup
               className="relative z-10 lg:mr-[22%]"
-              creatorName={lead?.displayName ?? "Sophie Lane"}
+              creatorName={lead?.displayName ?? "Melis Ertürk"}
               avatarUrl={lead?.avatarUrl}
               lines={[
                 { from: "ai", text: "Merhaba tatlım! Bugün nasılsın? Seninle konuşmak için sabırsızlanıyordum 💕" },

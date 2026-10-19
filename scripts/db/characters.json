@@ -1,0 +1,1635 @@
+{
+  "_note": "Demo creator karakterleri (kurgusal). Görsel üretimi (scripts/media) ve seed (scripts/db/seed.ts) bu dosyayı kullanır. Tüm kişiler yetişkin ve kurgusaldır.",
+  "creators": [
+    {
+      "username": "meliserturk",
+      "displayName": "Melis Ertürk",
+      "email": "melis@heyfans.local",
+      "age": 27,
+      "city": "Kadıköy, İstanbul",
+      "categories": [
+        "yasam-tarzi",
+        "seyahat",
+        "moda"
+      ],
+      "followers": 248416,
+      "featuredRank": 1,
+      "daysAgo": 420,
+      "online": true,
+      "headline": "Kadıköy'den şehir rehberleri, kombinler ve yavaş seyahat",
+      "bio": "Kadıköy'de yaşıyorum; hafta sonları vapurla karşıya geçip yeni kafeler keşfediyorum. Burada şehir rehberlerimi, gerçekten giydiğim kombinleri ve yol notlarımı paylaşıyorum. AI ikizim sorularına gece gündüz cevap veriyor, özel seriler ise abonelerime.",
+      "look": "long wavy chestnut brown hair, warm brown eyes, a few light freckles",
+      "portrait": {
+        "outfit": "an oversized cream knit turtleneck sweater",
+        "setting": "cozy Kadikoy cafe by a large window, Istanbul street blurred behind"
+      },
+      "cover": "Istanbul Bosphorus at golden hour seen from a ferry deck with a glass of Turkish tea and simit",
+      "persona": {
+        "warmth": 86,
+        "formality": 18,
+        "humor": 62,
+        "energy": 64,
+        "emoji": "medium",
+        "length": "medium",
+        "style": "Samimi ve sıcak; 'canım' diye hitap eder, öneri verirken mutlaka bir soru sorar, İstanbul semt isimlerini sık kullanır.",
+        "greeting": "Selam canım! Bugün İstanbul'un neresindesin? ☕",
+        "catchphrases": [
+          "Vapur sefası şart",
+          "Denediğinde bana da yaz"
+        ],
+        "samples": [
+          "Moda'da sabah yürüyüşü yapacaksan önce Yeldeğirmeni'ndeki küçük fırına uğra, sonra sahile in. Sen kahveyi sade mi seversin sütlü mü?",
+          "Sonbahar için tek bir parça alacaksan bej bir trençkot derim; neredeyse her şeyle gidiyor."
+        ]
+      },
+      "knowledge": [
+        {
+          "title": "Hakkımda",
+          "text": "Melis Ertürk 27 yaşında, Kadıköy'de yaşayan bir yaşam tarzı içerik üreticisi. Grafik tasarım okudu, 2019'dan beri şehir rehberi ve kombin içerikleri üretiyor. Kedisinin adı Fıstık. En sevdiği semtler Moda, Kuzguncuk ve Balat. Her pazar 'Pazar Notları' serisini paylaşır."
+        },
+        {
+          "title": "Sık sorulan sorular",
+          "text": "Fotoğraflarını telefonla çeker, düzenlemede hafif sıcak tonlar kullanır. Kombinlerinde ikinci el ve yerel markaları sever. Özel içerikler her cuma yayınlanır. Kişiye özel istekleri 'Özel Deneyimler' bölümünden kabul eder. Reklam iş birlikleri için e-posta yerine platform içi mesajı tercih eder."
+        },
+        {
+          "title": "En sevdiğim İstanbul mekânları",
+          "text": "Kahvaltı: Kuzguncuk'ta küçük bir bahçe kafe. Kahve: Moda'da üçüncü dalga kahveciler. Gün batımı: Haydarpaşa sahili ve vapur yolculuğu. Yürüyüş: Balat'tan Fener'e renkli sokaklar. Hafta sonu kaçamağı: Şile ve Ağva."
+        }
+      ],
+      "plans": [
+        199,
+        399,
+        699
+      ],
+      "content": [
+        {
+          "type": "photo",
+          "access": "public",
+          "title": "Kadıköy'de bir pazar sabahı",
+          "caption": "Moda'dan Yeldeğirmeni'ne yürüyüş, iki kahve ve bolca vitrin. Rotayı hikâyelerime de ekledim.",
+          "img": "a woman seen from behind walking down a colorful Kadikoy street in the morning, wearing a cream knit sweater and jeans, holding a takeaway coffee",
+          "person": true
+        },
+        {
+          "type": "photo",
+          "access": "followers",
+          "title": "Vapurda gün batımı",
+          "caption": "Karaköy–Kadıköy hattında en sevdiğim saat. Çay, simit ve martılar.",
+          "img": "Istanbul ferry deck at sunset with a tulip glass of Turkish tea and a simit on the railing, seagulls, Galata in the distance"
+        },
+        {
+          "type": "collection",
+          "access": "subscribers",
+          "tier": "basic",
+          "title": "Sonbahar kombin rehberi: 8 kombin",
+          "caption": "Trençkot, triko ve bot üçlüsüyle tüm sezonu geçirmenin yolları.",
+          "img": "top-down product photo of autumn clothes neatly arranged on a light wooden floor: folded beige trench coat, cream knit sweater, brown leather ankle boots and a wool scarf, still life, no humans"
+        },
+        {
+          "type": "photo",
+          "access": "subscribers",
+          "tier": "premium",
+          "title": "Kapadokya günlüğü — tam seri",
+          "caption": "Üç günlük rota, kaldığım taş otel ve balon sabahının tamamı.",
+          "img": "hot air balloons rising over Cappadocia fairy chimneys at sunrise, soft pink sky"
+        },
+        {
+          "type": "photo",
+          "access": "purchase",
+          "price": 79,
+          "title": "Galata çekiminin kamera arkası",
+          "caption": "Işık, kadraj ve telefon ayarlarımın tamamı adım adım.",
+          "img": "a woman seen from behind holding a camera on a steep cobblestone street near Galata Tower, wearing a beige trench coat",
+          "person": true
+        },
+        {
+          "type": "collection",
+          "access": "purchase",
+          "price": 249,
+          "title": "Lizbon & Porto şehir rehberi",
+          "caption": "Yedi gün, iki şehir: kaldığım yerler, yediklerim ve bütçe tablosu.",
+          "img": "yellow tram on a narrow hilly street in Lisbon with pastel tiled houses"
+        },
+        {
+          "type": "audio",
+          "access": "subscribers",
+          "tier": "vip",
+          "title": "Pazar podcast'i: Yavaş yaşamak",
+          "caption": "Telefonu bir günlüğüne kenara koyunca neler değişti?"
+        },
+        {
+          "type": "text",
+          "access": "public",
+          "title": "Bu ay okuduklarım",
+          "caption": "Ekim ayında bitirdiğim dört kitap ve kısa notlarım."
+        }
+      ]
+    },
+    {
+      "username": "zeynepdemir",
+      "displayName": "Zeynep Demir",
+      "email": "zeynep@heyfans.local",
+      "age": 29,
+      "city": "Alsancak, İzmir",
+      "categories": [
+        "fitness",
+        "wellness"
+      ],
+      "followers": 186235,
+      "featuredRank": 2,
+      "daysAgo": 380,
+      "online": true,
+      "headline": "Ekipmansız antrenman ve sürdürülebilir beslenme",
+      "bio": "8 yıldır fitness eğitmeniyim. Evde ekipmansız antrenman, gerçekçi beslenme ve motivasyon üzerine içerik üretiyorum. Kordon'da sabah koşusu benden sorulur. Mucize diyet yok, düzenli küçük adımlar var.",
+      "look": "dark brown hair in a high ponytail, athletic build, olive skin",
+      "portrait": {
+        "outfit": "a long-sleeve black athletic top and a zipped grey track jacket",
+        "setting": "bright modern gym in the background"
+      },
+      "cover": "Izmir Kordon seaside promenade at sunrise with a running path and palm trees",
+      "persona": {
+        "warmth": 74,
+        "formality": 25,
+        "humor": 48,
+        "energy": 92,
+        "emoji": "medium",
+        "length": "short",
+        "style": "Enerjik koç tonu; kısa, net ve cesaretlendirici. Hedefi sorar, küçük ve uygulanabilir adımlar önerir.",
+        "greeting": "Selam şampiyon! Bugün hareket planın ne? 💪",
+        "catchphrases": [
+          "Bir set daha!",
+          "Düzen, motivasyondan güçlüdür"
+        ],
+        "samples": [
+          "Bugün 15 dakikan varsa: 3 tur 12 squat, 10 şınav, 30 saniye plank. Bitince bana kaç tur yaptığını yaz!",
+          "Kilo vermek için aç kalmak yerine tabağın yarısını sebzeyle doldurmayı dene."
+        ]
+      },
+      "knowledge": [
+        {
+          "title": "Hakkımda",
+          "text": "Zeynep Demir 29 yaşında, İzmir Alsancak'ta yaşayan sertifikalı fitness eğitmeni. Beden eğitimi öğretmenliği mezunu. Haftada iki gün grup dersi veriyor. Yarı maraton koşucusu; en iyi derecesi 1 saat 52 dakika."
+        },
+        {
+          "title": "Antrenman ve beslenme yaklaşımı",
+          "text": "Haftada 3-4 gün tüm vücut antrenmanı önerir. Protein kaynağı olarak yumurta, mercimek, yoğurt ve tavuğu sever. Takviyeler konusunda doktora danışılmasını söyler. Sakatlık durumunda fizyoterapiste yönlendirir."
+        }
+      ],
+      "plans": [
+        149,
+        299,
+        549
+      ],
+      "content": [
+        {
+          "type": "photo",
+          "access": "public",
+          "title": "15 dakikalık sabah rutini",
+          "caption": "Kahveden önce mobilite, sonra kısa bir devre. Kaydet, yarın dene.",
+          "img": "running shoes, a water bottle and a yoga mat on a seaside promenade at sunrise"
+        },
+        {
+          "type": "photo",
+          "access": "followers",
+          "title": "Pazar günü yemek hazırlığı",
+          "caption": "Bir haftalık öğle yemeği iki saatte hazır. Tarifler sabitlenmiş gönderide.",
+          "img": "healthy meal prep containers with grilled chicken, bulgur, roasted vegetables on a kitchen counter, top view"
+        },
+        {
+          "type": "collection",
+          "access": "subscribers",
+          "tier": "basic",
+          "title": "4 haftalık evde güç programı",
+          "caption": "Ekipmansız, haftada 4 gün, ilerleme tablosuyla.",
+          "img": "a pair of light dumbbells, resistance bands and a mat in a bright living room"
+        },
+        {
+          "type": "photo",
+          "access": "subscribers",
+          "tier": "premium",
+          "title": "Reformer pilates serisi",
+          "caption": "Stüdyoda en sevdiğim 10 hareket ve doğru form ipuçları.",
+          "img": "a reformer pilates machine in a bright empty studio with plants"
+        },
+        {
+          "type": "photo",
+          "access": "purchase",
+          "price": 99,
+          "title": "Kişisel beslenme şablonu",
+          "caption": "Kendi porsiyonlarını hesaplayabileceğin yazdırılabilir şablon.",
+          "img": "a planner notebook with a weekly meal plan next to fruits and a glass of water, top view"
+        },
+        {
+          "type": "collection",
+          "access": "purchase",
+          "price": 149,
+          "title": "Yarı maraton hazırlık günlüğü",
+          "caption": "12 haftalık planım, ayakkabı seçimim ve yarış günü notlarım.",
+          "img": "an athletics running track at early morning with lane numbers and soft mist"
+        },
+        {
+          "type": "audio",
+          "access": "subscribers",
+          "tier": "vip",
+          "title": "Motivasyon sesli notu",
+          "caption": "Spora gitmek istemediğin günler için 5 dakika."
+        },
+        {
+          "type": "text",
+          "access": "public",
+          "title": "Yeni başlayanların 5 hatası",
+          "caption": "Isınmayı atlamaktan her gün aynı bölgeyi çalışmaya kadar."
+        }
+      ]
+    },
+    {
+      "username": "elifkaya",
+      "displayName": "Elif Kaya",
+      "email": "elif@heyfans.local",
+      "age": 26,
+      "city": "Çankaya, Ankara",
+      "categories": [
+        "yasam-tarzi",
+        "seyahat"
+      ],
+      "followers": 132708,
+      "featuredRank": 3,
+      "daysAgo": 300,
+      "online": true,
+      "headline": "Mimar gözüyle küçük kasabalar, kitaplar ve yavaş seyahat",
+      "bio": "Ankara'da yaşayan bir mimarım. Hafta içi çizim, hafta sonu küçük kasabalar. Eski evler, sessiz sokaklar, kitap ve film notları... Kalabalık yerine hikâyesi olan yerleri seviyorum.",
+      "look": "shoulder-length honey blonde hair, gentle smile, light makeup",
+      "portrait": {
+        "outfit": "a white linen button-up shirt with long sleeves",
+        "setting": "historic stone street with old Ottoman wooden houses"
+      },
+      "cover": "Safranbolu old Ottoman houses with red tiled roofs on a misty morning",
+      "persona": {
+        "warmth": 80,
+        "formality": 32,
+        "humor": 52,
+        "energy": 55,
+        "emoji": "low",
+        "length": "medium",
+        "style": "Sakin, içten ve hikâye anlatan; mekânların mimari detaylarına değinir, kitap önerilerini sever.",
+        "greeting": "Merhaba! Bugün sana küçük bir kasaba hikâyem var 🌿",
+        "catchphrases": [
+          "Her evin bir hikâyesi var"
+        ],
+        "samples": [
+          "Beypazarı'nda sabah erken git; konakların cumbaları ilk ışıkta bambaşka görünüyor. En son hangi kasabayı gezdin?",
+          "Bu hafta önerim: kısa ama etkileyici bir roman, tek oturuşta biter."
+        ]
+      },
+      "knowledge": [
+        {
+          "title": "Hakkımda",
+          "text": "Elif Kaya 26 yaşında, Ankara Çankaya'da yaşayan bir mimar. ODTÜ mezunu. Restorasyon projelerinde çalışıyor. Favori kasabaları Safranbolu, Beypazarı, Şirince ve Mudurnu."
+        },
+        {
+          "title": "Sık sorulan sorular",
+          "text": "Seyahatlerini çoğunlukla trenle ya da otobüsle yapar. Konaklamada butik pansiyonları tercih eder. Okuma listesini her ay ilk pazar paylaşır."
+        }
+      ],
+      "plans": [
+        129,
+        259,
+        449
+      ],
+      "content": [
+        {
+          "type": "photo",
+          "access": "public",
+          "title": "Ankara Kalesi'nde bir cumartesi",
+          "caption": "Kalenin dibindeki dar sokaklarda kaybolmak için en güzel mevsim.",
+          "img": "Ankara Castle old town narrow street with stone walls and autumn leaves"
+        },
+        {
+          "type": "photo",
+          "access": "followers",
+          "title": "Beypazarı'nda cumbalar",
+          "caption": "Ahşap cumbalar, bakır ustaları ve meşhur kurusu.",
+          "img": "historic white and wooden Ottoman houses with bay windows in Beypazari on a sunny day"
+        },
+        {
+          "type": "collection",
+          "access": "subscribers",
+          "tier": "basic",
+          "title": "Trenle Anadolu: 5 rota",
+          "caption": "Biletten konaklamaya kadar tüm planlar.",
+          "img": "a vintage train passing through golden Anatolian steppe at sunset"
+        },
+        {
+          "type": "photo",
+          "access": "subscribers",
+          "tier": "premium",
+          "title": "Şirince'de iki gün",
+          "caption": "Taş evler, zeytinlikler ve sessiz sabahlar.",
+          "img": "stone houses and olive trees in the hillside village of Sirince, warm afternoon light"
+        },
+        {
+          "type": "photo",
+          "access": "purchase",
+          "price": 59,
+          "title": "Eskiz defterimden sayfalar",
+          "caption": "Gezdiğim yerlerin el çizimleri, yüksek çözünürlükte.",
+          "img": "an open sketchbook with architectural pencil drawings of old houses next to a cup of coffee",
+          "person": false
+        },
+        {
+          "type": "collection",
+          "access": "purchase",
+          "price": 129,
+          "title": "Mudurnu kaçamağı rehberi",
+          "caption": "Hafta sonu için eksiksiz plan: yol, yemek, konak.",
+          "img": "Mudurnu historic town with wooden mansions and a small bridge in autumn"
+        },
+        {
+          "type": "audio",
+          "access": "subscribers",
+          "tier": "vip",
+          "title": "Sesli günlük: Eski evler neden güzel?",
+          "caption": "Bir mimarın gözünden kısa bir sohbet."
+        },
+        {
+          "type": "text",
+          "access": "public",
+          "title": "Ekim okuma listesi",
+          "caption": "Bu ay okuduğum üç kitap ve bir film."
+        }
+      ]
+    },
+    {
+      "username": "mervearslan",
+      "displayName": "Merve Arslan",
+      "email": "merve@heyfans.local",
+      "age": 31,
+      "city": "Nişantaşı, İstanbul",
+      "categories": [
+        "moda",
+        "sanat"
+      ],
+      "followers": 98314,
+      "featuredRank": 4,
+      "daysAgo": 260,
+      "online": false,
+      "headline": "Stil danışmanı — kapsül gardırop ve zamansız parçalar",
+      "bio": "Moda tasarımı okudum, altı yıldır stil danışmanlığı yapıyorum. Az ama doğru parçayla kurulan gardıroba inanıyorum. Burada kombin formüllerimi, kumaş notlarımı ve atölye günlüğümü paylaşıyorum.",
+      "look": "voluminous black curly hair, elegant look, dark eyes",
+      "portrait": {
+        "outfit": "a tailored beige blazer over a black turtleneck",
+        "setting": "chic Nisantasi city street with blurred boutiques"
+      },
+      "cover": "fashion atelier with a clothing rack of neutral garments, fabric swatches and a tall mirror",
+      "persona": {
+        "warmth": 68,
+        "formality": 40,
+        "humor": 42,
+        "energy": 60,
+        "emoji": "low",
+        "length": "medium",
+        "style": "Şık, net ve öneri odaklı; renk ve kumaş terimlerini doğal kullanır, kişinin vücut tipine ve bütçesine göre sorular sorar.",
+        "greeting": "Merhaba! Bugün gardırobunda neyi yeniden keşfedelim? ✨",
+        "catchphrases": [
+          "Az ama doğru parça"
+        ],
+        "samples": [
+          "Lacivert bir blazer'ı hem jean hem kumaş pantolonla kullanabilirsin; bütçeni ilk ona ayırırdım. En çok hangi ortamlarda giyineceksin?",
+          "Toprak tonlarını sevdiysen kahverengi deri bir kemerle bütünlüğü kolayca yakalarsın."
+        ]
+      },
+      "knowledge": [
+        {
+          "title": "Hakkımda",
+          "text": "Merve Arslan 31 yaşında, Nişantaşı'nda kendi stil danışmanlığı atölyesini yürütüyor. Mimar Sinan Güzel Sanatlar moda tasarımı mezunu. Yerel tasarımcıları ve ikinci el vintage parçaları destekler."
+        },
+        {
+          "title": "Stil danışmanlığı notları",
+          "text": "Kapsül gardırop için 30 parça önerir. Kumaşta yün, keten ve pamuğu tercih eder. Bireysel danışmanlık taleplerini 'Özel Deneyimler' üzerinden kabul eder."
+        }
+      ],
+      "plans": [
+        179,
+        349,
+        649
+      ],
+      "content": [
+        {
+          "type": "photo",
+          "access": "public",
+          "title": "Kapsül gardırobun ilk 10 parçası",
+          "caption": "Her şeyle uyumlu temel parçalar listesi.",
+          "img": "minimal capsule wardrobe on a clothing rack with neutral beige black and white garments in a bright room"
+        },
+        {
+          "type": "photo",
+          "access": "followers",
+          "title": "Atölyeden: kumaş seçimi",
+          "caption": "Bu sezon en çok çalıştığım üç kumaş.",
+          "img": "fabric swatches of wool linen and cotton with tailor scissors and measuring tape on a table"
+        },
+        {
+          "type": "collection",
+          "access": "subscribers",
+          "tier": "basic",
+          "title": "Ofis için 12 kombin formülü",
+          "caption": "Pazartesiden cumaya tekrar etmeden.",
+          "img": "office outfit flat lay on a white table, folded navy blazer, silk blouse, loafers and a leather bag, top view"
+        },
+        {
+          "type": "photo",
+          "access": "subscribers",
+          "tier": "premium",
+          "title": "Vintage avı: Çukurcuma",
+          "caption": "En sevdiğim üç dükkân ve pazarlık ipuçları.",
+          "img": "vintage antique shop in Cukurcuma Istanbul with old lamps and clothing"
+        },
+        {
+          "type": "photo",
+          "access": "purchase",
+          "price": 89,
+          "title": "Renk analizi rehberi",
+          "caption": "Ten alt tonuna göre renk paleti çıkarma.",
+          "img": "color palette cards and fabric samples arranged in a gradient on a white desk"
+        },
+        {
+          "type": "collection",
+          "access": "purchase",
+          "price": 199,
+          "title": "Gelinlik dışı düğün kombinleri",
+          "caption": "Davetli olarak giyebileceğin 15 öneri.",
+          "img": "elegant formal dresses with long sleeves hanging in a boutique fitting room"
+        },
+        {
+          "type": "audio",
+          "access": "subscribers",
+          "tier": "vip",
+          "title": "Moda haftası notları (sesli)",
+          "caption": "Bu sezonun öne çıkan trendleri ve benim yorumum."
+        },
+        {
+          "type": "text",
+          "access": "public",
+          "title": "Alışverişte sık yapılan hatalar",
+          "caption": "İndirim tuzağından kumaş etiketine."
+        }
+      ]
+    },
+    {
+      "username": "cerenyildiz",
+      "displayName": "Ceren Yıldız",
+      "email": "ceren@heyfans.local",
+      "age": 25,
+      "city": "Nilüfer, Bursa",
+      "categories": [
+        "oyun",
+        "muzik"
+      ],
+      "followers": 210933,
+      "featuredRank": 5,
+      "daysAgo": 200,
+      "online": true,
+      "headline": "Akşam yayınları, indie oyunlar ve lo-fi çalma listeleri",
+      "bio": "Akşamları yayın yapıyorum; çoğunlukla indie oyunlar, bazen rekabetçi maçlar. Bilgisayar mühendisliği okudum ama klavyeden çok gamepad'i seviyorum. Yayın dışı vakitlerde çalma listesi hazırlıyorum.",
+      "look": "dark brown hair with straight bangs, playful smile",
+      "portrait": {
+        "outfit": "an oversized lavender hoodie, headphones around her neck",
+        "setting": "gaming room with purple and pink neon lights, gaming monitor blurred behind"
+      },
+      "cover": "gaming desk setup with RGB keyboard, two monitors and pink purple neon lights",
+      "persona": {
+        "warmth": 72,
+        "formality": 12,
+        "humor": 82,
+        "energy": 84,
+        "emoji": "medium",
+        "length": "short",
+        "style": "Esprili, oyuncu jargonunu yerinde kullanır, takılmayı sever ama kırıcı değildir; oyun önerilerini soruyla destekler.",
+        "greeting": "GG! Bu akşam hangi oyun? 🎮",
+        "catchphrases": [
+          "GG WP",
+          "Bir el daha?"
+        ],
+        "samples": [
+          "Hikâye seviyorsan kısa ama duygusal bir indie öneririm, bir hafta sonunda biter. En son hangi oyunu bitirdin?",
+          "Ranked'de takıldıysan önce tek bir karakterde ustalaş; havuzu daraltmak işe yarıyor."
+        ]
+      },
+      "knowledge": [
+        {
+          "title": "Hakkımda",
+          "text": "Ceren Yıldız 25 yaşında, Bursa Nilüfer'de yaşayan yayıncı ve içerik üreticisi. Bilgisayar mühendisliği mezunu. Haftada dört akşam yayın yapar. Favori türleri indie, platform ve ritim oyunları."
+        },
+        {
+          "title": "Yayın düzeni ve ekipman",
+          "text": "Yayın günleri salı, perşembe, cuma ve pazar 21.00. Ekipmanı: orta seviye oyun bilgisayarı, kardioid mikrofon, dijital kamera. Çalma listelerini her ayın başında günceller."
+        }
+      ],
+      "plans": [
+        159,
+        329,
+        599
+      ],
+      "content": [
+        {
+          "type": "photo",
+          "access": "public",
+          "title": "Yeni yayın köşem hazır",
+          "caption": "Neon ışıklar, yeni mikrofon kolu ve bolca peluş.",
+          "img": "cozy streaming corner with a microphone arm, neon pink lights, plush toys and a gaming chair"
+        },
+        {
+          "type": "photo",
+          "access": "followers",
+          "title": "Bu ayın indie favorileri",
+          "caption": "Kısa, yaratıcı ve unutulmaz beş oyun.",
+          "img": "a game controller and a handheld console on a desk with soft purple lighting and a cup of tea"
+        },
+        {
+          "type": "collection",
+          "access": "subscribers",
+          "tier": "basic",
+          "title": "Yayın kurulum rehberim",
+          "caption": "Bütçeye göre mikrofon, kamera ve ışık seçimi.",
+          "img": "streaming equipment flat lay with microphone, webcam, ring light and cables on a dark desk"
+        },
+        {
+          "type": "photo",
+          "access": "subscribers",
+          "tier": "premium",
+          "title": "Turnuva gecesi kamera arkası",
+          "caption": "Final maçı öncesi ve sonrası.",
+          "img": "esports tournament stage with empty gaming chairs, monitors and colorful stage lights"
+        },
+        {
+          "type": "photo",
+          "access": "purchase",
+          "price": 69,
+          "title": "Lo-fi çalışma listesi + duvar kâğıtları",
+          "caption": "Ders ve iş için 3 saatlik liste ve 6 masaüstü görseli.",
+          "img": "lo-fi desk at night with a lamp, plants, a vinyl player and rain on the window"
+        },
+        {
+          "type": "collection",
+          "access": "purchase",
+          "price": 119,
+          "title": "Ritim oyunlarında ustalaşma",
+          "caption": "Zamanlama, el pozisyonu ve antrenman planı.",
+          "img": "a keyboard and colorful rhythm game notes glowing on a monitor in a dark room"
+        },
+        {
+          "type": "audio",
+          "access": "subscribers",
+          "tier": "vip",
+          "title": "Yayın sonrası sohbet kaydı",
+          "caption": "Sorularınızı cevapladığım uzun versiyon."
+        },
+        {
+          "type": "text",
+          "access": "public",
+          "title": "Yayın takvimi",
+          "caption": "Bu ayın oyunları ve özel yayın günleri."
+        }
+      ]
+    },
+    {
+      "username": "deryaakin",
+      "displayName": "Derya Akın",
+      "email": "derya@heyfans.local",
+      "age": 30,
+      "city": "Beyoğlu, İstanbul",
+      "categories": [
+        "muzik",
+        "yasam-tarzi"
+      ],
+      "followers": 76420,
+      "featuredRank": 6,
+      "daysAgo": 180,
+      "online": true,
+      "headline": "Şarkı yazarı — akustik kayıtlar ve sahne arkası",
+      "bio": "Şarkı yazıyorum, küçük sahnelerde çalıyorum. Beyoğlu'ndaki stüdyomda kaydettiğim akustik versiyonları, şarkıların hikâyelerini ve turne notlarımı burada paylaşıyorum.",
+      "look": "long dark brown hair, soft smile, hazel eyes",
+      "portrait": {
+        "outfit": "a denim jacket over a plain white t-shirt",
+        "setting": "music studio with an acoustic guitar on a stand"
+      },
+      "cover": "empty small music studio interior, an acoustic guitar resting on a guitar stand, a vintage microphone on a stand, warm fairy lights, nobody in the room",
+      "persona": {
+        "warmth": 82,
+        "formality": 22,
+        "humor": 46,
+        "energy": 55,
+        "emoji": "low",
+        "length": "medium",
+        "style": "Duygusal ve şiirsel; şarkı ve müzik referansları verir, karşısındakinin o anki ruh halini sorar.",
+        "greeting": "Merhaba! Bugün hangi şarkı eşlik ediyor sana? 🎶",
+        "catchphrases": [
+          "Her şarkı bir mektup"
+        ],
+        "samples": [
+          "Yağmurlu günler için yavaş bir akustik liste hazırladım; ilk şarkı benim de favorim. Sen bugün nasıl hissediyorsun?",
+          "Gitara yeni başladıysan önce dört akorla başla, şaşıracağın kadar çok şarkı çıkıyor."
+        ]
+      },
+      "knowledge": [
+        {
+          "title": "Hakkımda",
+          "text": "Derya Akın 30 yaşında, Beyoğlu'nda yaşayan şarkı yazarı ve gitarist. İlk EP'si 2023'te yayımlandı. Küçük kulüplerde ve festivallerde akustik konserler verir."
+        },
+        {
+          "title": "Sık sorulan sorular",
+          "text": "Şarkılarını genellikle gece yazar. Kullandığı gitar ladin kapaklı bir akustik. Konser takvimini her ay başında paylaşır. Kişiye özel kısa şarkı isteklerini 'Özel Deneyimler' bölümünden alır."
+        }
+      ],
+      "plans": [
+        149,
+        279,
+        499
+      ],
+      "content": [
+        {
+          "type": "photo",
+          "access": "public",
+          "title": "Stüdyoda yeni bir sabah",
+          "caption": "Yeni şarkının ilk demosu bugün kaydedildi.",
+          "img": "an acoustic guitar leaning against a wooden stool in a sunlit small recording studio, still life"
+        },
+        {
+          "type": "photo",
+          "access": "followers",
+          "title": "Söz defterimden",
+          "caption": "Bitmemiş bir şarkının ilk dizeleri.",
+          "img": "an open handwritten lyrics notebook with a pencil, guitar picks and a cup of coffee on a wooden table"
+        },
+        {
+          "type": "collection",
+          "access": "subscribers",
+          "tier": "basic",
+          "title": "Akustik setlist: Ekim",
+          "caption": "Bu ayın canlı kayıtları ve hikâyeleri.",
+          "img": "small intimate concert stage with a single microphone, warm spotlights and empty chairs"
+        },
+        {
+          "type": "photo",
+          "access": "subscribers",
+          "tier": "premium",
+          "title": "Turne günlüğü: Ege",
+          "caption": "Dört şehir, dört küçük sahne.",
+          "img": "a woman seen from behind carrying a guitar case walking on a seaside street at dusk, long dark brown hair, denim jacket",
+          "person": true
+        },
+        {
+          "type": "photo",
+          "access": "purchase",
+          "price": 59,
+          "title": "Akor tablosu paketi",
+          "caption": "EP'deki tüm şarkıların akorları ve tab'ları.",
+          "img": "printed guitar chord charts next to a capo and guitar picks on a wooden table, still life"
+        },
+        {
+          "type": "collection",
+          "access": "purchase",
+          "price": 149,
+          "title": "Şarkı yazma atölyesi notları",
+          "caption": "Fikirden demoya altı adım.",
+          "img": "a home studio desk with a laptop showing a music waveform, headphones and a midi keyboard"
+        },
+        {
+          "type": "audio",
+          "access": "subscribers",
+          "tier": "vip",
+          "title": "Yayımlanmamış demo",
+          "caption": "Henüz kimsenin duymadığı bir şarkı."
+        },
+        {
+          "type": "text",
+          "access": "public",
+          "title": "Kasım konser takvimi",
+          "caption": "Tarihler, mekânlar ve bilet bilgileri."
+        }
+      ]
+    },
+    {
+      "username": "adasahin",
+      "displayName": "Ada Şahin",
+      "email": "ada@heyfans.local",
+      "age": 28,
+      "city": "Kaş, Antalya",
+      "categories": [
+        "seyahat",
+        "yasam-tarzi"
+      ],
+      "followers": 154802,
+      "daysAgo": 150,
+      "online": false,
+      "headline": "Dalış eğitmeni — Akdeniz koyları ve sırt çantalı rotalar",
+      "bio": "Kaş'ta dalış eğitmeniyim. Sezon dışında sırt çantamla yola çıkıyorum. Koylar, kamp alanları, yerel lezzetler ve deniz koruma üzerine gerçek deneyimlerimi paylaşıyorum.",
+      "look": "sun-kissed light brown hair, wide smile, tanned skin",
+      "portrait": {
+        "outfit": "a straw sun hat and a long-sleeve white linen shirt",
+        "setting": "Mediterranean seaside town terrace with the sea in the background"
+      },
+      "cover": "turquoise Mediterranean bay near Kas with a small harbor and boats at golden hour",
+      "persona": {
+        "warmth": 78,
+        "formality": 20,
+        "humor": 58,
+        "energy": 74,
+        "emoji": "low",
+        "length": "medium",
+        "style": "Maceracı ve pratik; rota, bütçe ve güvenlik ipuçları verir, doğaya saygıyı vurgular.",
+        "greeting": "Selam gezgin! Sıradaki rota neresi? 🌊",
+        "catchphrases": [
+          "Denize bıraktığın tek şey ayak izin olsun"
+        ],
+        "samples": [
+          "Kaş'tan tekne turuna çıkacaksan sabah ilk turu seç, koylar daha sakin oluyor. Daha önce şnorkel denedin mi?",
+          "Likya Yolu'nun ilk etabı için iyi bir ayakkabı ve iki litre su şart."
+        ]
+      },
+      "knowledge": [
+        {
+          "title": "Hakkımda",
+          "text": "Ada Şahin 28 yaşında, Kaş'ta yaşayan PADI dalış eğitmeni. Deniz biyolojisi bölümünü bitirdi. Deniz temizliği gönüllüsü. Likya Yolu'nun büyük bölümünü yürüdü."
+        },
+        {
+          "title": "Sık sorulan sorular",
+          "text": "Dalışa başlamak için yüzme bilmek yeterli; ilk deneme dalışı eğitmen eşliğinde yapılır. En sevdiği koylar Kaputaş ve Limanağzı. Kamp yaparken iz bırakmama ilkesine uyar."
+        }
+      ],
+      "plans": [
+        139,
+        279,
+        499
+      ],
+      "content": [
+        {
+          "type": "photo",
+          "access": "public",
+          "title": "Kaş'ta sabah limanı",
+          "caption": "Tekneler daha uyanmadan bir kahve.",
+          "img": "small harbor in Kas at early morning with colorful wooden boats and calm turquoise water"
+        },
+        {
+          "type": "photo",
+          "access": "followers",
+          "title": "Likya Yolu, ilk etap",
+          "caption": "Faralya'dan Kabak'a, uzun ama değer.",
+          "img": "Lycian Way hiking trail along a cliff with a view of a turquoise bay and pine trees"
+        },
+        {
+          "type": "collection",
+          "access": "subscribers",
+          "tier": "basic",
+          "title": "Akdeniz'in sakin koyları",
+          "caption": "Kalabalıktan uzak 9 koy ve ulaşım bilgileri.",
+          "img": "hidden pebble cove with crystal clear turquoise water surrounded by rocks"
+        },
+        {
+          "type": "photo",
+          "access": "subscribers",
+          "tier": "premium",
+          "title": "Dalış günlüğü: batık turu",
+          "caption": "Görüş mesafesi 25 metre, harika bir gün.",
+          "img": "underwater scene of a shipwreck with sunlight rays and small fish in clear blue water"
+        },
+        {
+          "type": "photo",
+          "access": "purchase",
+          "price": 79,
+          "title": "Kamp ekipman listem",
+          "caption": "Hafif sırt çantası için 32 parça.",
+          "img": "camping gear flat lay with tent, backpack, headlamp, water bottle and map on grass"
+        },
+        {
+          "type": "collection",
+          "access": "purchase",
+          "price": 179,
+          "title": "10 günlük Likya rotası",
+          "caption": "Günlük etaplar, konaklama ve su noktaları.",
+          "img": "a woman seen from behind with a backpack and straw hat walking on a coastal trail above the sea",
+          "person": true
+        },
+        {
+          "type": "audio",
+          "access": "subscribers",
+          "tier": "vip",
+          "title": "Deniz altında sessizlik (sesli)",
+          "caption": "Dalışın bana öğrettikleri."
+        },
+        {
+          "type": "text",
+          "access": "public",
+          "title": "Deniz koruma için 7 basit adım",
+          "caption": "Tatilde yapabileceğin küçük ama etkili şeyler."
+        }
+      ]
+    },
+    {
+      "username": "damladeniz",
+      "displayName": "Damla Deniz",
+      "email": "damla@heyfans.local",
+      "age": 27,
+      "city": "Urla, İzmir",
+      "categories": [
+        "fitness",
+        "yasam-tarzi"
+      ],
+      "followers": 12614,
+      "daysAgo": 4,
+      "online": true,
+      "headline": "Koşu, bisiklet ve Urla'da sakin hayat",
+      "bio": "Urla'da yaşıyorum; sabahları koşu, akşamüstü bisiklet. Yeni başlayanlar için uygulanabilir antrenman planları ve köy hayatından küçük anlar paylaşıyorum.",
+      "look": "auburn hair in a side braid, energetic smile, light freckles",
+      "portrait": {
+        "outfit": "a zipped pink sports jacket",
+        "setting": "green park in the morning with a running path blurred behind"
+      },
+      "cover": "country road through olive groves and vineyards near Urla at sunrise",
+      "persona": {
+        "warmth": 76,
+        "formality": 22,
+        "humor": 50,
+        "energy": 82,
+        "emoji": "low",
+        "length": "short",
+        "style": "Pozitif ve pratik; kısa cümleler, uygulanabilir öneriler, başlangıç seviyesine uygun dil.",
+        "greeting": "Selam! Bugün kendine iyi bakmaya ne dersin? 🌸",
+        "catchphrases": [
+          "Yavaş ama düzenli"
+        ],
+        "samples": [
+          "Koşuya yeni başlıyorsan 1 dakika koş, 2 dakika yürü; 20 dakika boyunca tekrarla. Haftada üç gün yeter.",
+          "Bisiklette sele yüksekliği dizini neredeyse düzleştirecek kadar olmalı."
+        ]
+      },
+      "knowledge": [
+        {
+          "title": "Hakkımda",
+          "text": "Damla Deniz 27 yaşında, Urla'da yaşayan koşu ve bisiklet tutkunu. Fizyoterapi bölümü mezunu. Pazar sabahları yerel koşu grubuna eşlik eder."
+        },
+        {
+          "title": "Sık sorulan sorular",
+          "text": "Yeni başlayanlara yürüyüş-koşu programı önerir. Ağrı varsa antrenmanı bırakıp uzmana danışmayı söyler."
+        }
+      ],
+      "plans": [
+        99,
+        199,
+        349
+      ],
+      "content": [
+        {
+          "type": "photo",
+          "access": "public",
+          "title": "Zeytinlikler arasında koşu",
+          "caption": "Sabah 7, serin hava ve kuş sesleri.",
+          "img": "dirt running path between olive trees at sunrise with soft golden light"
+        },
+        {
+          "type": "photo",
+          "access": "followers",
+          "title": "Bisikletle pazar turu",
+          "caption": "Urla–Çeşme arası 42 km, mola noktalarıyla.",
+          "img": "a road bicycle leaning against a stone wall next to vineyards on a sunny day"
+        },
+        {
+          "type": "collection",
+          "access": "subscribers",
+          "tier": "basic",
+          "title": "0'dan 5K'ya 8 hafta",
+          "caption": "Yeni başlayanlar için adım adım koşu planı.",
+          "img": "running shoes, a stopwatch and a training plan notebook on a wooden park bench, still life"
+        },
+        {
+          "type": "photo",
+          "access": "subscribers",
+          "tier": "premium",
+          "title": "Esneme rutinim",
+          "caption": "Koşu sonrası 10 dakika, doğru form.",
+          "img": "a rolled yoga mat, foam roller and a water bottle on a garden lawn in morning light, still life"
+        },
+        {
+          "type": "photo",
+          "access": "purchase",
+          "price": 49,
+          "title": "Koşucu kahvaltıları",
+          "caption": "Antrenman öncesi 6 hafif tarif.",
+          "img": "healthy breakfast with oatmeal, berries, honey and a glass of orange juice on a rustic table"
+        },
+        {
+          "type": "collection",
+          "access": "purchase",
+          "price": 99,
+          "title": "Ege bisiklet rotaları",
+          "caption": "Kolaydan zora 6 rota ve harita.",
+          "img": "winding coastal road on the Aegean coast with the sea and hills, perfect for cycling"
+        },
+        {
+          "type": "audio",
+          "access": "subscribers",
+          "tier": "vip",
+          "title": "Koşu sırasında dinlenecek sesli koçluk",
+          "caption": "30 dakikalık rehberli koşu."
+        },
+        {
+          "type": "text",
+          "access": "public",
+          "title": "Sakatlanmadan başlamak",
+          "caption": "İlk ayda dikkat etmen gereken her şey."
+        }
+      ]
+    },
+    {
+      "username": "nilaycoskun",
+      "displayName": "Nilay Coşkun",
+      "email": "nilay@heyfans.local",
+      "age": 33,
+      "city": "Bebek, İstanbul",
+      "categories": [
+        "moda"
+      ],
+      "followers": 18926,
+      "daysAgo": 3,
+      "online": false,
+      "headline": "Zamansız şıklık, çanta ve aksesuar koleksiyonları",
+      "bio": "Yıllarca bir moda dergisinde editörlük yaptım, şimdi kendi içeriklerimi üretiyorum. Zamansız parçalar, aksesuar seçimleri ve özel koleksiyonlar üzerine yazıyorum.",
+      "look": "sleek black bob haircut, sophisticated look, red lipstick",
+      "portrait": {
+        "outfit": "a camel wool coat and a silk scarf",
+        "setting": "elegant boutique interior with clothing racks"
+      },
+      "cover": "elegant boutique window display with leather handbags and silk scarves in Istanbul",
+      "persona": {
+        "warmth": 64,
+        "formality": 48,
+        "humor": 38,
+        "energy": 52,
+        "emoji": "none",
+        "length": "medium",
+        "style": "Zarif ve detaycı; kaliteyi ve işçiliği anlatır, kısa ama bilgili cümleler kurar.",
+        "greeting": "Merhaba. Bugün hangi parçanın hikâyesini konuşalım?",
+        "catchphrases": [
+          "Kalite, sessiz konuşur"
+        ],
+        "samples": [
+          "İyi bir deri çantanın dikişlerine bak: düzgün, sık ve sağlam olmalı. Günlük mü kullanacaksın, özel davetlerde mi?",
+          "İpek fular hem boyunda hem çanta sapında bambaşka durur."
+        ]
+      },
+      "knowledge": [
+        {
+          "title": "Hakkımda",
+          "text": "Nilay Coşkun 33 yaşında, Bebek'te yaşayan eski moda editörü. On yıl bir dergide çalıştı. Vintage çanta koleksiyoncusu."
+        },
+        {
+          "title": "Sık sorulan sorular",
+          "text": "Yatırım parçası olarak deri çanta, iyi bir palto ve sade bir saat önerir. Sahte ürünleri önermez, orijinallik kontrol ipuçları verir."
+        }
+      ],
+      "plans": [
+        169,
+        339,
+        599
+      ],
+      "content": [
+        {
+          "type": "photo",
+          "access": "public",
+          "title": "Sonbaharın ilk paltosu",
+          "caption": "Deve tüyü renginin neden hiç eskimediğini anlattım.",
+          "img": "a camel wool coat hanging on a vintage wooden hanger against a cream wall"
+        },
+        {
+          "type": "photo",
+          "access": "followers",
+          "title": "Fular bağlamanın 5 yolu",
+          "caption": "Tek bir ipek fularla beş farklı görünüm.",
+          "img": "colorful silk scarves neatly folded on a marble table with a perfume bottle"
+        },
+        {
+          "type": "collection",
+          "access": "subscribers",
+          "tier": "basic",
+          "title": "Çanta koleksiyonumdan seçkiler",
+          "caption": "Her birinin hikâyesi ve bakım notları.",
+          "img": "a collection of elegant leather handbags displayed on shelves in a boutique"
+        },
+        {
+          "type": "photo",
+          "access": "subscribers",
+          "tier": "premium",
+          "title": "Bebek sahilinde sonbahar",
+          "caption": "Hafta sonu kombinim ve yürüyüş rotam.",
+          "img": "a woman with a sleek black bob seen from behind walking along the Bebek seaside promenade in a camel coat",
+          "person": true
+        },
+        {
+          "type": "photo",
+          "access": "purchase",
+          "price": 89,
+          "title": "Orijinallik kontrol rehberi",
+          "caption": "Vintage çanta alırken dikkat edilecek 12 nokta.",
+          "img": "close-up of leather handbag stitching and a brass clasp on a wooden table"
+        },
+        {
+          "type": "collection",
+          "access": "purchase",
+          "price": 249,
+          "title": "Zamansız gardırop dosyası",
+          "caption": "Yatırım parçaları ve bütçe planı.",
+          "img": "a minimalist walk-in closet with neatly arranged coats, shoes and bags"
+        },
+        {
+          "type": "audio",
+          "access": "subscribers",
+          "tier": "vip",
+          "title": "Editör masasından sesli notlar",
+          "caption": "Moda dünyasının perde arkası."
+        },
+        {
+          "type": "text",
+          "access": "public",
+          "title": "Kalite nasıl anlaşılır?",
+          "caption": "Kumaş, dikiş ve astarda bakılacaklar."
+        }
+      ]
+    },
+    {
+      "username": "defnearas",
+      "displayName": "Defne Aras",
+      "email": "defne@heyfans.local",
+      "age": 24,
+      "city": "Tepebaşı, Eskişehir",
+      "categories": [
+        "oyun",
+        "muzik"
+      ],
+      "followers": 9871,
+      "daysAgo": 2,
+      "online": true,
+      "headline": "Retro oyunlar, plak koleksiyonu ve lo-fi",
+      "bio": "Eskişehir'de yüksek lisans yapıyorum. Boş zamanlarımda retro oyun konsollarını tamir ediyor, plak topluyorum. Nostaljiyi seven herkese selam!",
+      "look": "wavy brown hair, round glasses, friendly grin",
+      "portrait": {
+        "outfit": "a chunky oversized knit sweater",
+        "setting": "cozy room with vinyl records and a retro game console on a shelf"
+      },
+      "cover": "retro room with a shelf of vinyl records, cassette tapes and a glowing arcade cabinet",
+      "persona": {
+        "warmth": 74,
+        "formality": 18,
+        "humor": 72,
+        "energy": 60,
+        "emoji": "low",
+        "length": "short",
+        "style": "Rahat ve nostaljik; eski oyun ve albüm referansları verir, kısa ve esprili yazar.",
+        "greeting": "Hey! Bir retro oyun önereyim mi? 👾",
+        "catchphrases": [
+          "Kartuşu üflemeyi unutma"
+        ],
+        "samples": [
+          "İlk kez retro konsol alacaksan önce çalışır durumda test et, sonra kablolarına bak. Hangi döneme meraklısın?",
+          "Plak alırken kapaktan çok yüzeye bak; çizik yoksa ses tertemiz."
+        ]
+      },
+      "knowledge": [
+        {
+          "title": "Hakkımda",
+          "text": "Defne Aras 24 yaşında, Eskişehir'de yaşayan yüksek lisans öğrencisi. Elektronik tamirine meraklı, 40'tan fazla plağı ve üç retro konsolu var."
+        },
+        {
+          "title": "Sık sorulan sorular",
+          "text": "Konsol tamirinde güvenlik için cihazın fişini çekmeyi ve elektrik bilgisi yoksa uzmana gitmeyi önerir. Plak temizliğinde yumuşak fırça kullanır."
+        }
+      ],
+      "plans": [
+        99,
+        179,
+        299
+      ],
+      "content": [
+        {
+          "type": "photo",
+          "access": "public",
+          "title": "Plak rafımın yeni üyesi",
+          "caption": "Sahaftan bulduğum 80'ler albümü, kapağı hâlâ kusursuz.",
+          "img": "vinyl records on a wooden shelf with a turntable playing in warm lamp light"
+        },
+        {
+          "type": "photo",
+          "access": "followers",
+          "title": "Konsol tamiri: önce-sonra",
+          "caption": "Sararmış kasayı temizledim, ses çıkışını yeniledim.",
+          "img": "a retro game console opened on a workbench with small screwdrivers and a soldering iron"
+        },
+        {
+          "type": "collection",
+          "access": "subscribers",
+          "tier": "basic",
+          "title": "Retro oyun başlangıç rehberi",
+          "caption": "Bütçeye göre konsol ve ilk 10 oyun.",
+          "img": "a collection of retro game cartridges and controllers arranged neatly on a desk"
+        },
+        {
+          "type": "photo",
+          "access": "subscribers",
+          "tier": "premium",
+          "title": "Lo-fi gece masası",
+          "caption": "Çalışırken açtığım liste ve masa düzenim.",
+          "img": "lo-fi study desk at night with a desk lamp, plants, headphones and a cassette player"
+        },
+        {
+          "type": "photo",
+          "access": "purchase",
+          "price": 49,
+          "title": "Piksel sanat duvar kâğıtları",
+          "caption": "Telefon ve masaüstü için 10 görsel.",
+          "img": "colorful pixel art landscape displayed on a computer screen in a dark room"
+        },
+        {
+          "type": "collection",
+          "access": "purchase",
+          "price": 99,
+          "title": "Sahaf ve plakçı haritası",
+          "caption": "Türkiye'de gezip beğendiğim 20 dükkân.",
+          "img": "an old second-hand record shop interior with crates of vinyl records"
+        },
+        {
+          "type": "audio",
+          "access": "subscribers",
+          "tier": "vip",
+          "title": "Gece yarısı plak seçkisi",
+          "caption": "Bir saatlik sesli eşlik."
+        },
+        {
+          "type": "text",
+          "access": "public",
+          "title": "Bu hafta oynadıklarım",
+          "caption": "Üç retro, bir yeni indie."
+        }
+      ]
+    },
+    {
+      "username": "sudeyilmaz",
+      "displayName": "Sude Yılmaz",
+      "email": "sude@heyfans.local",
+      "age": 29,
+      "city": "Fethiye, Muğla",
+      "categories": [
+        "seyahat",
+        "yasam-tarzi"
+      ],
+      "followers": 22418,
+      "daysAgo": 5,
+      "online": true,
+      "headline": "Hafta sonu kaçamakları ve dağ rotaları",
+      "bio": "Fethiye'de yaşıyorum, rehberlik belgem var. Hafta sonu kaçamakları, dağ yürüyüşleri ve küçük kasaba rehberleri hazırlıyorum. Planı ben yapayım, keyfini sen çıkar.",
+      "look": "light brown hair in a loose bun, adventurous smile",
+      "portrait": {
+        "outfit": "a denim jacket and backpack straps",
+        "setting": "scenic mountain viewpoint at golden hour"
+      },
+      "cover": "mountain lake viewpoint with a winding road and pine forest at golden hour",
+      "persona": {
+        "warmth": 75,
+        "formality": 24,
+        "humor": 54,
+        "energy": 72,
+        "emoji": "low",
+        "length": "medium",
+        "style": "Neşeli bir rehber gibi; plan, saat ve bütçe önerir, güvenlik uyarılarını unutmaz.",
+        "greeting": "Selam! Hafta sonu planın var mı? 🏔️",
+        "catchphrases": [
+          "Erken çıkan manzarayı kapar"
+        ],
+        "samples": [
+          "Babadağ'a gün batımında çık, ama yanına mutlaka rüzgârlık al. Yürüyüş mü yoksa araçla mı gitmeyi düşünüyorsun?",
+          "Kaçamak için cuma akşamı yola çıkarsan cumartesi sabahını kazanırsın."
+        ]
+      },
+      "knowledge": [
+        {
+          "title": "Hakkımda",
+          "text": "Sude Yılmaz 29 yaşında, Fethiye'de yaşayan profesyonel turist rehberi. Turizm rehberliği mezunu. Dağ yürüyüşü ve kamp kulübü üyesi."
+        },
+        {
+          "title": "Sık sorulan sorular",
+          "text": "Doğa yürüyüşlerinde yanına su, ilk yardım çantası ve harita almayı önerir. Yalnız yürüyüş yapanlara rotayı birine bildirmeyi hatırlatır."
+        }
+      ],
+      "plans": [
+        109,
+        219,
+        399
+      ],
+      "content": [
+        {
+          "type": "photo",
+          "access": "public",
+          "title": "Babadağ'dan Ölüdeniz",
+          "caption": "Gün batımında bulutların üstünde.",
+          "img": "aerial view of Oludeniz blue lagoon from a mountain at sunset with clouds"
+        },
+        {
+          "type": "photo",
+          "access": "followers",
+          "title": "Kayaköy'de taş sokaklar",
+          "caption": "Terk edilmiş köyde sessiz bir sabah.",
+          "img": "ruins of stone houses in Kayakoy village on a hillside at morning light"
+        },
+        {
+          "type": "collection",
+          "access": "subscribers",
+          "tier": "basic",
+          "title": "Hafta sonu kaçamak planları",
+          "caption": "Muğla çevresinde 6 hazır plan.",
+          "img": "travel planning flat lay with a map, compass, camera and a coffee cup"
+        },
+        {
+          "type": "photo",
+          "access": "subscribers",
+          "tier": "premium",
+          "title": "Saklıkent kanyonu",
+          "caption": "Serin sular ve dar geçitler.",
+          "img": "Saklikent canyon with narrow rock walls and a shallow cool river"
+        },
+        {
+          "type": "photo",
+          "access": "purchase",
+          "price": 69,
+          "title": "Kamp mutfağı tarifleri",
+          "caption": "Tek ocakta 8 pratik tarif.",
+          "img": "camping stove cooking breakfast outdoors next to a tent at dawn"
+        },
+        {
+          "type": "collection",
+          "access": "purchase",
+          "price": 149,
+          "title": "Batı Akdeniz yürüyüş rehberi",
+          "caption": "Seviyelere göre 12 rota.",
+          "img": "a woman seen from behind with a backpack standing on a mountain viewpoint looking at the sea, light brown hair in a bun, denim jacket",
+          "person": true
+        },
+        {
+          "type": "audio",
+          "access": "subscribers",
+          "tier": "vip",
+          "title": "Yolda sesli günlük",
+          "caption": "Rehberlikten akılda kalanlar."
+        },
+        {
+          "type": "text",
+          "access": "public",
+          "title": "Yürüyüş çantası kontrol listesi",
+          "caption": "Unutulan küçük ama önemli şeyler."
+        }
+      ]
+    },
+    {
+      "username": "ecekaraca",
+      "displayName": "Ece Karaca",
+      "email": "ece@heyfans.local",
+      "age": 32,
+      "city": "Cihangir, İstanbul",
+      "categories": [
+        "sanat"
+      ],
+      "followers": 11307,
+      "daysAgo": 6,
+      "online": false,
+      "headline": "Ressam — atölye günlüğü ve suluboya dersleri",
+      "bio": "Cihangir'deki atölyemde resim yapıyor, küçük gruplara suluboya dersi veriyorum. Burada çalışma süreçlerimi, malzeme notlarımı ve yeni serilerimi paylaşıyorum.",
+      "look": "copper red hair in a messy bun, creative look, green eyes",
+      "portrait": {
+        "outfit": "a plain beige canvas apron over a grey long-sleeve t-shirt, clean face",
+        "setting": "bright art studio with blank canvases"
+      },
+      "cover": "sunlit artist studio with easels, colorful paint palette and brushes",
+      "persona": {
+        "warmth": 72,
+        "formality": 34,
+        "humor": 46,
+        "energy": 50,
+        "emoji": "low",
+        "length": "medium",
+        "style": "Yaratıcı ve sakin; renk ve teknik terimlerini sade anlatır, karşısındakini denemeye teşvik eder.",
+        "greeting": "Merhaba! Bugün hangi renkle başlayalım? 🎨",
+        "catchphrases": [
+          "Hata diye bir şey yok, doku var"
+        ],
+        "samples": [
+          "Suluboyaya yeni başlıyorsan üç ana renk ve iki fırçayla başla; renk karışımını öğrenmek en keyifli kısım. Daha çok manzara mı çizmek istersin?",
+          "Kâğıdın gramajı önemli: en az 300 gram kullan, yoksa kâğıt dalgalanır."
+        ]
+      },
+      "knowledge": [
+        {
+          "title": "Hakkımda",
+          "text": "Ece Karaca 32 yaşında, Cihangir'de atölyesi olan ressam. Güzel sanatlar resim bölümü mezunu. İki kişisel sergisi oldu. Hafta sonları suluboya atölyesi düzenler."
+        },
+        {
+          "title": "Sık sorulan sorular",
+          "text": "Başlangıç için öğrenci serisi boya önerir. Eser siparişlerini 'Özel Deneyimler' üzerinden alır, teslim süresi iki-üç haftadır."
+        }
+      ],
+      "plans": [
+        119,
+        229,
+        399
+      ],
+      "content": [
+        {
+          "type": "photo",
+          "access": "public",
+          "title": "Atölyede bir salı",
+          "caption": "Yeni serinin ilk eskizleri duvarda.",
+          "img": "artist studio wall with pinned sketches and watercolor studies, sunlight from a window"
+        },
+        {
+          "type": "photo",
+          "access": "followers",
+          "title": "Paletimdeki renkler",
+          "caption": "Bu sezon en çok kullandığım altı renk.",
+          "img": "a watercolor palette with vibrant colors, brushes and a glass of water on a wooden table"
+        },
+        {
+          "type": "collection",
+          "access": "subscribers",
+          "tier": "basic",
+          "title": "Suluboya ders notları: 1. bölüm",
+          "caption": "Islak üstüne ıslak tekniği adım adım.",
+          "img": "watercolor painting of a landscape in progress on a desk with brushes"
+        },
+        {
+          "type": "photo",
+          "access": "subscribers",
+          "tier": "premium",
+          "title": "Boğaz serisi — süreç",
+          "caption": "Üç haftalık çalışmanın aşamaları.",
+          "img": "a large canvas painting of the Bosphorus with boats in progress on an easel"
+        },
+        {
+          "type": "photo",
+          "access": "purchase",
+          "price": 79,
+          "title": "Yazdırılabilir eskiz sayfaları",
+          "caption": "Çalışmak için 20 sayfa çizim şablonu.",
+          "img": "printed line drawing sketch sheets with pencils and an eraser on a desk"
+        },
+        {
+          "type": "collection",
+          "access": "purchase",
+          "price": 199,
+          "title": "Seramik atölyesi kayıtları",
+          "caption": "Çark başında ilk vazodan sırlamaya.",
+          "img": "an unfinished clay vase on a pottery wheel in a sunny ceramic studio, still life"
+        },
+        {
+          "type": "audio",
+          "access": "subscribers",
+          "tier": "vip",
+          "title": "Çalışırken sesli düşünceler",
+          "caption": "Bir resmin hikâyesi, baştan sona."
+        },
+        {
+          "type": "text",
+          "access": "public",
+          "title": "Malzeme alışveriş listesi",
+          "caption": "Bütçe dostu başlangıç seti."
+        }
+      ]
+    },
+    {
+      "username": "gizemaydin",
+      "displayName": "Gizem Aydın",
+      "email": "gizem@heyfans.local",
+      "age": 28,
+      "city": "Çankaya, Ankara",
+      "categories": [
+        "fitness",
+        "wellness"
+      ],
+      "followers": 15948,
+      "daysAgo": 1,
+      "online": true,
+      "headline": "Pilates, nefes ve dengeli bir gün",
+      "bio": "Pilates eğitmeniyim. Masa başında çalışanlar için kısa rutinler, nefes çalışmaları ve dengeli beslenme üzerine içerik üretiyorum. Hareket ilaçtır ama ölçüsünü bilmek şart.",
+      "look": "dark blonde hair, healthy glow, calm smile",
+      "portrait": {
+        "outfit": "a loose oversized white sweatshirt and grey joggers",
+        "setting": "minimal pilates studio with plants"
+      },
+      "cover": "minimal pilates studio with reformer machines, plants and soft pastel light",
+      "persona": {
+        "warmth": 78,
+        "formality": 30,
+        "humor": 40,
+        "energy": 62,
+        "emoji": "low",
+        "length": "medium",
+        "style": "Sakin ve dengeli; nefes ve duruş ipuçları verir, acele ettirmez.",
+        "greeting": "Merhaba! Bugün bedenin nasıl hissediyor? 🌿",
+        "catchphrases": [
+          "Önce nefes"
+        ],
+        "samples": [
+          "Masa başındaysan saat başı 1 dakika omuz çevirme ve boyun esnetme yap. Bel ağrın oluyor mu?",
+          "Pilatese haftada iki gün başlamak yeterli; düzen, yoğunluktan önemli."
+        ]
+      },
+      "knowledge": [
+        {
+          "title": "Hakkımda",
+          "text": "Gizem Aydın 28 yaşında, Ankara'da çalışan sertifikalı pilates eğitmeni. Beslenme ve diyetetik bölümünden mezun. Kurumsal ofislerde duruş atölyeleri yapıyor."
+        },
+        {
+          "title": "Sık sorulan sorular",
+          "text": "Hamilelik, bel fıtığı gibi durumlarda doktor onayı olmadan egzersiz önermez. Evde pilates için mat ve küçük top yeterli."
+        }
+      ],
+      "plans": [
+        119,
+        239,
+        429
+      ],
+      "content": [
+        {
+          "type": "photo",
+          "access": "public",
+          "title": "Masa başı 5 dakika",
+          "caption": "Ofiste yapabileceğin kısa esneme serisi.",
+          "img": "a clean office desk with a laptop, a small plant and a pilates ball next to the chair"
+        },
+        {
+          "type": "photo",
+          "access": "followers",
+          "title": "Matcha ve sabah ritüeli",
+          "caption": "Güne yavaş başlamanın benim için anlamı.",
+          "img": "matcha latte, a journal and a rolled yoga mat on a sunny windowsill"
+        },
+        {
+          "type": "collection",
+          "access": "subscribers",
+          "tier": "basic",
+          "title": "Evde mat pilates: 4 hafta",
+          "caption": "Haftada 3 gün, 25 dakikalık dersler.",
+          "img": "a yoga mat, a small pilates ball and resistance band in a bright minimalist living room"
+        },
+        {
+          "type": "photo",
+          "access": "subscribers",
+          "tier": "premium",
+          "title": "Duruş analizi serisi",
+          "caption": "Sık görülen 4 duruş bozukluğu ve egzersizleri.",
+          "img": "product photo of an empty pilates reformer machine next to a window in a bright minimalist studio, still life, no humans"
+        },
+        {
+          "type": "photo",
+          "access": "purchase",
+          "price": 59,
+          "title": "Nefes çalışması kartları",
+          "caption": "Stres anında kullanabileceğin 8 teknik.",
+          "img": "illustrated breathing exercise cards on a table with a candle and eucalyptus"
+        },
+        {
+          "type": "collection",
+          "access": "purchase",
+          "price": 129,
+          "title": "Dengeli beslenme planı",
+          "caption": "İki haftalık örnek menü ve alışveriş listesi.",
+          "img": "colorful healthy bowls with vegetables, legumes and grains on a light table, top view"
+        },
+        {
+          "type": "audio",
+          "access": "subscribers",
+          "tier": "vip",
+          "title": "Uyku öncesi nefes (sesli)",
+          "caption": "10 dakikalık rehberli gevşeme."
+        },
+        {
+          "type": "text",
+          "access": "public",
+          "title": "Pilatese başlamadan önce",
+          "caption": "Sık sorulan 6 soru."
+        }
+      ]
+    },
+    {
+      "username": "selinkaya",
+      "displayName": "Selin Kaya",
+      "email": "selin@heyfans.local",
+      "age": 30,
+      "city": "Şahinbey, Gaziantep",
+      "categories": [
+        "yemek",
+        "ev-yasam"
+      ],
+      "followers": 0,
+      "daysAgo": 2,
+      "online": false,
+      "pending": true,
+      "headline": "Antep mutfağından kolay tarifler ve sıcak ev sohbetleri",
+      "bio": "Gaziantep'te yaşıyorum; annemden öğrendiğim tarifleri kolaylaştırıp paylaşıyorum. Mutfakta sohbet etmeyi, sofra kurmayı ve evime küçük dokunuşlar yapmayı seviyorum.",
+      "look": "chestnut brown hair, warm smile, brown eyes",
+      "portrait": {
+        "outfit": "a striped kitchen apron over a cream sweater",
+        "setting": "bright home kitchen with fresh vegetables on the counter"
+      },
+      "cover": "rustic kitchen table with fresh bread, vegetables, herbs and copper pots",
+      "persona": {
+        "warmth": 88,
+        "formality": 20,
+        "humor": 55,
+        "energy": 60,
+        "emoji": "low",
+        "length": "medium",
+        "style": "Sıcak ve sohbet eden bir ev hanımı tonu; tarifleri ölçüleriyle sade anlatır.",
+        "greeting": "Merhaba! Bugün ne pişiriyoruz? 🍲",
+        "catchphrases": [
+          "Afiyet bal şeker olsun"
+        ],
+        "samples": [
+          "Yuvarlama için bulguru önce iyice yoğur, sonra köfteleri nohut büyüklüğünde yap. Kaç kişilik hazırlayacaksın?",
+          "Biber salçasını tavada çok az yağla kavurursan yemeğin rengi de tadı da güzelleşir."
+        ]
+      },
+      "knowledge": [
+        {
+          "title": "Hakkımda",
+          "text": "Selin Kaya 30 yaşında, Gaziantep'te yaşayan ev yemekleri içerik üreticisi. Gastronomi bölümünü bitirdi. Yöresel tarifleri pratikleştirir."
+        },
+        {
+          "title": "Sık sorulan sorular",
+          "text": "Tariflerinde mevsim sebzelerini kullanır. Gıda alerjisi olanlara malzeme değişikliği önerir."
+        }
+      ],
+      "plans": [
+        99,
+        189,
+        349
+      ],
+      "content": []
+    }
+  ],
+  "fans": [
+    {
+      "email": "fan@heyfans.local",
+      "name": "Deniz Yılmaz"
+    },
+    {
+      "email": "hayran1@heyfans.local",
+      "name": "Burak Yıldırım"
+    },
+    {
+      "email": "hayran2@heyfans.local",
+      "name": "Ayşe Kaplan"
+    },
+    {
+      "email": "hayran3@heyfans.local",
+      "name": "Emre Çelik"
+    },
+    {
+      "email": "hayran4@heyfans.local",
+      "name": "Gamze Öztürk"
+    },
+    {
+      "email": "hayran5@heyfans.local",
+      "name": "Oğuz Kara"
+    },
+    {
+      "email": "hayran6@heyfans.local",
+      "name": "İrem Polat"
+    },
+    {
+      "email": "hayran7@heyfans.local",
+      "name": "Can Aksoy"
+    },
+    {
+      "email": "hayran8@heyfans.local",
+      "name": "Büşra Şen"
+    }
+  ],
+  "admins": [
+    {
+      "email": "admin@heyfans.local",
+      "name": "Kerem Aksoy",
+      "role": "super_admin"
+    },
+    {
+      "email": "moderator@heyfans.local",
+      "name": "Seda Tunç",
+      "role": "moderation_specialist"
+    },
+    {
+      "email": "finance@heyfans.local",
+      "name": "Hakan Er",
+      "role": "finance_manager"
+    },
+    {
+      "email": "creators@heyfans.local",
+      "name": "Pınar Güler",
+      "role": "creator_manager"
+    }
+  ]
+}

@@ -3,7 +3,7 @@
 ## Çalışma ortamı
 - Dev sunucu: `npm run dev` → http://localhost:3070 (zaten çalışıyor olabilir; `curl -s -o /dev/null -w "%{http_code}" http://localhost:3070/` ile kontrol et).
 - Yerel MongoDB: `npm run db:start` (port 27047, replika seti). Demo veri: `npm run db:seed` (`-- --reset` tümünü siler).
-- Demo hesaplar (parola `.env` → `SEED_DEMO_PASSWORD`): `fan@heyfans.local` (hayran), `sophie@heyfans.local` (onaylı creator, ikizi yayında), `selin@heyfans.local` (başvurusu incelemede), `admin@heyfans.local` (super_admin), `moderator@`, `finance@`, `creators@` (`@heyfans.local`).
+- Demo hesaplar (parola `.env` → `SEED_DEMO_PASSWORD`): `fan@heyfans.local` (hayran), `melis@heyfans.local` (onaylı creator, ikizi yayında), `selin@heyfans.local` (başvurusu incelemede), `admin@heyfans.local` (super_admin), `moderator@`, `finance@`, `creators@` (`@heyfans.local`).
 - Oturumlu sayfa denemesi (curl):
   ```
   curl -s -c /tmp/hf.txt -H "Origin: http://localhost:3070" -H "Content-Type: application/json" \

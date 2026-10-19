@@ -189,7 +189,7 @@ export default async function StudioDashboardPage() {
           <div className="p-5">
             <h2 className="text-[15px] font-extrabold tracking-[-0.02em]">Topluluğun büyüyor</h2>
             <div className="mt-3 aspect-[16/9] overflow-hidden rounded-[14px]">
-              <CreatorPhoto src={creator.coverUrl ?? creator.avatarUrl} name={creator.displayName} rounded="rounded-[14px]" />
+              <CreatorPhoto src={creator.avatarUrl ?? creator.coverUrl} name={creator.displayName} rounded="rounded-[14px]" />
             </div>
             <p className="mt-3 text-[14px] font-extrabold">Yeni hayranlarla buluş</p>
             <p className="mt-1 text-[11px] leading-relaxed text-muted">

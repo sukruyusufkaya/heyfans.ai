@@ -24,7 +24,7 @@ export function ChatInfoPanel({ creator, twin }: Props) {
     <div className="grid content-start gap-4">
       <article className="hf-card overflow-hidden">
         <div className="relative aspect-[16/10]">
-          <CreatorPhoto src={creator.coverUrl ?? creator.avatarUrl} name={creator.displayName} rounded="rounded-none" />
+          <CreatorPhoto src={creator.avatarUrl ?? creator.coverUrl} name={creator.displayName} rounded="rounded-none" />
           <span className="absolute left-3 top-3">
             <AiTwinLabel size="md" className="bg-white/90" />
           </span>

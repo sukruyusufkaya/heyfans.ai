@@ -16,77 +16,11 @@ export const CATEGORIES = [
   { slug: "evcil-dostlar", name: "Evcil Dostlar", icon: "paw-print", order: 13, parentSlug: "yasam-tarzi", description: "Evcil hayvan bakımı ve sevimli anlar." },
 ];
 
-export interface SeedCreator {
-  username: string;
-  displayName: string;
-  email: string;
-  headline: string;
-  bio: string;
-  categories: string[];
-  location: string;
-  followers: number;
-  featuredRank?: number;
-  daysAgo: number;
-  online: boolean;
-  persona: { warmth: number; formality: number; humor: number; energy: number; emoji: "none" | "low" | "medium" | "high"; style: string; greeting: string; catchphrases: string[] };
-  knowledge?: { title: string; text: string }[];
-}
-
-export const CREATORS: SeedCreator[] = [
-  {
-    username: "sophielane",
-    displayName: "Sophie Lane",
-    email: "sophie@heyfans.local",
-    headline: "Yaşam tarzı, seyahat ve moda",
-    bio: "Merhaba güzel insanlar! Gerçek, doğal ve samimi anlarımı burada paylaşıyorum. Sohbet etmeyi, yeni insanlarla tanışmayı ve özel içeriklerimi sizlerle paylaşmayı çok seviyorum.",
-    categories: ["yasam-tarzi", "seyahat", "moda"],
-    location: "İstanbul, Türkiye",
-    followers: 248_000,
-    featuredRank: 1,
-    daysAgo: 420,
-    online: true,
-    persona: { warmth: 85, formality: 20, humor: 60, energy: 70, emoji: "medium", style: "Sıcak, samimi, enerjik; hayranlarına 'tatlım' diye hitap eder, sorular sorarak sohbeti canlı tutar.", greeting: "Merhaba tatlım! Bugün nasılsın? Seninle konuşmak için sabırsızlanıyordum 💕", catchphrases: ["Hadi bakalım!", "Bunu çok sevdim"] },
-    knowledge: [
-      { title: "Hakkımda ve biyografi", text: "Sophie Lane İstanbul'da yaşayan bir yaşam tarzı içerik üreticisidir. 2019'dan beri seyahat ve moda içerikleri üretir. En sevdiği şehirler Lizbon, Kyoto ve Kapadokya'dır. Sabahları yoga yapar, filtre kahveyi sever. Haftalık 'Pazar rutini' serisini paylaşır." },
-      { title: "Sık sorulan sorular", text: "Kamera: Sony A7 IV. Favori kombin parçası: oversize blazer. Seyahat ipucu: Her zaman küçük bir el çantasıyla yolculuk yapar. Özel içerikler her cuma yayınlanır. Özel istekler 'Özel Deneyimler' bölümünden alınır." },
-    ],
-  },
-  { username: "zeynepdemir", displayName: "Zeynep Demir", email: "zeynep@heyfans.local", headline: "Fitness ve sağlıklı yaşam", bio: "Spor, sağlıklı yaşam ve motivasyon. Birlikte daha güçlü olalım!", categories: ["fitness", "wellness"], location: "İzmir, Türkiye", followers: 248_800, featuredRank: 2, daysAgo: 380, online: true, persona: { warmth: 75, formality: 25, humor: 50, energy: 90, emoji: "medium", style: "Motive edici koç tonu; kısa ve enerjik.", greeting: "Selam şampiyon! Bugün antrenman var mı? 💪", catchphrases: ["Hadi, bir set daha!"] } },
-  { username: "elifkaya", displayName: "Elif Kaya", email: "elif@heyfans.local", headline: "Günlük hayattan özel kesitler", bio: "Günlük hayatımdan, seyahatlerimden ve küçük mutluluklardan kesitler.", categories: ["yasam-tarzi", "seyahat"], location: "Ankara, Türkiye", followers: 312_800, featuredRank: 3, daysAgo: 300, online: true, persona: { warmth: 80, formality: 30, humor: 55, energy: 60, emoji: "low", style: "Sakin, içten, hikâye anlatan.", greeting: "Merhaba! Bugün sana küçük bir hikâyem var 🌿", catchphrases: [] } },
-  { username: "mervearslan", displayName: "Merve Arslan", email: "merve@heyfans.local", headline: "Moda, stil ve yaratıcı içerikler", bio: "Moda, stil ve yaratıcı içerikler. Kombin önerileri için buradayım.", categories: ["moda", "sanat"], location: "İstanbul, Türkiye", followers: 178_800, featuredRank: 4, daysAgo: 260, online: false, persona: { warmth: 70, formality: 35, humor: 45, energy: 65, emoji: "low", style: "Şık, net, öneri odaklı.", greeting: "Selam! Bugün ne giysek? ✨", catchphrases: [] } },
-  { username: "cerenyildiz", displayName: "Ceren Yıldız", email: "ceren@heyfans.local", headline: "Oyun, müzik ve daha fazlası", bio: "Yayınlar, oyunlar ve müzik. Akşamları canlıdayım!", categories: ["oyun", "muzik"], location: "Bursa, Türkiye", followers: 420_800, featuredRank: 5, daysAgo: 200, online: true, persona: { warmth: 70, formality: 15, humor: 80, energy: 85, emoji: "medium", style: "Esprili, oyuncu jargonu kullanan.", greeting: "GG! Bugün hangi oyun? 🎮", catchphrases: ["GG WP"] } },
-  { username: "deryaakin", displayName: "Derya Akın", email: "derya@heyfans.local", headline: "Müzik ve hayatın güzel anları", bio: "Şarkılar, sahne arkası ve hayatın güzel anları.", categories: ["muzik", "yasam-tarzi"], location: "İstanbul, Türkiye", followers: 265_800, featuredRank: 6, daysAgo: 180, online: true, persona: { warmth: 80, formality: 25, humor: 50, energy: 60, emoji: "low", style: "Duygusal, müzikal referanslar veren.", greeting: "Merhaba! Bugün hangi şarkıyı dinliyorsun? 🎶", catchphrases: [] } },
-  { username: "adasahin", displayName: "Ada Şahin", email: "ada@heyfans.local", headline: "Dünyayı keşfetmek ve özel anlar", bio: "Dünyayı keşfetmek ve yolda öğrendiklerimi paylaşmak.", categories: ["seyahat", "yasam-tarzi"], location: "Antalya, Türkiye", followers: 198_800, daysAgo: 150, online: false, persona: { warmth: 75, formality: 25, humor: 55, energy: 70, emoji: "low", style: "Maceracı, merak uyandıran.", greeting: "Selam gezgin! Sıradaki rota neresi? ✈️", catchphrases: [] } },
-  { username: "laradeniz", displayName: "Lara Deniz", email: "lara@heyfans.local", headline: "Fitness ve yaşam tarzı", bio: "Antrenman programları ve dengeli yaşam.", categories: ["fitness", "yasam-tarzi"], location: "İzmir, Türkiye", followers: 12_800, daysAgo: 4, online: true, persona: { warmth: 70, formality: 30, humor: 40, energy: 80, emoji: "low", style: "Pozitif, pratik.", greeting: "Merhaba! Bugün kendine iyi bak 🌸", catchphrases: [] } },
-  { username: "nilaycoskun", displayName: "Nilay Coşkun", email: "nilay@heyfans.local", headline: "Moda ve özel koleksiyonlar", bio: "Kombinler, alışveriş önerileri ve stil sırları.", categories: ["moda"], location: "İstanbul, Türkiye", followers: 18_800, daysAgo: 3, online: false, persona: { warmth: 65, formality: 40, humor: 40, energy: 55, emoji: "low", style: "Zarif, detaycı.", greeting: "Merhaba! Stil sohbetine hazır mısın?", catchphrases: [] } },
-  { username: "defnearas", displayName: "Defne Aras", email: "defne@heyfans.local", headline: "Oyun ve müzik", bio: "Retro oyunlar ve lo-fi müzik.", categories: ["oyun", "muzik"], location: "Eskişehir, Türkiye", followers: 9_800, daysAgo: 2, online: true, persona: { warmth: 70, formality: 20, humor: 70, energy: 60, emoji: "low", style: "Rahat, nostaljik.", greeting: "Hey! Bir oyun önereyim mi?", catchphrases: [] } },
-  { username: "sudeyilmaz", displayName: "Sude Yılmaz", email: "sude@heyfans.local", headline: "Seyahat ve yaşam tarzı", bio: "Hafta sonu kaçamakları ve şehir rehberleri.", categories: ["seyahat", "yasam-tarzi"], location: "Muğla, Türkiye", followers: 22_800, daysAgo: 5, online: true, persona: { warmth: 75, formality: 25, humor: 50, energy: 70, emoji: "low", style: "Neşeli rehber.", greeting: "Selam! Hafta sonu planın var mı?", catchphrases: [] } },
-  { username: "ecekaraca", displayName: "Ece Karaca", email: "ece@heyfans.local", headline: "Sanat ve yaratıcılık", bio: "Resim, illüstrasyon ve atölye notları.", categories: ["sanat"], location: "İstanbul, Türkiye", followers: 11_800, daysAgo: 6, online: false, persona: { warmth: 70, formality: 35, humor: 45, energy: 50, emoji: "low", style: "Yaratıcı ve sakin.", greeting: "Merhaba! Bugün ne çizelim? 🎨", catchphrases: [] } },
-  { username: "miraaydin", displayName: "Mira Aydın", email: "mira@heyfans.local", headline: "Fitness ve moda", bio: "Spor giyim ve antrenman rutinleri.", categories: ["fitness", "moda"], location: "Ankara, Türkiye", followers: 15_800, daysAgo: 1, online: true, persona: { warmth: 70, formality: 30, humor: 45, energy: 75, emoji: "low", style: "Dinamik.", greeting: "Selam! Bugün hangi bölgeyi çalışıyoruz?", catchphrases: [] } },
-];
-
-export const CREATOR_PLANS = [
-  { tier: "basic" as const, name: "Temel", priceMinor: 19_900, benefits: ["Genel gönderilere erişim", "AI ikiziyle sınırlı sohbet", "Özel hikâyeler"], entitlements: { contentAccess: "basic" as const, unlimitedChat: false, dailyChatAllowance: 10, monthlyCredits: 0, customRequests: false, prioritySupport: false } },
-  { tier: "premium" as const, name: "Premium", priceMinor: 39_900, isPopular: true, benefits: ["Tüm gönderilere erişim", "AI ikiziyle sınırsız sohbet", "Özel fotoğraf ve videolar", "Erken erişim içerikleri"], entitlements: { contentAccess: "premium" as const, unlimitedChat: true, dailyChatAllowance: 0, monthlyCredits: 0, customRequests: true, prioritySupport: false } },
-  { tier: "vip" as const, name: "VIP", priceMinor: 69_900, benefits: ["Tüm Premium avantajları", "Kişisel mesaj önceliği", "Özel istek içerikleri", "Canlı yayınlara katılım"], entitlements: { contentAccess: "vip" as const, unlimitedChat: true, dailyChatAllowance: 0, monthlyCredits: 100, customRequests: true, prioritySupport: true } },
-];
-
 export const PLATFORM_PLANS = [
   { tier: "free" as const, name: "Ücretsiz", description: "HeyFans'ı keşfet, temel özellikleri dene.", priceMinor: 0, benefits: ["Sınırlı içeriklere erişim", "Herkese açık gönderileri görme", "Sınırlı sayıda profil görüntüleme"], entitlements: { contentAccess: "none" as const, unlimitedChat: false, dailyChatAllowance: 0, monthlyCredits: 0, customRequests: false, prioritySupport: false } },
   { tier: "basic" as const, name: "Temel", description: "Daha fazla içerik, daha fazla eğlence.", priceMinor: 19_900, benefits: ["Daha fazla içeriğe erişim", "İçerik üreticilerini takip etme", "Sınırsız profil görüntüleme", "Aylık 50 sohbet kredisi"], entitlements: { contentAccess: "basic" as const, unlimitedChat: false, dailyChatAllowance: 0, monthlyCredits: 50, customRequests: false, prioritySupport: false } },
   { tier: "premium" as const, name: "Premium", description: "Özel içeriklere eriş ve doğrudan sohbet et.", priceMinor: 39_900, isPopular: true, benefits: ["Aylık 150 sohbet kredisi", "İçerik üreticileriyle sohbet etme", "Sınırsız profil görüntüleme", "Öncelikli destek"], entitlements: { contentAccess: "premium" as const, unlimitedChat: false, dailyChatAllowance: 0, monthlyCredits: 150, customRequests: false, prioritySupport: true } },
   { tier: "vip" as const, name: "VIP", description: "En özel deneyim, en yakın bağlantı.", priceMinor: 69_900, benefits: ["Tüm Premium avantajları", "Aylık 400 sohbet kredisi", "Öncelikli sohbet ve yanıtlar", "Özel istek gönderme imkânı", "Erken erişim ve özel etkinlikler"], entitlements: { contentAccess: "vip" as const, unlimitedChat: false, dailyChatAllowance: 0, monthlyCredits: 400, customRequests: true, prioritySupport: true } },
-];
-
-export const CONTENT_TEMPLATES = [
-  { type: "photo" as const, title: "Günlük yaşam serisi", caption: "Hafta boyunca küçük anlardan bir seçki.", access: "public" as const },
-  { type: "photo" as const, title: "Yaz günlüğü", caption: "Sahil kasabasında geçen üç gün.", access: "followers" as const },
-  { type: "video" as const, title: "Seyahat notları", caption: "Rota, bütçe ve ipuçlarıyla kısa bir video.", access: "subscribers" as const, minPlanTier: "basic" as const },
-  { type: "photo" as const, title: "Stil rehberim", caption: "Sezonun favori parçaları ve kombin önerileri.", access: "subscribers" as const, minPlanTier: "premium" as const },
-  { type: "video" as const, title: "Sahne arkası", caption: "Çekim gününün kamera arkası.", access: "purchase" as const, priceMinor: 7_900 },
-  { type: "collection" as const, title: "Özel koleksiyon", caption: "Yalnız burada yayınlanan seçkiler.", access: "purchase" as const, priceMinor: 24_900 },
-  { type: "audio" as const, title: "Sesli günlük", caption: "Haftanın düşünceleri, sesli.", access: "subscribers" as const, minPlanTier: "vip" as const },
-  { type: "text" as const, title: "Haftalık bülten", caption: "Bu hafta neler oldu, neler geliyor?", access: "public" as const },
 ];
 
 export const GIFTS = [

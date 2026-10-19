@@ -37,7 +37,7 @@
 - Admin sayfalarında `loading.tsx` olduğundan izin reddi HTTP 200 + akışlı yönlendirme ile döner (içerik sızmaz).
 
 ## Teknik sınırlar
-- Seed creator görselleri temsili degrade kompozisyonlardır (tasarım ZIP'lerindeki görseller UI içeren ekran kırpıntıları olduğu için kullanılmadı). Gerçek creator yüklemeleri otomatik olarak görünür.
+- Demo creator'lar ve görselleri kurgusaldır (yapay zekâ ile üretilmiş, `isDemo`). Canlıda gerçek creator'lar katıldıkça demo verisi kaldırılmalı veya "Örnek profil" olarak işaretli tutulmalıdır. İçerik görselleri canlı ortamda R2 olmadan sunulamaz (yerel disk Vercel'de kalıcı değil).
 - Hız sınırı MongoDB üzerinde; çok yüksek trafikte Redis adaptörü önerilir.
 - Trend skorları analitik olaylarından basit ağırlıklı hesapla üretilir; anomali/bot filtrelemesi yok.
 - AI hafıza çıkarımı kural tabanlıdır (LLM çağrısı yok); kullanıcı düzenleyip silebilir.

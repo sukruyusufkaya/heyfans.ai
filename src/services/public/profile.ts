@@ -4,7 +4,7 @@ import { connectDb } from "@/lib/db/mongo";
 import { hashIp } from "@/lib/security/audit";
 import { oid, usernameSchema } from "@/lib/validation/common";
 import { AiTwin, AiTwinVersion } from "@/models/ai";
-import { ContentItem, type IContentItem } from "@/models/content";
+import { ContentItem, MediaAsset, type IContentItem } from "@/models/content";
 import { CreatorProfile, type ICreatorProfile } from "@/models/creator";
 import { MembershipPlan, type IMembershipPlan, type PlanTier } from "@/models/monetization";
 import { AnalyticsEvent } from "@/models/platform";
@@ -98,7 +98,8 @@ export const getPublicCreator = cache(async (username: string): Promise<PublicCr
     tags: c.tags ?? [],
     location: c.location ?? null,
     languages: c.languages ?? [],
-    socialLinks: (c.socialLinks ?? []).map((s) => ({ platform: s.platform, handle: s.handle, url: s.url ?? null, verified: Boolean(s.verified) })),
+    // Kurgusal demo creator'ların kullanıcı adları gerçek hesaplara bağlantı üretmesin (taklit riski).
+    socialLinks: c.isDemo ? [] : (c.socialLinks ?? []).map((s) => ({ platform: s.platform, handle: s.handle, url: s.url ?? null, verified: Boolean(s.verified) })),
     verified: c.verification?.identity === "verified",
     isOnline: Boolean(c.isOnline),
     stats: {
@@ -158,7 +159,7 @@ export async function listCreatorPosts(
   const filter: Record<string, unknown> = { creatorId: oid(creatorId), status: "published", "moderation.state": { $ne: "removed" } };
   if (opts.types?.length) filter.type = { $in: opts.types.filter((t) => (POST_TYPES as readonly string[]).includes(t)) };
   const [docs, total] = await Promise.all([
-    ContentItem.find(filter, { creatorId: 1, type: 1, title: 1, caption: 1, status: 1, access: 1, minPlanTier: 1, price: 1, coverUrl: 1, publishedAt: 1, stats: 1 })
+    ContentItem.find(filter, { creatorId: 1, type: 1, title: 1, caption: 1, status: 1, access: 1, minPlanTier: 1, price: 1, coverUrl: 1, previewAssetId: 1, mediaAssetIds: 1, publishedAt: 1, stats: 1 })
       .sort({ publishedAt: -1, _id: -1 })
       .skip((page - 1) * pageSize)
       .limit(pageSize)
@@ -166,6 +167,19 @@ export async function listCreatorPosts(
     ContentItem.countDocuments(filter),
   ]);
   const decisions = await decideManyContentAccess(viewer, docs);
+  // Erişimi olan ve kapağı olmayan içerikte ilk medya görselse kapak olur (fan akışıyla aynı kural; /api/media erişimi yeniden denetler).
+  const needCover = docs.filter((d) => decisions.get(d._id.toString())?.allowed && !d.coverUrl && !d.previewAssetId && d.mediaAssetIds?.length);
+  const imageIds = new Set<string>();
+  if (needCover.length) {
+    const assets = await MediaAsset.find({ _id: { $in: needCover.map((d) => d.mediaAssetIds[0]!) }, status: "ready", kind: "image" }, { _id: 1 }).lean();
+    for (const a of assets) imageIds.add(a._id.toString());
+  }
+  const coverFor = (d: IContentItem) => {
+    if (d.coverUrl) return d.coverUrl;
+    if (d.previewAssetId) return `/api/media/${d.previewAssetId.toString()}`;
+    const first = d.mediaAssetIds?.[0]?.toString();
+    return first && imageIds.has(first) ? `/api/media/${first}` : null;
+  };
   const items = docs.map((d): PublicPost => {
     const decision = decisions.get(d._id.toString()) ?? { allowed: false, reason: "unavailable" as const };
     return {
@@ -176,7 +190,7 @@ export async function listCreatorPosts(
       access: d.access,
       minPlanTier: d.minPlanTier ?? null,
       priceMinor: d.access === "purchase" ? (d.price?.amountMinor ?? null) : null,
-      coverUrl: decision.allowed ? (d.coverUrl ?? null) : null,
+      coverUrl: decision.allowed ? coverFor(d) : null,
       publishedAt: d.publishedAt ? new Date(d.publishedAt).toISOString() : null,
       likes: d.stats?.likes ?? 0,
       comments: d.stats?.comments ?? 0,

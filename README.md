@@ -34,7 +34,7 @@ npm run db:seed -- --reset
 npm run dev
 ```
 
-→ http://localhost:3070 · Demo hesaplar: `fan@heyfans.local`, `sophie@heyfans.local` (creator), `admin@heyfans.local` (süper yönetici) — parola `.env` → `SEED_DEMO_PASSWORD`. Yerelde gönderilen e-postalar: http://localhost:3070/dev/outbox
+→ http://localhost:3070 · Demo hesaplar: `fan@heyfans.local`, `melis@heyfans.local` (creator), `admin@heyfans.local` (süper yönetici) — parola `.env` → `SEED_DEMO_PASSWORD`. Yerelde gönderilen e-postalar: http://localhost:3070/dev/outbox
 
 ## Komutlar
 

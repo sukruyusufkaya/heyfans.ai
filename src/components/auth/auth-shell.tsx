@@ -9,33 +9,34 @@ export interface VisualLine {
 
 type ArtKind = "portrait" | "portrait-left" | "phones";
 
-/** Lisanslı fotoğraf yok: koyu fuşya gradyan + temsili silüet katmanları (ekran görüntüsü kırpması kullanılmaz). */
+/** Koyu fuşya gradyan + üretilmiş temsili creator portreleri (ekran görüntüsü kırpması kullanılmaz). */
 function VisualArt({ kind }: { kind: ArtKind }) {
   return (
     <div aria-hidden className="absolute inset-0 -z-10 overflow-hidden bg-[linear-gradient(162deg,#8d1666_0%,#5b1044_38%,#270a23_100%)]">
       {kind === "phones" ? (
         <>
           <div className="absolute -right-[6%] top-[3%] h-[58%] w-[40%] rotate-[9deg] overflow-hidden rounded-[30px] border-[3px] border-white/20 opacity-80">
-            <CreatorPhoto name="Lara Deniz" rounded="rounded-none" showMonogram={false} />
+            <CreatorPhoto src="/images/seed/creators/damladeniz-portrait.webp" name="Damla Deniz" rounded="rounded-none" showMonogram={false} />
           </div>
           <div className="absolute left-[7%] top-[13%] h-[60%] w-[42%] -rotate-[7deg] overflow-hidden rounded-[30px] border-[3px] border-brand-300/60">
-            <CreatorPhoto name="Merve Arslan" rounded="rounded-none" showMonogram={false} />
+            <CreatorPhoto src="/images/seed/creators/mervearslan-portrait.webp" name="Merve Arslan" rounded="rounded-none" showMonogram={false} />
           </div>
           <div className="absolute left-[34%] top-[6%] h-[62%] w-[42%] rotate-[4deg] overflow-hidden rounded-[30px] border-[4px] border-brand-400 shadow-[0_20px_50px_rgba(0,0,0,0.35)]">
-            <CreatorPhoto name="Sophie Lane" rounded="rounded-none" showMonogram={false} />
+            <CreatorPhoto src="/images/seed/creators/meliserturk-portrait.webp" name="Melis Ertürk" rounded="rounded-none" showMonogram={false} />
           </div>
         </>
       ) : (
         <>
-          {/* Yumuşak ışık + eşmerkezli halkalar (ses/AI dalgası) + parlak küre: fotoğrafsız, markaya uygun soyut kompozisyon */}
-          <div className={cn("absolute top-[-14%] h-[74%] w-[84%] rounded-full bg-[radial-gradient(circle,rgba(255,140,205,0.62),transparent_66%)] blur-2xl", kind === "portrait" ? "-right-[16%]" : "-left-[18%]")} />
-          <div className={cn("absolute top-[-8%] aspect-square w-[74%]", kind === "portrait" ? "right-[-14%]" : "left-[-16%]")}>
-            <div className="absolute inset-0 rounded-full border border-white/20" />
-            <div className="absolute inset-[11%] rounded-full border border-white/20" />
-            <div className="absolute inset-[22%] rounded-full border border-white/25" />
-            <div className="absolute inset-[33%] rounded-full bg-[radial-gradient(circle_at_32%_30%,rgba(255,255,255,0.95),rgba(255,170,215,0.9)_38%,rgba(236,0,136,0.85)_100%)] shadow-[0_0_90px_rgba(255,105,184,0.75)]" />
+          <div className={cn("absolute inset-y-0 w-full", kind === "portrait" ? "right-0" : "left-0")}>
+            <CreatorPhoto
+              src={kind === "portrait" ? "/images/seed/creators/meliserturk-portrait.webp" : "/images/seed/creators/gizemaydin-portrait.webp"}
+              name={kind === "portrait" ? "Melis Ertürk" : "Gizem Aydın"}
+              rounded="rounded-none"
+              showMonogram={false}
+            />
           </div>
-          <div className="absolute inset-0 opacity-[0.14] mix-blend-overlay [background-image:radial-gradient(rgba(255,255,255,0.9)_0.6px,transparent_0.7px)] [background-size:3px_3px]" />
+          {/* Referanstaki koyu fuşya ton: fotoğrafın üstünde çarpma katmanı */}
+          <div className="absolute inset-0 bg-[linear-gradient(162deg,rgba(141,22,102,0.55)_0%,rgba(91,16,68,0.45)_45%,rgba(39,10,35,0.7)_100%)] mix-blend-multiply" />
         </>
       )}
       <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(39,10,35,0)_20%,rgba(39,10,35,0.55)_58%,rgba(32,8,28,0.96)_100%)]" />

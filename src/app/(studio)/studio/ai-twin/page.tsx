@@ -84,7 +84,7 @@ export default async function TwinPage() {
         <div className="grid content-start gap-5">
           <Card padded={false} className="overflow-hidden">
             <div className="relative aspect-[4/3]">
-              <CreatorPhoto src={creator.coverUrl ?? creator.avatarUrl} name={creator.displayName} rounded="rounded-none" />
+              <CreatorPhoto src={creator.avatarUrl ?? creator.coverUrl} name={creator.displayName} rounded="rounded-none" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" aria-hidden />
               <div className="absolute right-3.5 top-3.5">
                 <TwinStatusBadge status={twin.status} size="md" />

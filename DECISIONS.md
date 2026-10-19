@@ -37,7 +37,9 @@ Her karar: tarih · karar · gerekçe · durum. "KULLANICI ONAYI" işaretli kara
 | D-29 | 2026-10-19 | `/dev/outbox` ve `EMAIL_PROVIDER=outbox` yalnız `APP_MODE=development`. | Barındırılan demoda doğrulama/sıfırlama bağlantıları herkese açılmasın. |
 | D-30 | 2026-10-19 | Bildirilen sohbetler `reported` durumunda kalır ama hayran kullanmaya devam eder. | Bildirim yapan hayranın sohbetini kaybetmesi hataydı. |
 | D-31 | 2026-10-19 | Taslak yasal sayfalar `noindex` ve site haritası dışı; onaylanınca dahil edilir. | Taslak metinlerin kesin belge gibi indekslenmemesi. |
-
+| D-32 | 2026-10-19 | Demo creator karakterlerinin tamamı kurgusal **Türk** karakterlere çevrildi ("Sophie Lane" → Melis Ertürk vb.); tek kaynak `scripts/db/characters.json` (profil, kişilik, bilgi tabanı, fiyat, 8 özgün içerik). Kurgusal kullanıcı adları herkese açık profilde dış sosyal bağlantıya dönüştürülmez. | Kullanıcı talebi: tamamı Türk ve "bot gibi görünmeyen" profiller; gerçek hesaplara yönlendirme/taklit riski yok. |
+| D-33 | 2026-10-19 | Seed görselleri yerelde **Realistic Vision V6.0 B1** (CreativeML OpenRAIL-M) ile yalnız metinden üretildi; her aday elle incelendi (kısa üst/açık giyim, yüz boyası, anlamsız yazı, ikinci yüz içerenler elendi). İçerik fotoğraflarında kişi arkadan/uzaktan veya insansız sahne: farklı fotoğraflarda farklı yüz (sahte profil izlenimi) önlenir. Üretim betikleri `scripts/media/`. | Kullanıcı onayı (2026-10-19) + lisanslı fotoğraf olmaması. |
+| D-34 | 2026-10-19 | Profil/kapak/kategori görselleri `public/images/seed/` (herkese açık, Vercel ile dağıtılır); içerik görselleri `scripts/db/seed-media/` → seed sırasında depolama sağlayıcısına (yerel/R2) **erişim kontrollü** MediaAsset olarak yüklenir. | Ücretli içerik görselleri herkese açık klasörde olmamalı. |
 
 ## KULLANICI ONAYI bekleyen kararlar (varsayılanla ilerleniyor)
 
@@ -53,4 +55,4 @@ Her karar: tarih · karar · gerekçe · durum. "KULLANICI ONAYI" işaretli kara
 | K-08 | Ses/görüntü altyapısı | LiveKit Cloud (+ TTS/STT sağlayıcısı) | Sesli/görüntülü görüşme |
 | K-09 | Alan adı | heyfans.ai (varsayım) | APP_URL, e-posta alan adı, OAuth dönüş adresleri |
 | K-10 | E-posta sağlayıcısı | Resend | Doğrulama/sıfırlama e-postaları |
-| K-11 | Medya depolama + seed görselleri | Cloudflare R2 (S3 uyumlu). Seed creator fotoğrafları için: lisanslı fotoğraf ya da yerel üretim (≈2,5 GB model indirmesi gerekir). | Görsel kalite |
+| K-11 | Medya depolama | Cloudflare R2 (S3 uyumlu). Seed görselleri yerel üretimle tamamlandı (D-33). | Canlıda içerik görselleri için R2 gerekli |

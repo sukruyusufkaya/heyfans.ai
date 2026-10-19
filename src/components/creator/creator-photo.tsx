@@ -40,7 +40,7 @@ export function CreatorPhoto({
   if (src) {
     return (
       // eslint-disable-next-line @next/next/no-img-element
-      <img src={src} alt={name} loading={priority ? "eager" : "lazy"} sizes={sizes} className={cn("size-full object-cover", rounded, className)} />
+      <img src={src} alt={name} loading={priority ? "eager" : "lazy"} sizes={sizes} className={cn("size-full object-cover object-[50%_22%]", rounded, className)} />
     );
   }
   const h = hash(name);

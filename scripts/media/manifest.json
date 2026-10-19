@@ -1,0 +1,1192 @@
+[
+ {
+  "file": "/images/seed/creators/adasahin-portrait.webp",
+  "group": "portraits",
+  "key": "adasahin",
+  "width": 768,
+  "height": 1056,
+  "origin": "generated",
+  "model": "Realistic Vision V6.0 B1 (CreativeML OpenRAIL-M)",
+  "prompt": "RAW photo, portrait of a 28 year old Turkish woman, sun-kissed light brown hair, wide smile, tanned skin, wearing a straw sun hat and a long-sleeve white linen shirt, fully clothed, Mediterranean seaside town terrace with the sea in the background, upper body, natural expression, natural skin texture, soft natural light, 50mm, photorealistic"
+ },
+ {
+  "file": "/images/seed/creators/cerenyildiz-portrait.webp",
+  "group": "portraits",
+  "key": "cerenyildiz",
+  "width": 768,
+  "height": 1056,
+  "origin": "generated",
+  "model": "Realistic Vision V6.0 B1 (CreativeML OpenRAIL-M)",
+  "prompt": "RAW photo, portrait of a 25 year old Turkish woman, dark brown hair with straight bangs, playful smile, wearing an oversized lavender hoodie, headphones around her neck, fully clothed, gaming room with purple and pink neon lights, gaming monitor blurred behind, upper body, natural expression, natural skin texture, soft natural light, 50mm, photorealistic"
+ },
+ {
+  "file": "/images/seed/creators/damladeniz-portrait.webp",
+  "group": "portraits",
+  "key": "damladeniz",
+  "width": 768,
+  "height": 1056,
+  "origin": "generated",
+  "model": "Realistic Vision V6.0 B1 (CreativeML OpenRAIL-M)",
+  "prompt": "RAW photo, portrait of a 27 year old Turkish woman, auburn hair in a side braid, energetic smile, light freckles, wearing a zipped pink sports jacket, fully clothed, green park in the morning with a running path blurred behind, upper body, natural expression, natural skin texture, soft natural light, 50mm, photorealistic"
+ },
+ {
+  "file": "/images/seed/creators/defnearas-portrait.webp",
+  "group": "portraits",
+  "key": "defnearas",
+  "width": 768,
+  "height": 1056,
+  "origin": "generated",
+  "model": "Realistic Vision V6.0 B1 (CreativeML OpenRAIL-M)",
+  "prompt": "RAW photo, portrait of a 24 year old Turkish woman, wavy brown hair, round glasses, friendly grin, wearing a chunky oversized knit sweater, fully clothed, cozy room with vinyl records and a retro game console on a shelf, upper body, natural expression, natural skin texture, soft natural light, 50mm, photorealistic"
+ },
+ {
+  "file": "/images/seed/creators/deryaakin-portrait.webp",
+  "group": "portraits",
+  "key": "deryaakin",
+  "width": 768,
+  "height": 1056,
+  "origin": "generated",
+  "model": "Realistic Vision V6.0 B1 (CreativeML OpenRAIL-M)",
+  "prompt": "RAW photo, portrait of a 30 year old Turkish woman, long dark brown hair, soft smile, hazel eyes, wearing a denim jacket over a plain white t-shirt, fully clothed, music studio with an acoustic guitar on a stand, upper body, natural expression, natural skin texture, soft natural light, 50mm, photorealistic"
+ },
+ {
+  "file": "/images/seed/creators/ecekaraca-portrait.webp",
+  "group": "portraits",
+  "key": "ecekaraca",
+  "width": 768,
+  "height": 1056,
+  "origin": "generated",
+  "model": "Realistic Vision V6.0 B1 (CreativeML OpenRAIL-M)",
+  "prompt": "RAW photo, portrait of a 32 year old Turkish woman, copper red hair in a messy bun, creative look, green eyes, wearing a plain beige canvas apron over a grey long-sleeve t-shirt, clean face, fully clothed, bright art studio with blank canvases, upper body, natural expression, natural skin texture, soft natural light, 50mm, photorealistic"
+ },
+ {
+  "file": "/images/seed/creators/elifkaya-portrait.webp",
+  "group": "portraits",
+  "key": "elifkaya",
+  "width": 768,
+  "height": 1056,
+  "origin": "generated",
+  "model": "Realistic Vision V6.0 B1 (CreativeML OpenRAIL-M)",
+  "prompt": "RAW photo, portrait of a 26 year old Turkish woman, shoulder-length honey blonde hair, gentle smile, light makeup, wearing a white linen button-up shirt with long sleeves, fully clothed, historic stone street with old Ottoman wooden houses, upper body, natural expression, natural skin texture, soft natural light, 50mm, photorealistic"
+ },
+ {
+  "file": "/images/seed/creators/gizemaydin-portrait.webp",
+  "group": "portraits",
+  "key": "gizemaydin",
+  "width": 768,
+  "height": 1056,
+  "origin": "generated",
+  "model": "Realistic Vision V6.0 B1 (CreativeML OpenRAIL-M)",
+  "prompt": "RAW photo, portrait of a 28 year old Turkish woman, dark blonde hair, healthy glow, calm smile, wearing a loose oversized white sweatshirt and grey joggers, fully clothed, minimal pilates studio with plants, upper body, natural expression, natural skin texture, soft natural light, 50mm, photorealistic"
+ },
+ {
+  "file": "/images/seed/creators/meliserturk-portrait.webp",
+  "group": "portraits",
+  "key": "meliserturk",
+  "width": 768,
+  "height": 1056,
+  "origin": "generated",
+  "model": "Realistic Vision V6.0 B1 (CreativeML OpenRAIL-M)",
+  "prompt": "RAW photo, portrait of a 27 year old Turkish woman, long wavy chestnut brown hair, warm brown eyes, a few light freckles, wearing an oversized cream knit turtleneck sweater, fully clothed, cozy Kadikoy cafe by a large window, Istanbul street blurred behind, upper body, natural expression, natural skin texture, soft natural light, 50mm, photorealistic"
+ },
+ {
+  "file": "/images/seed/creators/mervearslan-portrait.webp",
+  "group": "portraits",
+  "key": "mervearslan",
+  "width": 768,
+  "height": 1056,
+  "origin": "generated",
+  "model": "Realistic Vision V6.0 B1 (CreativeML OpenRAIL-M)",
+  "prompt": "RAW photo, portrait of a 31 year old Turkish woman, voluminous black curly hair, elegant look, dark eyes, wearing a tailored beige blazer over a black turtleneck, fully clothed, chic Nisantasi city street with blurred boutiques, upper body, natural expression, natural skin texture, soft natural light, 50mm, photorealistic"
+ },
+ {
+  "file": "/images/seed/creators/nilaycoskun-portrait.webp",
+  "group": "portraits",
+  "key": "nilaycoskun",
+  "width": 768,
+  "height": 1056,
+  "origin": "generated",
+  "model": "Realistic Vision V6.0 B1 (CreativeML OpenRAIL-M)",
+  "prompt": "RAW photo, portrait of a 33 year old Turkish woman, sleek black bob haircut, sophisticated look, red lipstick, wearing a camel wool coat and a silk scarf, fully clothed, elegant boutique interior with clothing racks, upper body, natural expression, natural skin texture, soft natural light, 50mm, photorealistic"
+ },
+ {
+  "file": "/images/seed/creators/selinkaya-portrait.webp",
+  "group": "portraits",
+  "key": "selinkaya",
+  "width": 768,
+  "height": 1056,
+  "origin": "generated",
+  "model": "Realistic Vision V6.0 B1 (CreativeML OpenRAIL-M)",
+  "prompt": "RAW photo, portrait of a 30 year old Turkish woman, chestnut brown hair, warm smile, brown eyes, wearing a striped kitchen apron over a cream sweater, fully clothed, bright home kitchen with fresh vegetables on the counter, upper body, natural expression, natural skin texture, soft natural light, 50mm, photorealistic"
+ },
+ {
+  "file": "/images/seed/creators/sudeyilmaz-portrait.webp",
+  "group": "portraits",
+  "key": "sudeyilmaz",
+  "width": 768,
+  "height": 1056,
+  "origin": "generated",
+  "model": "Realistic Vision V6.0 B1 (CreativeML OpenRAIL-M)",
+  "prompt": "RAW photo, portrait of a 29 year old Turkish woman, light brown hair in a loose bun, adventurous smile, wearing a denim jacket and backpack straps, fully clothed, scenic mountain viewpoint at golden hour, upper body, natural expression, natural skin texture, soft natural light, 50mm, photorealistic"
+ },
+ {
+  "file": "/images/seed/creators/zeynepdemir-portrait.webp",
+  "group": "portraits",
+  "key": "zeynepdemir",
+  "width": 768,
+  "height": 1056,
+  "origin": "generated",
+  "model": "Realistic Vision V6.0 B1 (CreativeML OpenRAIL-M)",
+  "prompt": "RAW photo, portrait of a 29 year old Turkish woman, dark brown hair in a high ponytail, athletic build, olive skin, wearing a long-sleeve black athletic top and a zipped grey track jacket, fully clothed, bright modern gym in the background, upper body, natural expression, natural skin texture, soft natural light, 50mm, photorealistic"
+ },
+ {
+  "file": "/images/seed/creators/adasahin-cover.webp",
+  "group": "covers",
+  "key": "adasahin",
+  "width": 1152,
+  "height": 672,
+  "origin": "generated",
+  "model": "Realistic Vision V6.0 B1 (CreativeML OpenRAIL-M)",
+  "prompt": "RAW photo, empty scene with no people, turquoise Mediterranean bay near Kas with a small harbor and boats at golden hour, natural true-to-life colors, soft daylight, beautiful composition, high detail, photorealistic, 35mm lens, authentic social media photo"
+ },
+ {
+  "file": "/images/seed/creators/cerenyildiz-cover.webp",
+  "group": "covers",
+  "key": "cerenyildiz",
+  "width": 1152,
+  "height": 672,
+  "origin": "generated",
+  "model": "Realistic Vision V6.0 B1 (CreativeML OpenRAIL-M)",
+  "prompt": "RAW photo, empty scene with no people, gaming desk setup with RGB keyboard, two monitors and pink purple neon lights, natural true-to-life colors, soft daylight, beautiful composition, high detail, photorealistic, 35mm lens, authentic social media photo"
+ },
+ {
+  "file": "/images/seed/creators/damladeniz-cover.webp",
+  "group": "covers",
+  "key": "damladeniz",
+  "width": 1152,
+  "height": 672,
+  "origin": "generated",
+  "model": "Realistic Vision V6.0 B1 (CreativeML OpenRAIL-M)",
+  "prompt": "RAW photo, empty scene with no people, country road through olive groves and vineyards near Urla at sunrise, natural true-to-life colors, soft daylight, beautiful composition, high detail, photorealistic, 35mm lens, authentic social media photo"
+ },
+ {
+  "file": "/images/seed/creators/defnearas-cover.webp",
+  "group": "covers",
+  "key": "defnearas",
+  "width": 1152,
+  "height": 672,
+  "origin": "generated",
+  "model": "Realistic Vision V6.0 B1 (CreativeML OpenRAIL-M)",
+  "prompt": "RAW photo, empty scene with no people, retro room with a shelf of vinyl records, cassette tapes and a glowing arcade cabinet, natural true-to-life colors, soft daylight, beautiful composition, high detail, photorealistic, 35mm lens, authentic social media photo"
+ },
+ {
+  "file": "/images/seed/creators/deryaakin-cover.webp",
+  "group": "covers",
+  "key": "deryaakin",
+  "width": 1152,
+  "height": 672,
+  "origin": "generated",
+  "model": "Realistic Vision V6.0 B1 (CreativeML OpenRAIL-M)",
+  "prompt": "RAW photo, empty scene with no people, empty small music studio interior, an acoustic guitar resting on a guitar stand, a vintage microphone on a stand, warm fairy lights, nobody in the room, natural true-to-life colors, soft daylight, beautiful composition, high detail, photorealistic, 35mm lens, authentic social media photo"
+ },
+ {
+  "file": "/images/seed/creators/ecekaraca-cover.webp",
+  "group": "covers",
+  "key": "ecekaraca",
+  "width": 1152,
+  "height": 672,
+  "origin": "generated",
+  "model": "Realistic Vision V6.0 B1 (CreativeML OpenRAIL-M)",
+  "prompt": "RAW photo, empty scene with no people, sunlit artist studio with easels, colorful paint palette and brushes, natural true-to-life colors, soft daylight, beautiful composition, high detail, photorealistic, 35mm lens, authentic social media photo"
+ },
+ {
+  "file": "/images/seed/creators/elifkaya-cover.webp",
+  "group": "covers",
+  "key": "elifkaya",
+  "width": 1152,
+  "height": 672,
+  "origin": "generated",
+  "model": "Realistic Vision V6.0 B1 (CreativeML OpenRAIL-M)",
+  "prompt": "RAW photo, empty scene with no people, Safranbolu old Ottoman houses with red tiled roofs on a misty morning, natural true-to-life colors, soft daylight, beautiful composition, high detail, photorealistic, 35mm lens, authentic social media photo"
+ },
+ {
+  "file": "/images/seed/creators/gizemaydin-cover.webp",
+  "group": "covers",
+  "key": "gizemaydin",
+  "width": 1152,
+  "height": 672,
+  "origin": "generated",
+  "model": "Realistic Vision V6.0 B1 (CreativeML OpenRAIL-M)",
+  "prompt": "RAW photo, empty scene with no people, minimal pilates studio with reformer machines, plants and soft pastel light, natural true-to-life colors, soft daylight, beautiful composition, high detail, photorealistic, 35mm lens, authentic social media photo"
+ },
+ {
+  "file": "/images/seed/creators/meliserturk-cover.webp",
+  "group": "covers",
+  "key": "meliserturk",
+  "width": 1152,
+  "height": 672,
+  "origin": "generated",
+  "model": "Realistic Vision V6.0 B1 (CreativeML OpenRAIL-M)",
+  "prompt": "RAW photo, empty scene with no people, Istanbul Bosphorus at golden hour seen from a ferry deck with a glass of Turkish tea and simit, natural true-to-life colors, soft daylight, beautiful composition, high detail, photorealistic, 35mm lens, authentic social media photo"
+ },
+ {
+  "file": "/images/seed/creators/mervearslan-cover.webp",
+  "group": "covers",
+  "key": "mervearslan",
+  "width": 1152,
+  "height": 672,
+  "origin": "generated",
+  "model": "Realistic Vision V6.0 B1 (CreativeML OpenRAIL-M)",
+  "prompt": "RAW photo, empty scene with no people, fashion atelier with a clothing rack of neutral garments, fabric swatches and a tall mirror, natural true-to-life colors, soft daylight, beautiful composition, high detail, photorealistic, 35mm lens, authentic social media photo"
+ },
+ {
+  "file": "/images/seed/creators/nilaycoskun-cover.webp",
+  "group": "covers",
+  "key": "nilaycoskun",
+  "width": 1152,
+  "height": 672,
+  "origin": "generated",
+  "model": "Realistic Vision V6.0 B1 (CreativeML OpenRAIL-M)",
+  "prompt": "RAW photo, empty scene with no people, elegant boutique window display with leather handbags and silk scarves in Istanbul, natural true-to-life colors, soft daylight, beautiful composition, high detail, photorealistic, 35mm lens, authentic social media photo"
+ },
+ {
+  "file": "/images/seed/creators/selinkaya-cover.webp",
+  "group": "covers",
+  "key": "selinkaya",
+  "width": 1152,
+  "height": 672,
+  "origin": "generated",
+  "model": "Realistic Vision V6.0 B1 (CreativeML OpenRAIL-M)",
+  "prompt": "RAW photo, empty scene with no people, rustic kitchen table with fresh bread, vegetables, herbs and copper pots, natural true-to-life colors, soft daylight, beautiful composition, high detail, photorealistic, 35mm lens, authentic social media photo"
+ },
+ {
+  "file": "/images/seed/creators/sudeyilmaz-cover.webp",
+  "group": "covers",
+  "key": "sudeyilmaz",
+  "width": 1152,
+  "height": 672,
+  "origin": "generated",
+  "model": "Realistic Vision V6.0 B1 (CreativeML OpenRAIL-M)",
+  "prompt": "RAW photo, empty scene with no people, mountain lake viewpoint with a winding road and pine forest at golden hour, natural true-to-life colors, soft daylight, beautiful composition, high detail, photorealistic, 35mm lens, authentic social media photo"
+ },
+ {
+  "file": "/images/seed/creators/zeynepdemir-cover.webp",
+  "group": "covers",
+  "key": "zeynepdemir",
+  "width": 1152,
+  "height": 672,
+  "origin": "generated",
+  "model": "Realistic Vision V6.0 B1 (CreativeML OpenRAIL-M)",
+  "prompt": "RAW photo, empty scene with no people, Izmir Kordon seaside promenade at sunrise with a running path and palm trees, natural true-to-life colors, soft daylight, beautiful composition, high detail, photorealistic, 35mm lens, authentic social media photo"
+ },
+ {
+  "file": "/images/seed/categories/egitim.webp",
+  "group": "categories",
+  "key": "egitim",
+  "width": 960,
+  "height": 720,
+  "origin": "generated",
+  "model": "Realistic Vision V6.0 B1 (CreativeML OpenRAIL-M)",
+  "prompt": "RAW photo, empty scene with no people, open notebook, books and a laptop on a bright desk, natural true-to-life colors, soft daylight, beautiful composition, high detail, photorealistic, 35mm lens, authentic social media photo"
+ },
+ {
+  "file": "/images/seed/categories/ev-yasam.webp",
+  "group": "categories",
+  "key": "ev-yasam",
+  "width": 960,
+  "height": 720,
+  "origin": "generated",
+  "model": "Realistic Vision V6.0 B1 (CreativeML OpenRAIL-M)",
+  "prompt": "RAW photo, empty scene with no people, bright scandinavian home interior with sofa and plants, natural true-to-life colors, soft daylight, beautiful composition, high detail, photorealistic, 35mm lens, authentic social media photo"
+ },
+ {
+  "file": "/images/seed/categories/evcil-dostlar.webp",
+  "group": "categories",
+  "key": "evcil-dostlar",
+  "width": 960,
+  "height": 720,
+  "origin": "generated",
+  "model": "Realistic Vision V6.0 B1 (CreativeML OpenRAIL-M)",
+  "prompt": "RAW photo, empty scene with no people, cute ginger cat sleeping on a cozy blanket by a window, natural true-to-life colors, soft daylight, beautiful composition, high detail, photorealistic, 35mm lens, authentic social media photo"
+ },
+ {
+  "file": "/images/seed/categories/fitness.webp",
+  "group": "categories",
+  "key": "fitness",
+  "width": 960,
+  "height": 720,
+  "origin": "generated",
+  "model": "Realistic Vision V6.0 B1 (CreativeML OpenRAIL-M)",
+  "prompt": "RAW photo, empty scene with no people, dumbbells, water bottle and towel on a gym bench, natural true-to-life colors, soft daylight, beautiful composition, high detail, photorealistic, 35mm lens, authentic social media photo"
+ },
+ {
+  "file": "/images/seed/categories/is-dunyasi.webp",
+  "group": "categories",
+  "key": "is-dunyasi",
+  "width": 960,
+  "height": 720,
+  "origin": "generated",
+  "model": "Realistic Vision V6.0 B1 (CreativeML OpenRAIL-M)",
+  "prompt": "RAW photo, empty scene with no people, modern workspace with laptop, notebook and Turkish coffee by a window, natural true-to-life colors, soft daylight, beautiful composition, high detail, photorealistic, 35mm lens, authentic social media photo"
+ },
+ {
+  "file": "/images/seed/categories/moda.webp",
+  "group": "categories",
+  "key": "moda",
+  "width": 960,
+  "height": 720,
+  "origin": "generated",
+  "model": "Realistic Vision V6.0 B1 (CreativeML OpenRAIL-M)",
+  "prompt": "RAW photo, empty scene with no people, clothing rack with elegant garments in a boutique, natural true-to-life colors, soft daylight, beautiful composition, high detail, photorealistic, 35mm lens, authentic social media photo"
+ },
+ {
+  "file": "/images/seed/categories/muzik.webp",
+  "group": "categories",
+  "key": "muzik",
+  "width": 960,
+  "height": 720,
+  "origin": "generated",
+  "model": "Realistic Vision V6.0 B1 (CreativeML OpenRAIL-M)",
+  "prompt": "RAW photo, empty scene with no people, studio microphone and headphones with soft bokeh lights, natural true-to-life colors, soft daylight, beautiful composition, high detail, photorealistic, 35mm lens, authentic social media photo"
+ },
+ {
+  "file": "/images/seed/categories/oyun.webp",
+  "group": "categories",
+  "key": "oyun",
+  "width": 960,
+  "height": 720,
+  "origin": "generated",
+  "model": "Realistic Vision V6.0 B1 (CreativeML OpenRAIL-M)",
+  "prompt": "RAW photo, empty scene with no people, gaming controller and headset on a desk with neon lights, natural true-to-life colors, soft daylight, beautiful composition, high detail, photorealistic, 35mm lens, authentic social media photo"
+ },
+ {
+  "file": "/images/seed/categories/sanat.webp",
+  "group": "categories",
+  "key": "sanat",
+  "width": 960,
+  "height": 720,
+  "origin": "generated",
+  "model": "Realistic Vision V6.0 B1 (CreativeML OpenRAIL-M)",
+  "prompt": "RAW photo, empty scene with no people, paint palette, brushes and a colorful canvas, natural true-to-life colors, soft daylight, beautiful composition, high detail, photorealistic, 35mm lens, authentic social media photo"
+ },
+ {
+  "file": "/images/seed/categories/seyahat.webp",
+  "group": "categories",
+  "key": "seyahat",
+  "width": 960,
+  "height": 720,
+  "origin": "generated",
+  "model": "Realistic Vision V6.0 B1 (CreativeML OpenRAIL-M)",
+  "prompt": "RAW photo, empty scene with no people, travel flat lay with passport, map of Turkey, camera and sunglasses, natural true-to-life colors, soft daylight, beautiful composition, high detail, photorealistic, 35mm lens, authentic social media photo"
+ },
+ {
+  "file": "/images/seed/categories/wellness.webp",
+  "group": "categories",
+  "key": "wellness",
+  "width": 960,
+  "height": 720,
+  "origin": "generated",
+  "model": "Realistic Vision V6.0 B1 (CreativeML OpenRAIL-M)",
+  "prompt": "RAW photo, empty scene with no people, candles, yoga mat and eucalyptus in a calm room, natural true-to-life colors, soft daylight, beautiful composition, high detail, photorealistic, 35mm lens, authentic social media photo"
+ },
+ {
+  "file": "/images/seed/categories/yasam-tarzi.webp",
+  "group": "categories",
+  "key": "yasam-tarzi",
+  "width": 960,
+  "height": 720,
+  "origin": "generated",
+  "model": "Realistic Vision V6.0 B1 (CreativeML OpenRAIL-M)",
+  "prompt": "RAW photo, empty scene with no people, cozy stylish Istanbul apartment living room with plants, coffee and books, natural true-to-life colors, soft daylight, beautiful composition, high detail, photorealistic, 35mm lens, authentic social media photo"
+ },
+ {
+  "file": "/images/seed/categories/yemek.webp",
+  "group": "categories",
+  "key": "yemek",
+  "width": 960,
+  "height": 720,
+  "origin": "generated",
+  "model": "Realistic Vision V6.0 B1 (CreativeML OpenRAIL-M)",
+  "prompt": "RAW photo, empty scene with no people, traditional Turkish breakfast spread on a rustic table, top view, natural true-to-life colors, soft daylight, beautiful composition, high detail, photorealistic, 35mm lens, authentic social media photo"
+ },
+ {
+  "file": "seed-media/content/adasahin-0.webp",
+  "group": "content",
+  "key": "adasahin-0",
+  "width": 960,
+  "height": 720,
+  "origin": "generated",
+  "model": "Realistic Vision V6.0 B1 (CreativeML OpenRAIL-M)",
+  "prompt": "RAW photo, empty scene with no people, small harbor in Kas at early morning with colorful wooden boats and calm turquoise water, natural true-to-life colors, soft daylight, beautiful composition, high detail, photorealistic, 35mm lens, authentic social media photo"
+ },
+ {
+  "file": "seed-media/content/adasahin-1.webp",
+  "group": "content",
+  "key": "adasahin-1",
+  "width": 960,
+  "height": 720,
+  "origin": "generated",
+  "model": "Realistic Vision V6.0 B1 (CreativeML OpenRAIL-M)",
+  "prompt": "RAW photo, empty scene with no people, Lycian Way hiking trail along a cliff with a view of a turquoise bay and pine trees, natural true-to-life colors, soft daylight, beautiful composition, high detail, photorealistic, 35mm lens, authentic social media photo"
+ },
+ {
+  "file": "seed-media/content/adasahin-2.webp",
+  "group": "content",
+  "key": "adasahin-2",
+  "width": 960,
+  "height": 720,
+  "origin": "generated",
+  "model": "Realistic Vision V6.0 B1 (CreativeML OpenRAIL-M)",
+  "prompt": "RAW photo, empty scene with no people, hidden pebble cove with crystal clear turquoise water surrounded by rocks, natural true-to-life colors, soft daylight, beautiful composition, high detail, photorealistic, 35mm lens, authentic social media photo"
+ },
+ {
+  "file": "seed-media/content/adasahin-3.webp",
+  "group": "content",
+  "key": "adasahin-3",
+  "width": 960,
+  "height": 720,
+  "origin": "generated",
+  "model": "Realistic Vision V6.0 B1 (CreativeML OpenRAIL-M)",
+  "prompt": "RAW photo, empty scene with no people, underwater scene of a shipwreck with sunlight rays and small fish in clear blue water, natural true-to-life colors, soft daylight, beautiful composition, high detail, photorealistic, 35mm lens, authentic social media photo"
+ },
+ {
+  "file": "seed-media/content/adasahin-4.webp",
+  "group": "content",
+  "key": "adasahin-4",
+  "width": 960,
+  "height": 720,
+  "origin": "generated",
+  "model": "Realistic Vision V6.0 B1 (CreativeML OpenRAIL-M)",
+  "prompt": "RAW photo, empty scene with no people, camping gear flat lay with tent, backpack, headlamp, water bottle and map on grass, natural true-to-life colors, soft daylight, beautiful composition, high detail, photorealistic, 35mm lens, authentic social media photo"
+ },
+ {
+  "file": "seed-media/content/adasahin-5.webp",
+  "group": "content",
+  "key": "adasahin-5",
+  "width": 960,
+  "height": 720,
+  "origin": "generated",
+  "model": "Realistic Vision V6.0 B1 (CreativeML OpenRAIL-M)",
+  "prompt": "RAW photo, a woman seen from behind with a backpack and straw hat walking on a coastal trail above the sea, modest fully clothed, face not visible, natural true-to-life colors, soft daylight, candid lifestyle photo, high detail, photorealistic, authentic social media photo"
+ },
+ {
+  "file": "seed-media/content/cerenyildiz-0.webp",
+  "group": "content",
+  "key": "cerenyildiz-0",
+  "width": 960,
+  "height": 720,
+  "origin": "generated",
+  "model": "Realistic Vision V6.0 B1 (CreativeML OpenRAIL-M)",
+  "prompt": "RAW photo, empty scene with no people, cozy streaming corner with a microphone arm, neon pink lights, plush toys and a gaming chair, natural true-to-life colors, soft daylight, beautiful composition, high detail, photorealistic, 35mm lens, authentic social media photo"
+ },
+ {
+  "file": "seed-media/content/cerenyildiz-1.webp",
+  "group": "content",
+  "key": "cerenyildiz-1",
+  "width": 960,
+  "height": 720,
+  "origin": "generated",
+  "model": "Realistic Vision V6.0 B1 (CreativeML OpenRAIL-M)",
+  "prompt": "RAW photo, empty scene with no people, a game controller and a handheld console on a desk with soft purple lighting and a cup of tea, natural true-to-life colors, soft daylight, beautiful composition, high detail, photorealistic, 35mm lens, authentic social media photo"
+ },
+ {
+  "file": "seed-media/content/cerenyildiz-2.webp",
+  "group": "content",
+  "key": "cerenyildiz-2",
+  "width": 960,
+  "height": 720,
+  "origin": "generated",
+  "model": "Realistic Vision V6.0 B1 (CreativeML OpenRAIL-M)",
+  "prompt": "RAW photo, empty scene with no people, streaming equipment flat lay with microphone, webcam, ring light and cables on a dark desk, natural true-to-life colors, soft daylight, beautiful composition, high detail, photorealistic, 35mm lens, authentic social media photo"
+ },
+ {
+  "file": "seed-media/content/cerenyildiz-3.webp",
+  "group": "content",
+  "key": "cerenyildiz-3",
+  "width": 960,
+  "height": 720,
+  "origin": "generated",
+  "model": "Realistic Vision V6.0 B1 (CreativeML OpenRAIL-M)",
+  "prompt": "RAW photo, empty scene with no people, esports tournament stage with empty gaming chairs, monitors and colorful stage lights, natural true-to-life colors, soft daylight, beautiful composition, high detail, photorealistic, 35mm lens, authentic social media photo"
+ },
+ {
+  "file": "seed-media/content/cerenyildiz-4.webp",
+  "group": "content",
+  "key": "cerenyildiz-4",
+  "width": 960,
+  "height": 720,
+  "origin": "generated",
+  "model": "Realistic Vision V6.0 B1 (CreativeML OpenRAIL-M)",
+  "prompt": "RAW photo, empty scene with no people, lo-fi desk at night with a lamp, plants, a vinyl player and rain on the window, natural true-to-life colors, soft daylight, beautiful composition, high detail, photorealistic, 35mm lens, authentic social media photo"
+ },
+ {
+  "file": "seed-media/content/cerenyildiz-5.webp",
+  "group": "content",
+  "key": "cerenyildiz-5",
+  "width": 960,
+  "height": 720,
+  "origin": "generated",
+  "model": "Realistic Vision V6.0 B1 (CreativeML OpenRAIL-M)",
+  "prompt": "RAW photo, empty scene with no people, a keyboard and colorful rhythm game notes glowing on a monitor in a dark room, natural true-to-life colors, soft daylight, beautiful composition, high detail, photorealistic, 35mm lens, authentic social media photo"
+ },
+ {
+  "file": "seed-media/content/damladeniz-0.webp",
+  "group": "content",
+  "key": "damladeniz-0",
+  "width": 960,
+  "height": 720,
+  "origin": "generated",
+  "model": "Realistic Vision V6.0 B1 (CreativeML OpenRAIL-M)",
+  "prompt": "RAW photo, empty scene with no people, dirt running path between olive trees at sunrise with soft golden light, natural true-to-life colors, soft daylight, beautiful composition, high detail, photorealistic, 35mm lens, authentic social media photo"
+ },
+ {
+  "file": "seed-media/content/damladeniz-1.webp",
+  "group": "content",
+  "key": "damladeniz-1",
+  "width": 960,
+  "height": 720,
+  "origin": "generated",
+  "model": "Realistic Vision V6.0 B1 (CreativeML OpenRAIL-M)",
+  "prompt": "RAW photo, empty scene with no people, a road bicycle leaning against a stone wall next to vineyards on a sunny day, natural true-to-life colors, soft daylight, beautiful composition, high detail, photorealistic, 35mm lens, authentic social media photo"
+ },
+ {
+  "file": "seed-media/content/damladeniz-2.webp",
+  "group": "content",
+  "key": "damladeniz-2",
+  "width": 960,
+  "height": 720,
+  "origin": "generated",
+  "model": "Realistic Vision V6.0 B1 (CreativeML OpenRAIL-M)",
+  "prompt": "RAW photo, empty scene with no people, running shoes, a stopwatch and a training plan notebook on a wooden park bench, still life, natural true-to-life colors, soft daylight, beautiful composition, high detail, photorealistic, 35mm lens, authentic social media photo"
+ },
+ {
+  "file": "seed-media/content/damladeniz-3.webp",
+  "group": "content",
+  "key": "damladeniz-3",
+  "width": 960,
+  "height": 720,
+  "origin": "generated",
+  "model": "Realistic Vision V6.0 B1 (CreativeML OpenRAIL-M)",
+  "prompt": "RAW photo, empty scene with no people, a rolled yoga mat, foam roller and a water bottle on a garden lawn in morning light, still life, natural true-to-life colors, soft daylight, beautiful composition, high detail, photorealistic, 35mm lens, authentic social media photo"
+ },
+ {
+  "file": "seed-media/content/damladeniz-4.webp",
+  "group": "content",
+  "key": "damladeniz-4",
+  "width": 960,
+  "height": 720,
+  "origin": "generated",
+  "model": "Realistic Vision V6.0 B1 (CreativeML OpenRAIL-M)",
+  "prompt": "RAW photo, empty scene with no people, healthy breakfast with oatmeal, berries, honey and a glass of orange juice on a rustic table, natural true-to-life colors, soft daylight, beautiful composition, high detail, photorealistic, 35mm lens, authentic social media photo"
+ },
+ {
+  "file": "seed-media/content/damladeniz-5.webp",
+  "group": "content",
+  "key": "damladeniz-5",
+  "width": 960,
+  "height": 720,
+  "origin": "generated",
+  "model": "Realistic Vision V6.0 B1 (CreativeML OpenRAIL-M)",
+  "prompt": "RAW photo, empty scene with no people, winding coastal road on the Aegean coast with the sea and hills, perfect for cycling, natural true-to-life colors, soft daylight, beautiful composition, high detail, photorealistic, 35mm lens, authentic social media photo"
+ },
+ {
+  "file": "seed-media/content/defnearas-0.webp",
+  "group": "content",
+  "key": "defnearas-0",
+  "width": 960,
+  "height": 720,
+  "origin": "generated",
+  "model": "Realistic Vision V6.0 B1 (CreativeML OpenRAIL-M)",
+  "prompt": "RAW photo, empty scene with no people, vinyl records on a wooden shelf with a turntable playing in warm lamp light, natural true-to-life colors, soft daylight, beautiful composition, high detail, photorealistic, 35mm lens, authentic social media photo"
+ },
+ {
+  "file": "seed-media/content/defnearas-1.webp",
+  "group": "content",
+  "key": "defnearas-1",
+  "width": 960,
+  "height": 720,
+  "origin": "generated",
+  "model": "Realistic Vision V6.0 B1 (CreativeML OpenRAIL-M)",
+  "prompt": "RAW photo, empty scene with no people, a retro game console opened on a workbench with small screwdrivers and a soldering iron, natural true-to-life colors, soft daylight, beautiful composition, high detail, photorealistic, 35mm lens, authentic social media photo"
+ },
+ {
+  "file": "seed-media/content/defnearas-2.webp",
+  "group": "content",
+  "key": "defnearas-2",
+  "width": 960,
+  "height": 720,
+  "origin": "generated",
+  "model": "Realistic Vision V6.0 B1 (CreativeML OpenRAIL-M)",
+  "prompt": "RAW photo, empty scene with no people, a collection of retro game cartridges and controllers arranged neatly on a desk, natural true-to-life colors, soft daylight, beautiful composition, high detail, photorealistic, 35mm lens, authentic social media photo"
+ },
+ {
+  "file": "seed-media/content/defnearas-3.webp",
+  "group": "content",
+  "key": "defnearas-3",
+  "width": 960,
+  "height": 720,
+  "origin": "generated",
+  "model": "Realistic Vision V6.0 B1 (CreativeML OpenRAIL-M)",
+  "prompt": "RAW photo, empty scene with no people, lo-fi study desk at night with a desk lamp, plants, headphones and a cassette player, natural true-to-life colors, soft daylight, beautiful composition, high detail, photorealistic, 35mm lens, authentic social media photo"
+ },
+ {
+  "file": "seed-media/content/defnearas-4.webp",
+  "group": "content",
+  "key": "defnearas-4",
+  "width": 960,
+  "height": 720,
+  "origin": "generated",
+  "model": "Realistic Vision V6.0 B1 (CreativeML OpenRAIL-M)",
+  "prompt": "RAW photo, empty scene with no people, colorful pixel art landscape displayed on a computer screen in a dark room, natural true-to-life colors, soft daylight, beautiful composition, high detail, photorealistic, 35mm lens, authentic social media photo"
+ },
+ {
+  "file": "seed-media/content/defnearas-5.webp",
+  "group": "content",
+  "key": "defnearas-5",
+  "width": 960,
+  "height": 720,
+  "origin": "generated",
+  "model": "Realistic Vision V6.0 B1 (CreativeML OpenRAIL-M)",
+  "prompt": "RAW photo, empty scene with no people, an old second-hand record shop interior with crates of vinyl records, natural true-to-life colors, soft daylight, beautiful composition, high detail, photorealistic, 35mm lens, authentic social media photo"
+ },
+ {
+  "file": "seed-media/content/deryaakin-0.webp",
+  "group": "content",
+  "key": "deryaakin-0",
+  "width": 960,
+  "height": 720,
+  "origin": "generated",
+  "model": "Realistic Vision V6.0 B1 (CreativeML OpenRAIL-M)",
+  "prompt": "RAW photo, empty scene with no people, an acoustic guitar leaning against a wooden stool in a sunlit small recording studio, still life, natural true-to-life colors, soft daylight, beautiful composition, high detail, photorealistic, 35mm lens, authentic social media photo"
+ },
+ {
+  "file": "seed-media/content/deryaakin-1.webp",
+  "group": "content",
+  "key": "deryaakin-1",
+  "width": 960,
+  "height": 720,
+  "origin": "generated",
+  "model": "Realistic Vision V6.0 B1 (CreativeML OpenRAIL-M)",
+  "prompt": "RAW photo, empty scene with no people, an open handwritten lyrics notebook with a pencil, guitar picks and a cup of coffee on a wooden table, natural true-to-life colors, soft daylight, beautiful composition, high detail, photorealistic, 35mm lens, authentic social media photo"
+ },
+ {
+  "file": "seed-media/content/deryaakin-2.webp",
+  "group": "content",
+  "key": "deryaakin-2",
+  "width": 960,
+  "height": 720,
+  "origin": "generated",
+  "model": "Realistic Vision V6.0 B1 (CreativeML OpenRAIL-M)",
+  "prompt": "RAW photo, empty scene with no people, small intimate concert stage with a single microphone, warm spotlights and empty chairs, natural true-to-life colors, soft daylight, beautiful composition, high detail, photorealistic, 35mm lens, authentic social media photo"
+ },
+ {
+  "file": "seed-media/content/deryaakin-3.webp",
+  "group": "content",
+  "key": "deryaakin-3",
+  "width": 960,
+  "height": 720,
+  "origin": "generated",
+  "model": "Realistic Vision V6.0 B1 (CreativeML OpenRAIL-M)",
+  "prompt": "RAW photo, a woman seen from behind carrying a guitar case walking on a seaside street at dusk, long dark brown hair, denim jacket, modest fully clothed, face not visible, natural true-to-life colors, soft daylight, candid lifestyle photo, high detail, photorealistic, authentic social media photo"
+ },
+ {
+  "file": "seed-media/content/deryaakin-4.webp",
+  "group": "content",
+  "key": "deryaakin-4",
+  "width": 960,
+  "height": 720,
+  "origin": "generated",
+  "model": "Realistic Vision V6.0 B1 (CreativeML OpenRAIL-M)",
+  "prompt": "RAW photo, empty scene with no people, printed guitar chord charts next to a capo and guitar picks on a wooden table, still life, natural true-to-life colors, soft daylight, beautiful composition, high detail, photorealistic, 35mm lens, authentic social media photo"
+ },
+ {
+  "file": "seed-media/content/deryaakin-5.webp",
+  "group": "content",
+  "key": "deryaakin-5",
+  "width": 960,
+  "height": 720,
+  "origin": "generated",
+  "model": "Realistic Vision V6.0 B1 (CreativeML OpenRAIL-M)",
+  "prompt": "RAW photo, empty scene with no people, a home studio desk with a laptop showing a music waveform, headphones and a midi keyboard, natural true-to-life colors, soft daylight, beautiful composition, high detail, photorealistic, 35mm lens, authentic social media photo"
+ },
+ {
+  "file": "seed-media/content/ecekaraca-0.webp",
+  "group": "content",
+  "key": "ecekaraca-0",
+  "width": 960,
+  "height": 720,
+  "origin": "generated",
+  "model": "Realistic Vision V6.0 B1 (CreativeML OpenRAIL-M)",
+  "prompt": "RAW photo, empty scene with no people, artist studio wall with pinned sketches and watercolor studies, sunlight from a window, natural true-to-life colors, soft daylight, beautiful composition, high detail, photorealistic, 35mm lens, authentic social media photo"
+ },
+ {
+  "file": "seed-media/content/ecekaraca-1.webp",
+  "group": "content",
+  "key": "ecekaraca-1",
+  "width": 960,
+  "height": 720,
+  "origin": "generated",
+  "model": "Realistic Vision V6.0 B1 (CreativeML OpenRAIL-M)",
+  "prompt": "RAW photo, empty scene with no people, a watercolor palette with vibrant colors, brushes and a glass of water on a wooden table, natural true-to-life colors, soft daylight, beautiful composition, high detail, photorealistic, 35mm lens, authentic social media photo"
+ },
+ {
+  "file": "seed-media/content/ecekaraca-2.webp",
+  "group": "content",
+  "key": "ecekaraca-2",
+  "width": 960,
+  "height": 720,
+  "origin": "generated",
+  "model": "Realistic Vision V6.0 B1 (CreativeML OpenRAIL-M)",
+  "prompt": "RAW photo, empty scene with no people, watercolor painting of a landscape in progress on a desk with brushes, natural true-to-life colors, soft daylight, beautiful composition, high detail, photorealistic, 35mm lens, authentic social media photo"
+ },
+ {
+  "file": "seed-media/content/ecekaraca-3.webp",
+  "group": "content",
+  "key": "ecekaraca-3",
+  "width": 960,
+  "height": 720,
+  "origin": "generated",
+  "model": "Realistic Vision V6.0 B1 (CreativeML OpenRAIL-M)",
+  "prompt": "RAW photo, empty scene with no people, a large canvas painting of the Bosphorus with boats in progress on an easel, natural true-to-life colors, soft daylight, beautiful composition, high detail, photorealistic, 35mm lens, authentic social media photo"
+ },
+ {
+  "file": "seed-media/content/ecekaraca-4.webp",
+  "group": "content",
+  "key": "ecekaraca-4",
+  "width": 960,
+  "height": 720,
+  "origin": "generated",
+  "model": "Realistic Vision V6.0 B1 (CreativeML OpenRAIL-M)",
+  "prompt": "RAW photo, empty scene with no people, printed line drawing sketch sheets with pencils and an eraser on a desk, natural true-to-life colors, soft daylight, beautiful composition, high detail, photorealistic, 35mm lens, authentic social media photo"
+ },
+ {
+  "file": "seed-media/content/ecekaraca-5.webp",
+  "group": "content",
+  "key": "ecekaraca-5",
+  "width": 960,
+  "height": 720,
+  "origin": "generated",
+  "model": "Realistic Vision V6.0 B1 (CreativeML OpenRAIL-M)",
+  "prompt": "RAW photo, empty scene with no people, an unfinished clay vase on a pottery wheel in a sunny ceramic studio, still life, natural true-to-life colors, soft daylight, beautiful composition, high detail, photorealistic, 35mm lens, authentic social media photo"
+ },
+ {
+  "file": "seed-media/content/elifkaya-0.webp",
+  "group": "content",
+  "key": "elifkaya-0",
+  "width": 960,
+  "height": 720,
+  "origin": "generated",
+  "model": "Realistic Vision V6.0 B1 (CreativeML OpenRAIL-M)",
+  "prompt": "RAW photo, empty scene with no people, Ankara Castle old town narrow street with stone walls and autumn leaves, natural true-to-life colors, soft daylight, beautiful composition, high detail, photorealistic, 35mm lens, authentic social media photo"
+ },
+ {
+  "file": "seed-media/content/elifkaya-1.webp",
+  "group": "content",
+  "key": "elifkaya-1",
+  "width": 960,
+  "height": 720,
+  "origin": "generated",
+  "model": "Realistic Vision V6.0 B1 (CreativeML OpenRAIL-M)",
+  "prompt": "RAW photo, empty scene with no people, historic white and wooden Ottoman houses with bay windows in Beypazari on a sunny day, natural true-to-life colors, soft daylight, beautiful composition, high detail, photorealistic, 35mm lens, authentic social media photo"
+ },
+ {
+  "file": "seed-media/content/elifkaya-2.webp",
+  "group": "content",
+  "key": "elifkaya-2",
+  "width": 960,
+  "height": 720,
+  "origin": "generated",
+  "model": "Realistic Vision V6.0 B1 (CreativeML OpenRAIL-M)",
+  "prompt": "RAW photo, empty scene with no people, a vintage train passing through golden Anatolian steppe at sunset, natural true-to-life colors, soft daylight, beautiful composition, high detail, photorealistic, 35mm lens, authentic social media photo"
+ },
+ {
+  "file": "seed-media/content/elifkaya-3.webp",
+  "group": "content",
+  "key": "elifkaya-3",
+  "width": 960,
+  "height": 720,
+  "origin": "generated",
+  "model": "Realistic Vision V6.0 B1 (CreativeML OpenRAIL-M)",
+  "prompt": "RAW photo, empty scene with no people, stone houses and olive trees in the hillside village of Sirince, warm afternoon light, natural true-to-life colors, soft daylight, beautiful composition, high detail, photorealistic, 35mm lens, authentic social media photo"
+ },
+ {
+  "file": "seed-media/content/elifkaya-4.webp",
+  "group": "content",
+  "key": "elifkaya-4",
+  "width": 960,
+  "height": 720,
+  "origin": "generated",
+  "model": "Realistic Vision V6.0 B1 (CreativeML OpenRAIL-M)",
+  "prompt": "RAW photo, empty scene with no people, an open sketchbook with architectural pencil drawings of old houses next to a cup of coffee, natural true-to-life colors, soft daylight, beautiful composition, high detail, photorealistic, 35mm lens, authentic social media photo"
+ },
+ {
+  "file": "seed-media/content/elifkaya-5.webp",
+  "group": "content",
+  "key": "elifkaya-5",
+  "width": 960,
+  "height": 720,
+  "origin": "generated",
+  "model": "Realistic Vision V6.0 B1 (CreativeML OpenRAIL-M)",
+  "prompt": "RAW photo, empty scene with no people, Mudurnu historic town with wooden mansions and a small bridge in autumn, natural true-to-life colors, soft daylight, beautiful composition, high detail, photorealistic, 35mm lens, authentic social media photo"
+ },
+ {
+  "file": "seed-media/content/gizemaydin-0.webp",
+  "group": "content",
+  "key": "gizemaydin-0",
+  "width": 960,
+  "height": 720,
+  "origin": "generated",
+  "model": "Realistic Vision V6.0 B1 (CreativeML OpenRAIL-M)",
+  "prompt": "RAW photo, empty scene with no people, a clean office desk with a laptop, a small plant and a pilates ball next to the chair, natural true-to-life colors, soft daylight, beautiful composition, high detail, photorealistic, 35mm lens, authentic social media photo"
+ },
+ {
+  "file": "seed-media/content/gizemaydin-1.webp",
+  "group": "content",
+  "key": "gizemaydin-1",
+  "width": 960,
+  "height": 720,
+  "origin": "generated",
+  "model": "Realistic Vision V6.0 B1 (CreativeML OpenRAIL-M)",
+  "prompt": "RAW photo, empty scene with no people, matcha latte, a journal and a rolled yoga mat on a sunny windowsill, natural true-to-life colors, soft daylight, beautiful composition, high detail, photorealistic, 35mm lens, authentic social media photo"
+ },
+ {
+  "file": "seed-media/content/gizemaydin-2.webp",
+  "group": "content",
+  "key": "gizemaydin-2",
+  "width": 960,
+  "height": 720,
+  "origin": "generated",
+  "model": "Realistic Vision V6.0 B1 (CreativeML OpenRAIL-M)",
+  "prompt": "RAW photo, empty scene with no people, a yoga mat, a small pilates ball and resistance band in a bright minimalist living room, natural true-to-life colors, soft daylight, beautiful composition, high detail, photorealistic, 35mm lens, authentic social media photo"
+ },
+ {
+  "file": "seed-media/content/gizemaydin-3.webp",
+  "group": "content",
+  "key": "gizemaydin-3",
+  "width": 960,
+  "height": 720,
+  "origin": "generated",
+  "model": "Realistic Vision V6.0 B1 (CreativeML OpenRAIL-M)",
+  "prompt": "RAW photo, empty scene with no people, product photo of an empty pilates reformer machine next to a window in a bright minimalist studio, still life, no humans, natural true-to-life colors, soft daylight, beautiful composition, high detail, photorealistic, 35mm lens, authentic social media photo"
+ },
+ {
+  "file": "seed-media/content/gizemaydin-4.webp",
+  "group": "content",
+  "key": "gizemaydin-4",
+  "width": 960,
+  "height": 720,
+  "origin": "generated",
+  "model": "Realistic Vision V6.0 B1 (CreativeML OpenRAIL-M)",
+  "prompt": "RAW photo, empty scene with no people, illustrated breathing exercise cards on a table with a candle and eucalyptus, natural true-to-life colors, soft daylight, beautiful composition, high detail, photorealistic, 35mm lens, authentic social media photo"
+ },
+ {
+  "file": "seed-media/content/gizemaydin-5.webp",
+  "group": "content",
+  "key": "gizemaydin-5",
+  "width": 960,
+  "height": 720,
+  "origin": "generated",
+  "model": "Realistic Vision V6.0 B1 (CreativeML OpenRAIL-M)",
+  "prompt": "RAW photo, empty scene with no people, colorful healthy bowls with vegetables, legumes and grains on a light table, top view, natural true-to-life colors, soft daylight, beautiful composition, high detail, photorealistic, 35mm lens, authentic social media photo"
+ },
+ {
+  "file": "seed-media/content/meliserturk-0.webp",
+  "group": "content",
+  "key": "meliserturk-0",
+  "width": 960,
+  "height": 720,
+  "origin": "generated",
+  "model": "Realistic Vision V6.0 B1 (CreativeML OpenRAIL-M)",
+  "prompt": "RAW photo, a woman seen from behind walking down a colorful Kadikoy street in the morning, wearing a cream knit sweater and jeans, holding a takeaway coffee, modest fully clothed, face not visible, natural true-to-life colors, soft daylight, candid lifestyle photo, high detail, photorealistic, authentic social media photo"
+ },
+ {
+  "file": "seed-media/content/meliserturk-1.webp",
+  "group": "content",
+  "key": "meliserturk-1",
+  "width": 960,
+  "height": 720,
+  "origin": "generated",
+  "model": "Realistic Vision V6.0 B1 (CreativeML OpenRAIL-M)",
+  "prompt": "RAW photo, empty scene with no people, Istanbul ferry deck at sunset with a tulip glass of Turkish tea and a simit on the railing, seagulls, Galata in the distance, natural true-to-life colors, soft daylight, beautiful composition, high detail, photorealistic, 35mm lens, authentic social media photo"
+ },
+ {
+  "file": "seed-media/content/meliserturk-2.webp",
+  "group": "content",
+  "key": "meliserturk-2",
+  "width": 960,
+  "height": 720,
+  "origin": "generated",
+  "model": "Realistic Vision V6.0 B1 (CreativeML OpenRAIL-M)",
+  "prompt": "RAW photo, empty scene with no people, top-down product photo of autumn clothes neatly arranged on a light wooden floor: folded beige trench coat, cream knit sweater, brown leather ankle boots and a wool scarf, still life, no humans, natural true-to-life colors, soft daylight, beautiful composition, high detail, photorealistic, 35mm lens, authentic social media photo"
+ },
+ {
+  "file": "seed-media/content/meliserturk-3.webp",
+  "group": "content",
+  "key": "meliserturk-3",
+  "width": 960,
+  "height": 720,
+  "origin": "generated",
+  "model": "Realistic Vision V6.0 B1 (CreativeML OpenRAIL-M)",
+  "prompt": "RAW photo, empty scene with no people, hot air balloons rising over Cappadocia fairy chimneys at sunrise, soft pink sky, natural true-to-life colors, soft daylight, beautiful composition, high detail, photorealistic, 35mm lens, authentic social media photo"
+ },
+ {
+  "file": "seed-media/content/meliserturk-4.webp",
+  "group": "content",
+  "key": "meliserturk-4",
+  "width": 960,
+  "height": 720,
+  "origin": "generated",
+  "model": "Realistic Vision V6.0 B1 (CreativeML OpenRAIL-M)",
+  "prompt": "RAW photo, a woman seen from behind holding a camera on a steep cobblestone street near Galata Tower, wearing a beige trench coat, modest fully clothed, face not visible, natural true-to-life colors, soft daylight, candid lifestyle photo, high detail, photorealistic, authentic social media photo"
+ },
+ {
+  "file": "seed-media/content/meliserturk-5.webp",
+  "group": "content",
+  "key": "meliserturk-5",
+  "width": 960,
+  "height": 720,
+  "origin": "generated",
+  "model": "Realistic Vision V6.0 B1 (CreativeML OpenRAIL-M)",
+  "prompt": "RAW photo, empty scene with no people, yellow tram on a narrow hilly street in Lisbon with pastel tiled houses, natural true-to-life colors, soft daylight, beautiful composition, high detail, photorealistic, 35mm lens, authentic social media photo"
+ },
+ {
+  "file": "seed-media/content/mervearslan-0.webp",
+  "group": "content",
+  "key": "mervearslan-0",
+  "width": 960,
+  "height": 720,
+  "origin": "generated",
+  "model": "Realistic Vision V6.0 B1 (CreativeML OpenRAIL-M)",
+  "prompt": "RAW photo, empty scene with no people, minimal capsule wardrobe on a clothing rack with neutral beige black and white garments in a bright room, natural true-to-life colors, soft daylight, beautiful composition, high detail, photorealistic, 35mm lens, authentic social media photo"
+ },
+ {
+  "file": "seed-media/content/mervearslan-1.webp",
+  "group": "content",
+  "key": "mervearslan-1",
+  "width": 960,
+  "height": 720,
+  "origin": "generated",
+  "model": "Realistic Vision V6.0 B1 (CreativeML OpenRAIL-M)",
+  "prompt": "RAW photo, empty scene with no people, fabric swatches of wool linen and cotton with tailor scissors and measuring tape on a table, natural true-to-life colors, soft daylight, beautiful composition, high detail, photorealistic, 35mm lens, authentic social media photo"
+ },
+ {
+  "file": "seed-media/content/mervearslan-2.webp",
+  "group": "content",
+  "key": "mervearslan-2",
+  "width": 960,
+  "height": 720,
+  "origin": "generated",
+  "model": "Realistic Vision V6.0 B1 (CreativeML OpenRAIL-M)",
+  "prompt": "RAW photo, empty scene with no people, office outfit flat lay on a white table, folded navy blazer, silk blouse, loafers and a leather bag, top view, natural true-to-life colors, soft daylight, beautiful composition, high detail, photorealistic, 35mm lens, authentic social media photo"
+ },
+ {
+  "file": "seed-media/content/mervearslan-3.webp",
+  "group": "content",
+  "key": "mervearslan-3",
+  "width": 960,
+  "height": 720,
+  "origin": "generated",
+  "model": "Realistic Vision V6.0 B1 (CreativeML OpenRAIL-M)",
+  "prompt": "RAW photo, empty scene with no people, vintage antique shop in Cukurcuma Istanbul with old lamps and clothing, natural true-to-life colors, soft daylight, beautiful composition, high detail, photorealistic, 35mm lens, authentic social media photo"
+ },
+ {
+  "file": "seed-media/content/mervearslan-4.webp",
+  "group": "content",
+  "key": "mervearslan-4",
+  "width": 960,
+  "height": 720,
+  "origin": "generated",
+  "model": "Realistic Vision V6.0 B1 (CreativeML OpenRAIL-M)",
+  "prompt": "RAW photo, empty scene with no people, color palette cards and fabric samples arranged in a gradient on a white desk, natural true-to-life colors, soft daylight, beautiful composition, high detail, photorealistic, 35mm lens, authentic social media photo"
+ },
+ {
+  "file": "seed-media/content/mervearslan-5.webp",
+  "group": "content",
+  "key": "mervearslan-5",
+  "width": 960,
+  "height": 720,
+  "origin": "generated",
+  "model": "Realistic Vision V6.0 B1 (CreativeML OpenRAIL-M)",
+  "prompt": "RAW photo, empty scene with no people, elegant formal dresses with long sleeves hanging in a boutique fitting room, natural true-to-life colors, soft daylight, beautiful composition, high detail, photorealistic, 35mm lens, authentic social media photo"
+ },
+ {
+  "file": "seed-media/content/nilaycoskun-0.webp",
+  "group": "content",
+  "key": "nilaycoskun-0",
+  "width": 960,
+  "height": 720,
+  "origin": "generated",
+  "model": "Realistic Vision V6.0 B1 (CreativeML OpenRAIL-M)",
+  "prompt": "RAW photo, empty scene with no people, a camel wool coat hanging on a vintage wooden hanger against a cream wall, natural true-to-life colors, soft daylight, beautiful composition, high detail, photorealistic, 35mm lens, authentic social media photo"
+ },
+ {
+  "file": "seed-media/content/nilaycoskun-1.webp",
+  "group": "content",
+  "key": "nilaycoskun-1",
+  "width": 960,
+  "height": 720,
+  "origin": "generated",
+  "model": "Realistic Vision V6.0 B1 (CreativeML OpenRAIL-M)",
+  "prompt": "RAW photo, empty scene with no people, colorful silk scarves neatly folded on a marble table with a perfume bottle, natural true-to-life colors, soft daylight, beautiful composition, high detail, photorealistic, 35mm lens, authentic social media photo"
+ },
+ {
+  "file": "seed-media/content/nilaycoskun-2.webp",
+  "group": "content",
+  "key": "nilaycoskun-2",
+  "width": 960,
+  "height": 720,
+  "origin": "generated",
+  "model": "Realistic Vision V6.0 B1 (CreativeML OpenRAIL-M)",
+  "prompt": "RAW photo, empty scene with no people, a collection of elegant leather handbags displayed on shelves in a boutique, natural true-to-life colors, soft daylight, beautiful composition, high detail, photorealistic, 35mm lens, authentic social media photo"
+ },
+ {
+  "file": "seed-media/content/nilaycoskun-3.webp",
+  "group": "content",
+  "key": "nilaycoskun-3",
+  "width": 960,
+  "height": 720,
+  "origin": "generated",
+  "model": "Realistic Vision V6.0 B1 (CreativeML OpenRAIL-M)",
+  "prompt": "RAW photo, a woman with a sleek black bob seen from behind walking along the Bebek seaside promenade in a camel coat, modest fully clothed, face not visible, natural true-to-life colors, soft daylight, candid lifestyle photo, high detail, photorealistic, authentic social media photo"
+ },
+ {
+  "file": "seed-media/content/nilaycoskun-4.webp",
+  "group": "content",
+  "key": "nilaycoskun-4",
+  "width": 960,
+  "height": 720,
+  "origin": "generated",
+  "model": "Realistic Vision V6.0 B1 (CreativeML OpenRAIL-M)",
+  "prompt": "RAW photo, empty scene with no people, close-up of leather handbag stitching and a brass clasp on a wooden table, natural true-to-life colors, soft daylight, beautiful composition, high detail, photorealistic, 35mm lens, authentic social media photo"
+ },
+ {
+  "file": "seed-media/content/nilaycoskun-5.webp",
+  "group": "content",
+  "key": "nilaycoskun-5",
+  "width": 960,
+  "height": 720,
+  "origin": "generated",
+  "model": "Realistic Vision V6.0 B1 (CreativeML OpenRAIL-M)",
+  "prompt": "RAW photo, empty scene with no people, a minimalist walk-in closet with neatly arranged coats, shoes and bags, natural true-to-life colors, soft daylight, beautiful composition, high detail, photorealistic, 35mm lens, authentic social media photo"
+ },
+ {
+  "file": "seed-media/content/sudeyilmaz-0.webp",
+  "group": "content",
+  "key": "sudeyilmaz-0",
+  "width": 960,
+  "height": 720,
+  "origin": "generated",
+  "model": "Realistic Vision V6.0 B1 (CreativeML OpenRAIL-M)",
+  "prompt": "RAW photo, empty scene with no people, aerial view of Oludeniz blue lagoon from a mountain at sunset with clouds, natural true-to-life colors, soft daylight, beautiful composition, high detail, photorealistic, 35mm lens, authentic social media photo"
+ },
+ {
+  "file": "seed-media/content/sudeyilmaz-1.webp",
+  "group": "content",
+  "key": "sudeyilmaz-1",
+  "width": 960,
+  "height": 720,
+  "origin": "generated",
+  "model": "Realistic Vision V6.0 B1 (CreativeML OpenRAIL-M)",
+  "prompt": "RAW photo, empty scene with no people, ruins of stone houses in Kayakoy village on a hillside at morning light, natural true-to-life colors, soft daylight, beautiful composition, high detail, photorealistic, 35mm lens, authentic social media photo"
+ },
+ {
+  "file": "seed-media/content/sudeyilmaz-2.webp",
+  "group": "content",
+  "key": "sudeyilmaz-2",
+  "width": 960,
+  "height": 720,
+  "origin": "generated",
+  "model": "Realistic Vision V6.0 B1 (CreativeML OpenRAIL-M)",
+  "prompt": "RAW photo, empty scene with no people, travel planning flat lay with a map, compass, camera and a coffee cup, natural true-to-life colors, soft daylight, beautiful composition, high detail, photorealistic, 35mm lens, authentic social media photo"
+ },
+ {
+  "file": "seed-media/content/sudeyilmaz-3.webp",
+  "group": "content",
+  "key": "sudeyilmaz-3",
+  "width": 960,
+  "height": 720,
+  "origin": "generated",
+  "model": "Realistic Vision V6.0 B1 (CreativeML OpenRAIL-M)",
+  "prompt": "RAW photo, empty scene with no people, Saklikent canyon with narrow rock walls and a shallow cool river, natural true-to-life colors, soft daylight, beautiful composition, high detail, photorealistic, 35mm lens, authentic social media photo"
+ },
+ {
+  "file": "seed-media/content/sudeyilmaz-4.webp",
+  "group": "content",
+  "key": "sudeyilmaz-4",
+  "width": 960,
+  "height": 720,
+  "origin": "generated",
+  "model": "Realistic Vision V6.0 B1 (CreativeML OpenRAIL-M)",
+  "prompt": "RAW photo, empty scene with no people, camping stove cooking breakfast outdoors next to a tent at dawn, natural true-to-life colors, soft daylight, beautiful composition, high detail, photorealistic, 35mm lens, authentic social media photo"
+ },
+ {
+  "file": "seed-media/content/sudeyilmaz-5.webp",
+  "group": "content",
+  "key": "sudeyilmaz-5",
+  "width": 960,
+  "height": 720,
+  "origin": "generated",
+  "model": "Realistic Vision V6.0 B1 (CreativeML OpenRAIL-M)",
+  "prompt": "RAW photo, a woman seen from behind with a backpack standing on a mountain viewpoint looking at the sea, light brown hair in a bun, denim jacket, modest fully clothed, face not visible, natural true-to-life colors, soft daylight, candid lifestyle photo, high detail, photorealistic, authentic social media photo"
+ },
+ {
+  "file": "seed-media/content/zeynepdemir-0.webp",
+  "group": "content",
+  "key": "zeynepdemir-0",
+  "width": 960,
+  "height": 720,
+  "origin": "generated",
+  "model": "Realistic Vision V6.0 B1 (CreativeML OpenRAIL-M)",
+  "prompt": "RAW photo, empty scene with no people, running shoes, a water bottle and a yoga mat on a seaside promenade at sunrise, natural true-to-life colors, soft daylight, beautiful composition, high detail, photorealistic, 35mm lens, authentic social media photo"
+ },
+ {
+  "file": "seed-media/content/zeynepdemir-1.webp",
+  "group": "content",
+  "key": "zeynepdemir-1",
+  "width": 960,
+  "height": 720,
+  "origin": "generated",
+  "model": "Realistic Vision V6.0 B1 (CreativeML OpenRAIL-M)",
+  "prompt": "RAW photo, empty scene with no people, healthy meal prep containers with grilled chicken, bulgur, roasted vegetables on a kitchen counter, top view, natural true-to-life colors, soft daylight, beautiful composition, high detail, photorealistic, 35mm lens, authentic social media photo"
+ },
+ {
+  "file": "seed-media/content/zeynepdemir-2.webp",
+  "group": "content",
+  "key": "zeynepdemir-2",
+  "width": 960,
+  "height": 720,
+  "origin": "generated",
+  "model": "Realistic Vision V6.0 B1 (CreativeML OpenRAIL-M)",
+  "prompt": "RAW photo, empty scene with no people, a pair of light dumbbells, resistance bands and a mat in a bright living room, natural true-to-life colors, soft daylight, beautiful composition, high detail, photorealistic, 35mm lens, authentic social media photo"
+ },
+ {
+  "file": "seed-media/content/zeynepdemir-3.webp",
+  "group": "content",
+  "key": "zeynepdemir-3",
+  "width": 960,
+  "height": 720,
+  "origin": "generated",
+  "model": "Realistic Vision V6.0 B1 (CreativeML OpenRAIL-M)",
+  "prompt": "RAW photo, empty scene with no people, a reformer pilates machine in a bright empty studio with plants, natural true-to-life colors, soft daylight, beautiful composition, high detail, photorealistic, 35mm lens, authentic social media photo"
+ },
+ {
+  "file": "seed-media/content/zeynepdemir-4.webp",
+  "group": "content",
+  "key": "zeynepdemir-4",
+  "width": 960,
+  "height": 720,
+  "origin": "generated",
+  "model": "Realistic Vision V6.0 B1 (CreativeML OpenRAIL-M)",
+  "prompt": "RAW photo, empty scene with no people, a planner notebook with a weekly meal plan next to fruits and a glass of water, top view, natural true-to-life colors, soft daylight, beautiful composition, high detail, photorealistic, 35mm lens, authentic social media photo"
+ },
+ {
+  "file": "seed-media/content/zeynepdemir-5.webp",
+  "group": "content",
+  "key": "zeynepdemir-5",
+  "width": 960,
+  "height": 720,
+  "origin": "generated",
+  "model": "Realistic Vision V6.0 B1 (CreativeML OpenRAIL-M)",
+  "prompt": "RAW photo, empty scene with no people, an athletics running track at early morning with lane numbers and soft mist, natural true-to-life colors, soft daylight, beautiful composition, high detail, photorealistic, 35mm lens, authentic social media photo"
+ }
+]

@@ -182,23 +182,23 @@ test.describe.serial("Uçtan uca yolculuk", () => {
     expect(prefs?.interests?.length ?? 0).toBeGreaterThanOrEqual(3);
   });
 
-  test("5 · /explore: 'Sophie' araması sonuç verir", async ({ page, context }) => {
+  test("5 · /explore: 'Melis' araması sonuç verir", async ({ page, context }) => {
     await context.addCookies(fanCookies);
     await page.goto("/explore");
-    await page.getByLabel(/İçerik üreticisi adı, kategori veya ilgi alanı/).fill("Sophie");
+    await page.getByLabel(/İçerik üreticisi adı, kategori veya ilgi alanı/).fill("Melis");
     await page.getByRole("button", { name: "Ara", exact: true }).click();
-    await expect(page).toHaveURL(/[?&]q=Sophie/);
+    await expect(page).toHaveURL(/[?&]q=Melis/);
     await expect(page.getByRole("heading", { name: "Arama Sonuçları" })).toBeVisible();
-    await expect(page.getByRole("link", { name: "Sophie Lane profili" }).first()).toBeVisible();
+    await expect(page.getByRole("link", { name: "Melis Ertürk profili" }).first()).toBeVisible();
     // Olmayan bir arama boş durum gösterir
     await page.goto("/explore?q=zzzzyokboyleads");
     await expect(page.getByText("Aramana uygun içerik üreticisi bulunamadı")).toBeVisible();
   });
 
-  test("6 · Sophie takip edilir", async ({ page, context }) => {
+  test("6 · Melis takip edilir", async ({ page, context }) => {
     await context.addCookies(fanCookies);
-    await page.goto("/creators/sophielane");
-    await expect(page.getByRole("heading", { level: 1, name: /Sophie Lane/ })).toBeVisible();
+    await page.goto("/creators/meliserturk");
+    await expect(page.getByRole("heading", { level: 1, name: /Melis Ertürk/ })).toBeVisible();
     const follow = page.getByRole("button", { name: "Takip Et", exact: true });
     await follow.click();
     const following = page.getByRole("button", { name: "Takip ediliyor" });
@@ -212,13 +212,13 @@ test.describe.serial("Uçtan uca yolculuk", () => {
     await expect(page.getByRole("button", { name: "Takip ediliyor" })).toBeVisible();
   });
 
-  test("7 · Sophie favorilere eklenir ve /app/favorites'te görünür", async ({ page, context }) => {
+  test("7 · Melis favorilere eklenir ve /app/favorites'te görünür", async ({ page, context }) => {
     await context.addCookies(fanCookies);
     await page.goto("/app/favorites");
     await expect(page.getByText("Henüz favori içerik üreticin yok")).toBeVisible();
 
-    await page.goto("/explore?q=Sophie");
-    const card = page.locator("article", { hasText: "Sophie Lane" }).first();
+    await page.goto("/explore?q=Melis");
+    const card = page.locator("article", { hasText: "Melis Ertürk" }).first();
     await card.getByRole("button", { name: "Favorilere ekle" }).click();
     const unfav = card.getByRole("button", { name: "Favorilerden çıkar" });
     await expect(unfav).toHaveAttribute("aria-pressed", "true");
@@ -228,17 +228,17 @@ test.describe.serial("Uçtan uca yolculuk", () => {
       .toBe(1);
 
     await page.goto("/app/favorites");
-    await expect(page.getByRole("link", { name: "Sophie Lane profili" }).first()).toBeVisible();
+    await expect(page.getByRole("link", { name: "Melis Ertürk profili" }).first()).toBeVisible();
     await expect(page.getByText("Henüz favori içerik üreticin yok")).toHaveCount(0);
   });
 
   test("8 · AI sohbeti: mesaj gönderilir, AI İkizi etiketli 'Test yanıtı' akışı gelir", async ({ page, context }) => {
     test.setTimeout(120_000);
     await context.addCookies(fanCookies);
-    await page.goto("/chat/sophielane");
+    await page.goto("/chat/meliserturk");
     const box = page.getByLabel("Mesajını yaz");
     await expect(box).toBeEnabled();
-    const message = `Merhaba Sophie, bu bir E2E mesajıdır ${run}`;
+    const message = `Merhaba Melis, bu bir E2E mesajıdır ${run}`;
     await box.fill(message);
     await page.getByRole("button", { name: "Mesajı gönder" }).click();
 
@@ -263,16 +263,16 @@ test.describe.serial("Uçtan uca yolculuk", () => {
     test.setTimeout(150_000);
     await context.addCookies(fanCookies);
 
-    // Önce: Sophie'nin Temel seviye abonelere özel içeriği kilitli
+    // Önce: Melis'in Temel seviye abonelere özel içeriği kilitli
     const d = await db();
-    const sophie = await d.collection("creatorProfiles").findOne({ username: "sophielane" });
-    const premium = await d.collection("contentItems").findOne({ creatorId: sophie!._id, status: "published", access: "subscribers", minPlanTier: "basic" });
+    const melis = await d.collection("creatorProfiles").findOne({ username: "meliserturk" });
+    const premium = await d.collection("contentItems").findOne({ creatorId: melis!._id, status: "published", access: "subscribers", minPlanTier: "basic" });
     expect(premium, "seed: basic seviye aboneye özel içerik").toBeTruthy();
     premiumContentId = String(premium!._id);
     await page.goto(`/content/${premiumContentId}`);
     await expect(page.getByText("Bu içerik üyelere özel.")).toBeVisible();
 
-    await page.goto("/creators/sophielane/membership");
+    await page.goto("/creators/meliserturk/membership");
     await expect(page.getByRole("heading", { name: "Sana en uygun üyeliği seç" })).toBeVisible();
     await page.getByRole("link", { name: "Temel planını seç" }).click();
     subTxId = await payWithTestProvider(page);
@@ -284,9 +284,9 @@ test.describe.serial("Uçtan uca yolculuk", () => {
 
     await page.goto("/app/subscriptions");
     await expect(page.getByRole("heading", { name: "Aboneliklerim" })).toBeVisible();
-    await expect(page.getByText("Sophie Lane").first()).toBeVisible();
+    await expect(page.getByText("Melis Ertürk").first()).toBeVisible();
     await expect(page.getByText("Aktif", { exact: true }).first()).toBeVisible();
-    const sub = await d.collection("subscriptions").findOne({ userId: new ObjectId(fanUserId), creatorId: sophie!._id });
+    const sub = await d.collection("subscriptions").findOne({ userId: new ObjectId(fanUserId), creatorId: melis!._id });
     expect(sub?.status).toBe("active");
   });
 

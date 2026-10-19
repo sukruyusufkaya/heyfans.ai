@@ -24,7 +24,7 @@ Son güncelleme: 2026-10-19 · Rotalar: 74/74 + 9 yardımcı (`/checkout/test/[i
 ## Sayfalar
 | # | Sayfa | Route | Durum | Eksik / blokaj |
 |---|---|---|---|---|
-| 1 | Ana Sayfa | `/` | Tested | Creator fotoğrafları temsili (lisanslı görsel yok) |
+| 1 | Ana Sayfa | `/` | Tested | Demo creator fotoğrafları yerelde üretilmiş kurgusal Türk karakterler (D-33) |
 | 2 | Keşfet | `/explore` | Tested | Konum filtresi yok (veride konum araması yok) |
 | 3 | Trendler | `/trending` | Tested | Demo ortamda olaylar seed verisi |
 | 4 | Kategoriler | `/categories` | Tested | |

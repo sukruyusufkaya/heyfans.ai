@@ -3,3 +3,4 @@ design-references
 tests
 playwright-report
 test-results
+scripts/db/seed-media
