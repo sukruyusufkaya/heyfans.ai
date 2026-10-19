@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState, useSyncExternalStore } from "react";
 import { Bell, ChevronRight, LogOut, Menu, PanelLeftClose, PanelLeftOpen, Search, Settings, User, X } from "lucide-react";
 import { LogoLink } from "@/components/brand/logo";
 import { Avatar } from "@/components/ui/display";
@@ -37,23 +37,38 @@ function findLabel(nav: NavGroup[], pathname: string) {
 export function ConsoleShell(props: ConsoleShellProps) {
   const pathname = usePathname();
   const router = useRouter();
-  const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const storageKey = `hf.${props.variant}.collapsed`;
+  const collapsed = useSyncExternalStore(
+    (cb) => {
+      window.addEventListener("hf-collapse", cb);
+      window.addEventListener("storage", cb);
+      return () => {
+        window.removeEventListener("hf-collapse", cb);
+        window.removeEventListener("storage", cb);
+      };
+    },
+    () => {
+      try {
+        return localStorage.getItem(storageKey) === "1";
+      } catch {
+        return false;
+      }
+    },
+    () => false,
+  );
   const current = findLabel(props.nav, pathname);
 
-  useEffect(() => setMobileOpen(false), [pathname]);
-  useEffect(() => {
-    try {
-      setCollapsed(localStorage.getItem(`hf.${props.variant}.collapsed`) === "1");
-    } catch {}
-  }, [props.variant]);
+  const [lastPath, setLastPath] = useState(pathname);
+  if (lastPath !== pathname) {
+    setLastPath(pathname);
+    setMobileOpen(false);
+  }
   function toggleCollapsed() {
-    setCollapsed((v) => {
-      try {
-        localStorage.setItem(`hf.${props.variant}.collapsed`, v ? "0" : "1");
-      } catch {}
-      return !v;
-    });
+    try {
+      localStorage.setItem(storageKey, collapsed ? "0" : "1");
+    } catch {}
+    window.dispatchEvent(new Event("hf-collapse"));
   }
 
   async function signOut() {

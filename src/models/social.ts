@@ -225,3 +225,48 @@ const NotificationSchema = new Schema<INotification>(
 NotificationSchema.index({ userId: 1, readAt: 1, createdAt: -1 });
 NotificationSchema.index({ createdAt: 1 }, { expireAfterSeconds: 60 * 60 * 24 * 180 });
 export const Notification = defineModel<INotification>("Notification", NotificationSchema, "notifications");
+
+/** Sesli/görüntülü AI görüşmesi: dakika bazlı kredi tüketimi (her dakika ayrı, idempotent defter kaydı). */
+export interface ICallSession {
+  _id: ObjectId;
+  userId: ObjectId;
+  creatorId: ObjectId;
+  twinId: ObjectId;
+  kind: "voice" | "video";
+  status: "active" | "ended" | "failed";
+  provider: string;
+  roomName: string;
+  ratePerMinute: number;
+  minutesBilled: number;
+  creditsSpent: number;
+  startedAt: Date;
+  lastTickAt?: Date | null;
+  endedAt?: Date | null;
+  endReason?: string | null;
+  isDemo: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+}
+const CallSessionSchema = new Schema<ICallSession>(
+  {
+    userId: { type: Schema.Types.ObjectId, ref: "User", required: true },
+    creatorId: { type: Schema.Types.ObjectId, ref: "CreatorProfile", required: true },
+    twinId: { type: Schema.Types.ObjectId, ref: "AiTwin", required: true },
+    kind: { type: String, enum: ["voice", "video"], required: true },
+    status: { type: String, enum: ["active", "ended", "failed"], default: "active" },
+    provider: { type: String, required: true },
+    roomName: { type: String, required: true },
+    ratePerMinute: { type: Number, required: true, min: 0 },
+    minutesBilled: { type: Number, default: 0 },
+    creditsSpent: { type: Number, default: 0 },
+    startedAt: { type: Date, default: () => new Date() },
+    lastTickAt: { type: Date, default: null },
+    endedAt: { type: Date, default: null },
+    endReason: { type: String, default: null },
+    isDemo: { type: Boolean, default: false },
+  },
+  baseOptions,
+);
+CallSessionSchema.index({ userId: 1, status: 1, createdAt: -1 });
+CallSessionSchema.index({ creatorId: 1, createdAt: -1 });
+export const CallSession = defineModel<ICallSession>("CallSession", CallSessionSchema, "callSessions");

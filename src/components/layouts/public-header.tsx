@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { ChevronDown, Globe, Menu, Search, X } from "lucide-react";
 import { LogoLink } from "@/components/brand/logo";
 import { Avatar } from "@/components/ui/display";
@@ -23,7 +23,12 @@ export function PublicHeader({ user, extraNav }: { user: HeaderUser | null; extr
   const [q, setQ] = useState("");
   const nav = extraNav ? [...PUBLIC_NAV, ...extraNav] : PUBLIC_NAV;
 
-  useEffect(() => setOpen(false), [pathname]);
+  // Rota değişince mobil menüyü kapat (render sırasında, efekt olmadan)
+  const [lastPath, setLastPath] = useState(pathname);
+  if (lastPath !== pathname) {
+    setLastPath(pathname);
+    setOpen(false);
+  }
 
   function submit(e: React.FormEvent) {
     e.preventDefault();
