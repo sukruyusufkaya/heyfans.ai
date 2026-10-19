@@ -5,6 +5,9 @@ import { MediaAsset } from "@/models/content";
 import { getStorage } from "@/lib/storage";
 import { indexKnowledgeSource } from "@/lib/ai/knowledge";
 import { expireSubscriptions } from "@/services/billing/checkout";
+import { ContentItem } from "@/models/content";
+import { CreatorProfile } from "@/models/creator";
+import { setContentStatus } from "@/services/content/manage";
 
 /** İş kuyruğu (MongoDB): kilitle → çalıştır → üstel geri çekilmeyle yeniden dene. */
 export async function enqueueJob(type: JobType, payload: Record<string, unknown>, opts: { dedupeKey?: string; runAfter?: Date } = {}) {
@@ -99,4 +102,22 @@ export async function processJobs(limit = 5, budgetMs = 50_000) {
     processed++;
   }
   return { processed };
+}
+
+/** Zamanı gelen taslak içerikleri yayınlar (cron). Creator onaylı değilse içerik incelemeye düşer. */
+export async function publishScheduledContent(limit = 100) {
+  await connectDb();
+  const due = await ContentItem.find({ status: "draft", scheduledAt: { $ne: null, $lte: new Date() } }, { _id: 1, creatorId: 1 }).limit(limit).lean();
+  let published = 0;
+  for (const d of due) {
+    const creator = await CreatorProfile.findById(d.creatorId, { userId: 1 }).lean();
+    if (!creator) continue;
+    try {
+      await setContentStatus(creator.userId.toString(), d._id.toString(), "published");
+      published++;
+    } catch (err) {
+      console.error("[jobs:scheduled-publish]", d._id.toString(), (err as Error).message);
+    }
+  }
+  return published;
 }

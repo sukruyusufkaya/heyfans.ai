@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { ConsoleShell } from "@/components/layouts/console-shell";
-import { STUDIO_NAV } from "@/config/navigation";
+import { StudioShell } from "@/components/studio/studio-shell";
 import { requireCreator } from "@/lib/auth/session";
 import { getStudioShellData } from "@/services/shell";
 
@@ -25,11 +24,10 @@ export default async function StudioLayout({ children }: { children: React.React
   const status = TWIN_STATUS[shell.twinStatus ?? "draft"] ?? TWIN_STATUS.draft!;
   const live = shell.twinStatus === "live";
   return (
-    <ConsoleShell
+    <StudioShell
       variant="studio"
       sectionLabel="Creator Studio"
       rootCrumb="Panel"
-      nav={STUDIO_NAV}
       badges={{ pendingRequests: shell.pendingRequests }}
       identity={{ title: `${shell.displayName}${shell.verified ? " ✦" : ""}`, subtitle: shell.verified ? "Doğrulanmış İçerik Üreticisi" : "Doğrulama bekleniyor", image: shell.avatarUrl }}
       user={{ name: shell.displayName, image: shell.avatarUrl ?? user.image, subtitle: `@${shell.username}` }}
@@ -62,6 +60,6 @@ export default async function StudioLayout({ children }: { children: React.React
       footerNote="Gizlilik & güvenlik · Kontrol her zaman sende"
     >
       {children}
-    </ConsoleShell>
+    </StudioShell>
   );
 }

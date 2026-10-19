@@ -501,7 +501,7 @@ async function main() {
   for (const p of LEGAL_PAGES) {
     await CmsPage.updateOne(
       { slug: p.slug, locale: "tr" },
-      { $set: { kind: "legal", title: p.title, summary: p.summary, sections: p.sections.map((s, i) => ({ id: `s${i + 1}`, ...s })), status: "published", legalReview: "draft_requires_legal_review", publishedAt: new Date(), isDemo: true } },
+      { $set: { kind: "legal", title: p.title, summary: p.summary, sections: p.sections.map((s, i) => ({ ...s, id: s.id ?? `s${i + 1}` })), status: "published", legalReview: "draft_requires_legal_review", publishedAt: new Date(), isDemo: true } },
       { upsert: true },
     );
   }

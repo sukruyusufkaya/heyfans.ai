@@ -1,9 +1,9 @@
 import { Types } from "mongoose";
 import { connectDb } from "@/lib/db/mongo";
-import { AiTwin, AiTwinVersion, ContentItem, CreatorConsent, CreatorProfile, MembershipPlan, User } from "@/models";
+import { AiTwin, AiTwinVersion, ContentItem, CreatorConsent, CreatorProfile, MembershipPlan, User, type UserRole } from "@/models";
 
 let n = 0;
-export async function makeUser(roles: string[] = ["fan"], extra: Record<string, unknown> = {}) {
+export async function makeUser(roles: UserRole[] = ["fan"], extra: Record<string, unknown> = {}) {
   await connectDb();
   n++;
   const u = await User.create({ name: `Test Kullanıcı ${n}`, email: `t${n}_${Date.now()}@test.local`, emailVerified: true, roles, ...extra });

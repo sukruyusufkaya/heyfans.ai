@@ -119,7 +119,7 @@ export const HELP_ARTICLES = [
 
 const LEGAL_NOTE = "Bu metin TASLAKTIR ve yayın öncesi hukuk uzmanı onayı gerektirir. Kesinleşmiş hukuki belge değildir.";
 
-export const LEGAL_PAGES: { slug: string; title: string; summary: string; sections: { heading: string; body: string }[] }[] = [
+export const LEGAL_PAGES: { slug: string; title: string; summary: string; sections: { id?: string; heading: string; body: string }[] }[] = [
   {
     slug: "privacy",
     title: "Gizlilik Politikası",
@@ -145,6 +145,7 @@ export const LEGAL_PAGES: { slug: string; title: string; summary: string; sectio
       { heading: "İçerik Hakları", body: "Creator içerikleri creator'a aittir; izinsiz kopyalanamaz veya dağıtılamaz." },
       { heading: "Yasaklı Davranışlar", body: "Taciz, taklit, reşit olmayanlarla ilgili her türlü uygunsuz içerik, platform dışı ödeme talepleri ve kötüye kullanım yasaktır." },
       { heading: "Değişiklikler", body: "Şartlarda yapılacak önemli değişiklikler önceden bildirilecektir." },
+      { id: "mesafeli-satis", heading: "Mesafeli Satış ve Ön Bilgilendirme (Taslak)", body: "Satıcı bilgileri, hizmetin temel nitelikleri, toplam fiyat (vergiler dahil), ödeme ve ifa koşulları ile cayma hakkına ilişkin bilgiler ödeme sayfasında sipariş özetiyle birlikte gösterilir. Anında ifa edilen dijital içerik ve hizmetlerde cayma hakkının istisnası, 6502 sayılı Kanun ve Mesafeli Sözleşmeler Yönetmeliği kapsamında hukuk incelemesinden sonra kesinleştirilecektir." },
     ],
   },
   {

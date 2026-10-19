@@ -224,7 +224,7 @@ export function DataTable({ className, children }: { className?: string; childre
   );
 }
 export function Th({ className, ...props }: React.ThHTMLAttributes<HTMLTableCellElement>) {
-  return <th className={cn("border-b border-line px-3 py-2.5 text-[10px] font-black uppercase tracking-wider text-muted", className)} {...props} />;
+  return <th className={cn("relative border-b border-line px-3 py-2.5 text-[10px] font-black uppercase tracking-wider text-muted", className)} {...props} />;
 }
 export function Td({ className, ...props }: React.TdHTMLAttributes<HTMLTableCellElement>) {
   return <td className={cn("border-b border-line-soft px-3 py-3 align-middle text-ink-soft", className)} {...props} />;

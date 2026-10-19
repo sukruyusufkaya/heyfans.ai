@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { env } from "@/config/env";
-import { processJobs, enqueueJob } from "@/services/jobs/jobs";
+import { enqueueJob, processJobs, publishScheduledContent } from "@/services/jobs/jobs";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
@@ -13,6 +13,7 @@ export async function GET(request: Request) {
   }
   const hour = new Date().toISOString().slice(0, 13);
   await enqueueJob("subscriptions.expire", {}, { dedupeKey: `subs-expire:${hour}` });
-  const result = await processJobs(20, 50_000);
-  return NextResponse.json({ ok: true, ...result });
+  const scheduledPublished = await publishScheduledContent();
+  const result = await processJobs(20, 45_000);
+  return NextResponse.json({ ok: true, scheduledPublished, ...result });
 }

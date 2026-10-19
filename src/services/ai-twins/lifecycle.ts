@@ -58,6 +58,12 @@ export async function grantConsent(userId: string, kind: ConsentKind, ip?: strin
     textHash: createHash("sha256").update(t.text).digest("hex"),
     ipHash: hashIp(ip),
   });
+  if (kind === "knowledge_use") {
+    // Rıza yeniden verildiğinde onaylı ve indekslenmiş kaynakların parçaları tekrar kullanıma alınır.
+    const { KnowledgeChunk } = await import("@/models/ai");
+    const sources = await KnowledgeSource.find({ creatorId: creator._id, approved: true, status: "indexed" }, { _id: 1 }).lean();
+    await KnowledgeChunk.updateMany({ creatorId: creator._id, sourceId: { $in: sources.map((x) => x._id) } }, { $set: { active: true } });
+  }
   await audit({ actorId: userId, action: "consent.grant", targetType: "CreatorConsent", targetId: consent._id.toString(), metadata: { kind } });
   return consent;
 }
