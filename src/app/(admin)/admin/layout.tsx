@@ -1,11 +1,10 @@
 import type { Metadata } from "next";
 import { ShieldCheck } from "lucide-react";
-import { ConsoleShell } from "@/components/layouts/console-shell";
+import { AdminShell } from "@/components/admin/admin-shell";
 import { DemoDataNotice } from "@/components/ui/display";
 import { isDemo } from "@/config/env";
-import { ADMIN_NAV } from "@/config/navigation";
 import { requireAdmin } from "@/lib/auth/session";
-import { can, ADMIN_ROLE_LABELS } from "@/lib/permissions";
+import { permissionsFor, ADMIN_ROLE_LABELS } from "@/lib/permissions";
 import { getAdminShellData } from "@/services/shell";
 
 export const metadata: Metadata = { title: { default: "Yönetim", template: "%s · Admin | HEYFANS" }, robots: { index: false, follow: false } };
@@ -13,13 +12,14 @@ export const metadata: Metadata = { title: { default: "Yönetim", template: "%s 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   const { user } = await requireAdmin("admin.dashboard", "/admin");
   const counts = await getAdminShellData();
-  const nav = ADMIN_NAV.map((g) => ({ ...g, items: g.items.filter((i) => !i.permission || can(user, i.permission)) })).filter((g) => g.items.length);
+  // Menü, ikon bileşenleri sunucudan istemciye geçirilemediği için AdminShell içinde izinlere göre süzülür.
+  const allowed = [...permissionsFor(user)];
   return (
-    <ConsoleShell
+    <AdminShell
       variant="admin"
       sectionLabel="ADMIN CONSOLE"
       rootCrumb="Platform Yönetimi"
-      nav={nav}
+      allowed={allowed}
       badges={counts}
       identity={{
         title: "HEYFANS PLATFORM",
@@ -46,6 +46,6 @@ export default async function AdminLayout({ children }: { children: React.ReactN
       footerNote="HEYFANS Admin Console v1.0"
     >
       {children}
-    </ConsoleShell>
+    </AdminShell>
   );
 }
