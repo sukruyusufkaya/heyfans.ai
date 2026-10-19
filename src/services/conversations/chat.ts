@@ -68,7 +68,7 @@ async function loadLiveTwin(username: string) {
 export async function openConversation(userId: string, username: string) {
   const { creator, twin } = await loadLiveTwin(username);
   const uid = oid(userId);
-  let conv = await Conversation.findOne({ userId: uid, creatorId: creator._id, kind: "fan", status: { $in: ["active", "archived"] } }).sort({ updatedAt: -1 }).lean<IConversation>();
+  let conv = await Conversation.findOne({ userId: uid, creatorId: creator._id, kind: "fan", status: { $in: ["active", "archived", "reported"] } }).sort({ updatedAt: -1 }).lean<IConversation>();
   if (!conv) {
     const memoryOk = await memoryEnabledFor(uid);
     const created = await Conversation.create({ userId: uid, creatorId: creator._id, twinId: twin._id, kind: "fan", memoryEnabled: memoryOk });
@@ -102,7 +102,8 @@ export async function sendChatMessage(params: { userId: string; conversationId: 
   if (!text) throw new AppError("Mesaj boş olamaz.", "empty");
   if (text.length > settings.chat.maxInputChars) throw new AppError(`Mesaj en fazla ${settings.chat.maxInputChars} karakter olabilir.`, "too_long");
 
-  const conv = await Conversation.findOne({ _id: oid(params.conversationId), userId: uid, status: "active" }).lean<IConversation>();
+  // "reported": bildirilen sohbet moderasyonda işaretli kalır ama hayran kullanmaya devam edebilir.
+  const conv = await Conversation.findOne({ _id: oid(params.conversationId), userId: uid, status: { $in: ["active", "reported"] } }).lean<IConversation>();
   if (!conv) throw new NotFoundError("Sohbet bulunamadı.");
   const isTest = conv.kind === "test";
   const creator = await CreatorProfile.findById(conv.creatorId).lean<ICreatorProfile>();
@@ -280,7 +281,7 @@ export async function sendChatMessage(params: { userId: string; conversationId: 
 /** Fan sohbet listesi (sohbet kutusu). */
 export async function listConversations(userId: string, opts: { filter?: "all" | "unread"; q?: string } = {}) {
   await connectDb();
-  const q: Record<string, unknown> = { userId: oid(userId), kind: "fan", status: { $in: ["active", "archived"] } };
+  const q: Record<string, unknown> = { userId: oid(userId), kind: "fan", status: { $in: ["active", "archived", "reported"] } };
   if (opts.filter === "unread") q.unreadForUser = { $gt: 0 };
   const convs = await Conversation.find(q).sort({ lastMessageAt: -1, updatedAt: -1 }).limit(100).lean<IConversation[]>();
   const creators = await CreatorProfile.find({ _id: { $in: convs.map((c) => c.creatorId) } }, { displayName: 1, username: 1, avatarUrl: 1, isOnline: 1, verification: 1 }).lean();

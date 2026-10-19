@@ -1,0 +1,228 @@
+import type { Metadata } from "next";
+import Link from "next/link";
+import { ArrowDownLeft, ArrowUpRight, Coins, Lock, ReceiptText, Sparkles, Undo2 } from "lucide-react";
+import { z } from "zod";
+import { LinkTabs, buildHref, flattenSearchParams } from "@/components/fan/link-tabs";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardHeader } from "@/components/ui/card";
+import { DataTable, DemoDataNotice, EmptyState, PageHeader, Pagination, Progress, Td, Th } from "@/components/ui/display";
+import { isDemo } from "@/config/env";
+import { requireUser } from "@/lib/auth/session";
+import { cn, formatDateTime, formatMoney, formatNumber } from "@/lib/utils";
+import { getWalletPage, type LedgerRowView } from "@/services/fan/wallet";
+
+export const metadata: Metadata = { title: "Kredi ve Cüzdanım" };
+export const dynamic = "force-dynamic";
+
+const searchSchema = z.object({
+  filter: z.enum(["all", "in", "out"]).catch("all"),
+  page: z.coerce.number().int().min(1).max(1000).catch(1),
+});
+
+const STATUS: Record<LedgerRowView["status"], { label: string; tone: "green" | "gray" | "violet" }> = {
+  completed: { label: "Tamamlandı", tone: "green" },
+  reversed: { label: "İade edildi", tone: "gray" },
+  refund: { label: "İade", tone: "violet" },
+};
+
+export default async function WalletPage({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
+  const { user } = await requireUser("/app/wallet");
+  const sp = searchSchema.parse(flattenSearchParams(await searchParams));
+  const w = await getWalletPage(user.id, { filter: sp.filter === "all" ? undefined : sp.filter, page: sp.page });
+  const monthName = new Intl.DateTimeFormat("tr-TR", { month: "long", year: "numeric" }).format(new Date());
+  const hrefFor = (filter: string, page = 1) => buildHref("/app/wallet", { filter: filter === "all" ? null : filter, page: page > 1 ? page : null });
+
+  return (
+    <div className="mx-auto max-w-[1320px]">
+      <PageHeader
+        eyebrow="HEYFANS / CÜZDAN"
+        title="Kredi ve Cüzdanım"
+        description="Kredi bakiyeni yönet, paketleri incele ve işlemlerini takip et."
+        actions={isDemo() ? <DemoDataNotice /> : undefined}
+      />
+
+      <div className="grid gap-4 lg:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)]">
+        <section aria-label="Bakiye" className="relative overflow-hidden rounded-[18px] bg-[linear-gradient(120deg,#1a0b20_0%,#42103a_55%,#8a0f60_100%)] p-6 text-white shadow-[0_18px_35px_rgb(50_23_38/0.15)] sm:p-7">
+          <span aria-hidden className="pointer-events-none absolute -right-10 -top-10 size-56 rounded-full bg-brand-500/30 blur-3xl" />
+          <p className="relative text-[10px] font-black tracking-[0.18em] text-[#ff99ce]">KULLANILABİLİR BAKİYE</p>
+          <p className="relative mt-3 flex items-baseline gap-2.5 text-[44px] font-black leading-none tracking-[-0.05em]">
+            {formatNumber(w.summary.balance)} <span className="text-lg font-extrabold tracking-normal text-white/80">kredi</span>
+          </p>
+          <p className="relative mt-3 max-w-sm text-xs leading-relaxed text-white/75">AI sohbetlerinde, görüşmelerde, hediyelerde ve özel deneyimlerde kullanabilirsin.</p>
+          <dl className="relative mt-5 flex flex-wrap gap-x-8 gap-y-2 text-[11px] text-white/70">
+            <div>
+              <dt className="inline">Toplam yüklenen: </dt>
+              <dd className="inline font-extrabold text-white">{formatNumber(w.summary.lifetimePurchased)}</dd>
+            </div>
+            <div>
+              <dt className="inline">Toplam harcanan: </dt>
+              <dd className="inline font-extrabold text-white">{formatNumber(w.summary.lifetimeSpent)}</dd>
+            </div>
+          </dl>
+          {w.summary.status === "frozen" && (
+            <p role="alert" className="relative mt-4 flex items-center gap-2 rounded-xl bg-danger/90 px-3.5 py-2.5 text-xs font-bold">
+              <Lock className="size-4" aria-hidden /> Cüzdanın geçici olarak donduruldu. Destek ile iletişime geç.
+            </p>
+          )}
+        </section>
+
+        <Card>
+          <CardHeader title="Bu ayki kullanım" hint={monthName} />
+          <p className="flex items-baseline gap-2 text-[30px] font-black tracking-[-0.04em]">
+            {formatNumber(w.month.netSpent)} <span className="text-sm font-extrabold text-muted">kredi</span>
+            <Badge tone="pink" size="sm" className="ml-auto">
+              Bu ay
+            </Badge>
+          </p>
+          {w.month.groups.length ? (
+            <ul className="mt-4 grid gap-3">
+              {w.month.groups.map((g) => (
+                <li key={g.key}>
+                  <div className="mb-1.5 flex items-center justify-between text-[11px]">
+                    <span className="font-bold text-ink-soft">{g.label}</span>
+                    <span className="font-extrabold">{formatNumber(g.credits)}</span>
+                  </div>
+                  <Progress value={w.month.grossSpent ? (g.credits / w.month.grossSpent) * 100 : 0} label={`${g.label} harcaması`} />
+                </li>
+              ))}
+              {w.month.refunded > 0 && <li className="text-[11px] text-muted">İade edilen: {formatNumber(w.month.refunded)} kredi (net hesaba yansıtıldı)</li>}
+            </ul>
+          ) : (
+            <p className="mt-3 text-xs text-muted">Bu ay henüz kredi harcamadın.</p>
+          )}
+        </Card>
+      </div>
+
+      <section className="mt-6" aria-labelledby="packs">
+        <div className="mb-4 flex items-end justify-between gap-3">
+          <div>
+            <h2 id="packs" className="text-xl font-extrabold tracking-[-0.03em]">
+              Kredi Paketleri
+            </h2>
+            <p className="mt-1 text-xs text-muted">Krediler satın alma onaylandığında hesabına eklenir. Fiyatlara KDV dahildir.</p>
+          </div>
+        </div>
+        {w.packs.length ? (
+          <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+            {w.packs.map((p) => {
+              const total = p.credits + (p.bonusCredits ?? 0);
+              return (
+                <article key={p.key} className={cn("hf-card relative flex flex-col p-5", p.isPopular && "border-brand-300 shadow-[0_14px_32px_rgb(236_0_136/0.12)]")} aria-label={`${total} kredilik paket`}>
+                  <div className="flex items-center justify-between">
+                    <span className="grid size-9 place-items-center rounded-xl bg-brand-100 text-brand-500">
+                      <Coins className="size-[18px]" aria-hidden />
+                    </span>
+                    <Badge tone={p.isPopular ? "solid" : "pink"} size="sm">
+                      {p.isPopular ? "AVANTAJLI" : "KREDİ PAKETİ"}
+                    </Badge>
+                  </div>
+                  <p className="mt-4 text-[26px] font-black leading-none tracking-[-0.04em]">{formatNumber(p.credits)}</p>
+                  <p className="mt-1 text-[11px] font-bold text-muted">kredi{p.bonusCredits ? <span className="text-success"> + {formatNumber(p.bonusCredits)} bonus</span> : null}</p>
+                  <p className="mt-3 text-sm font-extrabold">{formatMoney(p.priceMinor, "TRY")}</p>
+                  <Link
+                    href={`/checkout?type=credit_pack&pack=${encodeURIComponent(p.key)}`}
+                    className={cn(
+                      "mt-4 flex h-10 items-center justify-center rounded-full text-xs font-extrabold",
+                      p.isPopular ? "bg-brand-500 text-white shadow-[var(--shadow-pink)] hover:bg-brand-600" : "border border-brand-300 text-brand-600 hover:bg-brand-50",
+                    )}
+                  >
+                    Satın al
+                  </Link>
+                </article>
+              );
+            })}
+          </div>
+        ) : (
+          <Card>
+            <EmptyState icon={<Coins />} title="Şu anda satın alınabilir paket yok" description="Kredi paketleri yönetim tarafından tanımlandığında burada görünür." />
+          </Card>
+        )}
+      </section>
+
+      <Card className="mt-6">
+        <CardHeader
+          title="İşlem Geçmişi"
+          hint="Son kredi hareketlerin"
+          icon={<ReceiptText />}
+          action={
+            <Link href="/app/settings" className="text-[11px] font-extrabold text-brand-600 hover:underline">
+              Ödeme geçmişi →
+            </Link>
+          }
+        />
+        <LinkTabs
+          label="İşlem filtresi"
+          className="mb-4"
+          items={[
+            { href: hrefFor("all"), label: "Tüm işlemler", active: sp.filter === "all" },
+            { href: hrefFor("in"), label: <><ArrowDownLeft /> Girenler</>, active: sp.filter === "in" },
+            { href: hrefFor("out"), label: <><ArrowUpRight /> Çıkanlar</>, active: sp.filter === "out" },
+          ]}
+        />
+        {w.ledger.rows.length ? (
+          <>
+            <div className="hidden md:block">
+              <DataTable>
+                <thead>
+                  <tr>
+                    <Th>Tarih</Th>
+                    <Th>İşlem</Th>
+                    <Th className="text-right">Miktar</Th>
+                    <Th className="text-right">Bakiye</Th>
+                    <Th>Durum</Th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {w.ledger.rows.map((r) => (
+                    <tr key={r.id}>
+                      <Td className="whitespace-nowrap text-muted-strong">{formatDateTime(r.createdAt)}</Td>
+                      <Td>
+                        <span className="font-extrabold text-ink">{r.label}</span>
+                        <span className="block max-w-[320px] truncate text-[10px] text-muted">{r.description}</span>
+                      </Td>
+                      <Td className={cn("text-right font-extrabold tabular-nums", r.amount > 0 ? "text-success" : "text-ink")}>
+                        {r.amount > 0 ? "+" : "−"}
+                        {formatNumber(Math.abs(r.amount))} kredi
+                      </Td>
+                      <Td className="text-right tabular-nums text-muted-strong">{formatNumber(r.balanceAfter)}</Td>
+                      <Td>
+                        <span className="inline-flex items-center gap-1.5">
+                          <Badge tone={STATUS[r.status].tone} size="sm">
+                            {r.status !== "completed" && <Undo2 />} {STATUS[r.status].label}
+                          </Badge>
+                          {r.isDemo && <Badge tone="warn" size="sm">Demo</Badge>}
+                        </span>
+                      </Td>
+                    </tr>
+                  ))}
+                </tbody>
+              </DataTable>
+            </div>
+            <ul className="grid gap-2 md:hidden">
+              {w.ledger.rows.map((r) => (
+                <li key={r.id} className="flex items-center gap-3 rounded-xl border border-line-soft p-3">
+                  <span className={cn("grid size-9 shrink-0 place-items-center rounded-full", r.amount > 0 ? "bg-success-soft text-success" : "bg-soft text-muted-strong")}>
+                    {r.amount > 0 ? <ArrowDownLeft className="size-4" /> : <ArrowUpRight className="size-4" />}
+                  </span>
+                  <span className="min-w-0 flex-1">
+                    <span className="block truncate text-xs font-extrabold">{r.label}</span>
+                    <span className="block text-[10px] text-muted">
+                      {formatDateTime(r.createdAt)} · {STATUS[r.status].label}
+                    </span>
+                  </span>
+                  <span className={cn("shrink-0 text-xs font-black tabular-nums", r.amount > 0 ? "text-success" : "text-ink")}>
+                    {r.amount > 0 ? "+" : "−"}
+                    {formatNumber(Math.abs(r.amount))}
+                  </span>
+                </li>
+              ))}
+            </ul>
+            <Pagination className="mt-5" page={w.ledger.page} pageCount={w.ledger.pageCount} hrefFor={(n) => hrefFor(sp.filter, n)} />
+          </>
+        ) : (
+          <EmptyState compact icon={<Sparkles />} title="Henüz işlem yok" description="Kredi yüklediğinde ya da harcadığında hareketlerin burada listelenir." />
+        )}
+      </Card>
+    </div>
+  );
+}

@@ -1,0 +1,35 @@
+"use client";
+import Link from "next/link";
+import { useEffect } from "react";
+import { AlertTriangle } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { EmptyState } from "@/components/ui/display";
+
+/** Hayran alanı hata sınırı: kabuk (üst çubuk/menü) ayakta kalır, yalnız sayfa içeriği yerine bu panel gösterilir. */
+export default function FanError({ error, reset }: { error: Error & { digest?: string }; reset: () => void }) {
+  useEffect(() => {
+    console.error("[fan:error]", error);
+  }, [error]);
+  return (
+    <div className="mx-auto max-w-xl">
+      <Card>
+        <EmptyState
+          icon={<AlertTriangle />}
+          title="Bu sayfa yüklenirken bir sorun oluştu"
+          description={`Lütfen tekrar dene. Sorun devam ederse destek ekibimize ulaş.${error.digest ? ` (Hata kodu: ${error.digest})` : ""}`}
+          action={
+            <div className="flex flex-wrap justify-center gap-2.5">
+              <Button onClick={reset} shape="pill">
+                Tekrar dene
+              </Button>
+              <Button asChild variant="secondary" shape="pill">
+                <Link href="/app">Ana sayfaya dön</Link>
+              </Button>
+            </div>
+          }
+        />
+      </Card>
+    </div>
+  );
+}
