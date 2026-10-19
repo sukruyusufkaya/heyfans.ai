@@ -177,6 +177,8 @@ async function main() {
       { upsert: true, returnDocument: "after" },
     );
     creatorIds.set(c.username, profile!._id);
+    // Demo zaman çizelgesi: profil kayıt tarihi (Mongoose timestamps upsert'te "şimdi" yazar)
+    await db.collection("creatorProfiles").updateOne({ _id: profile!._id }, { $set: { createdAt: created } });
 
     for (const kind of ["ai_twin_persona", "knowledge_use"] as const) {
       await CreatorConsent.updateOne(
@@ -388,7 +390,10 @@ async function main() {
         createdAt: when,
       });
       if (isContent) await ContentAccessGrant.updateOne({ userId: buyer, contentId: item!._id }, { $setOnInsert: { userId: buyer, contentId: item!._id, creatorId: sophie, source: "purchase", transactionId: tx._id } }, { upsert: true });
-      await recordPaymentEarning({ creatorId: sophie, sourceType: isContent ? "content" : "subscription", grossMinor: amount.amountMinor, currency: "TRY", transactionId: tx._id, description: isContent ? `İçerik satışı: ${item!.title}` : `Abonelik: ${plan.name}`, isDemo: true });
+      const earning = await recordPaymentEarning({ creatorId: sophie, sourceType: isContent ? "content" : "subscription", grossMinor: amount.amountMinor, currency: "TRY", transactionId: tx._id, description: isContent ? `İçerik satışı: ${item!.title}` : `Abonelik: ${plan.name}`, isDemo: true });
+      // Demo geçmişi: hak edişi işlem tarihine taşı (defter değişmez olduğu için yalnız seed'de ham koleksiyonla)
+      await db.collection("creatorEarnings").updateOne({ _id: earning._id }, { $set: { createdAt: when, availableAt: new Date(when.getTime() + settings.revenue.holdDays * DAY) } });
+      await db.collection("paymentTransactions").updateOne({ _id: tx._id }, { $set: { createdAt: when } });
     }
     // Hediye/bahşiş kredi harcamaları
     for (let i = 0; i < 12; i++) {
@@ -397,7 +402,8 @@ async function main() {
       const g = GIFTS[i % GIFTS.length]!;
       const entry = await debitWallet({ userId: buyer, amount: g.credits, type: "gift_sent", description: `${g.name} hediyesi`, idempotencyKey: `seed:hist:gift:${i}`, creatorId: sophie, isDemo: true });
       await Gift.create({ kind: "gift", senderId: buyer, creatorId: sophie, giftKey: g.key, credits: g.credits, ledgerEntryId: entry._id, isDemo: true, createdAt: ago(i * 4) });
-      await recordCreditEarning({ creatorId: sophie, sourceType: "gift", credits: g.credits, ledgerEntryId: entry._id, description: `${g.name} hediyesi`, isDemo: true });
+      const gEarning = await recordCreditEarning({ creatorId: sophie, sourceType: "gift", credits: g.credits, ledgerEntryId: entry._id, description: `${g.name} hediyesi`, isDemo: true });
+      await db.collection("creatorEarnings").updateOne({ _id: gEarning._id }, { $set: { createdAt: ago(i * 4), availableAt: ago(i * 4 - settings.revenue.holdDays) } });
     }
   }
 

@@ -97,6 +97,28 @@ describe("AI ikizi yaşam döngüsü", () => {
   });
 });
 
+describe("AI ikizi sürüm yeniden gönderimi", () => {
+  it("incelemedeyken yeni sürüm gönderilirse eskisi geçersiz olur; onaylıyken de yeniden gönderilebilir", async () => {
+    const creatorUser = await makeUser(["fan", "creator"]);
+    await CreatorProfile.create({ userId: new mongoose.Types.ObjectId(creatorUser), username: `rs${Date.now().toString(36)}`, displayName: "Yeniden", status: "approved", verification: { identity: "verified", social: "verified" } });
+    await getOrCreateTwin(creatorUser);
+    await updateTwinDraft(creatorUser, { persona: { displayName: "Yeniden", greeting: "Selam!" } });
+    await grantConsent(creatorUser, "ai_twin_persona");
+    await submitTwinForReview(creatorUser, "v1");
+    await updateTwinDraft(creatorUser, { persona: { greeting: "Güncel selam!" } });
+    await submitTwinForReview(creatorUser, "v2");
+    const { AiTwinVersion } = await import("@/models");
+    const { twin } = await getOrCreateTwin(creatorUser);
+    const versions = await AiTwinVersion.find({ twinId: twin._id }).sort({ version: 1 }).lean();
+    expect(versions.map((v) => v.status)).toEqual(["superseded", "pending_review"]);
+    expect(versions[1]!.snapshot.persona.greeting).toBe("Güncel selam!");
+    expect(twin.status).toBe("pending_review");
+    await reviewTwinVersion({ id: creatorUser, adminRole: "creator_manager" }, versions[1]!._id.toString(), "approve", "Uygun");
+    await submitTwinForReview(creatorUser, "v3");
+    expect((await getOrCreateTwin(creatorUser)).twin.status).toBe("pending_review");
+  });
+});
+
 describe("özel talepler", () => {
   it("talep kredi bloke eder; ret iade eder; tamamlama hak ediş üretir", async () => {
     const c = await makeLiveCreator();

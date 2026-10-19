@@ -19,7 +19,7 @@ export function assertTransition<S extends string>(table: TransitionTable<S>, fr
 export const TWIN_TRANSITIONS: TransitionTable<TwinStatus> = {
   draft: ["pending_review", "revoked"],
   pending_review: ["approved", "rejected", "draft", "revoked"],
-  approved: ["live", "draft", "revoked"],
+  approved: ["live", "pending_review", "draft", "revoked"],
   live: ["paused", "pending_review", "revoked"],
   paused: ["live", "pending_review", "revoked"],
   rejected: ["draft", "pending_review", "revoked"],

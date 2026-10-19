@@ -159,8 +159,9 @@ export async function submitTwinForReview(userId: string, changeSummary?: string
     );
     await AiTwin.updateOne({ _id: twin._id }, { $set: { currentVersion: versionNo } }, { session });
   });
-  // Yayındaki ikiz, yeni sürüm incelenirken yayında kalır (canlı sürüm değişmez).
-  if (twin.status !== "live" && twin.status !== "paused") await setStatus(twin._id, "pending_review", creator.userId, `Sürüm ${versionNo} incelemeye gönderildi`);
+  // Yayındaki ikiz, yeni sürüm incelenirken yayında kalır (canlı sürüm değişmez). İncelemedeki ikize
+  // yeni sürüm gönderilirse önceki bekleyen sürüm "superseded" olur, durum aynı kalır.
+  if (!["live", "paused", "pending_review"].includes(twin.status)) await setStatus(twin._id, "pending_review", creator.userId, `Sürüm ${versionNo} incelemeye gönderildi`);
   await audit({ actorId: userId, action: "twin.submit", targetType: "AiTwin", targetId: twin._id.toString(), metadata: { version: versionNo } });
   return { version: versionNo };
 }

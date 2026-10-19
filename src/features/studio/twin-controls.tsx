@@ -55,11 +55,19 @@ export function TwinControls({
 
       <div className="flex flex-wrap gap-2.5">
         {(status === "draft" || status === "rejected") && submit(status === "rejected" ? "Düzeltip tekrar gönder" : "İncelemeye gönder")}
-        {status === "pending_review" && <p className="text-[12px] font-semibold text-violet">Sürümün inceleniyor. Sonuç bildirim olarak gelir.</p>}
+        {status === "pending_review" && (
+          <>
+            <p className="self-center text-[12px] font-semibold text-violet">Sürümün inceleniyor. Sonuç bildirim olarak gelir.</p>
+            {submit("Güncel taslağı gönder", false)}
+          </>
+        )}
         {status === "approved" && (
-          <Button size="sm" loading={pending} disabled={!creatorApproved} onClick={() => run(() => publishTwinAction())}>
-            <Rocket /> Yayına al
-          </Button>
+          <>
+            <Button size="sm" loading={pending} disabled={!creatorApproved} onClick={() => run(() => publishTwinAction())}>
+              <Rocket /> Yayına al
+            </Button>
+            {submit("Değişikliklerle yeniden gönder", false)}
+          </>
         )}
         {status === "live" && (
           <>
