@@ -4,7 +4,7 @@ import { z } from "zod";
 import { assertAdmin } from "@/lib/auth/session";
 import { toActionError, type ActionResult } from "@/lib/errors";
 import { decideCreatorApplication, setCreatorSuspended } from "@/services/creators/onboarding";
-import { setCreatorFeatured } from "@/services/admin/creators";
+import { revealCreatorPhone, setCreatorFeatured } from "@/services/admin/creators";
 import { actorOf, assertAdminAny, idSchema, reasonSchema } from "./guard";
 
 const decideSchema = z.object({
@@ -22,6 +22,20 @@ export async function decideApplicationAction(input: unknown): Promise<ActionRes
     revalidatePath("/admin");
     const message = v.decision === "approve" ? "Başvuru onaylandı." : v.decision === "reject" ? "Başvuru reddedildi." : "Creator'dan ek bilgi istendi.";
     return { ok: true, data: undefined, message };
+  } catch (err) {
+    return toActionError(err);
+  }
+}
+
+const revealSchema = z.object({ creatorId: idSchema, reason: reasonSchema });
+
+/** Başvuru incelemesi: creator telefonunu göster (denetim kaydı oluşturur). */
+export async function revealCreatorPhoneAction(input: unknown): Promise<ActionResult<{ phone: string }>> {
+  try {
+    const { user } = await assertAdmin("creators.verify");
+    const v = revealSchema.parse(input);
+    const r = await revealCreatorPhone(actorOf(user), v.creatorId, v.reason);
+    return { ok: true, data: r, message: "Numara gösterildi; işlem denetim kaydına yazıldı." };
   } catch (err) {
     return toActionError(err);
   }

@@ -20,6 +20,8 @@ const PLATFORMS = [
   { key: "tiktok", label: "TikTok", ph: "kullaniciadi" },
   { key: "youtube", label: "YouTube", ph: "kanal adı" },
   { key: "x", label: "X / Twitter", ph: "kullaniciadi" },
+  { key: "twitch", label: "Twitch", ph: "kanaladi" },
+  { key: "kick", label: "Kick", ph: "kanaladi" },
   { key: "website", label: "Web sitesi", ph: "alanadi.com" },
 ] as const;
 type Platform = (typeof PLATFORMS)[number]["key"];

@@ -50,6 +50,8 @@ npm run dev
 | `npm run db:seed [-- --reset]` | Demo verisi (üretimde çalışmaz) |
 | `npm run db:init` | İndeksler + platform ayarları + temel veriler (yalnız eksikleri ekler; üretimde ilk kurulum) |
 | `npm run db:samples [-- --reindex \| --remove --yes]` | Kurgusal "Örnek profil"leri içe aktar / kaldır (üretimde de çalışır, satın alma kapalı) |
+| `npm run db:demo-accounts [-- --remove --yes]` | Rol bazlı demo hesaplar (hayran, creator, aday, tüm yönetici rolleri); parolalar `DEMO-HESAPLAR.local.md` (depoya girmez) |
+| `npm run db:init:prod` · `db:samples:prod` · `db:demo-accounts:prod` | Aynı betikler `.env.production.local` (Atlas) ile |
 | `npm run admin:create -- <email> <rol>` | Admin hesabı oluşturma (genel kayıttan admin açılamaz) |
 | `npm run jobs:run` | Kuyruktaki işleri bir kez işle |
 

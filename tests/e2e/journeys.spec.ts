@@ -301,7 +301,7 @@ test.describe.serial("Uçtan uca yolculuk", () => {
   });
 
   /* ─── CREATOR ─────────────────────────────────────────── */
-  test("11 · Creator kaydı → doğrulama → giriş → yaş → 5 adımlı başvuru → incelemede", async ({ page, context }) => {
+  test("11 · Creator kaydı → doğrulama → giriş → yaş → 7 adımlı (soru soru) başvuru → incelemede", async ({ page, context }) => {
     test.setTimeout(240_000);
     await context.clearCookies();
     await submitRegister(page, { name: creator.name, email: creator.email }, "creator");
@@ -312,18 +312,43 @@ test.describe.serial("Uçtan uca yolculuk", () => {
     await page.waitForURL(/\/onboarding\/creator/);
     creatorCookies = await context.cookies();
 
-    // 1 · Bağla
-    await expect(page.getByRole("heading", { name: /Topluluğunu getir/ })).toBeVisible();
+    const next = (name = "Devam Et") => page.getByRole("button", { name, exact: true }).click();
+
+    // 1 · Profil (soru soru)
+    await expect(page.getByRole("heading", { name: /Seni tanıyalım/ })).toBeVisible();
     await page.locator("#cr-name").fill(creator.name);
     await page.locator("#cr-username").fill(creator.username);
-    await page.locator("#cr-headline").fill("E2E testi için örnek creator profili");
-    await page.locator("#cr-link-instagram").fill(`@${creator.username}`);
-    await page.getByRole("button", { name: "Doğrulamaya Devam Et" }).click();
-    await expect(page.getByText("En az bir kategori seç.")).toBeVisible(); // kategori zorunlu
+    await next();
+    await next(); // kategori zorunlu
+    await expect(page.getByText("En az bir kategori seç.")).toBeVisible();
     await page.getByRole("group", { name: "Kategoriler" }).getByRole("checkbox").first().click();
-    await page.getByRole("button", { name: "Doğrulamaya Devam Et" }).click();
+    await next();
+    await page.locator("#cr-headline").fill("E2E testi için örnek creator profili");
+    await next("İletişime Devam Et");
 
-    // 2 · Doğrula
+    // 2 · İletişim (telefon zorunlu, şifreli saklanır)
+    await page.locator("#cr-phone").fill("1234");
+    await next();
+    await expect(page.locator("#cr-phone-error")).toBeVisible();
+    await page.locator("#cr-phone").fill("5321234567");
+    await next();
+    await page.locator("#cr-contact-consent").click();
+    await next("Sosyal Medyaya Devam Et");
+
+    // 3 · Sosyal medya (her platform tek soru)
+    await page.locator("#cr-social-instagram").fill(`https://www.instagram.com/${creator.username}/`);
+    await page.getByRole("radio", { name: "1 bin – 10 bin" }).click();
+    await next();
+    for (const p of ["tiktok", "youtube", "x", "twitch", "kick"]) {
+      await expect(page.locator(`#cr-social-${p}`)).toBeVisible();
+      await page.getByRole("button", { name: "Bu platformu kullanmıyorum" }).click();
+    }
+    await expect(page.locator("#cr-social-website")).toBeVisible();
+    await next(); // boş bırakılan platform atlanır
+    await expect(page.getByRole("radiogroup", { name: "Ana platform" })).toBeVisible();
+    await next("Doğrulamaya Devam Et");
+
+    // 4 · Doğrula
     await expect(page.getByRole("heading", { name: /olduğunu göster/ })).toBeVisible();
     await page.locator("#cr-legal").fill("E2E Test Kullanıcısı");
     await page.locator("#cr-birth").fill("1990");
@@ -332,7 +357,7 @@ test.describe.serial("Uçtan uca yolculuk", () => {
     await page.locator("#cr-declared").click();
     await page.getByRole("button", { name: "AI İkizine Devam Et" }).click();
 
-    // 3 · AI ikizi (açık rıza zorunlu)
+    // 5 · AI ikizi (açık rıza zorunlu)
     await expect(page.getByRole("heading", { name: /tanıştır/ })).toBeVisible();
     await page.locator("#cr-twin-name").fill(creator.twinName);
     await page.locator("#cr-twin-bio").fill("E2E ikizi: test amaçlı kısa biyografi.");
@@ -342,11 +367,11 @@ test.describe.serial("Uçtan uca yolculuk", () => {
     await page.locator("#cr-consent-persona").click();
     await page.getByRole("button", { name: "Özelleştirmeye Devam Et" }).click();
 
-    // 4 · Özelleştir (bilgi tabanı izni sonra Studio'dan verilecek)
+    // 6 · Özelleştir (bilgi tabanı izni sonra Studio'dan verilecek)
     await expect(page.getByRole("heading", { name: /senin tarzın/ })).toBeVisible();
     await page.getByRole("button", { name: "İncelemeye Devam Et" }).click();
 
-    // 5 · İncele + gönder
+    // 7 · İncele + gönder
     await expect(page.getByRole("heading", { name: /Son bir kontrol/ })).toBeVisible();
     await expect(page.getByText("Başvuruyu göndermeden önce şu adımları tamamla")).toHaveCount(0);
     await page.getByRole("button", { name: "Başvuruyu Gönder" }).click();
@@ -357,6 +382,9 @@ test.describe.serial("Uçtan uca yolculuk", () => {
     const profile = await d.collection("creatorProfiles").findOne({ userId: user!._id });
     expect(profile?.status).toBe("pending_review");
     expect(profile?.username).toBe(creator.username);
+    expect(profile?.contact?.phoneMasked).toBe("+90 5** *** ** 67");
+    expect(JSON.stringify(profile)).not.toContain("5321234567"); // telefon düz metin saklanmaz
+    expect(profile?.socialLinks?.[0]).toMatchObject({ platform: "instagram", handle: creator.username, audience: "1k_10k", primary: true });
     const app = await d.collection("creatorApplications").findOne({ creatorId: profile!._id });
     expect(["submitted", "in_review"]).toContain(app?.status);
   });

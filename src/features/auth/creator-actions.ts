@@ -3,7 +3,9 @@ import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
 import { assertUser } from "@/lib/auth/session";
 import { AppError, toActionError, type ActionResult } from "@/lib/errors";
-import { creatorConnectSchema, creatorCustomizeSchema, creatorTwinSchema, creatorVerifySchema } from "@/features/auth/schemas";
+import { creatorCustomizeSchema, creatorProfileSchema, creatorTwinSchema, creatorVerifySchema, usernameField } from "@/features/auth/schemas";
+import { connectDb } from "@/lib/db/mongo";
+import { CreatorProfile } from "@/models/creator";
 import { grantConsent, revokeConsent, submitTwinForReview, updateTwinDraft } from "@/services/ai-twins/lifecycle";
 import { saveOnboardingStep, startCreatorOnboarding, submitCreatorApplication } from "@/services/creators/onboarding";
 import { getCreatorOnboardingView } from "@/services/auth/creator-onboarding";
@@ -33,28 +35,59 @@ export async function startCreatorOnboardingAction(): Promise<ActionResult> {
   }
 }
 
-/** Adım 1 · Bağla: temel hesap bilgileri (account) + sosyal hesaplar (social). */
-export async function saveCreatorConnectAction(input: unknown): Promise<ActionResult> {
+/** Profil sorusu sırasında kullanıcı adının uygunluğu (kendi mevcut adı uygundur). */
+export async function checkCreatorUsernameAction(raw: string): Promise<ActionResult<{ available: boolean; message: string }>> {
   try {
     const { user } = await assertUser();
-    const v = creatorConnectSchema.parse(input);
-    const view = await viewOrThrow(user.id);
-    await saveOnboardingStep(user.id, "account", {
-      displayName: v.displayName,
-      username: v.username,
-      headline: v.headline,
-      bio: view.bio,
-      location: view.location,
-      categories: v.categories,
-    });
-    await saveOnboardingStep(user.id, "social", { links: v.links });
-    return done("Hesap bilgilerin kaydedildi.");
+    const parsed = usernameField.safeParse(raw);
+    if (!parsed.success) return { ok: true, data: { available: false, message: parsed.error.issues[0]?.message ?? "Geçersiz kullanıcı adı." } };
+    await connectDb();
+    const taken = await CreatorProfile.findOne({ username: parsed.data }, { userId: 1 }).lean();
+    const available = !taken || taken.userId.toString() === user.id;
+    return { ok: true, data: { available, message: available ? "Bu kullanıcı adı uygun." : "Bu kullanıcı adı alınmış." } };
   } catch (err) {
     return toActionError(err);
   }
 }
 
-/** Adım 2 · Doğrula: kimlik doğrulama talebi (belge SAKLANMAZ; sağlayıcı/admin incelemesine düşer). */
+/** Adım 1 · Profil: görünen ad, kullanıcı adı, kategoriler, tanıtım (account). */
+export async function saveCreatorProfileAction(input: unknown): Promise<ActionResult> {
+  try {
+    const { user } = await assertUser();
+    const v = creatorProfileSchema.parse(input);
+    await viewOrThrow(user.id);
+    await saveOnboardingStep(user.id, "account", v);
+    return done("Profil bilgilerin kaydedildi.");
+  } catch (err) {
+    return toActionError(err);
+  }
+}
+
+/** Adım 2 · İletişim: telefon (şifreli saklanır) + iletişim tercihi + KVKK onayı (contact). */
+export async function saveCreatorContactAction(input: unknown): Promise<ActionResult> {
+  try {
+    const { user } = await assertUser();
+    await viewOrThrow(user.id);
+    await saveOnboardingStep(user.id, "contact", (input ?? {}) as Record<string, unknown>);
+    return done("İletişim bilgilerin kaydedildi.");
+  } catch (err) {
+    return toActionError(err);
+  }
+}
+
+/** Adım 3 · Sosyal medya: platform hesapları + kitle büyüklüğü + ana platform (social). */
+export async function saveCreatorSocialAction(input: unknown): Promise<ActionResult> {
+  try {
+    const { user } = await assertUser();
+    await viewOrThrow(user.id);
+    await saveOnboardingStep(user.id, "social", (input ?? {}) as Record<string, unknown>);
+    return done("Sosyal hesapların kaydedildi.");
+  } catch (err) {
+    return toActionError(err);
+  }
+}
+
+/** Adım 4 · Doğrula: kimlik doğrulama talebi (belge SAKLANMAZ; sağlayıcı/admin incelemesine düşer). */
 export async function saveCreatorVerifyAction(input: unknown): Promise<ActionResult> {
   try {
     const { user } = await assertUser();
@@ -67,7 +100,7 @@ export async function saveCreatorVerifyAction(input: unknown): Promise<ActionRes
   }
 }
 
-/** Adım 3 · AI İkizi: ad, kısa biyografi, karşılama + açık rıza (ai_twin_persona). */
+/** Adım 5 · AI İkizi: ad, kısa biyografi, karşılama + açık rıza (ai_twin_persona). */
 export async function saveCreatorTwinAction(input: unknown): Promise<ActionResult> {
   try {
     const { user } = await assertUser();
@@ -82,7 +115,7 @@ export async function saveCreatorTwinAction(input: unknown): Promise<ActionResul
   }
 }
 
-/** Adım 4 · Özelleştir: kişilik (persona) + bilgi rızası (knowledge) + ses rızası (likeness) + sınırlar (boundaries). */
+/** Adım 6 · Özelleştir: kişilik (persona) + bilgi rızası (knowledge) + ses rızası (likeness) + sınırlar (boundaries). */
 export async function saveCreatorCustomizeAction(input: unknown): Promise<ActionResult> {
   try {
     const { user } = await assertUser();
@@ -120,7 +153,7 @@ export async function saveCreatorCustomizeAction(input: unknown): Promise<Action
   }
 }
 
-/** Adım 5 · İncele: başvuruyu gönderir (AI ikizi sürümü de incelemeye alınır). */
+/** Adım 7 · İncele: başvuruyu gönderir (AI ikizi sürümü de incelemeye alınır). */
 export async function submitCreatorApplicationAction(): Promise<ActionResult> {
   try {
     const { user } = await assertUser();

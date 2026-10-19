@@ -16,6 +16,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardHeader } from "@/components/ui/card";
 import { Avatar, DataTable, DemoDataNotice, EmptyState, Pagination, StatCard, Td, Th } from "@/components/ui/display";
 import { decideApplicationAction, setCreatorFeaturedAction, setCreatorSuspendedAction } from "@/features/admin/creators-actions";
+import { CreatorPhoneReveal } from "@/features/admin/creator-phone-reveal";
+import { SocialIcon, socialLabel } from "@/features/public/social-icon";
+import { audienceLabel, CONTACT_PREFERENCES } from "@/lib/creator-contact";
 import { requireAdmin } from "@/lib/auth/session";
 import { can } from "@/lib/permissions";
 import { TWIN_STATUS_LABELS } from "@/lib/state-machines";
@@ -180,6 +183,48 @@ export default async function AdminCreatorsPage({ searchParams }: { searchParams
                   Bu creator için gönderilmiş başvuru bulunmuyor (başvuru süreci tamamlanmamış olabilir).
                 </Notice>
               )}
+
+              <section aria-label="İletişim ve sosyal hesaplar" className="mb-4">
+                <p className="mb-1 text-[10px] font-black uppercase tracking-wider text-muted">İletişim ve sosyal hesaplar</p>
+                <DetailRow label="Telefon">
+                  {detail.contact.hasPhone && detail.contact.phoneMasked ? (
+                    <CreatorPhoneReveal creatorId={detail.id} masked={detail.contact.phoneMasked} canReveal={can(user, "creators.verify")} />
+                  ) : (
+                    <span className="text-muted">Eklenmedi</span>
+                  )}
+                </DetailRow>
+                {detail.contact.preference && <DetailRow label="İletişim tercihi">{CONTACT_PREFERENCES.find((c) => c.key === detail.contact.preference)?.label ?? detail.contact.preference}</DetailRow>}
+                {detail.socialLinks.length === 0 ? (
+                  <DetailRow label="Sosyal hesaplar">
+                    <span className="text-muted">Eklenmedi</span>
+                  </DetailRow>
+                ) : (
+                  <ul className="mt-1.5 grid gap-1.5">
+                    {detail.socialLinks.map((l) => (
+                      <li key={l.platform} className="flex items-center gap-2.5 rounded-xl bg-soft px-3 py-2 text-[11px]">
+                        <SocialIcon platform={l.platform} className="size-4 shrink-0 text-ink" />
+                        <span className="min-w-0 flex-1">
+                          <b className="text-ink">{socialLabel(l.platform)}</b>
+                          {l.primary && <span className="ml-1.5 font-bold text-brand-600">ana platform</span>}
+                          <span className="block truncate text-muted">
+                            {l.url ? (
+                              <a href={l.url} target="_blank" rel="noopener noreferrer nofollow" className="hover:text-brand-600 hover:underline">
+                                {l.handle}
+                              </a>
+                            ) : (
+                              l.handle
+                            )}
+                            {audienceLabel(l.audience) ? ` · ${audienceLabel(l.audience)}` : ""}
+                          </span>
+                        </span>
+                        <StatusPill size="sm" tone={l.verified ? "green" : "warn"}>
+                          {l.verified ? "Doğrulandı" : "Sahiplik kontrolü"}
+                        </StatusPill>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </section>
 
               {detail.scope.evidence && (
               <section aria-label="Doğrulama talepleri" className="mb-4">

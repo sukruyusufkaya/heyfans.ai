@@ -21,3 +21,7 @@ coverage/
 .DS_Store
 *.log
 .vercel
+
+# demo hesap parolaları ve yerel notlar (asla depoya girmez)
+*.local.json
+*.local.md

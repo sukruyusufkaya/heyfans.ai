@@ -103,10 +103,18 @@ Genel kurallar: tüm belgelerde `createdAt/updatedAt`; para alanları `{ amountM
 | `location` | String |  |  |
 | `languages` | [Mixed] |  |  |
 | `socialLinks` | [Belge] |  |  |
-| `socialLinks[].platform` | String | ✓ | `instagram`, `tiktok`, `youtube`, `x`, `website` |
-| `socialLinks[].handle` | String | ✓ |  |
-| `socialLinks[].url` | String |  |  |
+| `socialLinks[].platform` | String | ✓ | `instagram`, `tiktok`, `youtube`, `x`, `twitch`, `kick`, `website` |
+| `socialLinks[].handle` | String | ✓ | Ayıklanmış kullanıcı adı (`src/lib/creator-contact.ts → normalizeSocial`) |
+| `socialLinks[].url` | String |  | Platform kuralıyla üretilen https adresi |
 | `socialLinks[].verified` | Boolean |  |  |
+| `socialLinks[].audience` | String |  | Takipçi aralığı: `lt1k`, `1k_10k`, `10k_50k`, `50k_100k`, `100k_500k`, `500k_1m`, `gt1m` |
+| `socialLinks[].primary` | Boolean |  | Ana platform (başvuruda seçilir) |
+| `contact.phoneEncrypted` | String |  | E.164 telefon, AES-256-GCM (`DATA_ENCRYPTION_KEY`); düz metin hiçbir yerde saklanmaz |
+| `contact.phoneMasked` | String |  | `+90 5** *** ** 67` — arayüzlerde gösterilen |
+| `contact.phoneCountry` | String |  | `TR`, `DE`, `NL`… |
+| `contact.preference` | String |  | `phone`, `whatsapp`, `email` |
+| `contact.consentAt` | Date |  | İletişim verisinin işlenmesine onay zamanı |
+| `contact.phoneVerifiedAt` | Date |  | SMS doğrulaması (sağlayıcı yapılandırılınca) |
 | `status` | String |  | `onboarding`, `pending_review`, `approved`, `suspended`, `rejected` |
 | `statusHistory` | [Belge] |  |  |
 | `statusHistory[].from` | String |  |  |

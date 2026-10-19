@@ -1,6 +1,8 @@
 import "server-only";
 import { connectDb } from "@/lib/db/mongo";
 import { oid } from "@/lib/validation/common";
+import { decryptField } from "@/lib/security/crypto";
+import { PHONE_COUNTRIES } from "@/lib/creator-contact";
 import { AiTwin, type ITwin } from "@/models/ai";
 import { CreatorApplication, CreatorProfile, type ConsentKind, type ICreatorProfile } from "@/models/creator";
 import { activeConsents } from "@/services/ai-twins/lifecycle";
@@ -15,7 +17,9 @@ export interface CreatorOnboardingView {
   bio: string;
   location: string;
   categories: string[];
-  links: { platform: string; handle: string; verified: boolean }[];
+  links: { platform: string; handle: string; verified: boolean; audience: string | null; primary: boolean }[];
+  /** İletişim adımı: numara yalnız sahibine (düzenleme için) çözülür; başka hiçbir görünümde düz metin yoktur. */
+  contact: { country: string; national: string; masked: string | null; preference: "phone" | "whatsapp" | "email"; consented: boolean };
   /** Sosyal hesap sahipliği için profil biyografisine eklenecek kod (admin incelemesinde kontrol edilir). */
   socialCode: string;
   verification: { identity: ICreatorProfile["verification"]["identity"]; social: ICreatorProfile["verification"]["social"] };
@@ -48,6 +52,21 @@ export interface CreatorOnboardingView {
   missingRequired: string[];
 }
 
+function ownContact(profile: ICreatorProfile): CreatorOnboardingView["contact"] {
+  const c = profile.contact;
+  let national = "";
+  if (c?.phoneEncrypted) {
+    try {
+      const e164 = decryptField(c.phoneEncrypted);
+      const dial = PHONE_COUNTRIES.find((x) => x.code === c.phoneCountry)?.dial ?? "";
+      national = e164.startsWith(`+${dial}`) ? e164.slice(dial.length + 1) : e164.replace(/^\+/, "");
+    } catch {
+      national = "";
+    }
+  }
+  return { country: c?.phoneCountry ?? "TR", national, masked: c?.phoneMasked ?? null, preference: c?.preference ?? "whatsapp", consented: Boolean(c?.consentAt) };
+}
+
 /** Onboarding sihirbazı için tek okuma: profil + ikiz taslağı + rızalar + son başvuru. Profil yoksa null. */
 export async function getCreatorOnboardingView(userId: string): Promise<CreatorOnboardingView | null> {
   await connectDb();
@@ -76,7 +95,8 @@ export async function getCreatorOnboardingView(userId: string): Promise<CreatorO
     bio: profile.bio ?? "",
     location: profile.location ?? "",
     categories: profile.categories ?? [],
-    links: (profile.socialLinks ?? []).map((l) => ({ platform: l.platform, handle: l.handle, verified: l.verified })),
+    links: (profile.socialLinks ?? []).map((l) => ({ platform: l.platform, handle: l.handle, verified: l.verified, audience: l.audience ?? null, primary: Boolean(l.primary) })),
+    contact: ownContact(profile),
     socialCode: `HEYFANS-${profile._id.toString().slice(-6).toUpperCase()}`,
     verification: { identity: profile.verification.identity, social: profile.verification.social },
     completedSteps: [...completed],

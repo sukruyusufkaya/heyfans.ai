@@ -47,7 +47,11 @@ export type ActionResult<T = undefined> =
   | { ok: false; error: string; code?: string; fieldErrors?: Record<string, string[]> };
 
 export function toActionError(err: unknown): { ok: false; error: string; code?: string; fieldErrors?: Record<string, string[]> } {
-  if (err instanceof AppError) return { ok: false, error: err.message, code: err.code };
+  if (err instanceof AppError) {
+    // details.field verilmişse hata ilgili form alanının altında da gösterilir.
+    const field = typeof err.details?.field === "string" ? err.details.field : null;
+    return field ? { ok: false, error: err.message, code: err.code, fieldErrors: { [field]: [err.message] } } : { ok: false, error: err.message, code: err.code };
+  }
   const e = err as { name?: string; message?: string; status?: number; issues?: { path: (string | number)[]; message: string }[] };
   if (e?.name === "ForbiddenError" || e?.name === "UnauthorizedError") return { ok: false, error: e.message ?? "Yetkisiz işlem.", code: e.name };
   if (e?.name === "ZodError" && Array.isArray(e.issues)) {

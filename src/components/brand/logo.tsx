@@ -1,20 +1,48 @@
+import Image from "next/image";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 
-/** Referanslardaki kelime işareti: "HEY" koyu + "FANS" fuşya, 950 ağırlık, sıkı harf aralığı. */
-export function Wordmark({ className, dot = false, tone = "dark" }: { className?: string; dot?: boolean; tone?: "dark" | "light" }) {
+/**
+ * HEYFANS marka logosu: kalp amblemi (iki profil + yıldız) + "Heyfans" yazısı.
+ * Varlıklar kullanıcının verdiği logodan şeffaf olarak çıkarıldı (public/brand, src/app/icon.png, favicon.ico, opengraph-image.png).
+ * - tone="dark": açık zemin ("Hey" koyu) · tone="light": koyu zemin ("Hey" açık)
+ */
+const SIZES = {
+  sm: { mark: "h-7", word: "h-[18px]", gap: "gap-1.5" },
+  md: { mark: "h-9", word: "h-[23px]", gap: "gap-2" },
+  lg: { mark: "h-12", word: "h-[30px]", gap: "gap-2.5" },
+} as const;
+export type LogoSize = keyof typeof SIZES;
+
+export function LogoMark({ className, priority }: { className?: string; priority?: boolean }) {
+  return <Image src="/brand/heyfans-mark.png" alt="" width={301} height={256} priority={priority} className={cn("h-9 w-auto select-none", className)} draggable={false} />;
+}
+
+export function Wordmark({ className, tone = "dark", size = "md", markOnly = false, priority }: { className?: string; tone?: "dark" | "light"; size?: LogoSize; markOnly?: boolean; priority?: boolean; dot?: boolean }) {
+  const s = SIZES[size];
   return (
-    <span className={cn("font-display text-[28px] font-black leading-none tracking-[-0.06em]", tone === "light" ? "text-white" : "text-ink", className)}>
-      HEY<span className="text-brand-500">FANS</span>
-      {dot && <span className="text-brand-500">.</span>}
+    <span className={cn("inline-flex items-center leading-none", s.gap, className)}>
+      <LogoMark className={s.mark} priority={priority} />
+      {!markOnly && (
+        <Image
+          src={tone === "light" ? "/brand/heyfans-wordmark-light.png" : "/brand/heyfans-wordmark.png"}
+          alt="Heyfans"
+          width={479}
+          height={120}
+          priority={priority}
+          className={cn("w-auto select-none", s.word)}
+          draggable={false}
+        />
+      )}
+      {markOnly && <span className="sr-only">Heyfans</span>}
     </span>
   );
 }
 
-export function LogoLink({ href = "/", className, dot, tone }: { href?: string; className?: string; dot?: boolean; tone?: "dark" | "light" }) {
+export function LogoLink({ href = "/", className, tone, size }: { href?: string; className?: string; dot?: boolean; tone?: "dark" | "light"; size?: LogoSize }) {
   return (
-    <Link href={href} aria-label="HEYFANS ana sayfa" className={cn("inline-flex shrink-0 items-center", className)}>
-      <Wordmark dot={dot} tone={tone} />
+    <Link href={href} aria-label="Heyfans ana sayfa" className={cn("inline-flex shrink-0 items-center", className)}>
+      <Wordmark tone={tone} size={size} priority />
     </Link>
   );
 }

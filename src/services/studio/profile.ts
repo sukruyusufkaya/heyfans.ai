@@ -26,7 +26,7 @@ export const profileSchema = z.object({
         url: z.union([z.literal(""), z.string().trim().url("Geçerli bir bağlantı girin").max(500).refine((u) => /^https?:\/\//.test(u), "Yalnız http(s) bağlantıları")]).optional(),
       }),
     )
-    .max(5),
+    .max(7),
   /** undefined = değişmez, null = kaldır */
   avatarAssetId: assetId.nullable().optional(),
   coverAssetId: assetId.nullable().optional(),
@@ -56,7 +56,8 @@ export async function updateCreatorProfile(userId: string, raw: unknown) {
     languages: input.languages,
     socialLinks: input.socialLinks.map((l) => {
       const prev = creator.socialLinks.find((p) => p.platform === l.platform && p.handle === l.handle);
-      return { platform: l.platform, handle: l.handle, url: l.url || undefined, verified: Boolean(prev?.verified) };
+      // Başvuruda alınan kitle büyüklüğü ve ana platform bilgisi korunur.
+      return { platform: l.platform, handle: l.handle, url: l.url || undefined, verified: Boolean(prev?.verified), audience: prev?.audience ?? null, primary: Boolean(prev?.primary) };
     }),
   };
   const uid = creator.userId;

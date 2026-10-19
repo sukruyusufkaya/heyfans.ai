@@ -24,9 +24,11 @@ export const FAN_STEPS = [
 
 export const MIN_FAN_INTERESTS = 3;
 
-/** Creator karşılama: ekranda 5 adım, arka uçta 10 adımlık anahtarlara eşlenir. */
+/** Creator karşılama: ekranda 7 adım (ilk üçü soru soru), arka uçta adım anahtarlarına eşlenir. */
 export const CREATOR_GROUPS = [
-  { key: "connect", label: "Bağla", backend: ["account", "social"] },
+  { key: "profile", label: "Profil", backend: ["account"] },
+  { key: "contact", label: "İletişim", backend: ["contact"] },
+  { key: "social", label: "Sosyal medya", backend: ["social"] },
   { key: "verify", label: "Doğrula", backend: ["verify"] },
   { key: "twin", label: "AI İkizi", backend: ["twin"] },
   { key: "customize", label: "Özelleştir", backend: ["persona", "knowledge", "likeness", "boundaries"] },
@@ -34,11 +36,24 @@ export const CREATOR_GROUPS = [
 ] as const;
 export type CreatorGroupKey = (typeof CREATOR_GROUPS)[number]["key"];
 
+/** Soru soru ilerleyen adımların soruları (her ekranda tek soru). */
+export const CREATOR_QUESTIONS = {
+  profile: ["identity", "categories", "about"],
+  contact: ["phone", "preference"],
+  social: ["instagram", "tiktok", "youtube", "x", "twitch", "kick", "website", "primary"],
+} as const;
+export type QuestionGroupKey = keyof typeof CREATOR_QUESTIONS;
+export const isQuestionGroup = (k: string): k is QuestionGroupKey => k in CREATOR_QUESTIONS;
+
 /** Ekrandaki bir adım, ilgili arka uç adımları kaydedildiğinde "tamamlandı" sayılır (sunucu ve istemci ortak kullanır). */
 export function creatorGroupDone(key: CreatorGroupKey, completed: ReadonlySet<string>): boolean {
   switch (key) {
-    case "connect":
+    case "profile":
       return completed.has("account");
+    case "contact":
+      return completed.has("contact");
+    case "social":
+      return completed.has("social");
     case "verify":
       return completed.has("verify");
     case "twin":
@@ -51,14 +66,8 @@ export function creatorGroupDone(key: CreatorGroupKey, completed: ReadonlySet<st
 }
 
 /** Başvuru gönderilmeden önce tamamlanmış olması gereken arka uç adımları (servis ile aynı). */
-export const CREATOR_REQUIRED_STEPS = ["account", "verify", "twin", "persona", "boundaries"] as const;
+export const CREATOR_REQUIRED_STEPS = ["account", "contact", "social", "verify", "twin", "persona", "boundaries"] as const;
 
-export const SOCIAL_PLATFORM_META = [
-  { key: "instagram", label: "Instagram", placeholder: "@kullaniciadi" },
-  { key: "tiktok", label: "TikTok", placeholder: "@kullaniciadi" },
-  { key: "youtube", label: "YouTube", placeholder: "Kanal adı veya @kanal" },
-  { key: "x", label: "X / Twitter", placeholder: "@kullaniciadi" },
-] as const;
 
 export const EMOJI_OPTIONS = [
   { value: "none", label: "Hiç" },

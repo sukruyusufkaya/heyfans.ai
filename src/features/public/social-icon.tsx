@@ -1,6 +1,6 @@
 import { Link2 } from "lucide-react";
 
-const LABELS: Record<string, string> = { instagram: "Instagram", tiktok: "TikTok", youtube: "YouTube", x: "X (Twitter)", website: "Web sitesi" };
+const LABELS: Record<string, string> = { instagram: "Instagram", tiktok: "TikTok", youtube: "YouTube", x: "X (Twitter)", twitch: "Twitch", kick: "Kick", website: "Web sitesi" };
 
 export function socialLabel(platform: string) {
   return LABELS[platform] ?? platform;
@@ -18,6 +18,8 @@ export function socialHref(s: { platform: string; handle: string; url: string | 
     else if (s.platform === "tiktok") raw = `https://tiktok.com/@${h}`;
     else if (s.platform === "youtube") raw = `https://youtube.com/@${h}`;
     else if (s.platform === "x") raw = `https://x.com/${h}`;
+    else if (s.platform === "twitch") raw = `https://www.twitch.tv/${h}`;
+    else if (s.platform === "kick") raw = `https://kick.com/${h}`;
     else raw = `https://${h}`;
   }
   try {
@@ -54,6 +56,18 @@ export function SocialIcon({ platform, className = "size-4" }: { platform: strin
       return (
         <svg viewBox="0 0 24 24" className={className} fill="currentColor" aria-hidden>
           <path d="M16.6 2h-3.4v13.4a2.9 2.9 0 1 1-2.9-2.9c.3 0 .6 0 .9.1V9.1a6.3 6.3 0 1 0 5.4 6.3V8.6a8 8 0 0 0 4.7 1.5V6.7A4.7 4.7 0 0 1 16.6 2z" />
+        </svg>
+      );
+    case "twitch":
+      return (
+        <svg viewBox="0 0 24 24" className={className} fill="currentColor" aria-hidden>
+          <path d="M4.3 2 3 5.4v13.8h4.6V22h2.6l2.6-2.8h3.8L21.8 14V2zm15.8 11.2-3 3h-4.6l-2.6 2.6v-2.6H6V3.8h14.1zM16.3 7.1h-1.8v5.2h1.8zm-4.8 0H9.7v5.2h1.8z" />
+        </svg>
+      );
+    case "kick":
+      return (
+        <svg viewBox="0 0 24 24" className={className} fill="currentColor" aria-hidden>
+          <path d="M3 3h6v4h2V5h2V3h6v6h-2v2h-2v2h2v2h2v6h-6v-2h-2v-2H9v4H3z" />
         </svg>
       );
     default:

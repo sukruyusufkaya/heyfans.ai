@@ -28,6 +28,7 @@
 - Yetişkin içerik kapsamı: kapalı (K-04).
 
 ## Ajan doğrulamalarından çıkan açık noktalar
+- Creator telefon numarası SMS ile doğrulanmaz (sağlayıcı yok); şifreli saklanır, yönetici gerekçeyle görüntüler. Sosyal hesap sahipliği biyografi koduyla elle doğrulanır.
 - Bildirim tercihleri (e-posta/push) kaydedilir; e-posta/push dağıtımı henüz yok, bildirimler uygulama içidir.
 - `security.sessionMaxAgeDays` ve `security.maxLoginAttempts` ayarları kaydedilir ama Better Auth yapılandırması statik olduğundan dinamik uygulanmaz (değişiklik dağıtım gerektirir; arayüz uyarır).
 - AI ikizi kalite puanları (`twin.quality`) için otomatik değerlendirme hattı yok; Test Alanı uydurma puan göstermez.

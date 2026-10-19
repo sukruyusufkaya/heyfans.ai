@@ -4,7 +4,8 @@ import { baseOptions, defineModel, StatusEventSchema, type ObjectId, type Status
 export const CREATOR_STATUSES = ["onboarding", "pending_review", "approved", "suspended", "rejected"] as const;
 export type CreatorStatus = (typeof CREATOR_STATUSES)[number];
 
-export const SOCIAL_PLATFORMS = ["instagram", "tiktok", "youtube", "x", "website"] as const;
+import { AUDIENCE_KEYS, CONTACT_PREFERENCES, SOCIAL_PLATFORMS, type AudienceRange, type ContactPreference, type SocialPlatform } from "@/lib/creator-contact";
+export { SOCIAL_PLATFORMS };
 
 export interface ICreatorProfile {
   _id: ObjectId;
@@ -21,7 +22,9 @@ export interface ICreatorProfile {
   tags: string[];
   location?: string;
   languages: string[];
-  socialLinks: { platform: (typeof SOCIAL_PLATFORMS)[number]; handle: string; url?: string; verified: boolean }[];
+  socialLinks: { platform: SocialPlatform; handle: string; url?: string; verified: boolean; audience?: AudienceRange | null; primary?: boolean }[];
+  /** Başvuruda alınan iletişim bilgisi. Telefon şifreli saklanır (DATA_ENCRYPTION_KEY); arayüzde yalnız maskeli gösterilir. */
+  contact?: { phoneEncrypted: string | null; phoneMasked: string | null; phoneCountry: string | null; preference: ContactPreference; consentAt: Date | null; phoneVerifiedAt: Date | null };
   status: CreatorStatus;
   statusHistory: StatusEvent[];
   verification: {
@@ -83,11 +86,21 @@ const CreatorProfileSchema = new Schema<ICreatorProfile>(
             handle: { type: String, required: true, maxlength: 120 },
             url: { type: String, maxlength: 500 },
             verified: { type: Boolean, default: false },
+            audience: { type: String, enum: [...AUDIENCE_KEYS, null], default: null },
+            primary: { type: Boolean, default: false },
           },
           { _id: false },
         ),
       ],
       default: [],
+    },
+    contact: {
+      phoneEncrypted: { type: String, default: null },
+      phoneMasked: { type: String, default: null },
+      phoneCountry: { type: String, default: null },
+      preference: { type: String, enum: CONTACT_PREFERENCES.map((c) => c.key), default: "email" },
+      consentAt: { type: Date, default: null },
+      phoneVerifiedAt: { type: Date, default: null },
     },
     status: { type: String, enum: CREATOR_STATUSES, default: "onboarding" },
     statusHistory: { type: [StatusEventSchema], default: [] },

@@ -9,6 +9,7 @@ import { MembershipPlan } from "@/models/monetization";
 import { AnalyticsEvent } from "@/models/platform";
 import { Favorite, Follow } from "@/models/social";
 import { sampleCreatorIds } from "./sample";
+import { isProduction } from "@/config/env";
 
 /** Herkese açık creator kartı — yalnız yayına alınmış (approved) profiller. */
 export interface CreatorCard {
@@ -317,7 +318,8 @@ export async function platformCounters() {
   // Örnek (kurgusal) profiller gerçek kullanıcı/creator sayılmaz.
   const samples = await sampleCreatorIds();
   const [users, creators, messages, liveTwins] = await Promise.all([
-    User.countDocuments({ status: "active", _id: { $nin: samples.userIds } }),
+    // Üretimde demo/test hesapları (isDemo) gerçek kullanıcı sayılmaz; demo kipinde sayaçlar zaten "DEMO" etiketlidir.
+    User.countDocuments({ status: "active", _id: { $nin: samples.userIds }, ...(isProduction() ? { isDemo: { $ne: true } } : {}) }),
     CreatorProfile.countDocuments({ status: "approved", isSample: { $ne: true } }),
     Message.estimatedDocumentCount(),
     AiTwin.countDocuments({ status: "live", creatorId: { $nin: samples.creatorIds } }),

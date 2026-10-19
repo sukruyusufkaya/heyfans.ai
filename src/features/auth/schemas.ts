@@ -91,19 +91,16 @@ export const usernameField = z
   .toLowerCase()
   .regex(/^[a-z0-9_.]{3,30}$/, "Kullanıcı adı 3-30 karakter olmalı; harf, rakam, _ ve . kullanılabilir.");
 
-export const SOCIAL_KEYS = ["instagram", "tiktok", "youtube", "x"] as const;
-
-export const creatorConnectSchema = z.object({
+/** Profil (soru soru): görünen ad + kullanıcı adı, kategoriler, tanıtım. */
+export const creatorProfileSchema = z.object({
   displayName: z.string().trim().min(2, "Görünen ad en az 2 karakter olmalı.").max(80),
   username: usernameField,
-  headline: z.string().trim().max(140, "En fazla 140 karakter.").default(""),
   categories: z.array(slug).min(1, "En az bir kategori seç.").max(5, "En fazla 5 kategori seçebilirsin."),
-  links: z
-    .array(z.object({ platform: z.enum(SOCIAL_KEYS), handle: z.string().trim().min(2, "En az 2 karakter.").max(120) }))
-    .max(4)
-    .default([]),
+  headline: z.string().trim().max(140, "En fazla 140 karakter.").default(""),
+  bio: z.string().trim().max(1500, "En fazla 1500 karakter.").default(""),
+  location: z.string().trim().max(80, "En fazla 80 karakter.").default(""),
 });
-export type CreatorConnectInput = z.input<typeof creatorConnectSchema>;
+export type CreatorProfileInput = z.input<typeof creatorProfileSchema>;
 
 export const creatorVerifySchema = z.object({
   legalName: z.string().trim().min(3, "Yasal adını ve soyadını yaz.").max(120),

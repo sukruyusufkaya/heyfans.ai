@@ -2,6 +2,7 @@ import "server-only";
 import { connectDb } from "@/lib/db/mongo";
 import { AppError, NotFoundError } from "@/lib/errors";
 import { audit } from "@/lib/security/audit";
+import { decryptField } from "@/lib/security/crypto";
 import { oid, paged } from "@/lib/validation/common";
 import { AiTwin } from "@/models/ai";
 import {
@@ -105,7 +106,8 @@ export async function getAdminCreatorDetail(creatorId: string, scope: CreatorDet
     status: profile.status,
     location: profile.location ?? null,
     categories: profile.categories,
-    socialLinks: profile.socialLinks.map((s) => ({ platform: s.platform, handle: s.handle, verified: s.verified })),
+    socialLinks: profile.socialLinks.map((s) => ({ platform: s.platform, handle: s.handle, url: s.url ?? null, verified: s.verified, audience: s.audience ?? null, primary: Boolean(s.primary) })),
+    contact: { phoneMasked: profile.contact?.phoneMasked ?? null, preference: profile.contact?.preference ?? null, consentAt: profile.contact?.consentAt ?? null, hasPhone: Boolean(profile.contact?.phoneEncrypted) },
     verification: profile.verification,
     featured: profile.featured,
     stats: profile.stats,
@@ -144,6 +146,16 @@ export async function getAdminCreatorDetail(creatorId: string, scope: CreatorDet
     scope,
     payoutAccounts: payoutAccounts.map((a) => ({ id: a._id.toString(), masked: a.ibanMasked, status: a.status, holder: a.holderName })),
   };
+}
+
+/** Başvuru incelemesi için telefon numarasını açar. Her görüntüleme denetim kaydına yazılır. */
+export async function revealCreatorPhone(actor: AdminActor, creatorId: string, reason: string) {
+  await connectDb();
+  const profile = await CreatorProfile.findById(oid(creatorId), { contact: 1, username: 1 }).lean();
+  if (!profile?.contact?.phoneEncrypted) throw new NotFoundError("Bu creator için kayıtlı telefon yok.");
+  const phone = decryptField(profile.contact.phoneEncrypted);
+  await audit({ actorId: actor.id, actorRole: actor.adminRole, action: "creator.phone_reveal", targetType: "CreatorProfile", targetId: creatorId, reason, severity: "notice" });
+  return { phone };
 }
 
 /** Öne çıkan creator yönetimi: yalnız onaylı creator'lar öne çıkarılabilir. */

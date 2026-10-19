@@ -1,4 +1,5 @@
 import type { CreatorOnboardingView } from "@/services/auth/creator-onboarding";
+import { SOCIAL_PLATFORMS, type AudienceRange, type ContactPreference, type SocialPlatform } from "@/lib/creator-contact";
 
 export type { CreatorOnboardingView };
 
@@ -16,22 +17,31 @@ export interface ConsentTexts {
 
 /** Sihirbazın tüm adımlarının taslak değerleri (adım adım sunucuya kaydedilir). */
 export interface CreatorDraft {
-  // 1 · Bağla
+  // 1 · Profil
   displayName: string;
   username: string;
   headline: string;
+  bio: string;
+  location: string;
   categories: string[];
-  links: Record<"instagram" | "tiktok" | "youtube" | "x", string>;
-  // 2 · Doğrula
+  // 2 · İletişim
+  phoneCountry: string;
+  phoneNational: string;
+  contactPreference: ContactPreference;
+  contactConsent: boolean;
+  // 3 · Sosyal medya (her platform tek soru; "kullanmıyorum" = skip)
+  socials: Record<SocialPlatform, SocialAnswer>;
+  primary: SocialPlatform | null;
+  // 4 · Doğrula
   legalName: string;
   birthYear: string;
   declared: boolean;
-  // 3 · AI İkizi
+  // 5 · AI İkizi
   twinName: string;
   shortBio: string;
   greeting: string;
   consentPersona: boolean;
-  // 4 · Özelleştir
+  // 6 · Özelleştir
   warmth: number;
   formality: number;
   humor: number;
@@ -47,6 +57,13 @@ export interface CreatorDraft {
   voiceConsent: boolean;
 }
 
+export interface SocialAnswer {
+  handle: string;
+  audience: AudienceRange | null;
+  /** Kullanıcı "Bu platformu kullanmıyorum" dedi. */
+  skip: boolean;
+}
+
 export type FieldErrors = Record<string, string>;
 
 export interface StepProps {
@@ -57,13 +74,26 @@ export interface StepProps {
 }
 
 export function initialDraft(view: CreatorOnboardingView): CreatorDraft {
-  const link = (p: string) => view.links.find((l) => l.platform === p)?.handle ?? "";
+  const socialDone = view.completedSteps.includes("social");
+  const socials = Object.fromEntries(
+    SOCIAL_PLATFORMS.map((p) => {
+      const l = view.links.find((x) => x.platform === p);
+      return [p, { handle: l?.handle ?? "", audience: (l?.audience as AudienceRange | null) ?? null, skip: socialDone && !l }];
+    }),
+  ) as Record<SocialPlatform, SocialAnswer>;
   return {
     displayName: view.displayName,
     username: view.username,
     headline: view.headline,
+    bio: view.bio,
+    location: view.location,
     categories: view.categories,
-    links: { instagram: link("instagram"), tiktok: link("tiktok"), youtube: link("youtube"), x: link("x") },
+    phoneCountry: view.contact.country,
+    phoneNational: view.contact.national,
+    contactPreference: view.contact.preference,
+    contactConsent: view.contact.consented,
+    socials,
+    primary: (view.links.find((l) => l.primary)?.platform as SocialPlatform | undefined) ?? null,
     legalName: view.verifyDraft.legalName,
     birthYear: view.verifyDraft.birthYear,
     declared: view.completedSteps.includes("verify"),

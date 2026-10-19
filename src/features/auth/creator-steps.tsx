@@ -1,13 +1,13 @@
 "use client";
 import * as React from "react";
-import { AlertCircle, BadgeCheck, Check, Clock, FileX2, Lock, ShieldCheck } from "lucide-react";
+import { AlertCircle, BadgeCheck, Check, Clock, FileX2, Lock } from "lucide-react";
 import { AuthField, FormAlert } from "@/components/auth/auth-ui";
-import { InstagramIcon, TikTokIcon, XIcon, YouTubeIcon } from "@/components/auth/brand-icons";
 import { TagInput } from "@/components/auth/tag-input";
 import { AiTwinLabel, Badge } from "@/components/ui/badge";
 import { Checkbox, Input, Switch, Textarea } from "@/components/ui/form-controls";
 import { cn } from "@/lib/utils";
-import { EMOJI_OPTIONS, MESSAGE_LENGTH_OPTIONS, SOCIAL_PLATFORM_META } from "@/features/auth/constants";
+import { EMOJI_OPTIONS, MESSAGE_LENGTH_OPTIONS } from "@/features/auth/constants";
+import { audienceLabel, CONTACT_PREFERENCES, normalizePhone, SOCIAL_PLATFORMS, socialMeta } from "@/lib/creator-contact";
 import type { ConsentTexts, CreatorCategory, StepProps } from "@/features/auth/creator-types";
 
 const inputCls = "h-[52px] text-[14px]";
@@ -38,136 +38,7 @@ function Section({ title, hint, children }: { title: string; hint?: string; chil
   );
 }
 
-function ControlNote({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="flex items-start gap-3 rounded-2xl border border-brand-150 bg-brand-50 p-4">
-      <span className="grid size-9 shrink-0 place-items-center rounded-xl bg-white text-brand-500">
-        <ShieldCheck className="size-[18px]" aria-hidden />
-      </span>
-      <div className="text-xs leading-relaxed text-muted-strong">{children}</div>
-    </div>
-  );
-}
-
-/* ─── 1 · Bağla ─────────────────────────────────────────── */
-const SOCIAL_ICON = { instagram: InstagramIcon, tiktok: TikTokIcon, youtube: YouTubeIcon, x: XIcon } as const;
-
-export function StepConnect({ view, draft, set, errors, categories }: StepProps & { categories: CreatorCategory[] }) {
-  const toggleCategory = (slug: string) => {
-    if (draft.categories.includes(slug)) set("categories", draft.categories.filter((c) => c !== slug));
-    else if (draft.categories.length < 5) set("categories", [...draft.categories, slug]);
-  };
-  const hasLinks = Object.values(draft.links).some((h) => h.trim());
-  return (
-    <div className="space-y-7">
-      <Section title="Profil bilgilerin" hint="Hayranların seni bu bilgilerle görecek.">
-        <div className="grid gap-4 sm:grid-cols-2">
-          <AuthField label="Görünen ad" htmlFor="cr-name" error={errors.displayName}>
-            <Input id="cr-name" value={draft.displayName} onChange={(e) => set("displayName", e.target.value)} maxLength={80} autoComplete="name" className={inputCls} aria-invalid={!!errors.displayName} aria-describedby={errors.displayName ? "cr-name-error" : undefined} />
-          </AuthField>
-          <AuthField label="Kullanıcı adı" htmlFor="cr-username" error={errors.username} hint="heyfans.ai/creators/kullaniciadi">
-            <Input
-              id="cr-username"
-              value={draft.username}
-              onChange={(e) => set("username", e.target.value.toLowerCase().replace(/[^a-z0-9_.]/g, ""))}
-              maxLength={30}
-              autoComplete="username"
-              leftIcon={<span className="text-sm font-bold">@</span>}
-              className={inputCls}
-              aria-invalid={!!errors.username}
-              aria-describedby={errors.username ? "cr-username-error" : "cr-username-hint"}
-            />
-          </AuthField>
-        </div>
-        <AuthField label="Kısa tanıtım (isteğe bağlı)" htmlFor="cr-headline" error={errors.headline} hint={`${draft.headline.length}/140`}>
-          <Input id="cr-headline" value={draft.headline} onChange={(e) => set("headline", e.target.value)} maxLength={140} placeholder="Örn. Seyahat ve yaşam tarzı üzerine hikâyeler" className={inputCls} aria-describedby={errors.headline ? "cr-headline-error" : "cr-headline-hint"} />
-        </AuthField>
-        <fieldset>
-          <legend className="mb-2 flex w-full items-center justify-between text-[13px] font-extrabold text-ink">
-            <span>Kategoriler</span>
-            <span className="text-xs font-bold text-muted">{draft.categories.length}/5</span>
-          </legend>
-          <div className="flex flex-wrap gap-2" role="group" aria-label="Kategoriler">
-            {categories.map((c) => {
-              const on = draft.categories.includes(c.slug);
-              return (
-                <button
-                  key={c.slug}
-                  type="button"
-                  role="checkbox"
-                  aria-checked={on}
-                  onClick={() => toggleCategory(c.slug)}
-                  disabled={!on && draft.categories.length >= 5}
-                  className={cn("inline-flex h-9 items-center gap-1.5 rounded-full border px-3.5 text-xs font-extrabold transition-colors disabled:cursor-not-allowed disabled:opacity-45", on ? "border-brand-500 bg-brand-500 text-white" : "border-line bg-white text-ink-soft hover:border-brand-200")}
-                >
-                  {on && <Check className="size-3.5" strokeWidth={3} aria-hidden />}
-                  {c.name}
-                </button>
-              );
-            })}
-          </div>
-          {errors.categories && (
-            <p role="alert" className="mt-2 text-xs font-semibold text-danger">
-              {errors.categories}
-            </p>
-          )}
-        </fieldset>
-      </Section>
-
-      <Section title="Sosyal hesapların" hint="İsteğe bağlı. Hesap sahipliğini doğrulayarak AI ikizinin resmî olmasını sağlarız.">
-        <div className="grid gap-3 sm:grid-cols-2">
-          {SOCIAL_PLATFORM_META.map((p) => {
-            const Icon = SOCIAL_ICON[p.key];
-            const err = errors[`link.${p.key}`];
-            return (
-              <div key={p.key} className="flex items-start gap-3 rounded-xl border border-line bg-white p-3.5">
-                <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-soft text-ink">
-                  <Icon aria-hidden />
-                </span>
-                <div className="min-w-0 flex-1">
-                  <label htmlFor={`cr-link-${p.key}`} className="text-[13px] font-extrabold text-ink">
-                    {p.label}
-                  </label>
-                  <input
-                    id={`cr-link-${p.key}`}
-                    value={draft.links[p.key]}
-                    onChange={(e) => set("links", { ...draft.links, [p.key]: e.target.value })}
-                    placeholder={p.placeholder}
-                    maxLength={120}
-                    aria-invalid={!!err}
-                    aria-describedby={err ? `cr-link-${p.key}-error` : undefined}
-                    className="mt-1 h-9 w-full rounded-lg border border-line px-2.5 text-xs text-ink placeholder:text-[#b2a6b3] focus:border-brand-300 focus:outline-none focus:ring-4 focus:ring-brand-100 aria-[invalid=true]:border-danger"
-                  />
-                  {err && (
-                    <p id={`cr-link-${p.key}-error`} role="alert" className="mt-1 text-[11px] font-semibold text-danger">
-                      {err}
-                    </p>
-                  )}
-                </div>
-              </div>
-            );
-          })}
-        </div>
-        {hasLinks && (
-          <FormAlert tone="info">
-            <p className="font-extrabold">Sahiplik doğrulaması</p>
-            <p className="mt-1 font-medium">
-              Hesaplarını OAuth ile otomatik bağlama henüz yapılandırılmadı. Ekibimiz sahipliği elle doğrular: şu kodu sosyal hesabının biyografisine ekle ve incelemede kalmasını sağla:{" "}
-              <code className="rounded bg-white px-1.5 py-0.5 font-extrabold text-brand-600">{view.socialCode}</code>
-            </p>
-          </FormAlert>
-        )}
-      </Section>
-
-      <ControlNote>
-        <p className="text-[13px] font-extrabold text-ink">Kontrol her zaman sende.</p>
-        <p className="mt-0.5">Kimliğin, sesin, görünüşün ve içeriklerin yalnızca açık iznine bağlı olarak kullanılır; izinlerini istediğin zaman geri çekebilirsin.</p>
-      </ControlNote>
-    </div>
-  );
-}
-
-/* ─── 2 · Doğrula ───────────────────────────────────────── */
+/* ─── 4 · Doğrula ───────────────────────────────────────── */
 const IDENTITY_STATUS: Record<string, { label: string; tone: "gray" | "warn" | "green" | "danger" }> = {
   none: { label: "Henüz talep edilmedi", tone: "gray" },
   pending: { label: "İncelemede", tone: "warn" },
@@ -233,7 +104,7 @@ export function StepVerify({ view, draft, set, errors }: StepProps) {
   );
 }
 
-/* ─── 3 · AI İkizi ──────────────────────────────────────── */
+/* ─── 5 · AI İkizi ──────────────────────────────────────── */
 export function StepTwin({ view, draft, set, errors, consentText }: StepProps & { consentText: string }) {
   const alreadyGranted = view.consents.includes("ai_twin_persona");
   return (
@@ -288,7 +159,7 @@ export function StepTwin({ view, draft, set, errors, consentText }: StepProps & 
   );
 }
 
-/* ─── 4 · Özelleştir ────────────────────────────────────── */
+/* ─── 6 · Özelleştir ────────────────────────────────────── */
 function RangeField({ id, label, left, right, value, onChange }: { id: string; label: string; left: string; right: string; value: number; onChange: (v: number) => void }) {
   return (
     <div>
@@ -420,7 +291,7 @@ export function StepCustomize({ view, draft, set, errors, consentTexts }: StepPr
   );
 }
 
-/* ─── 5 · İncele ────────────────────────────────────────── */
+/* ─── 7 · İncele ────────────────────────────────────────── */
 function Row({ label, children, ok }: { label: string; children: React.ReactNode; ok?: boolean | null }) {
   return (
     <div className="flex items-start gap-3 py-2.5">
@@ -437,7 +308,9 @@ function Row({ label, children, ok }: { label: string; children: React.ReactNode
 
 export function StepReview({ view, draft, categories, completed, missing }: { view: StepProps["view"]; draft: StepProps["draft"]; categories: CreatorCategory[]; completed: string[]; missing: string[] }) {
   const catNames = draft.categories.map((s) => categories.find((c) => c.slug === s)?.name ?? s).join(", ");
-  const links = Object.entries(draft.links).filter(([, h]) => h.trim());
+  const links = SOCIAL_PLATFORMS.filter((p) => !draft.socials[p].skip && draft.socials[p].handle.trim());
+  const phone = normalizePhone(draft.phoneCountry, draft.phoneNational);
+  const pref = CONTACT_PREFERENCES.find((c) => c.key === draft.contactPreference)?.label;
   const identity = IDENTITY_STATUS[view.verification.identity] ?? IDENTITY_STATUS.none!;
   return (
     <div className="space-y-5">
@@ -445,7 +318,27 @@ export function StepReview({ view, draft, categories, completed, missing }: { vi
         <Row label="Profil" ok={completed.includes("account")}>
           <strong>{draft.displayName}</strong> · @{draft.username}
           <span className="block text-xs text-muted-strong">{catNames || "Kategori seçilmedi"}</span>
-          {links.length > 0 && <span className="block text-xs text-muted-strong">{links.map(([p, h]) => `${p}: ${h}`).join(" · ")} (sahiplik incelemede)</span>}
+          {draft.headline && <span className="block text-xs text-muted-strong">{draft.headline}</span>}
+        </Row>
+        <Row label="İletişim" ok={completed.includes("contact")}>
+          {phone.ok ? <span>{view.contact.masked && completed.includes("contact") ? view.contact.masked : `+${phone.e164.slice(1, phone.e164.length - phone.display.replace(/\s/g, "").length)} ${phone.display}`}</span> : "—"}
+          <span className="block text-xs text-muted-strong">Tercih: {pref ?? "—"} · Numaran şifreli saklanır, profilinde görünmez.</span>
+        </Row>
+        <Row label="Sosyal medya" ok={completed.includes("social")}>
+          {links.length ? (
+            <span className="block space-y-0.5 text-xs text-muted-strong">
+              {links.map((p) => (
+                <span key={p} className="block">
+                  <strong className="text-ink">{socialMeta(p)?.label}</strong>
+                  {draft.primary === p ? " (ana platform)" : ""}: {draft.socials[p].handle}
+                  {audienceLabel(draft.socials[p].audience) ? ` · ${audienceLabel(draft.socials[p].audience)}` : ""}
+                </span>
+              ))}
+              <span className="block">Hesap sahipliği incelemede doğrulanır.</span>
+            </span>
+          ) : (
+            "Hesap eklenmedi"
+          )}
         </Row>
         <Row label="Kimlik" ok={completed.includes("verify")}>
           {draft.legalName || "—"} <Badge tone={identity.tone}>{identity.label}</Badge>

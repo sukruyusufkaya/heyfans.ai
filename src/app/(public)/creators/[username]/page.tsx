@@ -126,7 +126,8 @@ export default async function CreatorProfilePage({ params, searchParams }: Props
 
       <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8">
         {/* Başlık */}
-        <header className="relative -mt-14 flex flex-col gap-5 sm:-mt-20 lg:flex-row lg:items-end lg:gap-7">
+        {/* Avatar kapağa taşar (-mt-20); geniş ekranda ad ve düğmeler kapağın alt kenarının altından başlar, görselin üstüne binmez. */}
+        <header className="relative -mt-14 flex flex-col gap-5 sm:-mt-20 lg:flex-row lg:items-start lg:gap-7">
           <div className="relative size-[112px] shrink-0 sm:size-[150px]">
             <span className="block size-full overflow-hidden rounded-full border-[5px] border-white bg-white shadow-xl">
               <CreatorPhoto src={creator.avatarUrl} name={creator.displayName} rounded="rounded-full" priority />
@@ -134,7 +135,7 @@ export default async function CreatorProfilePage({ params, searchParams }: Props
             {creator.isOnline && <span className="absolute bottom-2 right-2 size-5 rounded-full border-[3px] border-white bg-success" role="img" aria-label="Çevrimiçi" />}
           </div>
 
-          <div className="min-w-0 flex-1 lg:pb-3">
+          <div className="min-w-0 flex-1 lg:pt-[96px]">
             <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
               <h1 className="flex items-center gap-2 font-display text-[28px] font-extrabold leading-tight tracking-[-0.04em] sm:text-4xl">
                 {creator.displayName} {creator.verified && <Verified className="size-6 sm:size-7" />}
@@ -152,7 +153,7 @@ export default async function CreatorProfilePage({ params, searchParams }: Props
             </div>
           </div>
 
-          <div className="flex flex-wrap items-center gap-2.5 lg:pb-3">
+          <div className="flex flex-wrap items-center gap-2.5 lg:pt-[100px]">
             {isOwner ? (
               <Button asChild variant="outline" shape="pill" size="lg">
                 <Link href="/studio/profile">

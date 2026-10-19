@@ -3,6 +3,8 @@ import { z } from "zod";
 import { connectDb, withTransaction } from "@/lib/db/mongo";
 import { AppError, ConflictError, NotFoundError } from "@/lib/errors";
 import { audit } from "@/lib/security/audit";
+import { encryptField } from "@/lib/security/crypto";
+import { AUDIENCE_KEYS, CONTACT_PREFERENCES, maskPhone, normalizePhone, normalizeSocial, PHONE_COUNTRY_CODES, SOCIAL_PLATFORMS, socialMeta, type SocialPlatform } from "@/lib/creator-contact";
 import { oid, usernameSchema } from "@/lib/validation/common";
 import { AiTwin } from "@/models/ai";
 import { CreatorApplication, CreatorProfile, CreatorVerificationRequest, type ICreatorProfile } from "@/models/creator";
@@ -11,9 +13,10 @@ import { activeConsents } from "@/services/ai-twins/lifecycle";
 import { notify } from "@/services/notifications/notifications";
 import { getPlatformSettings } from "@/services/platform/settings";
 
-/** Creator karşılama sihirbazının 10 adımı (UI 5 grupta gösterir). */
+/** Creator karşılama sihirbazının adımları (UI 7 grupta, ilk üçü soru soru gösterir). */
 export const ONBOARDING_STEPS = [
   { key: "account", label: "Temel hesap bilgileri" },
+  { key: "contact", label: "İletişim bilgileri" },
   { key: "verify", label: "Kimlik ve creator doğrulaması" },
   { key: "social", label: "Sosyal medya hesapları" },
   { key: "twin", label: "AI ikizi oluşturma" },
@@ -33,6 +36,21 @@ export const accountStepSchema = z.object({
   bio: z.string().trim().max(1500).optional().default(""),
   categories: z.array(z.string().max(60)).min(1, "En az bir kategori seçin").max(5),
   location: z.string().trim().max(80).optional().default(""),
+});
+
+export const contactStepSchema = z.object({
+  country: z.enum(PHONE_COUNTRY_CODES),
+  national: z.string().trim().min(4, "Telefon numaranı yaz.").max(24),
+  preference: z.enum(CONTACT_PREFERENCES.map((c) => c.key) as ["phone", "whatsapp", "email"]),
+  consent: z.literal(true, { error: "İletişim bilgilerinin başvuru için işlenmesini onaylamalısın." }),
+});
+
+export const socialStepSchema = z.object({
+  links: z
+    .array(z.object({ platform: z.enum(SOCIAL_PLATFORMS), handle: z.string().trim().min(1).max(220), audience: z.enum(AUDIENCE_KEYS).nullable().optional() }))
+    .max(SOCIAL_PLATFORMS.length)
+    .refine((ls) => new Set(ls.map((l) => l.platform)).size === ls.length, "Her platform bir kez eklenebilir."),
+  primary: z.enum(SOCIAL_PLATFORMS).nullable().optional(),
 });
 
 /** Creator yolculuğunu başlatır: profil (onboarding) + "creator" rolü. Fan erişimi korunur. */
@@ -69,18 +87,36 @@ export async function saveOnboardingStep(userId: string, step: OnboardingStepKey
     profile.set({ displayName: input.displayName, username: input.username, headline: input.headline, bio: input.bio, categories: input.categories, location: input.location });
     await User.updateOne({ _id: profile.userId }, { $set: { username: input.username } });
   }
+  let stored: Record<string, unknown> | null = null;
+  if (step === "contact") {
+    const input = contactStepSchema.parse(data);
+    const phone = normalizePhone(input.country, input.national);
+    if (!phone.ok) throw new AppError(phone.error, "invalid_phone", 400, { field: "national" });
+    // Telefon düz metin olarak hiçbir yere yazılmaz: şifreli değer + maskeli gösterim.
+    profile.contact = { phoneEncrypted: encryptField(phone.e164), phoneMasked: maskPhone(phone.e164), phoneCountry: input.country, preference: input.preference, consentAt: new Date(), phoneVerifiedAt: null };
+    profile.markModified("contact");
+    stored = { country: input.country, phone: maskPhone(phone.e164), preference: input.preference };
+  }
   if (step === "social") {
-    const links = z
-      .array(z.object({ platform: z.enum(["instagram", "tiktok", "youtube", "x", "website"]), handle: z.string().trim().min(2).max(120) }))
-      .max(6)
-      .parse(data.links ?? []);
-    profile.socialLinks = links.map((l) => ({ ...l, verified: false }));
+    const input = socialStepSchema.parse(data);
+    const links: { platform: SocialPlatform; handle: string; url: string; verified: boolean; audience: (typeof AUDIENCE_KEYS)[number] | null; primary: boolean }[] = [];
+    for (const l of input.links) {
+      const n = normalizeSocial(l.platform, l.handle);
+      if (!n.ok) throw new AppError(`${socialMeta(l.platform)?.label ?? l.platform}: ${n.error}`, "invalid_social", 400, { field: `link.${l.platform}` });
+      const prev = profile.socialLinks.find((p) => p.platform === l.platform && p.handle === n.handle);
+      links.push({ platform: l.platform, handle: n.handle, url: n.url, verified: Boolean(prev?.verified), audience: socialMeta(l.platform)?.audience ? (l.audience ?? null) : null, primary: false });
+    }
+    if (!links.some((l) => l.platform !== "website")) throw new AppError("En az bir sosyal medya hesabı eklemelisin (web sitesi tek başına yeterli değil).", "social_required", 400, { field: "links" });
+    const primary = input.primary && links.some((l) => l.platform === input.primary) ? input.primary : links.find((l) => l.platform !== "website")!.platform;
+    for (const l of links) l.primary = l.platform === primary;
+    profile.socialLinks = links;
+    stored = { platforms: links.map((l) => l.platform), primary };
     if (links.length) {
       // Sahiplik doğrulaması: profiline eklemesi gereken kod (OAuth bağlantısı yapılandırıldığında otomatikleşir)
       const codeValue = `HEYFANS-${profile._id.toString().slice(-6).toUpperCase()}`;
       await CreatorVerificationRequest.updateOne(
         { creatorId: profile._id, type: "social", status: { $in: ["pending", "in_review"] } },
-        { $set: { userId: profile.userId, evidence: [...links.map((l) => ({ kind: l.platform, value: l.handle })), { kind: "bio_code", value: codeValue }] }, $setOnInsert: { creatorId: profile._id, type: "social", provider: "manual" } },
+        { $set: { userId: profile.userId, evidence: [...links.map((l) => ({ kind: l.platform, value: l.url })), { kind: "bio_code", value: codeValue }] }, $setOnInsert: { creatorId: profile._id, type: "social", provider: "manual" } },
         { upsert: true },
       );
       if (profile.verification.social === "none") profile.verification.social = "pending";
@@ -99,7 +135,7 @@ export async function saveOnboardingStep(userId: string, step: OnboardingStepKey
   done.add(step);
   profile.onboarding.completedSteps = [...done];
   profile.onboarding.step = Math.max(profile.onboarding.step, ONBOARDING_STEPS.findIndex((s) => s.key === step) + 2);
-  profile.onboarding.data = { ...(profile.onboarding.data ?? {}), [step]: sanitizeStepData(data) };
+  profile.onboarding.data = { ...(profile.onboarding.data ?? {}), [step]: stored ?? sanitizeStepData(data) };
   profile.markModified("onboarding");
   await profile.save();
   return profile.toObject();
@@ -116,7 +152,7 @@ export async function submitCreatorApplication(userId: string) {
   await connectDb();
   const profile = await CreatorProfile.findOne({ userId: oid(userId) });
   if (!profile) throw new NotFoundError("Creator profili bulunamadı.");
-  const required: OnboardingStepKey[] = ["account", "verify", "twin", "persona", "boundaries"];
+  const required: OnboardingStepKey[] = ["account", "contact", "social", "verify", "twin", "persona", "boundaries"];
   const missing = required.filter((s) => !profile.onboarding.completedSteps.includes(s));
   if (missing.length) throw new AppError(`Eksik adımlar: ${missing.map((m) => ONBOARDING_STEPS.find((s) => s.key === m)!.label).join(", ")}`, "steps_missing");
   const consents = await activeConsents(profile._id);
@@ -126,7 +162,7 @@ export async function submitCreatorApplication(userId: string) {
     userId: profile.userId,
     creatorId: profile._id,
     status: "submitted",
-    snapshot: { displayName: profile.displayName, username: profile.username, categories: profile.categories, socialLinks: profile.socialLinks, onboarding: profile.onboarding.data },
+    snapshot: { displayName: profile.displayName, username: profile.username, categories: profile.categories, socialLinks: profile.socialLinks, contact: { phone: profile.contact?.phoneMasked ?? null, preference: profile.contact?.preference ?? null }, onboarding: profile.onboarding.data },
     checklist: [
       { key: "identity", label: "Kimlik doğrulama", passed: profile.verification.identity === "verified" ? true : null },
       { key: "social", label: "Sosyal hesap sahipliği", passed: profile.verification.social === "verified" ? true : null },

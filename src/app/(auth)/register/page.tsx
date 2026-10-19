@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
-import { BadgeCheck } from "lucide-react";
+import { Sparkles } from "lucide-react";
 import { AuthShell, AuthVisual, VisualPill } from "@/components/auth/auth-shell";
 import { firstParam, safeNext } from "@/features/auth/next-url";
 import { RegisterForm } from "@/features/auth/register-form";
@@ -24,7 +24,7 @@ export default async function RegisterPage({ searchParams }: { searchParams: Pro
       visual={
         <AuthVisual
           art="phones"
-          topBadge={<VisualPill icon={<BadgeCheck />}>Doğrulanmış üreticiler</VisualPill>}
+          topBadge={<VisualPill icon={<Sparkles />}>AI ikizi destekli platform</VisualPill>}
           eyebrow="HEYFANS'a hoş geldin"
           lines={[{ text: "Yeni bir yol," }, { text: "bağlan.", accent: true }]}
           body="İlgi alanlarını paylaşan insanlarla tanış, gerçek bağlar kur ve sana özel deneyimleri keşfet."
