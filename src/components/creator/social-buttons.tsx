@@ -5,6 +5,7 @@ import { Heart, Plus, Check } from "lucide-react";
 import { toast } from "sonner";
 import { Button, type ButtonProps } from "@/components/ui/button";
 import { toggleFavoriteAction, toggleFollowAction } from "@/features/social/actions";
+import { useT } from "@/i18n/client";
 import { cn } from "@/lib/utils";
 
 /** Takip düğmesi — iyimser güncelleme; oturum yoksa girişe yönlendirir. */
@@ -23,6 +24,7 @@ export function FollowButton({
   className?: string;
   variant?: ButtonProps["variant"];
 }) {
+  const t = useT();
   const router = useRouter();
   const [pending, start] = useTransition();
   const [following, setFollowing] = useOptimistic(initial);
@@ -45,7 +47,7 @@ export function FollowButton({
       }}
     >
       {following ? <Check /> : <Plus />}
-      {following ? "Takip ediliyor" : "Takip Et"}
+      {following ? t("Takip ediliyor") : t("Takip Et")}
     </Button>
   );
 }
@@ -65,6 +67,7 @@ export function FavoriteButton({
   className?: string;
   tone?: "glass" | "plain";
 }) {
+  const t = useT();
   const router = useRouter();
   const [pending, start] = useTransition();
   const [fav, setFav] = useOptimistic(initial);
@@ -73,7 +76,7 @@ export function FavoriteButton({
       type="button"
       disabled={pending}
       aria-pressed={fav}
-      aria-label={fav ? "Favorilerden çıkar" : "Favorilere ekle"}
+      aria-label={fav ? t("Favorilerden çıkar") : t("Favorilere ekle")}
       onClick={(e) => {
         e.preventDefault();
         e.stopPropagation();

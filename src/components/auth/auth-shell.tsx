@@ -22,6 +22,7 @@ function VisualArt({ kind }: { kind: ArtKind }) {
             <CreatorPhoto src="/images/seed/creators/mervearslan-portrait.webp" name="Merve Arslan" rounded="rounded-none" showMonogram={false} />
           </div>
           <div className="absolute start-[34%] top-[6%] h-[62%] w-[42%] rotate-[4deg] overflow-hidden rounded-[30px] border-[4px] border-brand-400 shadow-[0_20px_50px_rgba(0,0,0,0.35)]">
+            {/* i18n-ignore (örnek creator adı) */}
             <CreatorPhoto src="/images/seed/creators/meliserturk-portrait.webp" name="Melis Ertürk" rounded="rounded-none" showMonogram={false} />
           </div>
         </>
@@ -30,7 +31,7 @@ function VisualArt({ kind }: { kind: ArtKind }) {
           <div className={cn("absolute inset-y-0 w-full", kind === "portrait" ? "end-0" : "start-0")}>
             <CreatorPhoto
               src={kind === "portrait" ? "/images/seed/creators/meliserturk-portrait.webp" : "/images/seed/creators/gizemaydin-portrait.webp"}
-              name={kind === "portrait" ? "Melis Ertürk" : "Gizem Aydın"}
+              name={kind === "portrait" ? "Melis Ertürk" : "Gizem Aydın"} // i18n-ignore (örnek creator adı)
               rounded="rounded-none"
               showMonogram={false}
             />

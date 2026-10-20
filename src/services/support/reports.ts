@@ -8,6 +8,7 @@ import { CreatorProfile } from "@/models/creator";
 import { REPORT_REASONS } from "@/models/safety";
 import { createReport } from "@/services/moderation/moderation";
 import { createSupportTicket, ticketSchema } from "./tickets";
+import { m } from "@/i18n/m";
 
 export type ResolvedTarget = { targetType: "profile" | "content"; targetId: string; label: string };
 
@@ -51,23 +52,23 @@ export async function resolveTargetFromUrl(input: string | null | undefined): Pr
 
 /* ─── Güvenlik bildirimi ───────────────────────────────────── */
 export const SAFETY_REASON_LABELS: Record<(typeof REPORT_REASONS)[number], string> = {
-  impersonation: "Kimliğe bürünme / izinsiz benzerlik",
-  harassment: "Taciz veya tehdit",
-  sexual_content: "Uygunsuz / cinsel içerik",
-  minor_safety: "Reşit olmayanların güvenliği",
-  hate: "Nefret söylemi",
-  self_harm: "Kendine zarar / acil tehlike",
-  spam: "Spam veya dolandırıcılık",
-  copyright: "Telif hakkı",
-  privacy: "Gizlilik ihlali",
-  ai_misbehavior: "AI ikizinin uygunsuz davranışı",
-  other: "Diğer",
+  impersonation: m("Kimliğe bürünme / izinsiz benzerlik"),
+  harassment: m("Taciz veya tehdit"),
+  sexual_content: m("Uygunsuz / cinsel içerik"),
+  minor_safety: m("Reşit olmayanların güvenliği"),
+  hate: m("Nefret söylemi"),
+  self_harm: m("Kendine zarar / acil tehlike"),
+  spam: m("Spam veya dolandırıcılık"),
+  copyright: m("Telif hakkı"),
+  privacy: m("Gizlilik ihlali"),
+  ai_misbehavior: m("AI ikizinin uygunsuz davranışı"),
+  other: m("Diğer"),
 };
 
 export const safetyReportSchema = z.object({
-  reason: z.enum(REPORT_REASONS, { error: "Lütfen bir bildirim türü seçin" }),
-  targetUrl: z.string().trim().max(500, "Bağlantı en fazla 500 karakter olabilir").optional().default(""),
-  details: z.string().trim().min(10, "Açıklama en az 10 karakter olmalı").max(3000, "Açıklama en fazla 3000 karakter olabilir"),
+  reason: z.enum(REPORT_REASONS, { error: m("Lütfen bir bildirim türü seçin") }),
+  targetUrl: z.string().trim().max(500, m("Bağlantı en fazla 500 karakter olabilir")).optional().default(""),
+  details: z.string().trim().min(10, m("Açıklama en az 10 karakter olmalı")).max(3000, m("Açıklama en fazla 3000 karakter olabilir")),
   name: z.string().trim().max(120).optional().default(""),
   email: z.string().trim().toLowerCase().max(200).optional().default(""),
 });
@@ -89,15 +90,15 @@ export async function submitSafetyReport(raw: unknown, actor: { userId?: string 
     const res = await createReport({ id: actor.userId }, { targetType: target.targetType, targetId: target.targetId, reason: input.reason, details: input.details });
     return { kind: "report" as const, reference: res.reportNo };
   }
-  const subject = `Güvenlik bildirimi: ${SAFETY_REASON_LABELS[input.reason]}`;
+  const subject = `Güvenlik bildirimi: ${SAFETY_REASON_LABELS[input.reason]}`; // i18n-ignore (destek kaydı Türkçe saklanır)
   const message = [
-    `Bildirim türü: ${SAFETY_REASON_LABELS[input.reason]}`,
-    input.targetUrl ? `İlgili bağlantı / hesap: ${input.targetUrl}${target ? ` (çözümlendi: ${target.targetType} · ${target.label})` : ""}` : "İlgili bağlantı: belirtilmedi",
+    `Bildirim türü: ${SAFETY_REASON_LABELS[input.reason]}`, // i18n-ignore (destek kaydı Türkçe saklanır)
+    input.targetUrl ? `İlgili bağlantı / hesap: ${input.targetUrl}${target ? ` (çözümlendi: ${target.targetType} · ${target.label})` : ""}` : m("İlgili bağlantı: belirtilmedi"), // i18n-ignore (destek kaydı Türkçe saklanır)
     "",
     input.details,
   ].join("\n");
   const ticket = ticketSchema.parse({
-    name: actor.name || input.name || "Misafir",
+    name: actor.name || input.name || "Misafir", // i18n-ignore (destek kaydı Türkçe saklanır)
     email,
     category: "safety",
     subject,
@@ -110,20 +111,20 @@ export async function submitSafetyReport(raw: unknown, actor: { userId?: string 
 
 /* ─── Telif / içerik kaldırma ──────────────────────────────── */
 export const COPYRIGHT_CLAIM_TYPES = {
-  copyright: "Telif hakkı ihlali",
-  unauthorized_image: "İzinsiz görsel kullanımı",
-  voice_likeness: "Ses benzerliği",
-  impersonation: "Kimliğe bürünme",
+  copyright: m("Telif hakkı ihlali"),
+  unauthorized_image: m("İzinsiz görsel kullanımı"),
+  voice_likeness: m("Ses benzerliği"),
+  impersonation: m("Kimliğe bürünme"),
 } as const;
 
 export const copyrightSchema = z.object({
-  name: z.string().trim().min(2, "Ad soyad en az 2 karakter olmalı").max(120),
-  email: z.string().trim().toLowerCase().email("Geçerli bir e-posta adresi girin").max(200),
-  rightsHolder: z.string().trim().min(2, "Hak sahibini belirtin").max(160),
-  claimType: z.enum(Object.keys(COPYRIGHT_CLAIM_TYPES) as [keyof typeof COPYRIGHT_CLAIM_TYPES, ...(keyof typeof COPYRIGHT_CLAIM_TYPES)[]], { error: "İhlal türünü seçin" }),
-  url: z.string().trim().min(3, "İhlal edilen içerik bağlantısını girin").max(500),
-  description: z.string().trim().min(20, "Açıklama en az 20 karakter olmalı").max(4000),
-  declaration: z.literal(true, { error: "Beyanı onaylamanız gerekir" }),
+  name: z.string().trim().min(2, m("Ad soyad en az 2 karakter olmalı")).max(120),
+  email: z.string().trim().toLowerCase().email(m("Geçerli bir e-posta adresi girin")).max(200),
+  rightsHolder: z.string().trim().min(2, m("Hak sahibini belirtin")).max(160),
+  claimType: z.enum(Object.keys(COPYRIGHT_CLAIM_TYPES) as [keyof typeof COPYRIGHT_CLAIM_TYPES, ...(keyof typeof COPYRIGHT_CLAIM_TYPES)[]], { error: m("İhlal türünü seçin") }),
+  url: z.string().trim().min(3, m("İhlal edilen içerik bağlantısını girin")).max(500),
+  description: z.string().trim().min(20, m("Açıklama en az 20 karakter olmalı")).max(4000),
+  declaration: z.literal(true, { error: m("Beyanı onaylamanız gerekir") }),
 });
 
 /** Telif talebi: yüksek öncelikli "legal" talebi + bağlantı bizim profil/içeriğimize çözülürse moderasyon raporu. */
@@ -131,23 +132,23 @@ export async function submitCopyrightClaim(raw: unknown, actor: { userId?: strin
   const input = copyrightSchema.parse(raw);
   const target = await resolveTargetFromUrl(input.url);
   const message = [
-    `Hak sahibi: ${input.rightsHolder}`,
-    `İhlal türü: ${COPYRIGHT_CLAIM_TYPES[input.claimType]}`,
-    `İhlal edilen içerik: ${input.url}${target ? ` (çözümlendi: ${target.targetType} · ${target.label})` : " (sitemizde eşleşen kayıt bulunamadı)"}`,
+    `Hak sahibi: ${input.rightsHolder}`, // i18n-ignore (destek kaydı Türkçe saklanır)
+    `İhlal türü: ${COPYRIGHT_CLAIM_TYPES[input.claimType]}`, // i18n-ignore (destek kaydı Türkçe saklanır)
+    `İhlal edilen içerik: ${input.url}${target ? ` (çözümlendi: ${target.targetType} · ${target.label})` : m(" (sitemizde eşleşen kayıt bulunamadı)")}`, // i18n-ignore (destek kaydı Türkçe saklanır)
     "",
     input.description,
     "",
-    "Beyan: Başvuru sahibi, bilgilerin doğru olduğunu ve hak sahibi ya da yetkili temsilcisi olduğunu beyan etmiştir.",
+    m("Beyan: Başvuru sahibi, bilgilerin doğru olduğunu ve hak sahibi ya da yetkili temsilcisi olduğunu beyan etmiştir."),
   ].join("\n");
   const ticket = await createSupportTicket(
-    { name: input.name, email: input.email, category: "legal", subject: `Telif / içerik kaldırma: ${COPYRIGHT_CLAIM_TYPES[input.claimType]}`, message, priority: "high" },
+    { name: input.name, email: input.email, category: "legal", subject: `Telif / içerik kaldırma: ${COPYRIGHT_CLAIM_TYPES[input.claimType]}`, message, priority: "high" }, // i18n-ignore (destek kaydı Türkçe saklanır)
     { userId: actor.userId, ipKey: actor.ipKey },
   );
   let reportNo: string | null = null;
   if (target) {
     try {
       const reporter = actor.userId ? { id: actor.userId } : { email: input.email };
-      const res = await createReport(reporter, { targetType: target.targetType, targetId: target.targetId, reason: input.claimType === "impersonation" ? "impersonation" : "copyright", details: `Telif talebi ${ticket.ticketNo}: ${input.description}`.slice(0, 3000) });
+      const res = await createReport(reporter, { targetType: target.targetType, targetId: target.targetId, reason: input.claimType === "impersonation" ? "impersonation" : "copyright", details: `Telif talebi ${ticket.ticketNo}: ${input.description}`.slice(0, 3000) }); // i18n-ignore (destek kaydı Türkçe saklanır)
       reportNo = res.reportNo;
     } catch (err) {
       console.error("[support:copyright] rapor oluşturulamadı", err); // talep kaydı korunur

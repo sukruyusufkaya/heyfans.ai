@@ -25,11 +25,11 @@ export async function enqueueJob(type: JobType, payload: Record<string, unknown>
 
 async function extractText(sourceId: string): Promise<string> {
   const source = await KnowledgeSource.findById(sourceId);
-  if (!source) throw new Error("Kaynak bulunamadı");
+  if (!source) throw new Error("Kaynak bulunamadı"); // i18n-ignore (saklanan işlem hatası)
   if (source.type === "text" || source.type === "faq") return source.text ?? "";
   if (source.type === "url" && source.url) {
     const res = await fetch(source.url, { headers: { "User-Agent": "HEYFANS-KnowledgeBot/1.0" }, signal: AbortSignal.timeout(15_000) });
-    if (!res.ok) throw new Error(`URL okunamadı (${res.status})`);
+    if (!res.ok) throw new Error(`URL okunamadı (${res.status})`); // i18n-ignore
     const html = (await res.text()).slice(0, 2_000_000);
     return html
       .replace(/<script[\s\S]*?<\/script>|<style[\s\S]*?<\/style>/gi, " ")
@@ -41,7 +41,7 @@ async function extractText(sourceId: string): Promise<string> {
   }
   if (source.type === "file" && source.assetId) {
     const asset = await MediaAsset.findById(source.assetId).lean();
-    if (!asset) throw new Error("Dosya bulunamadı");
+    if (!asset) throw new Error("Dosya bulunamadı"); // i18n-ignore
     const buf = await getStorage().read(asset.storageKey);
     if (asset.mime === "application/pdf") {
       const { extractText: pdfText, getDocumentProxy } = await import("unpdf");
@@ -60,7 +60,7 @@ async function runJob(job: IIngestionJob) {
       const sourceId = String(job.payload.sourceId);
       await KnowledgeSource.updateOne({ _id: sourceId }, { $set: { status: "extracting", error: null } });
       const text = await extractText(sourceId);
-      if (!text.trim()) throw new Error("Kaynakta metin bulunamadı");
+      if (!text.trim()) throw new Error("Kaynakta metin bulunamadı"); // i18n-ignore
       await KnowledgeSource.updateOne({ _id: sourceId }, { $set: { text: text.slice(0, 200_000) } });
       const { Types } = await import("mongoose");
       await indexKnowledgeSource(new Types.ObjectId(sourceId), text);
@@ -113,7 +113,7 @@ export async function publishScheduledContent(limit = 100) {
     const creator = await CreatorProfile.findById(d.creatorId, { userId: 1 }).lean();
     if (!creator) continue;
     try {
-      await setContentStatus(creator.userId.toString(), d._id.toString(), "published");
+      await setContentStatus(creator.userId.toString(), d._id.toString(), "published"); // i18n-ignore (durum kodu)
       published++;
     } catch (err) {
       console.error("[jobs:scheduled-publish]", d._id.toString(), (err as Error).message);

@@ -5,6 +5,7 @@ export const CREATOR_STATUSES = ["onboarding", "pending_review", "approved", "su
 export type CreatorStatus = (typeof CREATOR_STATUSES)[number];
 
 import { AUDIENCE_KEYS, CONTACT_PREFERENCES, SOCIAL_PLATFORMS, type AudienceRange, type ContactPreference, type SocialPlatform } from "@/lib/creator-contact";
+import { m } from "@/i18n/m";
 export { SOCIAL_PLATFORMS };
 
 export interface ICreatorProfile {
@@ -65,7 +66,7 @@ const CreatorProfileSchema = new Schema<ICreatorProfile>(
       required: true,
       lowercase: true,
       trim: true,
-      match: [/^[a-z0-9_.]{3,30}$/, "Kullanıcı adı 3-30 karakter: harf, rakam, _ ve ."],
+      match: [/^[a-z0-9_.]{3,30}$/, m("Kullanıcı adı 3-30 karakter: harf, rakam, _ ve .")],
     },
     displayName: { type: String, required: true, trim: true, maxlength: 80 },
     headline: { type: String, maxlength: 140 },

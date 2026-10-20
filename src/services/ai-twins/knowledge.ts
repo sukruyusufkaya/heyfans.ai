@@ -7,11 +7,12 @@ import { KnowledgeChunk, KnowledgeSource, type IKnowledgeSource } from "@/models
 import { MediaAsset } from "@/models/content";
 import { activeConsents, getOrCreateTwin } from "./lifecycle";
 import { enqueueJob } from "@/services/jobs/jobs";
+import { m } from "@/i18n/m";
 
 export const knowledgeInputSchema = z.discriminatedUnion("type", [
-  z.object({ type: z.literal("text"), title: z.string().trim().min(2).max(200), text: z.string().trim().min(20, "Metin en az 20 karakter olmalı").max(100_000) }),
+  z.object({ type: z.literal("text"), title: z.string().trim().min(2).max(200), text: z.string().trim().min(20, m("Metin en az 20 karakter olmalı")).max(100_000) }),
   z.object({ type: z.literal("faq"), title: z.string().trim().min(2).max(200), text: z.string().trim().min(20).max(50_000) }),
-  z.object({ type: z.literal("url"), title: z.string().trim().min(2).max(200), url: z.string().url().max(500).refine((u) => /^https:\/\//.test(u), "Yalnız https bağlantıları") }),
+  z.object({ type: z.literal("url"), title: z.string().trim().min(2).max(200), url: z.string().url().max(500).refine((u) => /^https:\/\//.test(u), m("Yalnız https bağlantıları")) }),
   z.object({ type: z.literal("file"), title: z.string().trim().min(2).max(200), assetId: z.string().regex(/^[a-f0-9]{24}$/i) }),
 ]);
 

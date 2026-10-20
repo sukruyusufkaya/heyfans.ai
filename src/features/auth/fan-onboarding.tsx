@@ -11,6 +11,8 @@ import { Switch } from "@/components/ui/form-controls";
 import { cn } from "@/lib/utils";
 import { completeFanOnboardingAction, saveFanStepAction, skipFanOnboardingAction } from "@/features/auth/actions";
 import { FAN_STEPS, FAN_VIBES, MIN_FAN_INTERESTS } from "@/features/auth/constants";
+import { useT } from "@/i18n/client";
+import { m } from "@/i18n/m";
 
 export interface FanCategory {
   slug: string;
@@ -31,22 +33,23 @@ export interface FanInitial {
 const CONSENTS = [
   {
     key: "recommendationsEnabled",
-    title: "İçerik ve üretici önerileri",
-    text: "Seçtiğin ilgi alanlarına ve ruh haline göre sana içerik üreticileri ve AI ikizleri öneririz. Kapalıyken genel (herkese aynı) listeler gösterilir.",
+    title: m("İçerik ve üretici önerileri"),
+    text: m("Seçtiğin ilgi alanlarına ve ruh haline göre sana içerik üreticileri ve AI ikizleri öneririz. Kapalıyken genel (herkese aynı) listeler gösterilir."),
   },
   {
     key: "personalizationConsent",
-    title: "Kişiselleştirme izni",
-    text: "Gezinme ve etkileşim davranışının, sana özel öneriler ve deneyim için kullanılmasına izin verirsin. İstediğin zaman Ayarlar'dan kapatabilirsin.",
+    title: m("Kişiselleştirme izni"),
+    text: m("Gezinme ve etkileşim davranışının, sana özel öneriler ve deneyim için kullanılmasına izin verirsin. İstediğin zaman Ayarlar'dan kapatabilirsin."),
   },
   {
     key: "aiMemoryEnabled",
-    title: "AI hafızası",
-    text: "AI ikizleri, sohbetlerde paylaştığın tercihleri (ör. adın, sevdiğin şeyler) hatırlayarak daha kişisel yanıt verir. Hafıza yalnız senin hesabında tutulur; istediğin zaman görüp silebilirsin. Kişiselleştirme izni gerektirir.",
+    title: m("AI hafızası"),
+    text: m("AI ikizleri, sohbetlerde paylaştığın tercihleri (ör. adın, sevdiğin şeyler) hatırlayarak daha kişisel yanıt verir. Hafıza yalnız senin hesabında tutulur; istediğin zaman görüp silebilirsin. Kişiselleştirme izni gerektirir."),
   },
 ] as const;
 
 export function FanOnboarding({ categories, initial, next, firstName }: { categories: FanCategory[]; initial: FanInitial; next: string | null; firstName: string }) {
+  const t = useT();
   // Tamamlanmış/atlanmış karşılama baştan düzenlenir; yarım kalan, kaldığı adımdan devam eder.
   const startStep = initial.step >= 0 && initial.step < 3 && !initial.completed ? initial.step : 0;
   const [step, setStep] = React.useState(startStep);
@@ -79,7 +82,7 @@ export function FanOnboarding({ categories, initial, next, firstName }: { catego
       if (step === 3) {
         const r = await completeFanOnboardingAction({ interests, vibes, ...consents }, next);
         if (!r.ok) return setError(r.error);
-        toast.success("Hazırsın! Tercihlerin kaydedildi.");
+        toast.success(t("Hazırsın! Tercihlerin kaydedildi."));
         window.location.assign(r.data.to);
         return;
       }
@@ -110,9 +113,9 @@ export function FanOnboarding({ categories, initial, next, firstName }: { catego
   return (
     <div className="flex min-h-full flex-1 flex-col">
       <div className="flex items-center justify-between gap-3">
-        <p className="text-[11px] font-black uppercase tracking-[0.18em] text-brand-500">Hayran karşılama</p>
+        <p className="text-[11px] font-black uppercase tracking-[0.18em] text-brand-500">{t("Hayran karşılama")}</p>
         <p className="text-[11px] font-extrabold uppercase tracking-wide text-muted-strong">
-          {FAN_STEPS.length} adımın {step + 1}.&apos;si
+          {t("{total} adımın {current}.'si", { total: FAN_STEPS.length, current: step + 1 })}
         </p>
       </div>
       <div className="mt-4">
@@ -124,22 +127,22 @@ export function FanOnboarding({ categories, initial, next, firstName }: { catego
           <>
             <div className="flex flex-wrap items-start justify-between gap-3">
               <div>
-                <p className="text-xs font-bold uppercase tracking-wide text-ink-soft">Deneyimini şekillendir</p>
+                <p className="text-xs font-bold uppercase tracking-wide text-ink-soft">{t("Deneyimini şekillendir")}</p>
                 <h1 id="fan-step-title" ref={headingRef} tabIndex={-1} className="mt-1.5 font-display text-[30px] font-extrabold leading-tight tracking-[-0.035em] [word-spacing:0.07em] text-ink outline-none sm:text-[36px]">
-                  Nelerle <span className="text-brand-500">ilgileniyorsun?</span>
+                  {t.rich("Nelerle <mark>ilgileniyorsun?</mark>", { mark: (c) => <span className="text-brand-500">{c}</span> })}
                 </h1>
               </div>
               <span aria-live="polite" className={cn("inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-xs font-extrabold", interests.length >= MIN_FAN_INTERESTS ? "bg-brand-100 text-brand-600" : "bg-soft text-muted-strong")}>
-                {interests.length} alan seçildi {interests.length >= MIN_FAN_INTERESTS && <Check className="size-3.5" aria-hidden />}
+                {t("{n} alan seçildi", { n: interests.length })} {interests.length >= MIN_FAN_INTERESTS && <Check className="size-3.5" aria-hidden />}
               </span>
             </div>
-            <p className="mt-3 text-[13px] text-muted-strong">En az {MIN_FAN_INTERESTS} ilgi alanı seç. Sana uygun içerik üreticilerini ve AI ikizlerini önerelim.</p>
+            <p className="mt-3 text-[13px] text-muted-strong">{t("En az {min} ilgi alanı seç. Sana uygun içerik üreticilerini ve AI ikizlerini önerelim.", { min: MIN_FAN_INTERESTS })}</p>
             {categories.length === 0 ? (
               <FormAlert tone="warn" className="mt-6">
-                <p>Kategoriler şu anda yüklenemedi. Bu adımı atlayıp daha sonra Ayarlar&apos;dan seçebilirsin.</p>
+                <p>{t("Kategoriler şu anda yüklenemedi. Bu adımı atlayıp daha sonra Ayarlar'dan seçebilirsin.")}</p>
               </FormAlert>
             ) : (
-              <div className="mt-5 grid grid-cols-2 gap-3 lg:grid-cols-3 2xl:grid-cols-4" role="group" aria-label="İlgi alanları">
+              <div className="mt-5 grid grid-cols-2 gap-3 lg:grid-cols-3 2xl:grid-cols-4" role="group" aria-label={t("İlgi alanları")}>
                 {categories.map((c) => {
                   const on = interests.includes(c.slug);
                   return (
@@ -171,12 +174,12 @@ export function FanOnboarding({ categories, initial, next, firstName }: { catego
 
         {step === 1 && (
           <>
-            <p className="text-xs font-bold uppercase tracking-wide text-ink-soft">Tercihlerini belirle</p>
+            <p className="text-xs font-bold uppercase tracking-wide text-ink-soft">{t("Tercihlerini belirle")}</p>
             <h1 id="fan-step-title" ref={headingRef} tabIndex={-1} className="mt-1.5 font-display text-[30px] font-extrabold leading-tight tracking-[-0.035em] [word-spacing:0.07em] text-ink outline-none sm:text-[36px]">
-              Nasıl bir <span className="text-brand-500">enerji</span> arıyorsun?
+              {t.rich("Nasıl bir <mark>enerji</mark> arıyorsun?", { mark: (c) => <span className="text-brand-500">{c}</span> })}
             </h1>
-            <p className="mt-3 text-[13px] text-muted-strong">İstediğin kadarını seç; bu seçim yalnız önerileri şekillendirir, istediğin zaman değiştirebilirsin.</p>
-            <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4" role="group" aria-label="Ruh halleri">
+            <p className="mt-3 text-[13px] text-muted-strong">{t("İstediğin kadarını seç; bu seçim yalnız önerileri şekillendirir, istediğin zaman değiştirebilirsin.")}</p>
+            <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4" role="group" aria-label={t("Ruh halleri")}>
               {FAN_VIBES.map((v) => {
                 const on = vibes.includes(v.key);
                 return (
@@ -189,12 +192,12 @@ export function FanOnboarding({ categories, initial, next, firstName }: { catego
                     className={cn("flex min-h-[92px] flex-col justify-between rounded-xl border p-3.5 text-start transition-all", on ? "border-2 border-brand-500 bg-brand-50 p-[13px]" : "border-line bg-white hover:border-brand-200")}
                   >
                     <span className="flex items-center justify-between">
-                      <span className="text-[13px] font-extrabold text-ink">{v.label}</span>
+                      <span className="text-[13px] font-extrabold text-ink">{t(v.label)}</span>
                       <span className={cn("grid size-5 place-items-center rounded-full border", on ? "border-brand-500 bg-brand-500 text-white" : "border-line text-transparent")} aria-hidden>
                         <Check className="size-3" strokeWidth={3.5} />
                       </span>
                     </span>
-                    <span className="text-[11px] text-muted-strong">{v.hint}</span>
+                    <span className="text-[11px] text-muted-strong">{t(v.hint)}</span>
                   </button>
                 );
               })}
@@ -204,11 +207,11 @@ export function FanOnboarding({ categories, initial, next, firstName }: { catego
 
         {step === 2 && (
           <>
-            <p className="text-xs font-bold uppercase tracking-wide text-ink-soft">Gizlilik ve kişiselleştirme</p>
+            <p className="text-xs font-bold uppercase tracking-wide text-ink-soft">{t("Gizlilik ve kişiselleştirme")}</p>
             <h1 id="fan-step-title" ref={headingRef} tabIndex={-1} className="mt-1.5 font-display text-[30px] font-extrabold leading-tight tracking-[-0.035em] [word-spacing:0.07em] text-ink outline-none sm:text-[36px]">
-              Deneyimini <span className="text-brand-500">sen yönet.</span>
+              {t.rich("Deneyimini <mark>sen yönet.</mark>", { mark: (c) => <span className="text-brand-500">{c}</span> })}
             </h1>
-            <p className="mt-3 text-[13px] leading-relaxed text-muted-strong">Aşağıdaki izinlerin hiçbiri zorunlu değil. Kapalı bırakırsan da HEYFANS&apos;ı tam olarak kullanabilirsin; istediğin zaman Ayarlar&apos;dan değiştirirsin.</p>
+            <p className="mt-3 text-[13px] leading-relaxed text-muted-strong">{t("Aşağıdaki izinlerin hiçbiri zorunlu değil. Kapalı bırakırsan da HEYFANS'ı tam olarak kullanabilirsin; istediğin zaman Ayarlar'dan değiştirirsin.")}</p>
             <ul className="mt-5 space-y-3">
               {CONSENTS.map((c) => {
                 const disabled = c.key === "aiMemoryEnabled" && !consents.personalizationConsent;
@@ -216,10 +219,10 @@ export function FanOnboarding({ categories, initial, next, firstName }: { catego
                   <li key={c.key} className={cn("flex items-start gap-4 rounded-xl border border-line bg-white p-4", disabled && "opacity-60")}>
                     <div className="min-w-0 flex-1">
                       <p id={`consent-${c.key}`} className="text-[13px] font-extrabold text-ink">
-                        {c.title}
+                        {t(c.title)}
                       </p>
                       <p id={`consent-${c.key}-desc`} className="mt-1 text-xs leading-relaxed text-muted-strong">
-                        {c.text}
+                        {t(c.text)}
                       </p>
                     </div>
                     <Switch checked={consents[c.key]} disabled={disabled} onCheckedChange={(v) => setConsent(c.key, v)} aria-labelledby={`consent-${c.key}`} aria-describedby={`consent-${c.key}-desc`} />
@@ -232,35 +235,40 @@ export function FanOnboarding({ categories, initial, next, firstName }: { catego
 
         {step === 3 && (
           <>
-            <p className="text-xs font-bold uppercase tracking-wide text-ink-soft">Neredeyse bitti</p>
+            <p className="text-xs font-bold uppercase tracking-wide text-ink-soft">{t("Neredeyse bitti")}</p>
             <h1 id="fan-step-title" ref={headingRef} tabIndex={-1} className="mt-1.5 font-display text-[30px] font-extrabold leading-tight tracking-[-0.035em] [word-spacing:0.07em] text-ink outline-none sm:text-[36px]">
-              Hazırsın{firstName ? `, ${firstName}` : ""}! <span className="text-brand-500">Özetin burada.</span>
+              {firstName
+                ? t.rich("Hazırsın, {name}! <mark>Özetin burada.</mark>", { name: firstName, mark: (c) => <span className="text-brand-500">{c}</span> })
+                : t.rich("Hazırsın! <mark>Özetin burada.</mark>", { mark: (c) => <span className="text-brand-500">{c}</span> })}
             </h1>
             <dl className="mt-6 space-y-4 rounded-2xl border border-line bg-soft/60 p-5">
               <div>
-                <dt className="text-[11px] font-extrabold uppercase tracking-wider text-muted">İlgi alanların</dt>
+                <dt className="text-[11px] font-extrabold uppercase tracking-wider text-muted">{t("İlgi alanların")}</dt>
                 <dd className="mt-2 flex flex-wrap gap-1.5">
-                  {interests.length ? interests.map((s) => <Chip key={s}>{catName.get(s) ?? s}</Chip>) : <span className="text-xs text-muted">Seçilmedi</span>}
+                  {interests.length ? interests.map((s) => <Chip key={s}>{catName.get(s) ?? s}</Chip>) : <span className="text-xs text-muted">{t("Seçilmedi")}</span>}
                 </dd>
               </div>
               <div>
-                <dt className="text-[11px] font-extrabold uppercase tracking-wider text-muted">Ruh halin</dt>
+                <dt className="text-[11px] font-extrabold uppercase tracking-wider text-muted">{t("Ruh halin")}</dt>
                 <dd className="mt-2 flex flex-wrap gap-1.5">
-                  {vibes.length ? vibes.map((s) => <Chip key={s}>{FAN_VIBES.find((v) => v.key === s)?.label ?? s}</Chip>) : <span className="text-xs text-muted">Seçilmedi</span>}
+                  {vibes.length ? vibes.map((s) => {
+                    const label = FAN_VIBES.find((v) => v.key === s)?.label;
+                    return <Chip key={s}>{label ? t(label) : s}</Chip>;
+                  }) : <span className="text-xs text-muted">{t("Seçilmedi")}</span>}
                 </dd>
               </div>
               <div>
-                <dt className="text-[11px] font-extrabold uppercase tracking-wider text-muted">İzinler</dt>
+                <dt className="text-[11px] font-extrabold uppercase tracking-wider text-muted">{t("İzinler")}</dt>
                 <dd className="mt-2 grid gap-1.5 text-xs text-ink-soft sm:grid-cols-3">
-                  <Status on={consents.recommendationsEnabled}>Öneriler</Status>
-                  <Status on={consents.personalizationConsent}>Kişiselleştirme</Status>
-                  <Status on={consents.aiMemoryEnabled}>AI hafızası</Status>
+                  <Status on={consents.recommendationsEnabled} label={t("Öneriler")} />
+                  <Status on={consents.personalizationConsent} label={t("Kişiselleştirme")} />
+                  <Status on={consents.aiMemoryEnabled} label={t("AI hafızası")} />
                 </dd>
               </div>
             </dl>
             <p className="mt-4 flex items-start gap-2 text-xs text-muted-strong">
               <Sparkles className="mt-0.5 size-3.5 shrink-0 text-brand-500" aria-hidden />
-              Bu tercihleri istediğin zaman Ayarlar &gt; Kişiselleştirme bölümünden değiştirebilir, AI hafızanı silebilirsin.
+              {t("Bu tercihleri istediğin zaman Ayarlar > Kişiselleştirme bölümünden değiştirebilir, AI hafızanı silebilirsin.")}
             </p>
           </>
         )}
@@ -276,15 +284,15 @@ export function FanOnboarding({ categories, initial, next, firstName }: { catego
         <div className="flex items-center gap-3">
           {step > 0 && (
             <Button type="button" variant="secondary" size="lg" className="h-[54px] rounded-[10px]" onClick={() => go(step - 1)} disabled={pending}>
-              <ArrowLeft className="rtl:-scale-x-100" aria-hidden /> Geri
+              <ArrowLeft className="rtl:-scale-x-100" aria-hidden /> {t("Geri")}
             </Button>
           )}
           <button type="button" onClick={onSkip} disabled={pending} className="text-[13px] font-semibold text-muted hover:text-ink-soft disabled:opacity-60">
-            Şimdilik geç
+            {t("Şimdilik geç")}
           </button>
         </div>
         <Button type="button" size="lg" onClick={onNext} disabled={!canContinue} loading={pending} className="h-[54px] min-w-[170px] rounded-[10px] bg-gradient-to-r from-brand-500 to-brand-600 text-[14px]">
-          {step === 3 ? "HEYFANS'a Başla" : "Devam Et"} <ArrowRight className="rtl:-scale-x-100 size-[18px]" aria-hidden />
+          {step === 3 ? t("HEYFANS'a Başla") : t("Devam Et")} <ArrowRight className="rtl:-scale-x-100 size-[18px]" aria-hidden />
         </Button>
       </div>
     </div>
@@ -295,15 +303,14 @@ function Chip({ children }: { children: React.ReactNode }) {
   return <span className="rounded-full bg-brand-100 px-3 py-1.5 text-[11px] font-extrabold text-brand-600">{children}</span>;
 }
 
-function Status({ on, children }: { on: boolean; children: React.ReactNode }) {
+function Status({ on, label }: { on: boolean; label: string }) {
+  const t = useT();
   return (
     <span className="flex items-center gap-1.5">
       <span className={cn("grid size-4 place-items-center rounded-full", on ? "bg-success text-white" : "bg-[#e3dbe5] text-transparent")} aria-hidden>
         <Check className="size-2.5" strokeWidth={4} />
       </span>
-      <span>
-        {children}: <strong>{on ? "açık" : "kapalı"}</strong>
-      </span>
+      <span>{t.rich("{label}: <b>{state}</b>", { label, state: on ? t("açık") : t("kapalı"), b: (c) => <strong>{c}</strong> })}</span>
     </span>
   );
 }

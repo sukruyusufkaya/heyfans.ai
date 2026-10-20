@@ -18,7 +18,7 @@ export const getPlatformSettings = cache(async (): Promise<IPlatformSettings> =>
     { $setOnInsert: { key: "global", "credits.packs": DEFAULT_CREDIT_PACKS } },
     { upsert: true, returnDocument: "after", setDefaultsOnInsert: true },
   ).lean<IPlatformSettings>();
-  if (!doc) throw new Error("Platform ayarları okunamadı");
+  if (!doc) throw new Error("Platform ayarları okunamadı"); // i18n-ignore (dahili hata)
   if (!doc.credits.packs?.length) doc.credits.packs = DEFAULT_CREDIT_PACKS;
   return doc;
 });

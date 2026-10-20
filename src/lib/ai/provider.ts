@@ -2,6 +2,7 @@ import "server-only";
 import { createHash } from "node:crypto";
 import { allowsMockProviders, env } from "@/config/env";
 import { FeatureUnavailableError } from "@/lib/errors";
+import { getT } from "@/i18n/server";
 
 export interface ChatMessage {
   role: "system" | "user" | "assistant";
@@ -44,7 +45,7 @@ export class OpenAiCompatibleProvider implements AiProvider {
   ) {}
 
   private headers() {
-    return { "Content-Type": "application/json", Authorization: `Bearer ${this.apiKey}` };
+    return { "Content-Type": "application/json", Authorization: `Bearer ${this.apiKey}` }; // i18n-ignore (HTTP başlığı)
   }
 
   async chat(messages: ChatMessage[], opts: { maxTokens: number; temperature: number; signal?: AbortSignal }) {
@@ -54,7 +55,7 @@ export class OpenAiCompatibleProvider implements AiProvider {
       body: JSON.stringify({ model: this.model, messages, max_tokens: opts.maxTokens, temperature: opts.temperature }),
       signal: opts.signal,
     });
-    if (!res.ok) throw new Error(`AI sağlayıcısı hata döndürdü (${res.status})`);
+    if (!res.ok) throw new Error(`AI sağlayıcısı hata döndürdü (${res.status})`); // i18n-ignore (günlük/geliştirici hatası)
     const json = (await res.json()) as { choices: { message: { content: string } }[]; usage?: { prompt_tokens: number; completion_tokens: number } };
     const text = json.choices?.[0]?.message?.content ?? "";
     return {
@@ -73,7 +74,7 @@ export class OpenAiCompatibleProvider implements AiProvider {
       body: JSON.stringify({ model: this.model, messages, max_tokens: opts.maxTokens, temperature: opts.temperature, stream: true, stream_options: { include_usage: true } }),
       signal: opts.signal,
     });
-    if (!res.ok || !res.body) throw new Error(`AI sağlayıcısı hata döndürdü (${res.status})`);
+    if (!res.ok || !res.body) throw new Error(`AI sağlayıcısı hata döndürdü (${res.status})`); // i18n-ignore (günlük/geliştirici hatası)
     let resolveUsage!: (u: Usage) => void;
     const usage = new Promise<Usage>((r) => (resolveUsage = r));
     const inputApprox = approxTokens(messages.map((m) => m.content).join("\n"));
@@ -122,7 +123,7 @@ export class OpenAiCompatibleProvider implements AiProvider {
       headers: this.headers(),
       body: JSON.stringify({ model: this.embeddingModel, input: texts }),
     });
-    if (!res.ok) throw new Error(`Gömme (embedding) isteği başarısız (${res.status})`);
+    if (!res.ok) throw new Error(`Gömme (embedding) isteği başarısız (${res.status})`); // i18n-ignore (günlük/geliştirici hatası)
     const json = (await res.json()) as { data: { embedding: number[] }[]; usage?: { prompt_tokens: number } };
     return { vectors: json.data.map((d) => d.embedding), usage: { inputTokens: json.usage?.prompt_tokens ?? approxTokens(texts.join(" ")), outputTokens: 0 } };
   }
@@ -137,21 +138,23 @@ export class MockAiProvider implements AiProvider {
   readonly embeddingModel = "mock-embed-64";
   readonly isMock = true;
 
-  private reply(messages: ChatMessage[]) {
+  /** Test yanıtı isteğin dilinde üretilir (istek dışında Türkçe). */
+  private async reply(messages: ChatMessage[]) {
+    const t = await getT();
     const lastUser = [...messages].reverse().find((m) => m.role === "user")?.content ?? "";
     const system = messages.find((m) => m.role === "system")?.content ?? "";
-    const name = /AI_IKIZ_ADI:\s*(.+)/.exec(system)?.[1]?.trim() ?? "AI ikizi";
+    const name = /AI_IKIZ_ADI:\s*(.+)/.exec(system)?.[1]?.trim() ?? t("AI ikizi");
     const topic = lastUser.replace(/\s+/g, " ").slice(0, 80);
-    return `[Test yanıtı] Merhaba! Ben ${name}'in AI ikiziyim. "${topic}" hakkında konuşmayı çok isterim. Bu yanıt, gerçek bir AI sağlayıcısı yapılandırılmadığı için test modunda üretildi.`;
+    return t("[Test yanıtı] Merhaba! Ben {name}'in AI ikiziyim. \"{topic}\" hakkında konuşmayı çok isterim. Bu yanıt, gerçek bir AI sağlayıcısı yapılandırılmadığı için test modunda üretildi.", { name, topic });
   }
 
   async chat(messages: ChatMessage[]) {
-    const text = this.reply(messages);
+    const text = await this.reply(messages);
     return { text, usage: { inputTokens: approxTokens(messages.map((m) => m.content).join("\n")), outputTokens: approxTokens(text) } };
   }
 
   async chatStream(messages: ChatMessage[]): Promise<StreamResult> {
-    const text = this.reply(messages);
+    const text = await this.reply(messages);
     const words = text.split(/(\s+)/);
     async function* iterate() {
       for (const w of words) {

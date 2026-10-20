@@ -150,7 +150,7 @@ export async function reverseLedgerEntry(
         userId: original.userId,
         amount: -original.amount,
         type: "reversal",
-        description: `İade: ${reason}`.slice(0, 300),
+        description: `İade: ${reason}`.slice(0, 300), // i18n-ignore (defter açıklaması saklanır)
         idempotencyKey: `reversal:${original._id.toString()}`,
         creatorId: original.creatorId,
         refType: original.refType,

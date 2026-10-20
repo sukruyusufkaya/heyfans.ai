@@ -7,6 +7,7 @@ import { extractAndStoreMemories, loadMemories, memoryEnabledFor } from "@/lib/a
 import { buildSystemPrompt } from "@/lib/ai/persona";
 import { costMicroUsd, getAiProvider, type ChatMessage } from "@/lib/ai/provider";
 import { checkInput, checkOutput, CRISIS_MESSAGE } from "@/lib/ai/safety";
+import { getLocale, getT } from "@/i18n/server";
 import { rateLimit } from "@/lib/security/rate-limit";
 import { oid } from "@/lib/validation/common";
 import { AiTwin, AiTwinVersion, AiUsageRecord, type ITwin, type ITwinVersion } from "@/models/ai";
@@ -63,12 +64,13 @@ async function loadLiveTwin(username: string) {
   const creator = await CreatorProfile.findOne({ username: username.toLowerCase(), status: "approved" }).lean<ICreatorProfile>();
   if (!creator) throw new NotFoundError("İçerik üreticisi bulunamadı.");
   const twin = await AiTwin.findOne({ creatorId: creator._id }).lean<ITwin>();
-  if (!twin || twin.status !== "live" || !twin.features.chat) throw new FeatureUnavailableError(`${creator.displayName} adlı creator'ın AI ikizi şu anda sohbete açık değil.`);
+  if (!twin || twin.status !== "live" || !twin.features.chat) throw new AppError("{creator} adlı creator'ın AI ikizi şu anda sohbete açık değil.", "feature_unavailable", 503, { missing: [], params: { creator: creator.displayName } });
   return { creator, twin };
 }
 
 /** Sohbet ekranı verisi + gerekirse yeni konuşma. */
 export async function openConversation(userId: string, username: string) {
+  const t = await getT();
   const { creator, twin } = await loadLiveTwin(username);
   const uid = oid(userId);
   let conv = await Conversation.findOne({ userId: uid, creatorId: creator._id, kind: "fan", status: { $in: ["active", "archived", "reported"] } }).sort({ updatedAt: -1 }).lean<IConversation>();
@@ -83,7 +85,7 @@ export async function openConversation(userId: string, username: string) {
     await Conversation.updateOne({ _id: conv._id }, { $set: { unreadForUser: 0 } });
   }
   const messages = await Message.find({ conversationId: conv._id }).sort({ createdAt: -1 }).limit(60).lean<IMessage[]>();
-  const billing = await resolveBilling(uid, creator, twin).catch((e: AppError) => ({ mode: "blocked" as const, credits: 0, freeLeft: 0, reason: e.message }));
+  const billing = await resolveBilling(uid, creator, twin).catch((e: AppError) => ({ mode: "blocked" as const, credits: 0, freeLeft: 0, reason: t(e.template, e.params) }));
   const wallet = await ensureWallet(uid);
   return { creator, twin, conversation: conv, messages: messages.reverse(), billing, balance: wallet.balance };
 }
@@ -99,11 +101,12 @@ const line = (e: ChatEvent) => enc.encode(`${JSON.stringify(e)}\n`);
  */
 export async function sendChatMessage(params: { userId: string; conversationId: string; text: string; idempotencyKey: string; mode?: "fan" | "test" }): Promise<ReadableStream<Uint8Array>> {
   await connectDb();
+  const t = await getT();
   const uid = oid(params.userId);
   const text = params.text.trim();
   const settings = await getPlatformSettings();
   if (!text) throw new AppError("Mesaj boş olamaz.", "empty");
-  if (text.length > settings.chat.maxInputChars) throw new AppError(`Mesaj en fazla ${settings.chat.maxInputChars} karakter olabilir.`, "too_long");
+  if (text.length > settings.chat.maxInputChars) throw new AppError("Mesaj en fazla {max} karakter olabilir.", "too_long", 400, { params: { max: settings.chat.maxInputChars } });
 
   // "reported": bildirilen sohbet moderasyonda işaretli kalır ama hayran kullanmaya devam edebilir.
   const conv = await Conversation.findOne({ _id: oid(params.conversationId), userId: uid, status: { $in: ["active", "reported"] } }).lean<IConversation>();
@@ -127,7 +130,7 @@ export async function sendChatMessage(params: { userId: string; conversationId: 
   const dup = await Message.findOne({ conversationId: conv._id, idempotencyKey: params.idempotencyKey }).lean();
   if (dup) throw new AppError("Bu mesaj zaten gönderildi.", "duplicate", 409);
 
-  const verdict = checkInput(text, { adultContentEnabled: settings.features.adultContent });
+  const verdict = checkInput(text, { adultContentEnabled: settings.features.adultContent, t });
   const billing = isTest ? { mode: "test" as BillingMode, credits: 0 } : await resolveBilling(uid, creator, twin);
   const blocked = verdict.action === "block" || verdict.action === "crisis" || verdict.action === "rewrite";
 
@@ -139,6 +142,7 @@ export async function sendChatMessage(params: { userId: string; conversationId: 
     const charge = blocked ? 0 : billing.credits;
     if (charge > 0) {
       const entry = await debitWallet(
+        // i18n-ignore (defter açıklaması saklanır)
         { userId: uid, amount: charge, type: "spend_message", description: `${creator.displayName} AI ikizi ile mesaj`, idempotencyKey: `msg:${conv._id.toString()}:${params.idempotencyKey}`, creatorId: creator._id, refType: "Message", refId: msgId },
         session,
       );
@@ -193,7 +197,7 @@ export async function sendChatMessage(params: { userId: string; conversationId: 
 
       // Güvenlik girişte durdurduysa: modele gitmeden sabit güvenli yanıt
       if (blocked) {
-        const body = verdict.action === "crisis" ? CRISIS_MESSAGE : verdict.userMessage ?? "Bu konuda yardımcı olamam.";
+        const body = verdict.action === "crisis" ? t(CRISIS_MESSAGE) : verdict.userMessage ?? t("Bu konuda yardımcı olamam.");
         const ai = await Message.create({
           conversationId: conv._id,
           userId: uid,
@@ -223,6 +227,7 @@ export async function sendChatMessage(params: { userId: string; conversationId: 
           adultContentEnabled: settings.features.adultContent,
           mode: isTest ? "test" : "fan",
           isSampleProfile: Boolean(creator.isSample),
+          fanLocale: t.locale,
         });
         const messages: ChatMessage[] = [
           { role: "system", content: system },
@@ -235,7 +240,7 @@ export async function sendChatMessage(params: { userId: string; conversationId: 
           controller.enqueue(line({ type: "delta", text: delta }));
         }
         const usage = await result.usage;
-        const out = checkOutput(output, { adultContentEnabled: settings.features.adultContent });
+        const out = checkOutput(output, { adultContentEnabled: settings.features.adultContent, t });
         const finalText = out.text.trim() || "…";
         const usageRecord = await AiUsageRecord.create({
           kind: isTest ? "test_chat" : "chat",
@@ -263,20 +268,20 @@ export async function sendChatMessage(params: { userId: string; conversationId: 
           safety: { inputFlagged: verdict.categories.length > 0, outputFlagged: out.action !== "allow", categories: out.categories, action: out.action === "allow" ? "none" : "rewritten" },
         });
         await AiUsageRecord.updateOne({ _id: usageRecord._id }, { $set: { messageId: aiMsg._id } }).catch(() => undefined);
-        if (out.action !== "allow") controller.enqueue(line({ type: "delta", text: `\n\n[Güvenlik filtresi yanıtı düzenledi]` }));
+        if (out.action !== "allow") controller.enqueue(line({ type: "delta", text: "\n\n" + t("[Güvenlik filtresi yanıtı düzenledi]") }));
         await Conversation.updateOne({ _id: conv._id }, { $set: { lastMessageAt: new Date(), lastMessagePreview: finalText.slice(0, 120) }, $inc: { messageCount: 1 } });
         if (!isTest) {
           await AiTwin.updateOne({ _id: twin._id }, { $inc: { "stats.messages": 1 } });
-          if (ledgerEntryId) await recordCreditEarning({ creatorId: creator._id, sourceType: "chat", credits: userMessage.creditsCharged, ledgerEntryId, description: "AI ikizi sohbeti" });
+          if (ledgerEntryId) await recordCreditEarning({ creatorId: creator._id, sourceType: "chat", credits: userMessage.creditsCharged, ledgerEntryId, description: "AI ikizi sohbeti" /* i18n-ignore (hak ediş açıklaması saklanır) */ });
           if (memoryOn && conv.memoryEnabled) await extractAndStoreMemories(uid, creator._id, text, userMessage._id).catch(() => 0);
         }
         controller.enqueue(line({ type: "done", aiMessageId: aiMsg._id.toString(), isMock: provider.isMock, safetyAction: out.action }));
       } catch (err) {
         console.error("[chat:stream]", err);
-        if (ledgerEntryId) await reverseLedgerEntry(ledgerEntryId, "AI yanıtı üretilemedi").catch((e) => console.error("[chat:refund]", e));
+        if (ledgerEntryId) await reverseLedgerEntry(ledgerEntryId, "AI yanıtı üretilemedi" /* i18n-ignore (defter notu saklanır) */).catch((e) => console.error("[chat:refund]", e));
         await Message.updateOne({ _id: userMessage._id }, { $set: { status: "failed" } });
         await AiUsageRecord.create({ kind: isTest ? "test_chat" : "chat", provider: provider.name, model: provider.model, userId: uid, creatorId: creator._id, twinId: twin._id, conversationId: conv._id, status: "error", errorCode: "provider_error", latencyMs: Date.now() - started, isMock: provider.isMock });
-        controller.enqueue(line({ type: "error", message: ledgerEntryId ? "AI ikizi şu anda yanıt veremedi. Harcanan kredi iade edildi." : "AI ikizi şu anda yanıt veremedi. Lütfen tekrar dene.", code: "provider_error" }));
+        controller.enqueue(line({ type: "error", message: ledgerEntryId ? t("AI ikizi şu anda yanıt veremedi. Harcanan kredi iade edildi.") : t("AI ikizi şu anda yanıt veremedi. Lütfen tekrar dene."), code: "provider_error" }));
       } finally {
         controller.close();
       }
@@ -287,6 +292,7 @@ export async function sendChatMessage(params: { userId: string; conversationId: 
 /** Fan sohbet listesi (sohbet kutusu). */
 export async function listConversations(userId: string, opts: { filter?: "all" | "unread"; q?: string } = {}) {
   await connectDb();
+  const locale = await getLocale();
   const q: Record<string, unknown> = { userId: oid(userId), kind: "fan", status: { $in: ["active", "archived", "reported"] } };
   if (opts.filter === "unread") q.unreadForUser = { $gt: 0 };
   const convs = await Conversation.find(q).sort({ lastMessageAt: -1, updatedAt: -1 }).limit(100).lean<IConversation[]>();
@@ -294,8 +300,8 @@ export async function listConversations(userId: string, opts: { filter?: "all" |
   const map = new Map(creators.map((c) => [c._id.toString(), c]));
   let rows = convs.map((c) => ({ conversation: c, creator: map.get(c.creatorId.toString()) })).filter((r) => r.creator);
   if (opts.q) {
-    const term = opts.q.toLocaleLowerCase("tr-TR");
-    rows = rows.filter((r) => r.creator!.displayName.toLocaleLowerCase("tr-TR").includes(term) || r.creator!.username.includes(term));
+    const term = opts.q.toLocaleLowerCase(locale);
+    rows = rows.filter((r) => r.creator!.displayName.toLocaleLowerCase(locale).includes(term) || r.creator!.username.includes(term));
   }
   return rows;
 }
@@ -322,7 +328,7 @@ export async function openTestConversation(userId: string, reset = false) {
   if (!twin) throw new NotFoundError("Önce AI ikizini oluştur.");
   if (reset) await Conversation.updateMany({ userId: uid, creatorId: creator._id, kind: "test", status: "active" }, { $set: { status: "archived" } });
   let conv = await Conversation.findOne({ userId: uid, creatorId: creator._id, kind: "test", status: "active" }).lean<IConversation>();
-  if (!conv) conv = (await Conversation.create({ userId: uid, creatorId: creator._id, twinId: twin._id, kind: "test", title: "Test oturumu" })).toObject();
+  if (!conv) conv = (await Conversation.create({ userId: uid, creatorId: creator._id, twinId: twin._id, kind: "test", title: "Test oturumu" /* i18n-ignore (kayıtlı başlık) */ })).toObject();
   const messages = await Message.find({ conversationId: conv._id }).sort({ createdAt: 1 }).limit(100).lean<IMessage[]>();
   return { creator, twin, conversation: conv, messages };
 }

@@ -4,9 +4,9 @@ import { env } from "@/config/env";
 
 function key(): Buffer {
   const raw = env().DATA_ENCRYPTION_KEY;
-  if (!raw) throw new Error("DATA_ENCRYPTION_KEY tanımlı değil (hassas alan şifrelemesi için gerekli).");
+  if (!raw) throw new Error("DATA_ENCRYPTION_KEY tanımlı değil (hassas alan şifrelemesi için gerekli)."); // i18n-ignore (geliştirici/günlük hatası)
   const buf = Buffer.from(raw, "base64");
-  if (buf.length !== 32) throw new Error("DATA_ENCRYPTION_KEY 32 baytlık base64 değer olmalı.");
+  if (buf.length !== 32) throw new Error("DATA_ENCRYPTION_KEY 32 baytlık base64 değer olmalı."); // i18n-ignore (geliştirici/günlük hatası)
   return buf;
 }
 
@@ -21,7 +21,7 @@ export function encryptField(plain: string): string {
 
 export function decryptField(payload: string): string {
   const [v, iv, tag, data] = payload.split(".");
-  if (v !== "v1" || !iv || !tag || !data) throw new Error("Şifreli alan biçimi geçersiz");
+  if (v !== "v1" || !iv || !tag || !data) throw new Error("Şifreli alan biçimi geçersiz"); // i18n-ignore (geliştirici/günlük hatası)
   const decipher = createDecipheriv("aes-256-gcm", key(), Buffer.from(iv, "base64url"));
   decipher.setAuthTag(Buffer.from(tag, "base64url"));
   return Buffer.concat([decipher.update(Buffer.from(data, "base64url")), decipher.final()]).toString("utf8");

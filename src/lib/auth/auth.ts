@@ -94,6 +94,7 @@ function buildAuth(db: Db, client: MongoClient) {
             const intent = rest.signupIntent === "creator" ? "creator" : "fan";
             // E-posta ile kayıtta Kullanım Şartları + Gizlilik onayı sunucuda zorunlu ve zaman damgasıyla saklanır.
             if (ctx?.path === "/sign-up/email" && acceptTerms !== true) {
+              // i18n-ignore (istemci kodu TERMS_REQUIRED ile authErrorMessage üzerinden çevirir)
               throw new APIError("BAD_REQUEST", { message: "Kullanım Şartları ve Gizlilik Politikası onaylanmalı.", code: "TERMS_REQUIRED" });
             }
             // Hesap dili: kullanıcının seçimi (çerez) → konum → tarayıcı dili. E-postalar ve bildirimler bu dilde gider.
@@ -162,7 +163,7 @@ export function getAuth(): Promise<Auth> {
   g.__heyfansAuth ??= (async () => {
     const m = await connectDb();
     const db = m.connection.db;
-    if (!db) throw new Error("MongoDB bağlantısı hazır değil");
+    if (!db) throw new Error("MongoDB bağlantısı hazır değil"); // i18n-ignore (geliştirici/günlük hatası)
     return buildAuth(db as unknown as Db, m.connection.getClient() as unknown as MongoClient);
   })().catch((err) => {
     g.__heyfansAuth = undefined;

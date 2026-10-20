@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 import { siteConfig } from "@/config/site";
+import { LOCALE_PARAM, LOCALES } from "@/i18n/config";
 import { allHelpSlugs } from "@/services/support/help";
 import { sitemapEntities } from "@/services/public/sitemap";
 
@@ -19,16 +20,31 @@ const STATIC_ROUTES: { path: string; priority: number; changeFrequency: Metadata
   { path: "/contact", priority: 0.5, changeFrequency: "yearly" },
 ];
 
+type Entry = MetadataRoute.Sitemap[number];
+
+/** Her dil için `?lang=<kod>` alternatifi; `x-default` düz (Türkçe) adrestir (layout.tsx ile aynı şema). */
+function withAlternates(url: string, rest: Omit<Entry, "url" | "alternates">): Entry {
+  const languages: Record<string, string> = Object.fromEntries(
+    LOCALES.map((l) => {
+      const u = new URL(url);
+      u.searchParams.set(LOCALE_PARAM, l);
+      return [l, u.toString()];
+    }),
+  );
+  languages["x-default"] = url;
+  return { url, ...rest, alternates: { languages } };
+}
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const base = siteConfig.url.replace(/\/$/, "");
   const now = new Date();
-  const entries: MetadataRoute.Sitemap = STATIC_ROUTES.map((r) => ({ url: `${base}${r.path}`, lastModified: now, changeFrequency: r.changeFrequency, priority: r.priority }));
+  const entries: MetadataRoute.Sitemap = STATIC_ROUTES.map((r) => withAlternates(`${base}${r.path}`, { lastModified: now, changeFrequency: r.changeFrequency, priority: r.priority }));
   try {
     const [{ creators, categories, legal }, help] = await Promise.all([sitemapEntities(), allHelpSlugs()]);
-    for (const c of creators) entries.push({ url: `${base}/creators/${c.username}`, lastModified: c.updatedAt, changeFrequency: "weekly", priority: 0.7 });
-    for (const c of categories) entries.push({ url: `${base}/categories/${c.slug}`, lastModified: c.updatedAt, changeFrequency: "weekly", priority: 0.6 });
-    for (const h of help) entries.push({ url: `${base}/help/${h.slug}`, lastModified: h.updatedAt, changeFrequency: "monthly", priority: 0.5 });
-    for (const l of legal) entries.push({ url: `${base}/${l.slug}`, lastModified: l.updatedAt, changeFrequency: "yearly", priority: 0.4 });
+    for (const c of creators) entries.push(withAlternates(`${base}/creators/${c.username}`, { lastModified: c.updatedAt, changeFrequency: "weekly", priority: 0.7 }));
+    for (const c of categories) entries.push(withAlternates(`${base}/categories/${c.slug}`, { lastModified: c.updatedAt, changeFrequency: "weekly", priority: 0.6 }));
+    for (const h of help) entries.push(withAlternates(`${base}/help/${h.slug}`, { lastModified: h.updatedAt, changeFrequency: "monthly", priority: 0.5 }));
+    for (const l of legal) entries.push(withAlternates(`${base}/${l.slug}`, { lastModified: l.updatedAt, changeFrequency: "yearly", priority: 0.4 }));
   } catch (err) {
     // Veritabanına ulaşılamazsa statik rotalar yine de yayınlanır
     console.error("[sitemap]", err);

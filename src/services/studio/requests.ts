@@ -5,6 +5,7 @@ import { CUSTOM_REQUEST_STATUSES, CreatorEarning, CustomRequest } from "@/models
 import { listCreatorRequests } from "@/services/experiences/custom-requests";
 import { mediaUrl } from "@/services/media/media";
 import { shortName, studioCreator } from "./context";
+import { getT } from "@/i18n/server";
 
 export const requestsQuerySchema = z.object({ status: z.enum(["all", ...CUSTOM_REQUEST_STATUSES]).catch("all") });
 
@@ -25,6 +26,7 @@ export interface RequestView {
 
 /** Özel talep kutusu: durum sekmeleri, sayaçlar ve detay paneli için teslim dosyaları. */
 export async function getRequestsInbox(userId: string, status: string) {
+  const t = await getT();
   const creator = await studioCreator(userId);
   const [rows, counts, earn] = await Promise.all([
     listCreatorRequests(userId, status as never),
@@ -39,7 +41,7 @@ export async function getRequestsInbox(userId: string, status: string) {
     const deliverables = [];
     for (const id of r.deliverableAssetIds) {
       const a = aMap.get(id.toString());
-      if (a) deliverables.push({ assetId: a._id.toString(), name: a.originalName ?? "Dosya", kind: a.kind, url: await mediaUrl(a) });
+      if (a) deliverables.push({ assetId: a._id.toString(), name: a.originalName ?? t("Dosya"), kind: a.kind, url: await mediaUrl(a) });
     }
     items.push({
       id: r._id.toString(),
@@ -51,7 +53,7 @@ export async function getRequestsInbox(userId: string, status: string) {
       dueAt: r.dueAt ?? null,
       createdAt: r.createdAt,
       creatorNote: r.creatorNote ?? null,
-      fan: { name: shortName(fan?.name), image: fan?.image ?? null },
+      fan: { name: shortName(fan?.name, t), image: fan?.image ?? null },
       deliverables,
       history: r.history.map((h) => ({ to: h.to, at: h.at, note: h.note })),
     });

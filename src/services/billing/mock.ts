@@ -33,7 +33,7 @@ export async function completeMockPayment(userId: string, sessionId: string, out
     paymentId: `mock_pi_${randomUUID().slice(0, 12)}`,
     amountMinor: tx.amount.amountMinor,
     currency: tx.amount.currency,
-    failureReason: outcome === "fail" ? "Test: kart reddedildi" : undefined,
+    failureReason: outcome === "fail" ? "Test: kart reddedildi" : undefined, // i18n-ignore (test sağlayıcı notu)
   });
   const headers = new Headers({ "x-mock-signature": provider.sign(body) });
   await processPaymentWebhook("mock", headers, body);

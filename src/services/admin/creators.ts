@@ -189,6 +189,7 @@ export async function listFeaturedCreators() {
   ]);
   return {
     featured: featured.map((c) => ({ id: c._id.toString(), displayName: c.displayName, username: c.username, avatarUrl: c.avatarUrl ?? null, rank: c.featured.rank, status: c.status, followers: c.stats.followers })),
+    // i18n-ignore (kullanıcı içeriği: ad + kullanıcı adı)
     candidates: candidates.map((c) => ({ id: c._id.toString(), label: `${c.displayName} (@${c.username})` })),
   };
 }

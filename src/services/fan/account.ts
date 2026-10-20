@@ -13,6 +13,8 @@ import { Conversation, ConversationMemory, Favorite, Follow } from "@/models/soc
 import { Subscription } from "@/models/monetization";
 import { mediaUrl } from "@/services/media/media";
 import { ensureUserPreferences } from "@/services/users/lifecycle";
+import { getT } from "@/i18n/server";
+import { m } from "@/i18n/m";
 
 /* ─── Profil ──────────────────────────────────────────────── */
 
@@ -45,7 +47,7 @@ export async function getProfilePage(userId: string) {
   };
 }
 
-const nameSchema = z.string().trim().min(2, "Ad en az 2 karakter olmalı").max(120, "Ad en fazla 120 karakter olabilir");
+const nameSchema = z.string().trim().min(2, m("Ad en az 2 karakter olmalı")).max(120, m("Ad en fazla 120 karakter olabilir"));
 
 export async function updateProfileName(userId: string, name: unknown) {
   const value = nameSchema.parse(name);
@@ -77,7 +79,7 @@ export const preferencesPatchSchema = z
     aiMemoryEnabled: z.boolean(),
     recommendationsEnabled: z.boolean(),
     marketingConsent: z.boolean(),
-    interests: z.array(z.string().regex(/^[a-z0-9-]{2,60}$/)).max(12, "En fazla 12 ilgi alanı seçebilirsin"),
+    interests: z.array(z.string().regex(/^[a-z0-9-]{2,60}$/)).max(12, m("En fazla 12 ilgi alanı seçebilirsin")),
     notifications: z
       .object({ email: z.boolean(), push: z.boolean(), newContent: z.boolean(), messages: z.boolean(), promotions: z.boolean() })
       .partial(),
@@ -144,6 +146,7 @@ export interface MemoryGroup {
 
 export async function listMemoryGroups(userId: string): Promise<{ groups: MemoryGroup[]; total: number }> {
   await connectDb();
+  const t = await getT();
   const rows = await ConversationMemory.find({ userId: oid(userId) }).sort({ createdAt: -1 }).limit(500).lean();
   const creators = await CreatorProfile.find({ _id: { $in: [...new Set(rows.map((r) => r.creatorId.toString()))].map((i) => oid(i)) } }, { username: 1, displayName: 1, avatarUrl: 1 }).lean();
   const map = new Map(creators.map((c) => [c._id.toString(), c]));
@@ -153,7 +156,7 @@ export async function listMemoryGroups(userId: string): Promise<{ groups: Memory
     let g = groups.get(key);
     if (!g) {
       const c = map.get(key);
-      g = { creator: { id: key, username: c?.username ?? null, displayName: c?.displayName ?? "Kaldırılmış içerik üreticisi", avatarUrl: c?.avatarUrl ?? null }, memories: [] };
+      g = { creator: { id: key, username: c?.username ?? null, displayName: c?.displayName ?? t("Kaldırılmış içerik üreticisi"), avatarUrl: c?.avatarUrl ?? null }, memories: [] };
       groups.set(key, g);
     }
     g.memories.push({ id: r._id.toString(), fact: r.fact, category: r.category, source: r.source, createdAt: new Date(r.createdAt).toISOString() });
@@ -161,7 +164,7 @@ export async function listMemoryGroups(userId: string): Promise<{ groups: Memory
   return { groups: [...groups.values()], total: rows.length };
 }
 
-const factSchema = z.string().trim().min(2, "Bilgi en az 2 karakter olmalı").max(300, "Bilgi en fazla 300 karakter olabilir");
+const factSchema = z.string().trim().min(2, m("Bilgi en az 2 karakter olmalı")).max(300, m("Bilgi en fazla 300 karakter olabilir"));
 
 export async function updateMemoryFact(userId: string, memoryId: string, fact: unknown) {
   const value = factSchema.parse(fact);
@@ -190,8 +193,8 @@ export async function deleteAllMemories(userId: string) {
 /* ─── Hesap talepleri (destek kaydı; anında silme/indirme yok) ─ */
 
 const REQUEST_KINDS = {
-  delete_account: { subject: "Hesap silme talebi", message: "Kullanıcı, hesabının ve ilişkili kişisel verilerinin silinmesini talep ediyor. Yasal saklama yükümlülükleri (ör. finansal kayıtlar) kapsamındaki veriler dışındakiler silinmelidir.", priority: "high" as const },
-  export_data: { subject: "Kişisel veri kopyası talebi", message: "Kullanıcı, KVKK/GDPR kapsamında hesabına ait kişisel verilerin bir kopyasını talep ediyor.", priority: "normal" as const },
+  delete_account: { subject: "Hesap silme talebi", message: "Kullanıcı, hesabının ve ilişkili kişisel verilerinin silinmesini talep ediyor. Yasal saklama yükümlülükleri (ör. finansal kayıtlar) kapsamındaki veriler dışındakiler silinmelidir.", priority: "high" as const }, // i18n-ignore (destek kaydı Türkçe saklanır)
+  export_data: { subject: "Kişisel veri kopyası talebi", message: "Kullanıcı, KVKK/GDPR kapsamında hesabına ait kişisel verilerin bir kopyasını talep ediyor.", priority: "normal" as const }, // i18n-ignore (destek kaydı Türkçe saklanır)
 };
 
 /** "Hesabımı sil" / "verilerimi indir": SupportTicket (kategori: account) açar — işlem destek ekibince yürütülür. */
@@ -202,6 +205,7 @@ export async function createAccountRequest(user: { id: string; name: string; ema
   const open = await SupportTicket.findOne({ userId: oid(user.id), category: "account", subject: def.subject, status: { $in: ["open", "pending"] } }).lean();
   if (open) return { ticketNo: open.ticketNo, existing: true };
   const doc = await SupportTicket.create({
+    // i18n-ignore (kod)
     ticketNo: `DST-${Date.now().toString(36).toUpperCase().slice(-4)}${randomInt(1000, 9999)}`,
     userId: oid(user.id),
     name: user.name,

@@ -6,7 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/form-controls";
 import { ConfirmDialog } from "@/components/studio/confirm-dialog";
 import { useRun } from "@/components/studio/use-run";
-import { cn, formatDate } from "@/lib/utils";
+import { useFormatters, useLocale, useT } from "@/i18n/client";
+import { cn } from "@/lib/utils";
 import type { ConsentKind } from "@/models/creator";
 import { grantConsentAction, revokeConsentAction } from "./twin-actions";
 
@@ -35,7 +36,11 @@ export function ConsentCard({
   strongRevoke?: boolean;
   className?: string;
 }) {
+  const t = useT();
+  const locale = useLocale();
+  const { formatDate } = useFormatters();
   const { run, pending } = useRun();
+  const phrase = t("GERİ ÇEK");
   const [typed, setTyped] = useState("");
   return (
     <div className={cn("rounded-2xl border p-4", granted ? "border-[#c9eedc] bg-success-soft/40" : "border-line bg-white", className)}>
@@ -46,20 +51,20 @@ export function ConsentCard({
             {title}
           </p>
           <p className="mt-1.5 text-[11px] leading-relaxed text-muted-strong">{text}</p>
-          {granted && grantedAt && <p className="mt-1.5 text-[10px] text-muted">Verildi: {formatDate(grantedAt)}</p>}
+          {granted && grantedAt && <p className="mt-1.5 text-[10px] text-muted">{t("Verildi: {date}", { date: formatDate(grantedAt) })}</p>}
         </div>
         <Badge tone={granted ? "green" : "gray"} dot>
-          {granted ? "İzin verildi" : "İzin yok"}
+          {granted ? t("İzin verildi") : t("İzin yok")}
         </Badge>
       </div>
       <div className="mt-3 flex flex-wrap items-center gap-2.5">
         {granted ? (
           <ConfirmDialog
             tone="danger"
-            title={`${title} iznini geri çek`}
+            title={t("{title} iznini geri çek", { title })}
             description={revokeWarning}
-            confirmLabel="İzni geri çek"
-            confirmDisabled={strongRevoke ? typed.trim().toLocaleUpperCase("tr-TR") !== "GERİ ÇEK" : false}
+            confirmLabel={t("İzni geri çek")}
+            confirmDisabled={strongRevoke ? typed.trim().toLocaleUpperCase(locale) !== phrase.toLocaleUpperCase(locale) : false}
             onConfirm={async () => {
               const ok = await run(() => revokeConsentAction({ kind }));
               if (ok) setTyped("");
@@ -67,27 +72,27 @@ export function ConsentCard({
             }}
             trigger={
               <Button variant="danger-soft" size="sm" loading={pending}>
-                İzni geri çek
+                {t("İzni geri çek")}
               </Button>
             }
           >
             {strongRevoke && (
               <div className="rounded-xl border border-[#f6c9cd] bg-danger-soft p-3">
-                <p className="mb-2 text-[11px] font-bold text-[#b3252b]">Onaylamak için aşağıya GERİ ÇEK yaz.</p>
-                <Input aria-label="Onay metni" value={typed} onChange={(e) => setTyped(e.target.value)} placeholder="GERİ ÇEK" autoComplete="off" />
+                <p className="mb-2 text-[11px] font-bold text-[#b3252b]">{t("Onaylamak için aşağıya {phrase} yaz.", { phrase })}</p>
+                <Input aria-label={t("Onay metni")} value={typed} onChange={(e) => setTyped(e.target.value)} placeholder={phrase} autoComplete="off" />
               </div>
             )}
           </ConfirmDialog>
         ) : (
           <ConfirmDialog
-            title={`${title} iznini ver`}
-            description="Aşağıdaki metni okuyup açık rıza veriyorsun. İznini istediğin an geri çekebilirsin."
-            confirmLabel="Okudum, izin veriyorum"
+            title={t("{title} iznini ver", { title })}
+            description={t("Aşağıdaki metni okuyup açık rıza veriyorsun. İznini istediğin an geri çekebilirsin.")}
+            confirmLabel={t("Okudum, izin veriyorum")}
             onConfirm={() => run(() => grantConsentAction({ kind }))}
             disabled={locked}
             trigger={
               <Button size="sm" disabled={locked} loading={pending}>
-                İzin ver
+                {t("İzin ver")}
               </Button>
             }
           >

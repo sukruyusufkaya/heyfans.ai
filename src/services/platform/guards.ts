@@ -3,6 +3,7 @@ import { connectDb } from "@/lib/db/mongo";
 import { FeatureUnavailableError } from "@/lib/errors";
 import { AiUsageRecord } from "@/models/ai";
 import { getPlatformSettings } from "./settings";
+import { m } from "@/i18n/m";
 
 /** Bakım modu: yöneticiler hariç kullanıcı alanları ve ücretli/AI işlemleri durdurulur. */
 export async function maintenanceState(user?: { roles: string[] } | null) {
@@ -12,8 +13,8 @@ export async function maintenanceState(user?: { roles: string[] } | null) {
 }
 
 export async function assertNotInMaintenance(user?: { roles: string[] } | null) {
-  const m = await maintenanceState(user);
-  if (m.blocked) throw new FeatureUnavailableError(m.message || "Platform bakımda. Lütfen kısa süre sonra tekrar deneyin.");
+  const state = await maintenanceState(user);
+  if (state.blocked) throw new FeatureUnavailableError(state.message || m("Platform bakımda. Lütfen kısa süre sonra tekrar deneyin."));
 }
 
 /** AI aylık bütçe koruması: ayarlanmışsa (0 = sınırsız) bu ayki gerçek sağlayıcı maliyeti bütçeyi aşınca AI çağrıları durur. */

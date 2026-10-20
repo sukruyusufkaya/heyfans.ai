@@ -1,13 +1,17 @@
 import * as React from "react";
 import Link from "next/link";
 import Form from "next/form";
-import { AlertTriangle, Info, Search, ShieldAlert } from "lucide-react";
+import { Search } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { NativeSelect } from "@/components/ui/form-controls";
 import { Progress, PageHeader } from "@/components/ui/display";
 import { cn } from "@/lib/utils";
+import { getFormatters, getT } from "@/i18n/server";
+import { Notice } from "./notice";
 import type { Tone } from "./labels";
+
+export { Notice };
 
 /** Sorgu dizgisi kurar; boş / null değerleri atlar. */
 export function href(base: string, params: Record<string, string | number | boolean | null | undefined>) {
@@ -20,13 +24,16 @@ export function href(base: string, params: Record<string, string | number | bool
   return qs ? `${base}?${qs}` : base;
 }
 
-/** Her admin sayfasının ortak iskeleti: üst başlık + içerik. */
-export function AdminPage({
+/**
+ * Her admin sayfasının ortak iskeleti: üst başlık + içerik.
+ * Bu modül yalnız sunucu bileşenlerinden içe aktarılır (getT kullanır); istemci dosyaları `Notice`'i "./notice"dan almalıdır.
+ */
+export async function AdminPage({
   title,
   description,
   actions,
   children,
-  eyebrow = "PLATFORM YÖNETİMİ",
+  eyebrow,
 }: {
   title: React.ReactNode;
   description?: React.ReactNode;
@@ -34,9 +41,10 @@ export function AdminPage({
   eyebrow?: string;
   children: React.ReactNode;
 }) {
+  const t = await getT();
   return (
     <div className="mx-auto w-full max-w-[1480px]">
-      <PageHeader eyebrow={eyebrow} title={title} description={description} actions={actions} />
+      <PageHeader eyebrow={eyebrow ?? t("PLATFORM YÖNETİMİ")} title={title} description={description} actions={actions} />
       <div className="grid gap-5">{children}</div>
     </div>
   );
@@ -71,15 +79,16 @@ export interface TabItem {
   href: string;
 }
 /** URL tabanlı hap sekmeleri (JS gerektirmez). */
-export function TabLinks({ tabs, active, label = "Sekmeler", className }: { tabs: TabItem[]; active: string; label?: string; className?: string }) {
+export async function TabLinks({ tabs, active, label, className }: { tabs: TabItem[]; active: string; label?: string; className?: string }) {
+  const t = await getT();
   return (
-    <nav aria-label={label} className={cn("no-scrollbar -mx-1 flex items-center gap-2 overflow-x-auto px-1 pb-1", className)}>
-      {tabs.map((t) => {
-        const on = t.key === active;
+    <nav aria-label={label ?? t("Sekmeler")} className={cn("no-scrollbar -mx-1 flex items-center gap-2 overflow-x-auto px-1 pb-1", className)}>
+      {tabs.map((tab) => {
+        const on = tab.key === active;
         return (
           <Link
-            key={t.key}
-            href={t.href}
+            key={tab.key}
+            href={tab.href}
             scroll={false}
             aria-current={on ? "page" : undefined}
             className={cn(
@@ -87,8 +96,8 @@ export function TabLinks({ tabs, active, label = "Sekmeler", className }: { tabs
               on ? "bg-brand-500 text-white" : "bg-soft text-muted-strong hover:text-ink",
             )}
           >
-            {t.label}
-            {t.count !== undefined && t.count !== null && <span className={cn("rounded-full px-1.5 text-[9px]", on ? "bg-white/25" : "bg-white text-muted-strong")}>{t.count}</span>}
+            {tab.label}
+            {tab.count !== undefined && tab.count !== null && <span className={cn("rounded-full px-1.5 text-[9px]", on ? "bg-white/25" : "bg-white text-muted-strong")}>{tab.count}</span>}
           </Link>
         );
       })}
@@ -103,11 +112,11 @@ export interface FilterSelect {
   options: { value: string; label: string }[];
 }
 /** GET tabanlı arama / filtre çubuğu. Diğer parametreler gizli alanlarla korunur. */
-export function FilterForm({
+export async function FilterForm({
   action,
   q,
   qName = "q",
-  placeholder = "Ara...",
+  placeholder,
   selects = [],
   hidden = {},
   clearHref,
@@ -120,13 +129,15 @@ export function FilterForm({
   hidden?: Record<string, string | null | undefined>;
   clearHref?: string;
 }) {
+  const t = await getT();
+  const ph = placeholder ?? t("Ara...");
   const active = Boolean(q) || selects.some((s) => s.value && s.value !== "all");
   return (
     <Form action={action} role="search" className="mb-4 flex flex-wrap items-end gap-2.5">
       {Object.entries(hidden).map(([k, v]) => (v ? <input key={k} type="hidden" name={k} value={v} /> : null))}
       <div className="min-w-[220px] flex-1">
         <label htmlFor={`f-${qName}`} className="sr-only">
-          {placeholder}
+          {ph}
         </label>
         <div className="relative">
           <Search className="pointer-events-none absolute start-3.5 top-1/2 size-4 -translate-y-1/2 text-muted" aria-hidden />
@@ -134,7 +145,7 @@ export function FilterForm({
             id={`f-${qName}`}
             name={qName}
             defaultValue={q ?? ""}
-            placeholder={placeholder}
+            placeholder={ph}
             maxLength={100}
             className="h-10 w-full rounded-[10px] border border-line bg-white ps-10 pe-3 text-[12px] text-ink placeholder:text-[#b2a6b3] focus:border-brand-300 focus:outline-none focus:ring-4 focus:ring-brand-100"
           />
@@ -155,11 +166,11 @@ export function FilterForm({
         </div>
       ))}
       <Button type="submit" size="md" variant="secondary">
-        Filtrele
+        {t("Filtrele")}
       </Button>
       {active && clearHref && (
         <Link href={clearHref} className="text-[11px] font-extrabold text-brand-500 hover:underline">
-          Temizle
+          {t("Temizle")}
         </Link>
       )}
     </Form>
@@ -175,13 +186,14 @@ export function DetailRow({ label, children, className }: { label: React.ReactNo
   );
 }
 
-export function ScoreBar({ label, value, hint, tone = "pink" }: { label: string; value: number | null; hint?: React.ReactNode; tone?: "pink" | "green" | "violet" | "orange" | "teal" }) {
+export async function ScoreBar({ label, value, hint, tone = "pink" }: { label: string; value: number | null; hint?: React.ReactNode; tone?: "pink" | "green" | "violet" | "orange" | "teal" }) {
+  const { formatPercent } = await getFormatters();
   return (
     <div className="mb-3.5 last:mb-0">
       <div className="mb-1.5 flex items-center justify-between gap-3 text-[11px]">
         <b className="text-ink">{label}</b>
         <span className="text-muted">
-          {hint} <b className="text-ink">{value === null ? "—" : `%${Math.round(value)}`}</b>
+          {hint} <b className="text-ink">{value === null ? "—" : formatPercent(Math.round(value) * 100)}</b>
         </span>
       </div>
       <Progress value={value ?? 0} tone={tone} label={label} />
@@ -189,33 +201,19 @@ export function ScoreBar({ label, value, hint, tone = "pink" }: { label: string;
   );
 }
 
-const NOTICE_TONES = {
-  info: "border-[#e3d4f7] bg-violet-soft text-[#4b21a8]",
-  warn: "border-[#f9d9aa] bg-[#fff7e9] text-[#8a4a00]",
-  danger: "border-[#f6c7cb] bg-danger-soft text-[#a1262c]",
-  neutral: "border-line bg-soft text-muted-strong",
-};
-export function Notice({ tone = "info", icon, children, className, role }: { tone?: keyof typeof NOTICE_TONES; icon?: React.ReactNode; children: React.ReactNode; className?: string; role?: "alert" | "status" }) {
-  const Default = tone === "danger" ? ShieldAlert : tone === "warn" ? AlertTriangle : Info;
-  return (
-    <div role={role} className={cn("flex items-start gap-2.5 rounded-xl border px-3.5 py-3 text-[11px] font-semibold leading-relaxed", NOTICE_TONES[tone], className)}>
-      <span className="mt-0.5 shrink-0 [&_svg]:size-4">{icon ?? <Default />}</span>
-      <div className="min-w-0">{children}</div>
-    </div>
-  );
-}
-
 /** Ana sayfadaki "Yetkiniz yok" yönlendirmesi için. */
-export function DeniedNotice() {
+export async function DeniedNotice() {
+  const t = await getT();
   return (
     <Notice tone="danger" role="alert">
-      Bu bölüme erişim yetkiniz yok. Rolünüzün izinleri dışındaki sayfalar yönetim menüsünde gösterilmez.
+      {t("Bu bölüme erişim yetkiniz yok. Rolünüzün izinleri dışındaki sayfalar yönetim menüsünde gösterilmez.")}
     </Notice>
   );
 }
 
-export function Timeline({ items }: { items: { title: React.ReactNode; meta?: React.ReactNode; tone?: "pink" | "green" | "gray" | "danger" }[] }) {
-  if (!items.length) return <p className="text-[11px] text-muted">Henüz kayıt yok.</p>;
+export async function Timeline({ items }: { items: { title: React.ReactNode; meta?: React.ReactNode; tone?: "pink" | "green" | "gray" | "danger" }[] }) {
+  const t = await getT();
+  if (!items.length) return <p className="text-[11px] text-muted">{t("Henüz kayıt yok.")}</p>;
   const dots = { pink: "bg-brand-500", green: "bg-success", gray: "bg-[#c9c1cc]", danger: "bg-danger" };
   return (
     <ol className="grid gap-3">
@@ -233,13 +231,15 @@ export function Timeline({ items }: { items: { title: React.ReactNode; meta?: Re
 }
 
 /** Tablo altı kayıt sayacı. */
-export function ResultCount({ page, pageSize, total, noun = "kayıt" }: { page: number; pageSize: number; total: number; noun?: string }) {
+export async function ResultCount({ page, pageSize, total, noun }: { page: number; pageSize: number; total: number; noun?: string }) {
   if (!total) return null;
+  const t = await getT();
+  const { formatNumber } = await getFormatters();
   const from = (page - 1) * pageSize + 1;
   const to = Math.min(total, page * pageSize);
   return (
     <p className="mt-3 text-center text-[11px] text-muted">
-      {from}–{to} / {total.toLocaleString("tr-TR")} {noun} gösteriliyor
+      {t("{from}–{to} / {total} {noun} gösteriliyor", { from, to, total: formatNumber(total), noun: noun ?? t("kayıt") })}
     </p>
   );
 }

@@ -4,7 +4,8 @@ import { ChevronRight, CircleHelp, FileText, ScrollText, TriangleAlert } from "l
 import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/ui/display";
 import { siteConfig } from "@/config/site";
-import { formatDate } from "@/lib/utils";
+import { getFormatters, getT } from "@/i18n/server";
+import type { Translator } from "@/i18n/translate";
 import type { ICmsPage } from "@/models/platform";
 import { getCmsPage } from "@/services/cms/cms";
 import { PageBody, SupportHero } from "./support-ui";
@@ -21,28 +22,30 @@ export async function legalMetadata(slug: string, title: string, description: st
     title,
     description,
     alternates: { canonical: path },
-    openGraph: { title: `${title} | ${siteConfig.name}`, description, url: path, type: "website" },
+    openGraph: { title: `${title} | ${siteConfig.name}`, description, url: path, type: "website" }, // i18n-ignore (başlık çağıran tarafından çevrilmiş gelir)
     robots: indexable ? { index: true, follow: true } : { index: false, follow: true },
   };
 }
 
 /** Belirgin "TASLAK — Hukuki onay gerekli" rozeti (yalnız legalReview=draft_requires_legal_review iken). */
-export function DraftBadge({ page, className }: { page: Pick<ICmsPage, "legalReview"> | null | undefined; className?: string }) {
+export async function DraftBadge({ page, className }: { page: Pick<ICmsPage, "legalReview"> | null | undefined; className?: string }) {
   if (!isDraftLegal(page)) return null;
+  const t = await getT();
   return (
     <Badge tone="warn" size="lg" className={className}>
-      <TriangleAlert aria-hidden /> TASLAK — Hukuki onay gerekli
+      <TriangleAlert aria-hidden /> {t("TASLAK — Hukuki onay gerekli")}
     </Badge>
   );
 }
 
-export function DraftNotice({ page }: { page: Pick<ICmsPage, "legalReview"> | null | undefined }) {
+export async function DraftNotice({ page }: { page: Pick<ICmsPage, "legalReview"> | null | undefined }) {
   if (!isDraftLegal(page)) return null;
+  const t = await getT();
   return (
     <p role="note" className="flex items-start gap-3 rounded-xl border border-[#f9d9aa] bg-[#fff7e9] px-4 py-3 text-xs leading-relaxed text-[#7d4300]">
       <TriangleAlert className="mt-0.5 size-4 shrink-0" aria-hidden />
       <span>
-        <b>Bu metin bağlayıcı bir hukuki belge değildir.</b> Taslaktır; KVKK ve ilgili mevzuata göre hukuk incelemesinden geçmeden yürürlüğe girmez ve kullanıcılar için sözleşme niteliği taşımaz.
+        {t.rich("<b>Bu metin bağlayıcı bir hukuki belge değildir.</b> Taslaktır; KVKK ve ilgili mevzuata göre hukuk incelemesinden geçmeden yürürlüğe girmez ve kullanıcılar için sözleşme niteliği taşımaz.", { b: (c) => <b>{c}</b> })}
       </span>
     </p>
   );
@@ -88,33 +91,40 @@ export async function LegalDocument({
   extra?: React.ReactNode;
   actions?: React.ReactNode;
 }) {
-  const page = await getCmsPage(slug);
+  const [page, t, { formatDate }] = await Promise.all([getCmsPage(slug), getT(), getFormatters()]);
+  const sections = page?.sections.map((s) => ({ id: s.id, heading: t(s.heading), body: t(s.body) })) ?? [];
+  const versionLabel = !page
+    ? ""
+    : t("Sürüm {version} · {status}", {
+        version: page.version,
+        status: isDraftLegal(page) ? t("Yürürlükte değil (taslak)") : page.effectiveDate ? t("Yürürlük: {date}", { date: formatDate(page.effectiveDate) }) : t("Güncelleme: {date}", { date: formatDate(page.updatedAt) }),
+      });
   return (
     <>
       <SupportHero eyebrow={eyebrow} title={title} highlight={highlight} description={description} icon={icon ?? <FileText />} />
       <PageBody>
         {!page ? (
           <div className="hf-card">
-            <EmptyState icon={<ScrollText />} title="Bu doküman henüz yayınlanmadı" description="Metin hazırlanıp onaylandığında burada yer alacak. Sorularını İletişim sayfasından iletebilirsin." action={<Link href="/contact" className="text-xs font-extrabold text-brand-600 hover:underline">İletişime geç</Link>} />
+            <EmptyState icon={<ScrollText />} title={t("Bu doküman henüz yayınlanmadı")} description={t("Metin hazırlanıp onaylandığında burada yer alacak. Sorularını İletişim sayfasından iletebilirsin.")} action={<Link href="/contact" className="text-xs font-extrabold text-brand-600 hover:underline">{t("İletişime geç")}</Link>} />
           </div>
         ) : (
           <div className="grid items-start gap-6 lg:grid-cols-[270px_1fr]">
             <aside className="lg:sticky lg:top-24">
               <details className="hf-card group lg:hidden" open={false}>
                 <summary className="flex cursor-pointer list-none items-center justify-between px-5 py-4 text-xs font-black uppercase tracking-wider text-muted-strong">
-                  Sayfa içeriği <ChevronRight className="rtl:-scale-x-100 size-4 transition-transform group-open:rotate-90" aria-hidden />
+                  {t("Sayfa içeriği")} <ChevronRight className="rtl:-scale-x-100 size-4 transition-transform group-open:rotate-90" aria-hidden />
                 </summary>
-                <SectionNav page={page} />
+                <SectionNav sections={sections} label={t("Doküman bölümleri")} />
               </details>
               <div className="hf-card hidden p-3 lg:block">
-                <p className="px-3 pb-2 pt-2 text-[10px] font-black uppercase tracking-[0.14em] text-muted">Sayfa içeriği</p>
-                <SectionNav page={page} />
+                <p className="px-3 pb-2 pt-2 text-[10px] font-black uppercase tracking-[0.14em] text-muted">{t("Sayfa içeriği")}</p>
+                <SectionNav sections={sections} label={t("Doküman bölümleri")} />
                 <div className="mx-2 mt-3 border-t border-line pt-4">
                   <p className="flex items-center gap-2 text-xs font-extrabold text-ink">
-                    <CircleHelp className="size-4 text-brand-500" aria-hidden /> Yardıma mı ihtiyacın var?
+                    <CircleHelp className="size-4 text-brand-500" aria-hidden /> {t("Yardıma mı ihtiyacın var?")}
                   </p>
                   <Link href="/contact" className="mt-1 block text-[11px] text-muted hover:text-brand-600">
-                    Destek ekibine ulaşabilirsin →
+                    {t("Destek ekibine ulaşabilirsin →")}
                   </Link>
                 </div>
               </div>
@@ -124,19 +134,19 @@ export async function LegalDocument({
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <DraftBadge page={page} />
                 <span className="rounded-full bg-soft px-3 py-1.5 text-[10px] font-bold text-muted-strong">
-                  Sürüm {page.version} · {isDraftLegal(page) ? "Yürürlükte değil (taslak)" : page.effectiveDate ? `Yürürlük: ${formatDate(page.effectiveDate)}` : `Güncelleme: ${formatDate(page.updatedAt)}`}
+                  {versionLabel}
                 </span>
               </div>
               <h2 id="legal-title" className="mt-5 text-2xl font-black tracking-[-0.03em] text-ink">
-                {page.title}
+                {t(page.title)}
               </h2>
-              {(intro || page.summary) && <p className="mt-3 text-sm leading-relaxed text-muted-strong">{intro ?? stripDraftNote(page.summary ?? "")}</p>}
+              {(intro || page.summary) && <p className="mt-3 text-sm leading-relaxed text-muted-strong">{intro ?? summaryText(page.summary ?? "", t)}</p>}
               <div className="mt-5">
                 <DraftNotice page={page} />
               </div>
               {extra && <div className="mt-6">{extra}</div>}
               <div className="mt-8 grid gap-7">
-                {page.sections.map((s, i) => (
+                {sections.map((s, i) => (
                   <section key={s.id} id={s.id} className="scroll-mt-28">
                     <h3 className="text-base font-extrabold text-ink">
                       {i + 1}. {s.heading}
@@ -156,11 +166,11 @@ export async function LegalDocument({
   );
 }
 
-function SectionNav({ page }: { page: NonNullable<LegalCms> }) {
+function SectionNav({ sections, label }: { sections: { id: string; heading: string }[]; label: string }) {
   return (
-    <nav aria-label="Doküman bölümleri" className="px-2 pb-2 lg:px-0 lg:pb-0">
+    <nav aria-label={label} className="px-2 pb-2 lg:px-0 lg:pb-0">
       <ol className="grid gap-0.5">
-        {page.sections.map((s) => (
+        {sections.map((s) => (
           <li key={s.id}>
             <a href={`#${s.id}`} className="flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-xs font-bold text-ink-soft transition-colors hover:bg-brand-50 hover:text-brand-600">
               <ChevronRight className="rtl:-scale-x-100 size-3.5 text-muted" aria-hidden /> {s.heading}
@@ -170,6 +180,15 @@ function SectionNav({ page }: { page: NonNullable<LegalCms> }) {
       </ol>
     </nav>
   );
+}
+
+/**
+ * CMS özetini geçerli dile çevirir ve yinelenen taslak notunu ayıklar. Tohum veride özet + not ayrı `m()` parçalarıdır;
+ * not `Bu metin TASLAKTIR` ile başlar, önceki parça çeviri anahtarıdır.
+ */
+export function summaryText(summary: string, t: Translator) {
+  const i = summary.search(/Bu metin TASLAKTIR/i);
+  return (i < 0 ? t(summary) : t(summary.slice(0, i))).trim();
 }
 
 /** CMS özetlerindeki yinelenen "TASLAKTIR…" notunu ayıklar (zaten rozet ve uyarı gösteriliyor). */

@@ -83,11 +83,12 @@ export class StripePaymentProvider implements PaymentProvider {
   private async api(path: string, params: Record<string, string>) {
     const res = await fetch(`https://api.stripe.com/v1/${path}`, {
       method: "POST",
+      // i18n-ignore (HTTP başlığı)
       headers: { Authorization: `Bearer ${this.secretKey}`, "Content-Type": "application/x-www-form-urlencoded", "Idempotency-Key": params["metadata[transactionId]"] ?? randomUUID() },
       body: new URLSearchParams(params),
     });
     const json = (await res.json()) as Record<string, unknown>;
-    if (!res.ok) throw new Error(`Stripe hatası: ${(json.error as { message?: string })?.message ?? res.status}`);
+    if (!res.ok) throw new Error(`Stripe hatası: ${(json.error as { message?: string })?.message ?? res.status}`); // i18n-ignore (geliştirici/günlük hatası)
     return json;
   }
 
@@ -149,7 +150,7 @@ export class IyzicoPaymentProvider implements PaymentProvider {
     throw new FeatureUnavailableError("iyzico entegrasyonu henüz etkin değil: sandbox doğrulaması ve pazaryeri (alt üye işyeri) sözleşmesi bekleniyor.", [
       "PAYMENT_API_KEY",
       "PAYMENT_SECRET_KEY",
-      "iyzico pazaryeri sözleşmesi",
+      "iyzico pazaryeri sözleşmesi", // i18n-ignore (eksik-bileşen listesi, yönetici/geliştirici bilgisi)
     ]);
   }
   async createCheckout(): Promise<CheckoutSession> {
@@ -164,16 +165,16 @@ export class IyzicoPaymentProvider implements PaymentProvider {
 }
 
 export function verifyTimestampedSignature(header: string | null, rawBody: string, secret: string, toleranceSec: number) {
-  if (!header) throw new Error("İmza başlığı yok");
+  if (!header) throw new Error("İmza başlığı yok"); // i18n-ignore (geliştirici/günlük hatası)
   const parts = Object.fromEntries(header.split(",").map((p) => p.split("=") as [string, string]));
   const t = Number(parts.t);
   const v1 = parts.v1;
-  if (!t || !v1) throw new Error("İmza biçimi geçersiz");
-  if (Math.abs(Date.now() / 1000 - t) > toleranceSec) throw new Error("İmza zaman aşımı");
+  if (!t || !v1) throw new Error("İmza biçimi geçersiz"); // i18n-ignore (geliştirici/günlük hatası)
+  if (Math.abs(Date.now() / 1000 - t) > toleranceSec) throw new Error("İmza zaman aşımı"); // i18n-ignore (geliştirici/günlük hatası)
   const expected = createHmac("sha256", secret).update(`${t}.${rawBody}`).digest("hex");
   const a = Buffer.from(expected, "hex");
   const b = Buffer.from(v1, "hex");
-  if (a.length !== b.length || !timingSafeEqual(a, b)) throw new Error("İmza doğrulanamadı");
+  if (a.length !== b.length || !timingSafeEqual(a, b)) throw new Error("İmza doğrulanamadı"); // i18n-ignore (geliştirici/günlük hatası)
 }
 
 export function getPaymentProvider(): PaymentProvider {

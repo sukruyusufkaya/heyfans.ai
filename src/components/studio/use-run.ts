@@ -1,6 +1,7 @@
 "use client";
 import { useCallback, useState, useTransition } from "react";
 import { toast } from "sonner";
+import { useT } from "@/i18n/client";
 import type { ActionResult } from "@/lib/errors";
 
 /**
@@ -8,6 +9,7 @@ import type { ActionResult } from "@/lib/errors";
  * `run(() => action(input))` → başarıda mesajı toast'lar ve `true` döner; hatada hata toast'ı + alan hataları.
  */
 export function useRun() {
+  const t = useT();
   const [pending, start] = useTransition();
   const [fieldErrors, setFieldErrors] = useState<Record<string, string[]>>({});
 
@@ -19,7 +21,7 @@ export function useRun() {
             const res = await fn();
             if (res.ok) {
               setFieldErrors({});
-              if (opts.success !== false) toast.success(opts.success ?? res.message ?? "Kaydedildi.");
+              if (opts.success !== false) toast.success(opts.success ?? res.message ?? t("Kaydedildi."));
               opts.onOk?.(res.data);
               resolve(true);
             } else {
@@ -29,12 +31,12 @@ export function useRun() {
               resolve(false);
             }
           } catch {
-            toast.error("İşlem tamamlanamadı. Bağlantını kontrol edip tekrar dene.");
+            toast.error(t("İşlem tamamlanamadı. Bağlantını kontrol edip tekrar dene."));
             resolve(false);
           }
         });
       }),
-    [],
+    [t],
   );
   return { run, pending, fieldErrors, setFieldErrors };
 }

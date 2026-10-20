@@ -5,7 +5,9 @@ import { Camera, CameraOff, Coins, Loader2, MessageCircle, Mic, MicOff, Phone, P
 import { toast } from "sonner";
 import { AiTwinLabel } from "@/components/ui/badge";
 import { Avatar } from "@/components/ui/display";
-import { cn, formatNumber } from "@/lib/utils";
+import { useFormatters, useT } from "@/i18n/client";
+import type { Translator } from "@/i18n/translate";
+import { cn } from "@/lib/utils";
 
 type Phase = "idle" | "connecting" | "live" | "ended";
 
@@ -20,19 +22,21 @@ interface Props {
 const pad = (n: number) => String(n).padStart(2, "0");
 const clock = (sec: number) => `${pad(Math.floor(sec / 60))}:${pad(sec % 60)}`;
 
-async function post<T>(url: string, body: unknown): Promise<{ ok: true; data: T } | { ok: false; status: number; error: string; code?: string }> {
+async function post<T>(t: Translator, url: string, body: unknown): Promise<{ ok: true; data: T } | { ok: false; status: number; error: string; code?: string }> {
   try {
     const res = await fetch(url, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body), keepalive: url.endsWith("/end") });
     const json = await res.json().catch(() => ({}));
-    if (!res.ok) return { ok: false, status: res.status, error: (json as { error?: string }).error ?? "İşlem tamamlanamadı.", code: (json as { code?: string }).code };
+    if (!res.ok) return { ok: false, status: res.status, error: (json as { error?: string }).error ?? t("İşlem tamamlanamadı."), code: (json as { code?: string }).code };
     return { ok: true, data: json as T };
   } catch {
-    return { ok: false, status: 0, error: "Bağlantı kurulamadı." };
+    return { ok: false, status: 0, error: t("Bağlantı kurulamadı.") };
   }
 }
 
 /** Canlı görüşme istemcisi: /api/calls (başlat/tick/bitir) + livekit-client. Yalnız RTC yapılandırılmışsa render edilir. */
 export function CallClient({ username, kind, creator, ratePerMinute, initialBalance }: Props) {
+  const t = useT();
+  const { formatNumber } = useFormatters();
   const [phase, setPhase] = React.useState<Phase>("idle");
   const [balance, setBalance] = React.useState(initialBalance);
   const [elapsed, setElapsed] = React.useState(0);
@@ -64,14 +68,14 @@ export function CallClient({ username, kind, creator, ratePerMinute, initialBala
     setPhase("ended");
     setEndReason(reason);
     if (id && callServer) {
-      const res = await post<{ balance: number; creditsSpent: number | null; minutesBilled: number | null }>("/api/calls/end", { sessionId: id });
+      const res = await post<{ balance: number; creditsSpent: number | null; minutesBilled: number | null }>(t, "/api/calls/end", { sessionId: id });
       if (res.ok) {
         setBalance(res.data.balance);
         if (res.data.creditsSpent != null) setSpent(res.data.creditsSpent);
         if (res.data.minutesBilled != null) setMinutes(res.data.minutesBilled);
       }
     }
-  }, []);
+  }, [t]);
 
   // Süre sayacı + dakikalık faturalama (60 sn)
   React.useEffect(() => {
@@ -81,22 +85,22 @@ export function CallClient({ username, kind, creator, ratePerMinute, initialBala
       const id = sessionId.current;
       if (!id || tickBusy.current) return;
       tickBusy.current = true;
-      const res = await post<{ minutesBilled: number; creditsSpent: number; balance: number }>("/api/calls/tick", { sessionId: id });
+      const res = await post<{ minutesBilled: number; creditsSpent: number; balance: number }>(t, "/api/calls/tick", { sessionId: id });
       tickBusy.current = false;
       if (res.ok) {
         setBalance(res.data.balance);
         setSpent(res.data.creditsSpent);
         setMinutes(res.data.minutesBilled);
       } else if (res.status === 402 || res.status === 404) {
-        toast.error(res.status === 402 ? "Yetersiz kredi: görüşme sona erdi." : "Görüşme sunucuda sona ermiş.");
-        void finish(res.status === 402 ? "Yetersiz kredi nedeniyle görüşme sona erdi." : "Görüşme sona erdi.", false);
+        toast.error(res.status === 402 ? t("Yetersiz kredi: görüşme sona erdi.") : t("Görüşme sunucuda sona ermiş."));
+        void finish(res.status === 402 ? t("Yetersiz kredi nedeniyle görüşme sona erdi.") : t("Görüşme sona erdi."), false);
       }
     }, 60_000);
     return () => {
       clearInterval(clockId);
       clearInterval(tickId);
     };
-  }, [phase, finish]);
+  }, [phase, finish, t]);
 
   // Sayfadan ayrılırken görüşmeyi bitir (faturalama durur)
   React.useEffect(() => {
@@ -114,7 +118,7 @@ export function CallClient({ username, kind, creator, ratePerMinute, initialBala
   async function start() {
     setPhase("connecting");
     setEndReason(null);
-    const res = await post<{ sessionId: string; url: string; token: string; balance: number }>("/api/calls/start", { username, kind });
+    const res = await post<{ sessionId: string; url: string; token: string; balance: number }>(t, "/api/calls/start", { username, kind });
     if (!res.ok) {
       setPhase("idle");
       toast.error(res.error);
@@ -134,7 +138,7 @@ export function CallClient({ username, kind, creator, ratePerMinute, initialBala
       room.on(lk.RoomEvent.ParticipantConnected, sync);
       room.on(lk.RoomEvent.ParticipantDisconnected, sync);
       room.on(lk.RoomEvent.Disconnected, () => {
-        if (sessionId.current) void finish("Bağlantı sona erdi.");
+        if (sessionId.current) void finish(t("Bağlantı sona erdi."));
       });
       await room.connect(res.data.url, res.data.token);
       await room.localParticipant.setMicrophoneEnabled(true);
@@ -152,8 +156,8 @@ export function CallClient({ username, kind, creator, ratePerMinute, initialBala
       setPhase("live");
     } catch (err) {
       console.error("[call:connect]", err);
-      toast.error("Görüşmeye bağlanılamadı. Mikrofon/kamera iznini ve bağlantını kontrol et.");
-      await finish("Bağlantı kurulamadı.");
+      toast.error(t("Görüşmeye bağlanılamadı. Mikrofon/kamera iznini ve bağlantını kontrol et."));
+      await finish(t("Bağlantı kurulamadı."));
     }
   }
 
@@ -192,11 +196,11 @@ export function CallClient({ username, kind, creator, ratePerMinute, initialBala
         <div className="absolute start-4 end-4 top-4 z-10 flex flex-wrap items-center justify-between gap-2">
           <span className="inline-flex items-center gap-1.5 rounded-full bg-white/15 px-3 py-1.5 text-[10px] font-extrabold backdrop-blur">
             <span className={cn("size-1.5 rounded-full", live ? "animate-pulse bg-[#2ee59d]" : "bg-white/50")} aria-hidden />
-            {live ? "Canlı" : phase === "connecting" ? "Bağlanıyor…" : phase === "ended" ? "Görüşme bitti" : "Hazır"}
+            {live ? t("Canlı") : phase === "connecting" ? t("Bağlanıyor…") : phase === "ended" ? t("Görüşme bitti") : t("Hazır")}
           </span>
           <span className="rounded-full bg-white/15 px-3 py-1.5 text-[10px] font-extrabold backdrop-blur" aria-live="off">
             {clock(elapsed)}
-            {affordableMinutes != null && !live ? ` · bakiyen ~${affordableMinutes} dk` : ""}
+            {affordableMinutes != null && !live ? <> · {t("bakiyen ~{n} dk", { n: affordableMinutes })}</> : null}
           </span>
         </div>
         <div className={cn("relative z-0 flex h-full min-h-[360px] flex-col items-center justify-center gap-3 px-6 py-16 text-center", kind === "video" && live && remoteCount > 0 && "opacity-0")}>
@@ -206,35 +210,35 @@ export function CallClient({ username, kind, creator, ratePerMinute, initialBala
           <p className="text-lg font-black tracking-[-0.03em]">{creator.displayName}</p>
           <AiTwinLabel size="md" className="bg-white/90" />
           <p className="max-w-xs text-xs text-white/75">
-            {phase === "idle" && "Hazır olduğunda görüşmeyi başlat. Mikrofon izni istenecek."}
-            {phase === "connecting" && "Güvenli bağlantı kuruluyor…"}
-            {live && (remoteCount > 0 ? "AI ikizi seninle konuşuyor…" : "AI ikizinin odaya katılması bekleniyor…")}
-            {phase === "ended" && (endReason ?? "Görüşme sona erdi.")}
+            {phase === "idle" && t("Hazır olduğunda görüşmeyi başlat. Mikrofon izni istenecek.")}
+            {phase === "connecting" && t("Güvenli bağlantı kuruluyor…")}
+            {live && (remoteCount > 0 ? t("AI ikizi seninle konuşuyor…") : t("AI ikizinin odaya katılması bekleniyor…"))}
+            {phase === "ended" && (endReason ?? t("Görüşme sona erdi."))}
           </p>
         </div>
         {lowBalance && (
           <p role="alert" className="absolute inset-x-4 bottom-20 z-10 rounded-xl bg-danger/90 px-4 py-2 text-center text-[11px] font-bold">
-            Bakiyen bir sonraki dakikaya yetmiyor; görüşme otomatik sona erecek.
+            {t("Bakiyen bir sonraki dakikaya yetmiyor; görüşme otomatik sona erecek.")}
           </p>
         )}
         <div className="absolute inset-x-0 bottom-0 z-10 flex items-center justify-center gap-3 bg-gradient-to-t from-black/50 to-transparent px-4 pb-5 pt-10">
           {live ? (
             <>
-              <CtrlButton label={muted ? "Mikrofonu aç" : "Mikrofonu kapat"} onClick={toggleMic} active={muted}>
+              <CtrlButton label={muted ? t("Mikrofonu aç") : t("Mikrofonu kapat")} onClick={toggleMic} active={muted}>
                 {muted ? <MicOff /> : <Mic />}
               </CtrlButton>
-              <CtrlButton label={speakerOff ? "Sesi aç" : "Sesi kapat"} onClick={toggleSpeaker} active={speakerOff}>
+              <CtrlButton label={speakerOff ? t("Sesi aç") : t("Sesi kapat")} onClick={toggleSpeaker} active={speakerOff}>
                 {speakerOff ? <VolumeX /> : <Volume2 />}
               </CtrlButton>
               {kind === "video" && (
-                <CtrlButton label={cameraOn ? "Kamerayı kapat" : "Kamerayı aç"} onClick={toggleCamera} active={!cameraOn}>
+                <CtrlButton label={cameraOn ? t("Kamerayı kapat") : t("Kamerayı aç")} onClick={toggleCamera} active={!cameraOn}>
                   {cameraOn ? <Camera /> : <CameraOff />}
                 </CtrlButton>
               )}
-              <CtrlButton label="Aramayı bitir" onClick={() => finish("Görüşmeyi sen bitirdin.")} danger>
+              <CtrlButton label={t("Aramayı bitir")} onClick={() => finish(t("Görüşmeyi sen bitirdin."))} danger>
                 <PhoneOff />
               </CtrlButton>
-              <Link href={`/chat/${username}`} aria-label="Yazılı sohbete geç" className="grid size-12 place-items-center rounded-full bg-white/15 text-white backdrop-blur hover:bg-white/25 [&_svg]:size-5">
+              <Link href={`/chat/${username}`} aria-label={t("Yazılı sohbete geç")} className="grid size-12 place-items-center rounded-full bg-white/15 text-white backdrop-blur hover:bg-white/25 [&_svg]:size-5">
                 <MessageCircle />
               </Link>
             </>
@@ -246,7 +250,7 @@ export function CallClient({ username, kind, creator, ratePerMinute, initialBala
               className="inline-flex h-12 items-center gap-2 rounded-full bg-brand-500 px-7 text-sm font-extrabold text-white shadow-[var(--shadow-pink)] hover:bg-brand-600 disabled:opacity-60"
             >
               {phase === "connecting" ? <Loader2 className="size-4 animate-spin" /> : <Phone className="size-4" />}
-              {phase === "ended" ? "Yeniden başlat" : kind === "voice" ? "Sesli görüşmeyi başlat" : "Görüntülü görüşmeyi başlat"}
+              {phase === "ended" ? t("Yeniden başlat") : kind === "voice" ? t("Sesli görüşmeyi başlat") : t("Görüntülü görüşmeyi başlat")}
             </button>
           )}
         </div>
@@ -255,32 +259,33 @@ export function CallClient({ username, kind, creator, ratePerMinute, initialBala
       {!canStart && !live && (
         <div role="status" className="mt-3 flex flex-wrap items-center justify-between gap-2 rounded-xl border border-brand-200 bg-brand-50 px-4 py-3 text-xs">
           <p className="font-semibold text-ink-soft">
-            Görüşmeyi başlatmak için en az {formatNumber(ratePerMinute)} kredi gerekiyor. Bakiyen: {formatNumber(balance)}.
+            {t("Görüşmeyi başlatmak için en az {needed} kredi gerekiyor. Bakiyen: {balance}.", { needed: formatNumber(ratePerMinute), balance: formatNumber(balance) })}
           </p>
           <Link href="/app/wallet" className="inline-flex h-9 items-center gap-1.5 rounded-full bg-brand-500 px-4 text-[11px] font-extrabold text-white hover:bg-brand-600">
-            <Coins className="size-3.5" /> Kredi yükle
+            <Coins className="size-3.5" /> {t("Kredi yükle")}
           </Link>
         </div>
       )}
 
       <dl className="mt-4 grid gap-3 rounded-2xl border border-line-soft bg-[#fbf9fc] p-4 text-xs">
         <div className="flex items-center justify-between">
-          <dt className="text-muted">Görüşme süresi</dt>
+          <dt className="text-muted">{t("Görüşme süresi")}</dt>
           <dd className="font-extrabold tabular-nums">{clock(elapsed)}</dd>
         </div>
         <div className="flex items-center justify-between">
-          <dt className="text-muted">Dakika ücreti</dt>
-          <dd className="font-extrabold">{formatNumber(ratePerMinute)} kredi</dd>
+          <dt className="text-muted">{t("Dakika ücreti")}</dt>
+          <dd className="font-extrabold">{t("{n} kredi", { n: formatNumber(ratePerMinute) })}</dd>
         </div>
         <div className="flex items-center justify-between">
-          <dt className="text-muted">Bu görüşmede harcanan</dt>
+          <dt className="text-muted">{t("Bu görüşmede harcanan")}</dt>
           <dd className="font-extrabold tabular-nums">
-            {formatNumber(spent)} kredi{minutes ? ` (${minutes} dk)` : ""}
+            {t("{n} kredi", { n: formatNumber(spent) })}
+            {minutes ? <> ({t("{n} dk", { n: minutes })})</> : null}
           </dd>
         </div>
         <div className="flex items-center justify-between">
-          <dt className="text-muted">Kalan bakiye</dt>
-          <dd className="font-extrabold tabular-nums">{formatNumber(balance)} kredi</dd>
+          <dt className="text-muted">{t("Kalan bakiye")}</dt>
+          <dd className="font-extrabold tabular-nums">{t("{n} kredi", { n: formatNumber(balance) })}</dd>
         </div>
       </dl>
     </div>

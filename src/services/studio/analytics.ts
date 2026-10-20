@@ -4,6 +4,7 @@ import { ContentItem, type IContentItem } from "@/models/content";
 import { AnalyticsEvent } from "@/models/platform";
 import { Subscription } from "@/models/monetization";
 import { dayExpr, dayKeys, fillSeries, rangeStart, studioCreator } from "./context";
+import { getT } from "@/i18n/server";
 
 export const ANALYTICS_RANGES = [7, 30, 90] as const;
 export const analyticsRangeSchema = z.coerce.number().pipe(z.union([z.literal(7), z.literal(30), z.literal(90)])).catch(30);
@@ -12,6 +13,7 @@ const TRACKED = ["profile_view", "follow", "unfollow", "chat_message", "chat_sta
 
 /** AnalyticsEvent (creatorId bazlı) üzerinden profil/etkileşim/dönüşüm metrikleri. */
 export async function getCreatorAnalytics(userId: string, days: 7 | 30 | 90) {
+  const t = await getT();
   const creator = await studioCreator(userId);
   const cid = creator._id;
   const keys = dayKeys(days);
@@ -35,20 +37,21 @@ export async function getCreatorAnalytics(userId: string, days: 7 | 30 | 90) {
     Subscription.countDocuments({ creatorId: cid, scope: "creator", createdAt: { $gte: since } }),
   ]);
 
-  const count = (rows: { _id: string; n: number }[], t: string) => rows.find((r) => r._id === t)?.n ?? 0;
-  const cur = (t: string) => count(totals, t);
-  const prev = (t: string) => count(prevTotals, t);
-  const series = (t: string) =>
+  const count = (rows: { _id: string; n: number }[], ty: string) => rows.find((r) => r._id === ty)?.n ?? 0;
+  const cur = (ty: string) => count(totals, ty);
+  const prev = (ty: string) => count(prevTotals, ty);
+  const series = (ty: string) =>
     fillSeries(
       keys,
-      daily.filter((r) => r._id.t === t).map((r) => ({ _id: r._id.d, n: r.n })),
+      daily.filter((r) => r._id.t === ty).map((r) => ({ _id: r._id.d, n: r.n })),
+      t.locale,
     );
-  const delta = (t: string) => {
-    const p = prev(t);
-    return p > 0 ? Math.round(((cur(t) - p) / p) * 100) : null;
+  const delta = (ty: string) => {
+    const p = prev(ty);
+    return p > 0 ? Math.round(((cur(ty) - p) / p) * 100) : null;
   };
 
-  const viewedIds = topViewed.map((t) => t._id as IContentItem["_id"]);
+  const viewedIds = topViewed.map((v) => v._id as IContentItem["_id"]);
   const viewedItems = viewedIds.length ? await ContentItem.find({ _id: { $in: viewedIds } }, { title: 1, type: 1, "stats.revenueMinor": 1 }).lean<IContentItem[]>() : [];
   const itemMap = new Map(viewedItems.map((i) => [i._id.toString(), i]));
 
@@ -67,11 +70,11 @@ export async function getCreatorAnalytics(userId: string, days: 7 | 30 | 90) {
       contentViews: { value: cur("content_view"), delta: delta("content_view"), series: series("content_view") },
     },
     funnel: [
-      { key: "views", label: "Profil görüntüleme", value: profileViews },
-      { key: "follows", label: "Takip", value: follows },
-      { key: "subs", label: "Abonelik", value: subscriptions },
+      { key: "views", label: t("Profil görüntüleme"), value: profileViews },
+      { key: "follows", label: t("Takip"), value: follows },
+      { key: "subs", label: t("Abonelik"), value: subscriptions },
     ],
-    topViewed: topViewed.map((t) => ({ id: String(t._id), title: itemMap.get(String(t._id))?.title ?? "Silinmiş içerik", type: itemMap.get(String(t._id))?.type ?? "text", views: t.n, revenueMinor: itemMap.get(String(t._id))?.stats.revenueMinor ?? 0 })),
+    topViewed: topViewed.map((v) => ({ id: String(v._id), title: itemMap.get(String(v._id))?.title ?? t("Silinmiş içerik"), type: itemMap.get(String(v._id))?.type ?? "text", views: v.n, revenueMinor: itemMap.get(String(v._id))?.stats.revenueMinor ?? 0 })),
     topRevenue: topRevenue.map((i) => ({ id: i._id.toString(), title: i.title, type: i.type, purchases: i.stats.purchases, revenueMinor: i.stats.revenueMinor })),
   };
 }

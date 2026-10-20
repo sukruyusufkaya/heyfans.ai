@@ -10,8 +10,12 @@ import { requireUser } from "@/lib/auth/session";
 import { AppError } from "@/lib/errors";
 import { usernameSchema } from "@/lib/validation/common";
 import { getChatPage } from "@/services/fan/chat";
+import { getT } from "@/i18n/server";
 
-export const metadata: Metadata = { title: "AI İkiziyle Sohbet" };
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getT();
+  return { title: t("AI İkiziyle Sohbet") };
+}
 export const dynamic = "force-dynamic";
 
 export default async function ChatPage({ params }: { params: Promise<{ username: string }> }) {
@@ -19,6 +23,7 @@ export default async function ChatPage({ params }: { params: Promise<{ username:
   const parsed = usernameSchema.safeParse(raw);
   if (!parsed.success) notFound();
   const { user } = await requireUser(`/chat/${raw}`);
+  const t = await getT();
 
   let data: Awaited<ReturnType<typeof getChatPage>>;
   try {
@@ -31,11 +36,11 @@ export default async function ChatPage({ params }: { params: Promise<{ username:
           <Card>
             <EmptyState
               icon={<MessageCircleOff />}
-              title="Bu AI ikizi şu anda sohbete açık değil"
-              description={err.message}
+              title={t("Bu AI ikizi şu anda sohbete açık değil")}
+              description={t(err.template, err.params)}
               action={
                 <Link href={`/creators/${parsed.data}`} className="inline-flex h-10 items-center rounded-full bg-brand-500 px-5 text-xs font-extrabold text-white shadow-[var(--shadow-pink)] hover:bg-brand-600">
-                  Profile git
+                  {t("Profile git")}
                 </Link>
               }
             />
@@ -49,7 +54,15 @@ export default async function ChatPage({ params }: { params: Promise<{ username:
   return (
     <div className="mx-auto max-w-[1320px]">
       <div className="max-lg:hidden">
-        <PageHeader eyebrow="HEYFANS / FAN EXPERIENCE" title="AI İkiziyle Sohbet" description={data.creator.isSample ? `${data.creator.displayName} kurgusal bir örnek profildir; AI ikiziyle günlük ücretsiz mesaj hakkınla sohbet edebilirsin.` : `${data.creator.displayName} adlı içerik üreticisinin yetkilendirilmiş AI ikiziyle kişiselleştirilmiş sohbet.`} />
+        <PageHeader
+          eyebrow={t("HEYFANS / FAN EXPERIENCE")}
+          title={t("AI İkiziyle Sohbet")}
+          description={
+            data.creator.isSample
+              ? t("{name} kurgusal bir örnek profildir; AI ikiziyle günlük ücretsiz mesaj hakkınla sohbet edebilirsin.", { name: data.creator.displayName })
+              : t("{name} adlı içerik üreticisinin yetkilendirilmiş AI ikiziyle kişiselleştirilmiş sohbet.", { name: data.creator.displayName })
+          }
+        />
       </div>
       <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_340px]">
         <ChatClient
@@ -65,7 +78,7 @@ export default async function ChatPage({ params }: { params: Promise<{ username:
           ai={data.ai}
           memoryEnabled={data.memoryEnabled}
         />
-        <aside className="hidden lg:block" aria-label="İçerik üreticisi">
+        <aside className="hidden lg:block" aria-label={t("İçerik üreticisi")}>
           <ChatInfoPanel creator={data.creator} twin={data.twin} />
         </aside>
       </div>

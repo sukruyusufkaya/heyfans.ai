@@ -1,6 +1,9 @@
 "use client";
 import { useEffect, useId, useRef, useState } from "react";
 import { FileText, Film, ImageIcon, Loader2, Music2, UploadCloud, X } from "lucide-react";
+import { useFormatters, useLocale, useT } from "@/i18n/client";
+import { LOCALE_META } from "@/i18n/config";
+import type { Translator } from "@/i18n/translate";
 import { cn } from "@/lib/utils";
 
 export type UploadPurpose = "avatar" | "cover" | "content" | "content_preview" | "knowledge" | "voice_sample" | "deliverable";
@@ -38,24 +41,24 @@ function declaredMime(file: File) {
   return EXT_MIME[file.name.split(".").pop()?.toLowerCase() ?? ""] ?? "application/octet-stream";
 }
 
-async function readError(res: Response) {
+async function readError(res: Response, t: Translator) {
   try {
     const j = (await res.json()) as { error?: string };
-    return j.error ?? "Yükleme başarısız oldu.";
+    return j.error ?? t("Yükleme başarısız oldu.");
   } catch {
-    return "Yükleme başarısız oldu.";
+    return t("Yükleme başarısız oldu.");
   }
 }
 
-/** Yükleme akışı: upload-url → PUT (ilerlemeli) → complete. Hata durumunda Türkçe mesajla reddeder. */
-export async function uploadAsset(file: File, purpose: UploadPurpose, onProgress?: (ratio: number) => void): Promise<UploadedFile> {
+/** Yükleme akışı: upload-url → PUT (ilerlemeli) → complete. Hata durumunda çevrilmiş mesajla reddeder (`t` çağıranın çevirmenidir). */
+export async function uploadAsset(file: File, purpose: UploadPurpose, t: Translator, onProgress?: (ratio: number) => void): Promise<UploadedFile> {
   const mime = declaredMime(file);
   const init = await fetch("/api/media/upload-url", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ purpose, mime, sizeBytes: file.size, fileName: file.name }),
   });
-  if (!init.ok) throw new Error(await readError(init));
+  if (!init.ok) throw new Error(await readError(init, t));
   const { assetId, upload } = (await init.json()) as { assetId: string; upload: { method: string; url: string; headers: Record<string, string> } };
 
   await new Promise<void>((resolve, reject) => {
@@ -66,22 +69,25 @@ export async function uploadAsset(file: File, purpose: UploadPurpose, onProgress
     xhr.onload = () => {
       if (xhr.status >= 200 && xhr.status < 300) return resolve();
       try {
-        reject(new Error((JSON.parse(xhr.responseText) as { error?: string }).error ?? "Dosya yüklenemedi."));
+        reject(new Error((JSON.parse(xhr.responseText) as { error?: string }).error ?? t("Dosya yüklenemedi.")));
       } catch {
-        reject(new Error("Dosya yüklenemedi."));
+        reject(new Error(t("Dosya yüklenemedi.")));
       }
     };
-    xhr.onerror = () => reject(new Error("Dosya yüklenemedi. Bağlantını kontrol et."));
+    xhr.onerror = () => reject(new Error(t("Dosya yüklenemedi. Bağlantını kontrol et.")));
     xhr.send(file);
   });
 
   const done = await fetch(`/api/media/${assetId}/complete`, { method: "POST" });
-  if (!done.ok) throw new Error(await readError(done));
+  if (!done.ok) throw new Error(await readError(done, t));
   const j = (await done.json()) as { assetId: string; kind: string; url: string };
   return { assetId: j.assetId, url: j.url, kind: j.kind, name: file.name, sizeBytes: file.size };
 }
 
-const prettySize = (n: number) => (n > 1024 * 1024 ? `${(n / 1024 / 1024).toFixed(1)} MB` : `${Math.max(1, Math.round(n / 1024))} KB`);
+const prettySize = (n: number, tag: string) =>
+  n > 1024 * 1024
+    ? `${new Intl.NumberFormat(tag, { minimumFractionDigits: 1, maximumFractionDigits: 1 }).format(n / 1024 / 1024)} MB`
+    : `${new Intl.NumberFormat(tag).format(Math.max(1, Math.round(n / 1024)))} KB`;
 
 function Thumb({ f }: { f: UploadedFile }) {
   const Icon = f.kind === "video" ? Film : f.kind === "audio" ? Music2 : f.kind === "document" ? FileText : ImageIcon;
@@ -122,6 +128,9 @@ export function MediaUploader({
   className?: string;
   compact?: boolean;
 }) {
+  const t = useT();
+  const locale = useLocale();
+  const { formatPercent } = useFormatters();
   const id = useId();
   const [busy, setBusy] = useState<{ key: string; name: string; progress: number }[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -142,11 +151,11 @@ export function MediaUploader({
       const key = `${file.name}-${file.size}-${Math.random().toString(36).slice(2, 7)}`;
       setBusy((b) => [...b, { key, name: file.name, progress: 0 }]);
       try {
-        const up = await uploadAsset(file, purpose, (r) => setBusy((b) => b.map((x) => (x.key === key ? { ...x, progress: r } : x))));
+        const up = await uploadAsset(file, purpose, t, (r) => setBusy((b) => b.map((x) => (x.key === key ? { ...x, progress: r } : x))));
         acc = max > 1 ? [...acc, up] : [up];
         onChange(acc);
       } catch (e) {
-        setError(e instanceof Error ? e.message : "Yükleme başarısız oldu.");
+        setError(e instanceof Error ? e.message : t("Yükleme başarısız oldu."));
       } finally {
         setBusy((b) => b.filter((x) => x.key !== key));
       }
@@ -202,9 +211,9 @@ export function MediaUploader({
               <Thumb f={f} />
               <div className="min-w-0 flex-1">
                 <p className="truncate text-[12px] font-bold text-ink">{f.name}</p>
-                <p className="text-[10px] text-muted">{prettySize(f.sizeBytes)}</p>
+                <p className="text-[10px] text-muted">{prettySize(f.sizeBytes, LOCALE_META[locale].intl)}</p>
               </div>
-              <button type="button" disabled={disabled} onClick={() => onChange(value.filter((x) => x.assetId !== f.assetId))} className="grid size-8 place-items-center rounded-full text-muted hover:bg-soft hover:text-danger" aria-label={`${f.name} dosyasını kaldır`}>
+              <button type="button" disabled={disabled} onClick={() => onChange(value.filter((x) => x.assetId !== f.assetId))} className="grid size-8 place-items-center rounded-full text-muted hover:bg-soft hover:text-danger" aria-label={t("{name} dosyasını kaldır", { name: f.name })}>
                 <X className="size-4" />
               </button>
             </li>
@@ -213,9 +222,9 @@ export function MediaUploader({
             <li key={b.key} className="rounded-xl border border-line bg-white p-2.5">
               <div className="flex items-center justify-between text-[11px]">
                 <span className="truncate font-bold text-ink">{b.name}</span>
-                <span className="text-muted">%{Math.round(b.progress * 100)}</span>
+                <span className="text-muted">{formatPercent(Math.round(b.progress * 100) * 100)}</span>
               </div>
-              <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-[#f3eaf2]" role="progressbar" aria-valuenow={Math.round(b.progress * 100)} aria-valuemin={0} aria-valuemax={100} aria-label={`${b.name} yükleniyor`}>
+              <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-[#f3eaf2]" role="progressbar" aria-valuenow={Math.round(b.progress * 100)} aria-valuemin={0} aria-valuemax={100} aria-label={t("{name} yükleniyor", { name: b.name })}>
                 <div className="h-full rounded-full bg-brand-500 transition-[width]" style={{ width: `${b.progress * 100}%` }} />
               </div>
             </li>

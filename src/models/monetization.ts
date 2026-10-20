@@ -10,6 +10,7 @@ import {
   type ObjectId,
   type StatusEvent,
 } from "./_shared";
+import { m } from "@/i18n/m";
 
 export const PLAN_TIERS = ["free", "basic", "premium", "vip"] as const;
 export type PlanTier = (typeof PLAN_TIERS)[number];
@@ -68,8 +69,8 @@ const MembershipPlanSchema = new Schema<IMembershipPlan>(
   { ...baseOptions, minimize: false },
 );
 MembershipPlanSchema.pre("validate", function () {
-  if (this.scope === "creator" && !this.creatorId) this.invalidate("creatorId", "Creator planı creatorId gerektirir");
-  if (this.scope === "platform" && this.creatorId) this.invalidate("creatorId", "Platform planı creatorId içermez");
+  if (this.scope === "creator" && !this.creatorId) this.invalidate("creatorId", m("Creator planı creatorId gerektirir"));
+  if (this.scope === "platform" && this.creatorId) this.invalidate("creatorId", m("Platform planı creatorId içermez"));
 });
 MembershipPlanSchema.index({ scope: 1, creatorId: 1, status: 1, order: 1 });
 export const MembershipPlan = defineModel<IMembershipPlan>("MembershipPlan", MembershipPlanSchema, "membershipPlans");
@@ -143,7 +144,7 @@ export interface IWallet {
 const WalletSchema = new Schema<IWallet>(
   {
     userId: { type: Schema.Types.ObjectId, ref: "User", required: true },
-    balance: { type: Number, default: 0, min: [0, "Bakiye negatif olamaz"], validate: intValidator },
+    balance: { type: Number, default: 0, min: [0, m("Bakiye negatif olamaz")], validate: intValidator },
     lifetimePurchased: { type: Number, default: 0 },
     lifetimeSpent: { type: Number, default: 0 },
     status: { type: String, enum: ["active", "frozen"], default: "active" },
@@ -213,7 +214,7 @@ WalletLedgerSchema.index({ idempotencyKey: 1 }, { unique: true });
 WalletLedgerSchema.index({ userId: 1, createdAt: -1 });
 WalletLedgerSchema.index({ creatorId: 1, type: 1, createdAt: -1 });
 WalletLedgerSchema.index({ reversesEntryId: 1 }, { unique: true, partialFilterExpression: { reversesEntryId: { $type: "objectId" } } });
-immutable(WalletLedgerSchema, "Cüzdan defteri");
+immutable(WalletLedgerSchema, "Cüzdan defteri"); // i18n-ignore
 export const WalletLedgerEntry = defineModel<IWalletLedgerEntry>("WalletLedgerEntry", WalletLedgerSchema, "walletLedger");
 
 export const TRANSACTION_KINDS = ["credit_purchase", "subscription", "content_purchase", "custom_request", "tip"] as const;
@@ -401,7 +402,7 @@ const CreatorEarningSchema = new Schema<ICreatorEarning>(
 CreatorEarningSchema.index({ idempotencyKey: 1 }, { unique: true });
 CreatorEarningSchema.index({ creatorId: 1, createdAt: -1 });
 CreatorEarningSchema.index({ creatorId: 1, sourceType: 1, createdAt: -1 });
-immutable(CreatorEarningSchema, "Creator hak ediş defteri");
+immutable(CreatorEarningSchema, "Creator hak ediş defteri"); // i18n-ignore
 export const CreatorEarning = defineModel<ICreatorEarning>("CreatorEarning", CreatorEarningSchema, "creatorEarnings");
 
 export interface IPayoutAccount {

@@ -1,8 +1,10 @@
 import { Skeleton } from "@/components/ui/display";
+import { getT } from "@/i18n/server";
 
-export default function AuthLoading() {
+export default async function AuthLoading() {
+  const t = await getT();
   return (
-    <div className="mx-auto w-full max-w-[1600px] px-4 py-6 sm:px-6 lg:px-[42px] lg:py-8" aria-busy="true" aria-label="Sayfa yükleniyor">
+    <div className="mx-auto w-full max-w-[1600px] px-4 py-6 sm:px-6 lg:px-[42px] lg:py-8" aria-busy="true" aria-label={t("Sayfa yükleniyor")}>
       <div className="grid gap-7 lg:grid-cols-2">
         <Skeleton className="hidden h-[794px] rounded-[28px] lg:block" />
         <div className="rounded-[28px] border border-line bg-white p-8 sm:p-12">

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ChevronRight, Home } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { getT } from "@/i18n/server";
 
 /** Destek/yasal sayfalarının ortak pembe başlığı (referans 66–74: eyebrow + iki tonlu başlık + açıklama). */
 export function SupportHero({
@@ -43,13 +44,15 @@ export function SupportHero({
   );
 }
 
-export function Breadcrumbs({ items }: { items: { label: string; href?: string }[] }) {
+/** `items[].label` çağıran sayfa tarafından çevrilmiş olmalıdır. */
+export async function Breadcrumbs({ items }: { items: { label: string; href?: string }[] }) {
+  const t = await getT();
   return (
-    <nav aria-label="Sayfa yolu" className="mb-5 text-[11px] text-muted">
+    <nav aria-label={t("Sayfa yolu")} className="mb-5 text-[11px] text-muted">
       <ol className="flex flex-wrap items-center gap-1.5">
         <li>
           <Link href="/" className="inline-flex items-center gap-1 hover:text-brand-600">
-            <Home className="size-3" aria-hidden /> Ana Sayfa
+            <Home className="size-3" aria-hidden /> {t("Ana Sayfa")}
           </Link>
         </li>
         {items.map((it, i) => (

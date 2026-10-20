@@ -11,12 +11,18 @@ import { getAgeStatus } from "@/services/auth/age";
 import { getCreatorOnboardingView } from "@/services/auth/creator-onboarding";
 import { listCategories } from "@/services/creators/public";
 import { startCreatorOnboarding } from "@/services/creators/onboarding";
+import { getT } from "@/i18n/server";
+import { m } from "@/i18n/m";
 
-export const metadata: Metadata = { title: "İçerik Üreticisi Karşılama" };
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getT();
+  return { title: t("İçerik Üreticisi Karşılama") };
+}
 
-const PERKS = ["Tamamen senin kontrolün", "Yeni gelir olanakları", "Gerçek üreticiler için tasarlandı"];
+const PERKS = [m("Tamamen senin kontrolün"), m("Yeni gelir olanakları"), m("Gerçek üreticiler için tasarlandı")];
 
 export default async function CreatorOnboardingPage({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
+  const t = await getT();
   const sp = await searchParams;
   const { user } = await requireUser("/onboarding/creator");
 
@@ -32,7 +38,7 @@ export default async function CreatorOnboardingPage({ searchParams }: { searchPa
       await startCreatorOnboarding(user.id);
       view = await getCreatorOnboardingView(user.id);
     } catch (err) {
-      startError = err instanceof AppError ? err.message : "Başvuru şu anda başlatılamadı. Lütfen tekrar dene.";
+      startError = err instanceof AppError ? t(err.template, err.params) : t("Başvuru şu anda başlatılamadı. Lütfen tekrar dene.");
     }
   }
   const categories = view ? await listCategories() : [];
@@ -45,16 +51,16 @@ export default async function CreatorOnboardingPage({ searchParams }: { searchPa
       visual={
         <AuthVisual
           art="portrait"
-          topBadge={<VisualPill icon={<Crown />}>HEYFANS İÇERİK ÜRETİCİSİ STÜDYOSU</VisualPill>}
-          eyebrow="Üretici yolculuğun"
-          lines={[{ text: "Senin kimliğin." }, { text: "Senin AI ikizin.", accent: true }, { text: "Senin kuralların." }]}
-          body="Sana özel, tamamen kontrol edebildiğin AI ikizinle takipçilerine daha yakın ol."
+          topBadge={<VisualPill icon={<Crown />}>{t("HEYFANS İÇERİK ÜRETİCİSİ STÜDYOSU")}</VisualPill>}
+          eyebrow={t("Üretici yolculuğun")}
+          lines={[{ text: t("Senin kimliğin.") }, { text: t("Senin AI ikizin."), accent: true }, { text: t("Senin kuralların.") }]}
+          body={t("Sana özel, tamamen kontrol edebildiğin AI ikizinle takipçilerine daha yakın ol.")}
           footer={
             <ul className="space-y-1.5 text-xs font-bold text-white">
               {PERKS.map((p) => (
                 <li key={p} className="flex items-center gap-2">
                   <Check className="size-3.5 text-brand-400" strokeWidth={3} aria-hidden />
-                  {p}
+                  {t(p)}
                 </li>
               ))}
             </ul>
@@ -65,8 +71,8 @@ export default async function CreatorOnboardingPage({ searchParams }: { searchPa
       {view ? (
         <CreatorOnboarding
           view={view}
-          categories={categories.map((c) => ({ slug: c.slug, name: c.name, icon: c.icon }))}
-          consentTexts={{ persona: CONSENT_TEXTS.ai_twin_persona.text, knowledge: CONSENT_TEXTS.knowledge_use.text, voice: CONSENT_TEXTS.voice_likeness.text }}
+          categories={categories.map((c) => ({ slug: c.slug, name: t(c.name), icon: c.icon }))}
+          consentTexts={{ persona: t(CONSENT_TEXTS.ai_twin_persona.text), knowledge: t(CONSENT_TEXTS.knowledge_use.text), voice: t(CONSENT_TEXTS.voice_likeness.text) }}
         />
       ) : (
         <CreatorStartGate error={startError} />

@@ -15,6 +15,7 @@ import {
   Sparkles,
   type LucideIcon,
 } from "lucide-react";
+import { m } from "@/i18n/m";
 
 const ICONS: Record<string, LucideIcon> = {
   home: Home,
@@ -38,19 +39,20 @@ export function CategoryIcon({ name, className }: { name: string; className?: st
 }
 
 export const CATEGORY_LABELS: Record<string, string> = {
-  "yasam-tarzi": "Yaşam Tarzı",
-  fitness: "Fitness",
-  seyahat: "Seyahat",
-  oyun: "Oyun",
-  muzik: "Müzik",
-  egitim: "Eğitim",
-  moda: "Moda",
-  sanat: "Sanat",
-  "is-dunyasi": "İş Dünyası",
-  wellness: "Wellness",
-  yemek: "Yemek",
-  "ev-yasam": "Ev & Yaşam",
-  "evcil-dostlar": "Evcil Dostlar",
+  "yasam-tarzi": m("Yaşam Tarzı"),
+  fitness: m("Fitness"),
+  seyahat: m("Seyahat"),
+  oyun: m("Oyun"),
+  muzik: m("Müzik"),
+  egitim: m("Eğitim"),
+  moda: m("Moda"),
+  sanat: m("Sanat"),
+  "is-dunyasi": m("İş Dünyası"),
+  wellness: m("Wellness"),
+  yemek: m("Yemek"),
+  "ev-yasam": m("Ev & Yaşam"),
+  "evcil-dostlar": m("Evcil Dostlar"),
 };
 
+/** Kaynak (Türkçe) etiketi döner; gösterirken `t(categoryLabel(slug))` kullanın. */
 export const categoryLabel = (slug: string) => CATEGORY_LABELS[slug] ?? slug;

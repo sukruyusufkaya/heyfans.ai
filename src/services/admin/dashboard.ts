@@ -11,6 +11,7 @@ import { PayoutRequest, PaymentTransaction } from "@/models/monetization";
 import { AnalyticsEvent, SupportTicket } from "@/models/platform";
 import { Appeal, AuditLog, ModerationCase, Report } from "@/models/safety";
 import { daysAgo, loadUsers, monthBuckets, monthKeyExpr, pctDelta } from "./shared";
+import { getT } from "@/i18n/server";
 
 /** Brüt hacme sayılan ödeme durumları: başarıyla tahsil edilmiş (sonradan iade edilenler dahil). */
 export const GROSS_STATUSES = ["succeeded", "partially_refunded", "refunded"] as const;
@@ -33,12 +34,14 @@ export interface QueueItem {
 
 export async function getDashboardData(user: Pick<Actor, "roles" | "adminRole">) {
   await connectDb();
+  const t = await getT();
+  const pd = (a: number, b: number) => pctDelta(a, b, t.locale);
   const allowed = (p: Permission) => can(user, p);
   const now = new Date();
   const d30 = daysAgo(30, now);
   const d60 = daysAgo(60, now);
   const d1 = daysAgo(1, now);
-  const months = monthBuckets(12, now);
+  const months = monthBuckets(12, now, t.locale);
   const firstStart = months[0]!.start;
 
   const [
@@ -107,7 +110,7 @@ export async function getDashboardData(user: Pick<Actor, "roles" | "adminRole">)
     finance = {
       gross30: g30[0]?.total ?? 0,
       grossPrev30: gPrev[0]?.total ?? 0,
-      grossDelta: pctDelta(g30[0]?.total ?? 0, gPrev[0]?.total ?? 0),
+      grossDelta: pd(g30[0]?.total ?? 0, gPrev[0]?.total ?? 0),
       count30: g30[0]?.n ?? 0,
       testCount,
       byKind: byKind.map((k) => ({ kind: k._id, value: k.total })),
@@ -126,13 +129,13 @@ export async function getDashboardData(user: Pick<Actor, "roles" | "adminRole">)
     if (!allowed(perm)) return;
     jobs.push(counter().then((count) => void queue.push({ ...item, count })));
   };
-  add("creators.read", { key: "applications", label: "Creator doğrulama", note: "Yeni başvurular", href: "/admin/creators?status=pending_review", tone: "warn" }, () => CreatorApplication.countDocuments({ status: { $in: ["submitted", "in_review"] } }));
-  add("twins.read", { key: "twinVersions", label: "AI ikizi onayı", note: "İncelenecek sürümler", href: "/admin/ai-twins?status=pending_review", tone: "warn" }, () => AiTwinVersion.countDocuments({ status: "pending_review" }));
-  add("moderation.read", { key: "cases", label: "Moderasyon kuyruğu", note: "İnceleme bekleyen vakalar", href: "/admin/moderation", tone: "danger" }, () => ModerationCase.countDocuments({ status: { $in: ["open", "in_review", "escalated"] } }));
-  add("reports.read", { key: "reports", label: "Kullanıcı bildirimleri", note: "Açık raporlar", href: "/admin/reports", tone: "warn" }, () => Report.countDocuments({ status: { $in: ["open", "triaged"] } }));
-  add("reports.read", { key: "appeals", label: "İtirazlar", note: "Açık başvurular", href: "/admin/reports?tab=appeals", tone: "warn" }, () => Appeal.countDocuments({ status: { $in: ["open", "in_review"] } }));
-  add("finance.read", { key: "payouts", label: "Ödeme talepleri", note: "Creator ödemeleri", href: "/admin/finance?tab=payouts", tone: "pink" }, () => PayoutRequest.countDocuments({ status: { $in: ["requested", "approved", "processing"] } }));
-  add("support.read", { key: "tickets", label: "Destek talepleri", note: "Yanıt bekleyen", href: "/admin/reports?tab=support", tone: "gray" }, () => SupportTicket.countDocuments({ status: { $in: ["open", "pending"] } }));
+  add("creators.read", { key: "applications", label: t("Creator doğrulama"), note: t("Yeni başvurular"), href: "/admin/creators?status=pending_review", tone: "warn" }, () => CreatorApplication.countDocuments({ status: { $in: ["submitted", "in_review"] } }));
+  add("twins.read", { key: "twinVersions", label: t("AI ikizi onayı"), note: t("İncelenecek sürümler"), href: "/admin/ai-twins?status=pending_review", tone: "warn" }, () => AiTwinVersion.countDocuments({ status: "pending_review" }));
+  add("moderation.read", { key: "cases", label: t("Moderasyon kuyruğu"), note: t("İnceleme bekleyen vakalar"), href: "/admin/moderation", tone: "danger" }, () => ModerationCase.countDocuments({ status: { $in: ["open", "in_review", "escalated"] } }));
+  add("reports.read", { key: "reports", label: t("Kullanıcı bildirimleri"), note: t("Açık raporlar"), href: "/admin/reports", tone: "warn" }, () => Report.countDocuments({ status: { $in: ["open", "triaged"] } }));
+  add("reports.read", { key: "appeals", label: t("İtirazlar"), note: t("Açık başvurular"), href: "/admin/reports?tab=appeals", tone: "warn" }, () => Appeal.countDocuments({ status: { $in: ["open", "in_review"] } }));
+  add("finance.read", { key: "payouts", label: t("Ödeme talepleri"), note: t("Creator ödemeleri"), href: "/admin/finance?tab=payouts", tone: "pink" }, () => PayoutRequest.countDocuments({ status: { $in: ["requested", "approved", "processing"] } }));
+  add("support.read", { key: "tickets", label: t("Destek talepleri"), note: t("Yanıt bekleyen"), href: "/admin/reports?tab=support", tone: "gray" }, () => SupportTicket.countDocuments({ status: { $in: ["open", "pending"] } }));
   await Promise.all(jobs);
   const order = ["applications", "twinVersions", "cases", "reports", "appeals", "payouts", "tickets"];
   queue.sort((a, b) => order.indexOf(a.key) - order.indexOf(b.key));
@@ -150,7 +153,7 @@ export async function getDashboardData(user: Pick<Actor, "roles" | "adminRole">)
     recent = rows.map((r) => ({
       id: r._id.toString(),
       action: r.action,
-      actor: r.actorId ? actors.get(r.actorId.toString())?.name ?? "Silinmiş kullanıcı" : "Sistem",
+      actor: r.actorId ? actors.get(r.actorId.toString())?.name ?? t("Silinmiş kullanıcı") : t("Sistem"),
       targetType: r.targetType ?? null,
       severity: r.severity,
       at: r.createdAt,
@@ -172,10 +175,10 @@ export async function getDashboardData(user: Pick<Actor, "roles" | "adminRole">)
   return {
     kpis: {
       totalUsers,
-      usersDelta: pctDelta(users30, usersPrev30),
+      usersDelta: pd(users30, usersPrev30),
       users30,
       approvedCreators,
-      creatorsDelta: pctDelta(creators30, creatorsPrev30),
+      creatorsDelta: pd(creators30, creatorsPrev30),
       creators30,
       liveTwins,
       twinsTotal,

@@ -13,10 +13,14 @@ import { Card } from "@/components/ui/card";
 import { Avatar, EmptyState, Pagination } from "@/components/ui/display";
 import { requireUser } from "@/lib/auth/session";
 import { usernameSchema } from "@/lib/validation/common";
-import { formatCompact } from "@/lib/utils";
 import { getCreatorGallery } from "@/services/fan/posts";
+import { getFormatters, getT } from "@/i18n/server";
+import { m } from "@/i18n/m";
 
-export const metadata: Metadata = { title: "İçerik Galerisi" };
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getT();
+  return { title: t("İçerik Galerisi") };
+}
 export const dynamic = "force-dynamic";
 
 const searchSchema = z.object({
@@ -25,16 +29,18 @@ const searchSchema = z.object({
 });
 
 const TABS = [
-  { key: "all", label: "Tüm içerikler" },
-  { key: "photo", label: "Fotoğraflar" },
-  { key: "video", label: "Videolar" },
-  { key: "ai", label: "AI görselleri" },
-  { key: "audio", label: "Ses kayıtları" },
-  { key: "text", label: "Yazılar" },
+  { key: "all", label: m("Tüm içerikler") },
+  { key: "photo", label: m("Fotoğraflar") },
+  { key: "video", label: m("Videolar") },
+  { key: "ai", label: m("AI görselleri") },
+  { key: "audio", label: m("Ses kayıtları") },
+  { key: "text", label: m("Yazılar") },
 ] as const;
 
 export default async function GalleryPage({ params, searchParams }: { params: Promise<{ username: string }>; searchParams: Promise<Record<string, string | string[] | undefined>> }) {
   const { username: raw } = await params;
+  const t = await getT();
+  const { formatCompact } = await getFormatters();
   const parsedName = usernameSchema.safeParse(raw);
   if (!parsedName.success) notFound();
   const { user } = await requireUser(`/creators/${raw}/content`);
@@ -47,14 +53,14 @@ export default async function GalleryPage({ params, searchParams }: { params: Pr
   return (
     <div className="mx-auto max-w-[1320px]">
       <div className="mb-5">
-        <p className="eyebrow mb-2">HEYFANS / FAN EXPERIENCE</p>
-        <h1 className="text-[26px] font-black leading-[1.08] tracking-[-0.035em] text-ink sm:text-[30px]">İçerik Galerisi</h1>
-        <p className="mt-2 text-xs text-muted">{g.creator.displayName} adlı içerik üreticisinin fotoğraf, video ve özel deneyimlerini keşfet.</p>
+        <p className="eyebrow mb-2">{t("HEYFANS / FAN EXPERIENCE")}</p>
+        <h1 className="text-[26px] font-black leading-[1.08] tracking-[-0.035em] text-ink sm:text-[30px]">{t("İçerik Galerisi")}</h1>
+        <p className="mt-2 text-xs text-muted">{t("{name} adlı içerik üreticisinin fotoğraf, video ve özel deneyimlerini keşfet.", { name: g.creator.displayName })}</p>
       </div>
 
       <Card className="flex flex-col gap-4 sm:flex-row sm:items-center">
         <div className="flex min-w-0 flex-1 items-center gap-4">
-          <Link href={`/creators/${g.creator.username}`} aria-label={`${g.creator.displayName} profili`}>
+          <Link href={`/creators/${g.creator.username}`} aria-label={t("{name} profili", { name: g.creator.displayName })}>
             <Avatar src={g.creator.avatarUrl} name={g.creator.displayName} size={64} />
           </Link>
           <div className="min-w-0">
@@ -62,7 +68,8 @@ export default async function GalleryPage({ params, searchParams }: { params: Pr
               {g.creator.displayName} {g.creator.verified && <Verified className="size-5" />}
             </Link>
             <p className="mt-1 text-xs text-muted">
-              {formatCompact(g.creator.followers)} takipçi{g.creator.categories.length ? ` · ${g.creator.categories.slice(0, 2).map(categoryLabel).join(" & ")}` : ""}
+              {t("{count} takipçi", { count: formatCompact(g.creator.followers) })}
+              {g.creator.categories.length ? ` · ${g.creator.categories.slice(0, 2).map((c) => t(categoryLabel(c))).join(" & ")}` : ""}
             </p>
           </div>
         </div>
@@ -70,26 +77,26 @@ export default async function GalleryPage({ params, searchParams }: { params: Pr
           {!g.creator.isOwner && <FollowButton creatorId={g.creator.id} initial={g.following} authed />}
           <Button asChild variant="outline" shape="pill">
             <Link href={`/creators/${g.creator.username}/membership`}>
-              <Crown /> Üyelik planları
+              <Crown /> {t("Üyelik planları")}
             </Link>
           </Button>
           <Button asChild shape="pill">
             <Link href={`/chat/${g.creator.username}`}>
-              <MessageCircle /> AI ikiziyle sohbet et
+              <MessageCircle /> {t("AI ikiziyle sohbet et")}
             </Link>
           </Button>
         </div>
       </Card>
 
       <Card padded={false} className="mt-4 flex flex-col gap-3 p-3 sm:flex-row sm:items-center sm:justify-between">
-        <LinkTabs label="İçerik türü" items={TABS.map((t) => ({ href: buildHref(base, { type: t.key === "all" ? null : t.key }), label: t.label, active: sp.type === t.key }))} />
-        <p className="shrink-0 px-1 text-[11px] font-bold text-muted">Toplam {g.totalAll} paylaşım</p>
+        <LinkTabs label={t("İçerik türü")} items={TABS.map((tab) => ({ href: buildHref(base, { type: tab.key === "all" ? null : tab.key }), label: t(tab.label), active: sp.type === tab.key }))} />
+        <p className="shrink-0 px-1 text-[11px] font-bold text-muted">{t("Toplam {count} paylaşım", { count: g.totalAll })}</p>
       </Card>
 
       {g.featured.length > 0 && (
         <section className="mt-6" aria-labelledby="featured">
           <h2 id="featured" className="mb-3 text-lg font-extrabold tracking-[-0.02em]">
-            Öne çıkan içerikler
+            {t("Öne çıkan içerikler")}
           </h2>
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
             {g.featured.map((p) => (
@@ -101,7 +108,7 @@ export default async function GalleryPage({ params, searchParams }: { params: Pr
 
       <section className="mt-6" aria-labelledby="all-content">
         <h2 id="all-content" className="mb-3 text-lg font-extrabold tracking-[-0.02em]">
-          {sp.type === "all" ? "Tüm içerikler" : (TABS.find((t) => t.key === sp.type)?.label ?? "İçerikler")}
+          {sp.type === "all" ? t("Tüm içerikler") : t(TABS.find((tab) => tab.key === sp.type)?.label ?? m("İçerikler"))}
         </h2>
         {g.items.length ? (
           <>
@@ -116,8 +123,8 @@ export default async function GalleryPage({ params, searchParams }: { params: Pr
           <Card>
             <EmptyState
               icon={<ImageIcon />}
-              title={g.totalAll ? "Bu türde içerik bulunamadı" : "Henüz içerik paylaşılmamış"}
-              description={g.totalAll ? "Başka bir içerik türünü deneyebilirsin." : `${g.creator.displayName} yeni içerikler paylaştığında burada görünecek.`}
+              title={g.totalAll ? t("Bu türde içerik bulunamadı") : t("Henüz içerik paylaşılmamış")}
+              description={g.totalAll ? t("Başka bir içerik türünü deneyebilirsin.") : t("{name} yeni içerikler paylaştığında burada görünecek.", { name: g.creator.displayName })}
             />
           </Card>
         )}

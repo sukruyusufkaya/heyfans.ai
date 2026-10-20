@@ -1,7 +1,10 @@
 import { Link2 } from "lucide-react";
+import { m } from "@/i18n/m";
 
-const LABELS: Record<string, string> = { instagram: "Instagram", tiktok: "TikTok", youtube: "YouTube", x: "X (Twitter)", twitch: "Twitch", kick: "Kick", website: "Web sitesi" };
+// i18n-ignore: platform adları marka adıdır, yalnız "Web sitesi" çevrilir.
+const LABELS: Record<string, string> = { instagram: "Instagram", tiktok: "TikTok", youtube: "YouTube", x: "X (Twitter)", twitch: "Twitch", kick: "Kick", website: m("Web sitesi") };
 
+/** Kaynak etiketi döner; gösterirken `t(socialLabel(platform))` kullanın. */
 export function socialLabel(platform: string) {
   return LABELS[platform] ?? platform;
 }

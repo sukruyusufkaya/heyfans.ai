@@ -6,6 +6,7 @@ import { CONTENT_STATUSES, CONTENT_TYPES, ContentItem, MediaAsset, type IContent
 import { listCreatorContent, setContentStatus } from "@/services/content/manage";
 import { mediaUrl } from "@/services/media/media";
 import { studioCreator } from "./context";
+import { getT } from "@/i18n/server";
 
 export const libraryQuerySchema = z.object({
   status: z.enum(["all", ...CONTENT_STATUSES]).catch("all"),
@@ -25,9 +26,10 @@ export interface AssetView {
 
 async function assetViews(ids: IMediaAsset["_id"][]) {
   if (!ids.length) return new Map<string, AssetView>();
+  const t = await getT();
   const assets = await MediaAsset.find({ _id: { $in: ids }, status: "ready" }).lean<IMediaAsset[]>();
   const out = new Map<string, AssetView>();
-  for (const a of assets) out.set(a._id.toString(), { assetId: a._id.toString(), url: await mediaUrl(a), kind: a.kind, name: a.originalName ?? "Dosya", sizeBytes: a.sizeBytes });
+  for (const a of assets) out.set(a._id.toString(), { assetId: a._id.toString(), url: await mediaUrl(a), kind: a.kind, name: a.originalName ?? t("Dosya"), sizeBytes: a.sizeBytes });
   return out;
 }
 
@@ -84,7 +86,7 @@ export async function publishDueScheduled(userId: string, now = new Date()) {
   let published = 0;
   for (const d of due) {
     try {
-      await setContentStatus(userId, d._id.toString(), "published");
+      await setContentStatus(userId, d._id.toString(), "published"); // i18n-ignore (durum kodu)
       published++;
     } catch (e) {
       console.error("[studio:scheduled-publish]", d._id.toString(), e);

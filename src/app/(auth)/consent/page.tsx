@@ -9,11 +9,16 @@ import { connectDb } from "@/lib/db/mongo";
 import { oid } from "@/lib/validation/common";
 import { User } from "@/models/identity";
 import { resolvePostLoginDestination } from "@/services/auth/post-login";
+import { getT } from "@/i18n/server";
 
-export const metadata: Metadata = { title: "Şartları Onayla", robots: { index: false } };
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getT();
+  return { title: t("Şartları Onayla"), robots: { index: false } };
+}
 
 /** Google/Apple ile kayıt olanlar için şart onayı. Onay zaten varsa kullanıcı akışına devam eder. */
 export default async function ConsentPage({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
+  const t = await getT();
   const sp = await searchParams;
   const next = safeNext(firstParam(sp.next));
   const { user } = await requireUser("/consent");
@@ -29,10 +34,10 @@ export default async function ConsentPage({ searchParams }: { searchParams: Prom
       visual={
         <AuthVisual
           art="portrait"
-          eyebrow="Güvenli bir topluluk"
-          lines={[{ text: "Şeffaf kurallar," }, { text: "güvenli bağlantılar.", accent: true }]}
-          body="HEYFANS'ta her şey açık rıza ve şeffaflık üzerine kurulu. Kuralları bir kez onayla, keşfetmeye başla."
-          footer={<VisualNote icon={<ShieldCheck />}>Verilerin satılmaz, sohbetlerin korunur.</VisualNote>}
+          eyebrow={t("Güvenli bir topluluk")}
+          lines={[{ text: t("Şeffaf kurallar,") }, { text: t("güvenli bağlantılar."), accent: true }]}
+          body={t("HEYFANS'ta her şey açık rıza ve şeffaflık üzerine kurulu. Kuralları bir kez onayla, keşfetmeye başla.")}
+          footer={<VisualNote icon={<ShieldCheck />}>{t("Verilerin satılmaz, sohbetlerin korunur.")}</VisualNote>}
         />
       }
     >

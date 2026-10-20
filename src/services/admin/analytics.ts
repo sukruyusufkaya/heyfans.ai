@@ -7,6 +7,8 @@ import { AnalyticsEvent, ANALYTICS_EVENT_TYPES } from "@/models/platform";
 import { Conversation, Message } from "@/models/social";
 import { GROSS_STATUSES, txDateMatch } from "./dashboard";
 import { dayKeyExpr, monthBuckets, monthKeyExpr, pctDelta, TZ } from "./shared";
+import { getT } from "@/i18n/server";
+import { LOCALE_META } from "@/i18n/config";
 
 export const ANALYTICS_RANGES = { "30": 30, "90": 90, "365": 365 } as const;
 export type AnalyticsRangeKey = keyof typeof ANALYTICS_RANGES;
@@ -31,10 +33,12 @@ async function activeUserIds(from: Date, to: Date) {
 
 export async function getAnalyticsData(rangeDays: number, metric: Metric) {
   await connectDb();
+  const t = await getT();
+  const pd = (a: number, b: number) => pctDelta(a, b, t.locale);
   const now = new Date();
   const from = new Date(now.getTime() - rangeDays * 86_400_000);
   const prevFrom = new Date(from.getTime() - rangeDays * 86_400_000);
-  const months = monthBuckets(12, now);
+  const months = monthBuckets(12, now, t.locale);
   const firstMonth = months[0]!.start;
 
   const [activeNow, activePrev, signupsNow, signupsPrev, payersNow, grossNow, intents, eventsNow, eventsPrev, repeat, anonNow] = await Promise.all([
@@ -106,9 +110,9 @@ export async function getAnalyticsData(rangeDays: number, metric: Metric) {
   const chatSet = new Set([...chatConv, ...chatEvents].map(String));
   const paySet = new Set(payers.map(String));
   const funnel = [
-    { key: "signup", label: "Kayıt olan kullanıcı", n: cohortIds.length },
-    { key: "chat", label: "İlk sohbetini başlatan", n: chatSet.size },
-    { key: "purchase", label: "İlk ödemesini yapan", n: paySet.size },
+    { key: "signup", label: t("Kayıt olan kullanıcı"), n: cohortIds.length },
+    { key: "chat", label: t("İlk sohbetini başlatan"), n: chatSet.size },
+    { key: "purchase", label: t("İlk ödemesini yapan"), n: paySet.size },
   ];
 
   // Haftalık kohort tutundurma (son 8 hafta): kayıt haftası × sohbet aktivitesi
@@ -144,7 +148,7 @@ export async function getAnalyticsData(rangeDays: number, metric: Metric) {
     }
   }
   const currentIdx = WEEKS - 1;
-  const fmt = new Intl.DateTimeFormat("tr-TR", { day: "2-digit", month: "short", timeZone: TZ });
+  const fmt = new Intl.DateTimeFormat(LOCALE_META[t.locale].intl, { day: "2-digit", month: "short", timeZone: TZ });
   const cohortRows = cohorts.map((c, i) => {
     const size = c.ids.size;
     const cells: (number | null)[] = [];
@@ -162,7 +166,7 @@ export async function getAnalyticsData(rangeDays: number, metric: Metric) {
       for (const id of c.ids) if (activity.get(id)?.has(wi)) active++;
       cells.push(Math.round((active / size) * 100));
     }
-    return { label: `${fmt.format(c.start)} haftası`, size, cells };
+    return { label: t("{date} haftası", { date: fmt.format(c.start) }), size, cells };
   });
   // Ağırlıklı 1. hafta tutundurma
   let w1Num = 0;
@@ -177,7 +181,7 @@ export async function getAnalyticsData(rangeDays: number, metric: Metric) {
 
   const evNow = new Map(eventsNow.map((e) => [e._id, e.n]));
   const evPrev = new Map(eventsPrev.map((e) => [e._id, e.n]));
-  const eventRows = ANALYTICS_EVENT_TYPES.map((t) => ({ type: t, count: evNow.get(t) ?? 0, delta: pctDelta(evNow.get(t) ?? 0, evPrev.get(t) ?? 0) })).filter((e) => e.count > 0 || (evPrev.get(e.type) ?? 0) > 0).sort((a, b) => b.count - a.count);
+  const eventRows = ANALYTICS_EVENT_TYPES.map((ty) => ({ type: ty, count: evNow.get(ty) ?? 0, delta: pd(evNow.get(ty) ?? 0, evPrev.get(ty) ?? 0) })).filter((e) => e.count > 0 || (evPrev.get(e.type) ?? 0) > 0).sort((a, b) => b.count - a.count);
 
   const eventsTotal = eventsNow.reduce((a, e) => a + e.n, 0);
   const active = activeNow.length;
@@ -188,9 +192,9 @@ export async function getAnalyticsData(rangeDays: number, metric: Metric) {
   return {
     kpis: {
       active,
-      activeDelta: pctDelta(active, activePrev.length),
+      activeDelta: pd(active, activePrev.length),
       signups: signupsNow,
-      signupsDelta: pctDelta(signupsNow, signupsPrev),
+      signupsDelta: pd(signupsNow, signupsPrev),
       conversionPct: activeUnion ? Math.round((payers30 / activeUnion) * 1000) / 10 : null,
       payers: payers30,
       arppu: payers30 ? Math.round(gross / payers30) : null,

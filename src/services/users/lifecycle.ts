@@ -22,7 +22,7 @@ export async function onUserCreated({ userId, intent }: { userId: string; intent
         userId: uid,
         amount: settings.credits.signupBonus,
         type: "bonus",
-        description: "Hoş geldin bonusu",
+        description: "Hoş geldin bonusu", // i18n-ignore (defter açıklaması saklanır)
         idempotencyKey: `signup_bonus:${userId}`,
       });
     }

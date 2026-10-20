@@ -5,10 +5,15 @@ import { AgeVerification } from "@/features/auth/age-form";
 import { firstParam, safeNext } from "@/features/auth/next-url";
 import { requireUser } from "@/lib/auth/session";
 import { getAgeStatus } from "@/services/auth/age";
+import { getT } from "@/i18n/server";
 
-export const metadata: Metadata = { title: "Yaş Doğrulama" };
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getT();
+  return { title: t("Yaş Doğrulama") };
+}
 
 export default async function AgeVerificationPage({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
+  const t = await getT();
   const sp = await searchParams;
   const next = safeNext(firstParam(sp.next));
   const { user } = await requireUser("/age-verification");
@@ -24,10 +29,10 @@ export default async function AgeVerificationPage({ searchParams }: { searchPara
       visual={
         <AuthVisual
           art="portrait-left"
-          eyebrow="Güvenli bir topluluk"
-          lines={[{ text: "Yalnızca" }, { text: "yetişkinler için.", accent: true }]}
-          body="HEYFANS 18 yaşını doldurmuş kişilere hizmet verir. Bu adım, topluluğu ve seni korumamıza yardım eder."
-          footer={<VisualNote icon={<ShieldCheck />}>Özel. Güvenli. Tam sana göre.</VisualNote>}
+          eyebrow={t("Güvenli bir topluluk")}
+          lines={[{ text: t("Yalnızca") }, { text: t("yetişkinler için."), accent: true }]}
+          body={t("HEYFANS 18 yaşını doldurmuş kişilere hizmet verir. Bu adım, topluluğu ve seni korumamıza yardım eder.")}
+          footer={<VisualNote icon={<ShieldCheck />}>{t("Özel. Güvenli. Tam sana göre.")}</VisualNote>}
         />
       }
     >

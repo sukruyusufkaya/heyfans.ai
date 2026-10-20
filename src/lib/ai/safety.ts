@@ -1,3 +1,6 @@
+import { m } from "@/i18n/m";
+import type { Translator } from "@/i18n/translate";
+
 /**
  * Safety Engine — platform politikası. Creator sınırları bunu aşamaz.
  * Kural tabanlı ilk katman (her ortamda çalışır); sağlayıcı moderasyonu eklenebilir.
@@ -52,29 +55,43 @@ const PII_PATTERNS: RegExp[] = [
 
 const OFF_PLATFORM = /\b(whatsapp|telegram|snapchat|onlyfans|instagram(dan)?\s*yaz|dm\s*at|numarami\s*ver|bulusalim|bulusmak|adresim|evime\s*gel|disarida\s*gorus)\b/;
 
-export const CRISIS_MESSAGE =
-  "Bunu paylaştığın için teşekkür ederim. Ben bir AI ikiziyim ve profesyonel destek veremem; ama yalnız değilsin. Türkiye'de acil durumlarda 112'yi arayabilirsin. Kendini güvende hissetmiyorsan lütfen hemen güvendiğin biriyle ya da bir uzmanla konuş.";
+/** Kaynak dildeki (Türkçe) yanıtlar çeviri anahtarıdır; `opts.t` verilirse isteğin diline çevrilir, verilmezse Türkçe döner. */
+const MESSAGES = {
+  blocked: m("Bu konu platform kurallarımız gereği konuşulamaz."),
+  refused: m("Bu isteğe yardımcı olamam; topluluk kurallarımıza aykırı."),
+  adultOff: m("Cinsel içerikli sohbetler bu platformda kapalı. Başka bir konuda konuşalım mı?"),
+  masked: m("[gizlendi]"),
+  impersonation: m("Ben bir AI ikiziyim; gerçek kişi değilim. Bu konuda yanıt veremem ama seninle başka bir şey konuşmayı çok isterim."),
+  offPlatform: m("(Not: Güvenliğin için iletişim HEYFANS içinde kalmalı.)"),
+};
+const identity = (source: string) => source;
 
-export function checkInput(text: string, opts: { adultContentEnabled: boolean }): SafetyVerdict {
+export const CRISIS_MESSAGE = m(
+  "Bunu paylaştığın için teşekkür ederim. Ben bir AI ikiziyim ve profesyonel destek veremem; ama yalnız değilsin. Türkiye'de acil durumlarda 112'yi arayabilirsin. Kendini güvende hissetmiyorsan lütfen hemen güvendiğin biriyle ya da bir uzmanla konuş.",
+);
+
+export function checkInput(text: string, opts: { adultContentEnabled: boolean; t?: Translator }): SafetyVerdict {
+  const tr = opts.t ?? identity;
   const t = normalize(text);
   const cats = new Set<SafetyCategory>();
   for (const r of RULES) if (r.patterns.some((p) => p.test(t))) cats.add(r.cat);
-  if (cats.has("minor_safety")) return { action: "block", categories: [...cats], userMessage: "Bu konu platform kurallarımız gereği konuşulamaz." };
-  if (cats.has("self_harm")) return { action: "crisis", categories: [...cats], userMessage: CRISIS_MESSAGE };
-  if (cats.has("violence") || cats.has("illegal")) return { action: "block", categories: [...cats], userMessage: "Bu isteğe yardımcı olamam; topluluk kurallarımıza aykırı." };
+  if (cats.has("minor_safety")) return { action: "block", categories: [...cats], userMessage: tr(MESSAGES.blocked) };
+  if (cats.has("self_harm")) return { action: "crisis", categories: [...cats], userMessage: tr(CRISIS_MESSAGE) };
+  if (cats.has("violence") || cats.has("illegal")) return { action: "block", categories: [...cats], userMessage: tr(MESSAGES.refused) };
   if (cats.has("sexual") && !opts.adultContentEnabled)
-    return { action: "rewrite", categories: [...cats], userMessage: "Cinsel içerikli sohbetler bu platformda kapalı. Başka bir konuda konuşalım mı?" };
+    return { action: "rewrite", categories: [...cats], userMessage: tr(MESSAGES.adultOff) };
   return { action: "allow", categories: [...cats] };
 }
 
 /** AI çıktısı: kişisel veri/platform dışı iletişim maskelenir, insan olduğunu iddia eden ifadeler engellenir. */
-export function checkOutput(text: string, opts: { adultContentEnabled: boolean }): SafetyVerdict & { text: string } {
+export function checkOutput(text: string, opts: { adultContentEnabled: boolean; t?: Translator }): SafetyVerdict & { text: string } {
+  const tr = opts.t ?? identity;
   let out = text;
   const cats = new Set<SafetyCategory>();
   for (const p of PII_PATTERNS) {
     if (p.test(out)) {
       cats.add("personal_data");
-      out = out.replace(p, "[gizlendi]");
+      out = out.replace(p, tr(MESSAGES.masked));
     }
     p.lastIndex = 0;
   }
@@ -86,11 +103,11 @@ export function checkOutput(text: string, opts: { adultContentEnabled: boolean }
     return {
       action: "rewrite",
       categories: [...cats],
-      text: "Ben bir AI ikiziyim; gerçek kişi değilim. Bu konuda yanıt veremem ama seninle başka bir şey konuşmayı çok isterim.",
+      text: tr(MESSAGES.impersonation),
     };
   }
   if (cats.has("off_platform")) {
-    out += "\n\n(Not: Güvenliğin için iletişim HEYFANS içinde kalmalı.)";
+    out += `\n\n${tr(MESSAGES.offPlatform)}`;
   }
   return { action: cats.size ? "rewrite" : "allow", categories: [...cats], text: out };
 }

@@ -1,3 +1,5 @@
+"use client";
+import { useT } from "@/i18n/client";
 import { cn, initials } from "@/lib/utils";
 
 const PALETTES = [
@@ -37,6 +39,7 @@ export function CreatorPhoto({
   priority?: boolean;
   sizes?: string;
 }) {
+  const t = useT();
   if (src) {
     return (
       // eslint-disable-next-line @next/next/no-img-element
@@ -52,7 +55,7 @@ export function CreatorPhoto({
   return (
     <span
       role="img"
-      aria-label={`${name} için temsili görsel`}
+      aria-label={t("{name} için temsili görsel", { name })}
       className={cn("relative block size-full overflow-hidden [container-type:inline-size]", rounded, className)}
       style={{
         background: `radial-gradient(circle at ${x1}% ${y1}%, ${a} 0%, transparent 48%), radial-gradient(circle at ${x2}% ${y2}%, ${b} 0%, transparent 55%), linear-gradient(150deg, ${a}, ${b} 55%, ${c})`,
@@ -77,6 +80,7 @@ export function CreatorPhoto({
 
 /** İçerik kapağı (medya yoksa türüne göre temsili). */
 export function ContentCover({ src, title, type, locked, className }: { src?: string | null; title: string; type: string; locked?: boolean; className?: string }) {
+  const t = useT();
   if (src && !locked) {
     // eslint-disable-next-line @next/next/no-img-element
     return <img src={src} alt={title} loading="lazy" className={cn("size-full object-cover", className)} />;
@@ -86,7 +90,7 @@ export function ContentCover({ src, title, type, locked, className }: { src?: st
   return (
     <span
       role="img"
-      aria-label={locked ? `${title} (kilitli içerik)` : title}
+      aria-label={locked ? t("{title} (kilitli içerik)", { title }) : title}
       className={cn("relative block size-full overflow-hidden", className)}
       style={{ background: `linear-gradient(${120 + (h % 90)}deg, ${a}, ${b} 60%, ${c})` }}
     >

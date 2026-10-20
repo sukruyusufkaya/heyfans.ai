@@ -168,7 +168,7 @@ export async function deleteCategory(actor: AdminActor, id: string, reason: stri
   const c = await Category.findById(oid(id));
   if (!c) throw new NotFoundError("Kategori bulunamadı.");
   const [creators, content] = await Promise.all([CreatorProfile.countDocuments({ categories: c.slug }), ContentItem.countDocuments({ categories: c.slug })]);
-  if (creators + content > 0) throw new ConflictError(`Kategori ${creators} creator ve ${content} içerikte kullanılıyor; silmek yerine pasife alın.`, "category_in_use");
+  if (creators + content > 0) throw new AppError("Kategori {creators} creator ve {content} içerikte kullanılıyor; silmek yerine pasife alın.", "category_in_use", 409, { params: { creators, content } });
   await c.deleteOne();
   await audit({ actorId: actor.id, actorRole: actor.adminRole, action: "category.delete", targetType: "Category", targetId: id, reason, severity: "critical", metadata: { slug: c.slug } });
 }
@@ -237,7 +237,7 @@ export async function saveCampaign(actor: AdminActor, input: CampaignInput, reas
   if (input.id) {
     const c = await Campaign.findById(oid(input.id));
     if (!c) throw new NotFoundError("Kampanya bulunamadı.");
-    if (c.status !== input.status && !CAMPAIGN_FLOW[c.status].includes(input.status)) throw new ConflictError(`Geçersiz durum geçişi: ${c.status} → ${input.status}`);
+    if (c.status !== input.status && !CAMPAIGN_FLOW[c.status].includes(input.status)) throw new AppError("Geçersiz durum geçişi: {from} → {to}", "conflict", 409, { params: { from: c.status, to: input.status } });
     const before = { name: c.name, status: c.status, type: c.type };
     if (c.status !== input.status) c.history.push({ from: c.status, to: input.status, by: oid(actor.id), note: reason, at: new Date() });
     c.name = input.name.trim();

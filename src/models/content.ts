@@ -1,5 +1,6 @@
 import { Schema } from "mongoose";
 import { baseOptions, defineModel, MoneySchema, StatusEventSchema, type Money, type ObjectId, type StatusEvent } from "./_shared";
+import { m } from "@/i18n/m";
 
 export interface ICategory {
   _id: ObjectId;
@@ -168,7 +169,7 @@ const ContentItemSchema = new Schema<IContentItem>(
 );
 ContentItemSchema.pre("validate", function () {
   if (this.access === "purchase" && (!this.price || this.price.amountMinor <= 0)) {
-    this.invalidate("price", "Satın alma gerektiren içerik için fiyat zorunlu");
+    this.invalidate("price", m("Satın alma gerektiren içerik için fiyat zorunlu"));
   }
 });
 ContentItemSchema.index({ creatorId: 1, status: 1, publishedAt: -1 });

@@ -34,6 +34,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import type { Permission } from "@/lib/permissions";
+import { m } from "@/i18n/m";
 
 export interface NavItem {
   href: string;
@@ -50,162 +51,162 @@ export interface NavGroup {
 }
 
 export const PUBLIC_NAV: NavItem[] = [
-  { href: "/", label: "Ana Sayfa", match: "exact" },
-  { href: "/explore", label: "Keşfet" },
-  { href: "/trending", label: "Trendler" },
-  { href: "/categories", label: "Kategoriler" },
-  { href: "/how-it-works", label: "Nasıl Çalışır" },
-  { href: "/for-creators", label: "İçerik Üreticileri İçin" },
-  { href: "/pricing", label: "Fiyatlandırma" },
-  { href: "/about", label: "Hakkımızda" },
+  { href: "/", label: m("Ana Sayfa"), match: "exact" },
+  { href: "/explore", label: m("Keşfet") },
+  { href: "/trending", label: m("Trendler") },
+  { href: "/categories", label: m("Kategoriler") },
+  { href: "/how-it-works", label: m("Nasıl Çalışır") },
+  { href: "/for-creators", label: m("İçerik Üreticileri İçin") },
+  { href: "/pricing", label: m("Fiyatlandırma") },
+  { href: "/about", label: m("Hakkımızda") },
 ];
 
 export const FAN_TOP_NAV: NavItem[] = [
-  { href: "/app", label: "Ana Sayfa", match: "exact" },
-  { href: "/explore", label: "Keşfet" },
-  { href: "/app/following", label: "Takip Ettiklerim" },
-  { href: "/app/favorites", label: "Favorilerim" },
-  { href: "/chat", label: "Sohbetler" },
-  { href: "/app/subscriptions", label: "Üyeliklerim" },
+  { href: "/app", label: m("Ana Sayfa"), match: "exact" },
+  { href: "/explore", label: m("Keşfet") },
+  { href: "/app/following", label: m("Takip Ettiklerim") },
+  { href: "/app/favorites", label: m("Favorilerim") },
+  { href: "/chat", label: m("Sohbetler") },
+  { href: "/app/subscriptions", label: m("Üyeliklerim") },
 ];
 
 export const FAN_SIDEBAR: NavItem[] = [
-  { href: "/app", label: "Ana Sayfa", icon: Home, match: "exact" },
-  { href: "/explore", label: "Keşfet", icon: Compass },
-  { href: "/app/following", label: "Takip Ettiklerim", icon: Users },
-  { href: "/app/favorites", label: "Favorilerim", icon: Heart },
-  { href: "/chat", label: "Sohbetler", icon: MessageCircle, badgeKey: "unreadChats" },
-  { href: "/app/subscriptions", label: "Üyeliklerim", icon: Crown },
-  { href: "/app/experiences", label: "Deneyimlerim", icon: Sparkles },
-  { href: "/app/wallet", label: "Cüzdanım", icon: Wallet },
-  { href: "/app/gifts", label: "Hediyeler", icon: Gift },
-  { href: "/app/notifications", label: "Bildirimler", icon: Bell, badgeKey: "unreadNotifications" },
-  { href: "/app/profile", label: "Profilim", icon: User },
-  { href: "/app/personalization", label: "Kişiselleştirme", icon: Brain },
-  { href: "/app/settings", label: "Ayarlar", icon: Settings },
+  { href: "/app", label: m("Ana Sayfa"), icon: Home, match: "exact" },
+  { href: "/explore", label: m("Keşfet"), icon: Compass },
+  { href: "/app/following", label: m("Takip Ettiklerim"), icon: Users },
+  { href: "/app/favorites", label: m("Favorilerim"), icon: Heart },
+  { href: "/chat", label: m("Sohbetler"), icon: MessageCircle, badgeKey: "unreadChats" },
+  { href: "/app/subscriptions", label: m("Üyeliklerim"), icon: Crown },
+  { href: "/app/experiences", label: m("Deneyimlerim"), icon: Sparkles },
+  { href: "/app/wallet", label: m("Cüzdanım"), icon: Wallet },
+  { href: "/app/gifts", label: m("Hediyeler"), icon: Gift },
+  { href: "/app/notifications", label: m("Bildirimler"), icon: Bell, badgeKey: "unreadNotifications" },
+  { href: "/app/profile", label: m("Profilim"), icon: User },
+  { href: "/app/personalization", label: m("Kişiselleştirme"), icon: Brain },
+  { href: "/app/settings", label: m("Ayarlar"), icon: Settings },
 ];
 
 export const FAN_BOTTOM_NAV: NavItem[] = [
-  { href: "/app", label: "Ana Sayfa", icon: Home, match: "exact" },
-  { href: "/explore", label: "Keşfet", icon: Compass },
-  { href: "/chat", label: "Sohbetler", icon: MessageCircle },
-  { href: "/app/favorites", label: "Favoriler", icon: Heart },
-  { href: "/app/profile", label: "Profil", icon: User },
+  { href: "/app", label: m("Ana Sayfa"), icon: Home, match: "exact" },
+  { href: "/explore", label: m("Keşfet"), icon: Compass },
+  { href: "/chat", label: m("Sohbetler"), icon: MessageCircle },
+  { href: "/app/favorites", label: m("Favoriler"), icon: Heart },
+  { href: "/app/profile", label: m("Profil"), icon: User },
 ];
 
 export const STUDIO_NAV: NavGroup[] = [
   {
-    label: "CREATOR STUDIO",
+    label: m("CREATOR STUDIO"),
     items: [
-      { href: "/studio", label: "Genel Panel", icon: LayoutDashboard, match: "exact" },
-      { href: "/studio/ai-twin", label: "AI İkizim", icon: Bot },
-      { href: "/studio/personality", label: "Kişilik Stüdyosu", icon: Sparkles },
-      { href: "/studio/knowledge", label: "Bilgi Tabanı", icon: BookOpen },
-      { href: "/studio/voice", label: "Ses ve Görünüm", icon: Mic2 },
-      { href: "/studio/boundaries", label: "Sınırlar ve İzinler", icon: Shield },
-      { href: "/studio/test", label: "AI İkizi Testi", icon: FlaskConical },
-      { href: "/studio/content", label: "İçerik Kütüphanesi", icon: FileStack, match: "exact" },
-      { href: "/studio/content/new", label: "İçerik Oluşturma", icon: PenSquare },
-      { href: "/studio/memberships", label: "Üyelik Yönetimi", icon: Crown },
+      { href: "/studio", label: m("Genel Panel"), icon: LayoutDashboard, match: "exact" },
+      { href: "/studio/ai-twin", label: m("AI İkizim"), icon: Bot },
+      { href: "/studio/personality", label: m("Kişilik Stüdyosu"), icon: Sparkles },
+      { href: "/studio/knowledge", label: m("Bilgi Tabanı"), icon: BookOpen },
+      { href: "/studio/voice", label: m("Ses ve Görünüm"), icon: Mic2 },
+      { href: "/studio/boundaries", label: m("Sınırlar ve İzinler"), icon: Shield },
+      { href: "/studio/test", label: m("AI İkizi Testi"), icon: FlaskConical },
+      { href: "/studio/content", label: m("İçerik Kütüphanesi"), icon: FileStack, match: "exact" },
+      { href: "/studio/content/new", label: m("İçerik Oluşturma"), icon: PenSquare },
+      { href: "/studio/memberships", label: m("Üyelik Yönetimi"), icon: Crown },
     ],
   },
   {
-    label: "YÖNETİM & BÜYÜME",
+    label: m("YÖNETİM & BÜYÜME"),
     items: [
-      { href: "/studio/requests", label: "Özel Talepler", icon: Inbox, badgeKey: "pendingRequests" },
-      { href: "/studio/conversations", label: "Sohbetler", icon: MessageCircle },
-      { href: "/studio/fans", label: "Hayranlar ve Kitle", icon: Users },
-      { href: "/studio/earnings", label: "Gelirler", icon: BadgeDollarSign },
-      { href: "/studio/payouts", label: "Ödemeler", icon: WalletCards },
-      { href: "/studio/analytics", label: "Analitik", icon: BarChart3 },
-      { href: "/studio/profile", label: "Profil Düzenleyici", icon: UserCog },
-      { href: "/studio/settings", label: "Stüdyo Ayarları", icon: Settings },
+      { href: "/studio/requests", label: m("Özel Talepler"), icon: Inbox, badgeKey: "pendingRequests" },
+      { href: "/studio/conversations", label: m("Sohbetler"), icon: MessageCircle },
+      { href: "/studio/fans", label: m("Hayranlar ve Kitle"), icon: Users },
+      { href: "/studio/earnings", label: m("Gelirler"), icon: BadgeDollarSign },
+      { href: "/studio/payouts", label: m("Ödemeler"), icon: WalletCards },
+      { href: "/studio/analytics", label: m("Analitik"), icon: BarChart3 },
+      { href: "/studio/profile", label: m("Profil Düzenleyici"), icon: UserCog },
+      { href: "/studio/settings", label: m("Stüdyo Ayarları"), icon: Settings },
     ],
   },
 ];
 
 export const ADMIN_NAV: NavGroup[] = [
   {
-    label: "GENEL",
+    label: m("GENEL"),
     items: [
-      { href: "/admin", label: "Genel Bakış", icon: LayoutDashboard, match: "exact", permission: "admin.dashboard" },
-      { href: "/admin/creators", label: "İçerik Üreticileri", icon: Star, permission: "creators.read" },
-      { href: "/admin/users", label: "Kullanıcılar", icon: Users, permission: "users.read" },
-      { href: "/admin/ai-twins", label: "AI İkizleri", icon: Bot, permission: "twins.read" },
+      { href: "/admin", label: m("Genel Bakış"), icon: LayoutDashboard, match: "exact", permission: "admin.dashboard" },
+      { href: "/admin/creators", label: m("İçerik Üreticileri"), icon: Star, permission: "creators.read" },
+      { href: "/admin/users", label: m("Kullanıcılar"), icon: Users, permission: "users.read" },
+      { href: "/admin/ai-twins", label: m("AI İkizleri"), icon: Bot, permission: "twins.read" },
     ],
   },
   {
-    label: "GÜVENLİK VE UYUM",
+    label: m("GÜVENLİK VE UYUM"),
     items: [
-      { href: "/admin/moderation", label: "İçerik Moderasyonu", icon: ShieldAlert, permission: "moderation.read", badgeKey: "openCases" },
-      { href: "/admin/reports", label: "Raporlar ve İtirazlar", icon: Flag, permission: "reports.read", badgeKey: "openReports" },
+      { href: "/admin/moderation", label: m("İçerik Moderasyonu"), icon: ShieldAlert, permission: "moderation.read", badgeKey: "openCases" },
+      { href: "/admin/reports", label: m("Raporlar ve İtirazlar"), icon: Flag, permission: "reports.read", badgeKey: "openReports" },
     ],
   },
   {
-    label: "FİNANS VE YAPAY ZEKÂ",
+    label: m("FİNANS VE YAPAY ZEKÂ"),
     items: [
-      { href: "/admin/finance", label: "Finans ve İşlemler", icon: CreditCard, permission: "finance.read" },
-      { href: "/admin/ai-operations", label: "AI Operasyonları", icon: Cpu, permission: "ai_ops.read" },
-      { href: "/admin/analytics", label: "Platform Analitiği", icon: BarChart3, permission: "analytics.read" },
+      { href: "/admin/finance", label: m("Finans ve İşlemler"), icon: CreditCard, permission: "finance.read" },
+      { href: "/admin/ai-operations", label: m("AI Operasyonları"), icon: Cpu, permission: "ai_ops.read" },
+      { href: "/admin/analytics", label: m("Platform Analitiği"), icon: BarChart3, permission: "analytics.read" },
     ],
   },
   {
-    label: "İÇERİK VE SİSTEM",
+    label: m("İÇERİK VE SİSTEM"),
     items: [
-      { href: "/admin/content", label: "CMS ve Kampanyalar", icon: Megaphone, permission: "cms.manage" },
-      { href: "/admin/settings", label: "Platform Ayarları", icon: Settings, permission: "settings.read" },
+      { href: "/admin/content", label: m("CMS ve Kampanyalar"), icon: Megaphone, permission: "cms.manage" },
+      { href: "/admin/settings", label: m("Platform Ayarları"), icon: Settings, permission: "settings.read" },
     ],
   },
 ];
 
 export const SUPPORT_NAV: NavItem[] = [
-  { href: "/help", label: "Yardım Merkezi" },
-  { href: "/contact", label: "İletişim" },
-  { href: "/trust-and-safety", label: "Güven ve Güvenlik" },
-  { href: "/privacy", label: "Gizlilik Politikası" },
-  { href: "/terms", label: "Kullanım Şartları" },
-  { href: "/creator-agreement", label: "Creator Sözleşmesi" },
-  { href: "/community-guidelines", label: "Topluluk Kuralları" },
-  { href: "/copyright", label: "Telif ve İçerik Kaldırma" },
-  { href: "/cookies", label: "Çerez Politikası" },
+  { href: "/help", label: m("Yardım Merkezi") },
+  { href: "/contact", label: m("İletişim") },
+  { href: "/trust-and-safety", label: m("Güven ve Güvenlik") },
+  { href: "/privacy", label: m("Gizlilik Politikası") },
+  { href: "/terms", label: m("Kullanım Şartları") },
+  { href: "/creator-agreement", label: m("Creator Sözleşmesi") },
+  { href: "/community-guidelines", label: m("Topluluk Kuralları") },
+  { href: "/copyright", label: m("Telif ve İçerik Kaldırma") },
+  { href: "/cookies", label: m("Çerez Politikası") },
 ];
 
 export const FOOTER_COLUMNS: { title: string; links: NavItem[] }[] = [
   {
-    title: "Platform",
+    title: m("Platform"),
     links: [
-      { href: "/", label: "Ana Sayfa" },
-      { href: "/explore", label: "Keşfet" },
-      { href: "/trending", label: "Trendler" },
-      { href: "/categories", label: "Kategoriler" },
+      { href: "/", label: m("Ana Sayfa") },
+      { href: "/explore", label: m("Keşfet") },
+      { href: "/trending", label: m("Trendler") },
+      { href: "/categories", label: m("Kategoriler") },
     ],
   },
   {
-    title: "Yardım",
+    title: m("Yardım"),
     links: [
-      { href: "/how-it-works", label: "Nasıl Çalışır" },
-      { href: "/pricing", label: "Fiyatlandırma" },
-      { href: "/help", label: "Yardım Merkezi" },
-      { href: "/contact", label: "İletişim" },
+      { href: "/how-it-works", label: m("Nasıl Çalışır") },
+      { href: "/pricing", label: m("Fiyatlandırma") },
+      { href: "/help", label: m("Yardım Merkezi") },
+      { href: "/contact", label: m("İletişim") },
     ],
   },
   {
-    title: "Yasal",
+    title: m("Yasal"),
     links: [
-      { href: "/terms", label: "Kullanım Şartları" },
-      { href: "/privacy", label: "Gizlilik Politikası" },
-      { href: "/cookies", label: "Çerez Politikası" },
-      { href: "/community-guidelines", label: "Topluluk Kuralları" },
-      { href: "/copyright", label: "Telif ve İçerik Kaldırma" },
+      { href: "/terms", label: m("Kullanım Şartları") },
+      { href: "/privacy", label: m("Gizlilik Politikası") },
+      { href: "/cookies", label: m("Çerez Politikası") },
+      { href: "/community-guidelines", label: m("Topluluk Kuralları") },
+      { href: "/copyright", label: m("Telif ve İçerik Kaldırma") },
     ],
   },
   {
-    title: "İçerik Üreticileri İçin",
+    title: m("İçerik Üreticileri İçin"),
     links: [
-      { href: "/for-creators", label: "HEYFANS'a Katıl" },
-      { href: "/creator-agreement", label: "Creator Sözleşmesi" },
-      { href: "/trust-and-safety", label: "Güven ve Güvenlik" },
-      { href: "/studio", label: "Creator Studio" },
+      { href: "/for-creators", label: m("HEYFANS'a Katıl") },
+      { href: "/creator-agreement", label: m("Creator Sözleşmesi") },
+      { href: "/trust-and-safety", label: m("Güven ve Güvenlik") },
+      { href: "/studio", label: m("Creator Studio") },
     ],
   },
 ];

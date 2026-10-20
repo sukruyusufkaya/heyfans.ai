@@ -1,4 +1,6 @@
+"use client";
 import { Skeleton } from "@/components/ui/display";
+import { useT } from "@/i18n/client";
 
 function Head({ actions }: { actions?: boolean }) {
   return (
@@ -13,12 +15,15 @@ function Head({ actions }: { actions?: boolean }) {
   );
 }
 
-const Wrap = ({ children }: { children: React.ReactNode }) => (
-  <div className="mx-auto max-w-[1280px]" role="status" aria-busy="true" aria-label="Sayfa yükleniyor">
-    {children}
-    <span className="sr-only">Yükleniyor…</span>
-  </div>
-);
+const Wrap = ({ children }: { children: React.ReactNode }) => {
+  const t = useT();
+  return (
+    <div className="mx-auto max-w-[1280px]" role="status" aria-busy="true" aria-label={t("Sayfa yükleniyor")}>
+      {children}
+      <span className="sr-only">{t("Yükleniyor…")}</span>
+    </div>
+  );
+};
 
 /** KPI satırı + iki içerik kartı (panel, gelirler, analitik, hayranlar). */
 export function LoadingCards() {

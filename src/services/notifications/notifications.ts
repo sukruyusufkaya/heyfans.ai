@@ -3,6 +3,7 @@ import type { ClientSession } from "mongoose";
 import { connectDb } from "@/lib/db/mongo";
 import { oid } from "@/lib/validation/common";
 import { Notification, type INotification } from "@/models/social";
+import type { MessageParams, Translator } from "@/i18n/translate";
 
 /**
  * `title` / `body` kaynak (Türkçe) ICU kalıbıdır; değişkenler `params` ile verilir ve `data.params` içinde saklanır.
@@ -16,6 +17,12 @@ export interface NotifyInput {
   link?: string | null;
   actorImage?: string | null;
   data?: Record<string, unknown>;
+}
+
+/** Bildirimi okuyanın dilinde metne çevirir: başlık/gövde Türkçe ICU kalıbıdır, değişkenler `data.params` içindedir. */
+export function localizeNotification(t: Translator, n: { title: string; body?: string | null; data?: unknown }) {
+  const params = (n.data as { params?: MessageParams } | null | undefined)?.params;
+  return { title: t(n.title, params), body: n.body ? t(n.body, params) : "" };
 }
 
 /** Uygulama içi bildirim oluşturur (e-posta/push tercihleri ileride bu noktadan dağıtılır). */

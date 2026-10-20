@@ -3,6 +3,7 @@ import type { Types } from "mongoose";
 import { env } from "@/config/env";
 import { connectDb } from "@/lib/db/mongo";
 import { AiUsageRecord, KnowledgeChunk, KnowledgeSource, type IKnowledgeChunk } from "@/models/ai";
+import { m } from "@/i18n/m";
 import { costMicroUsd, getAiProvider, type AiProvider } from "./provider";
 
 /** Metni ~800 karakterlik, 120 karakter örtüşmeli parçalara böler (paragraf/cümle sınırlarını korur). */
@@ -90,14 +91,14 @@ export async function retrieveKnowledge(
 export async function indexKnowledgeSource(sourceId: Types.ObjectId, text: string) {
   await connectDb();
   const source = await KnowledgeSource.findById(sourceId);
-  if (!source) throw new Error("Kaynak bulunamadı");
+  if (!source) throw new Error("Kaynak bulunamadı"); // i18n-ignore (geliştirici/günlük hatası)
   const provider = getAiProvider();
   source.status = "chunking";
   await source.save();
   const pieces = chunkText(text);
   if (!pieces.length) {
     source.status = "failed";
-    source.error = "Kaynakta işlenebilir metin bulunamadı.";
+    source.error = m("Kaynakta işlenebilir metin bulunamadı."); // kayıtta tutulur; arayüzde t(source.error) ile gösterilir
     await source.save();
     return;
   }

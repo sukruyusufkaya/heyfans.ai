@@ -44,7 +44,7 @@ export async function getMongoClient() {
 export async function getNativeDb() {
   const m = await connectDb();
   const db = m.connection.db;
-  if (!db) throw new Error("MongoDB bağlantısı hazır değil");
+  if (!db) throw new Error("MongoDB bağlantısı hazır değil"); // i18n-ignore (geliştirici/günlük hatası)
   return db;
 }
 

@@ -10,10 +10,12 @@ import { recordCreditEarning } from "@/services/billing/earnings";
 import { assertNotSample, SAMPLE_PURCHASE_MESSAGE } from "@/services/creators/sample";
 import { getPlatformSettings } from "@/services/platform/settings";
 import { debitWallet, ensureWallet } from "@/services/wallet/wallet";
+import { getT } from "@/i18n/server";
 
 /** Görüşme ekranı için durum: özellik açık mı, RTC yapılandırılmış mı, ücret ve bakiye. */
 export async function getCallAvailability(userId: string, username: string, kind: "voice" | "video") {
   await connectDb();
+  const t = await getT();
   const creator = await CreatorProfile.findOne({ username: username.toLowerCase(), status: "approved" }).lean<ICreatorProfile>();
   if (!creator) throw new NotFoundError("İçerik üreticisi bulunamadı.");
   const twin = await AiTwin.findOne({ creatorId: creator._id }).lean<ITwin>();
@@ -21,12 +23,12 @@ export async function getCallAvailability(userId: string, username: string, kind
   const wallet = await ensureWallet(userId);
   const rate = kind === "voice" ? (twin?.pricing.voicePerMinuteCredits ?? 0) : (twin?.pricing.videoPerMinuteCredits ?? 0);
   const reasons: string[] = [];
-  if (creator.isSample) reasons.push(SAMPLE_PURCHASE_MESSAGE);
-  if (!twin || twin.status !== "live") reasons.push("AI ikizi yayında değil.");
-  if (kind === "voice" && (!twin?.features.voice || !settings.features.voiceCalls)) reasons.push("Bu creator sesli görüşmeyi etkinleştirmedi.");
-  if (kind === "video" && (!twin?.features.video || !settings.features.videoCalls)) reasons.push("Bu creator görüntülü görüşmeyi etkinleştirmedi.");
+  if (creator.isSample) reasons.push(t(SAMPLE_PURCHASE_MESSAGE));
+  if (!twin || twin.status !== "live") reasons.push(t("AI ikizi yayında değil."));
+  if (kind === "voice" && (!twin?.features.voice || !settings.features.voiceCalls)) reasons.push(t("Bu creator sesli görüşmeyi etkinleştirmedi."));
+  if (kind === "video" && (!twin?.features.video || !settings.features.videoCalls)) reasons.push(t("Bu creator görüntülü görüşmeyi etkinleştirmedi."));
   const rtc = rtcStatus();
-  if (!rtc.configured) reasons.push("Gerçek zamanlı görüşme altyapısı (RTC) henüz yapılandırılmadı.");
+  if (!rtc.configured) reasons.push(t("Gerçek zamanlı görüşme altyapısı (RTC) henüz yapılandırılmadı."));
   return { creator, twin, ratePerMinute: rate, balance: wallet.balance, available: reasons.length === 0, reasons, rtc };
 }
 
@@ -35,7 +37,7 @@ export async function startCall(user: { id: string; name: string }, username: st
   assertNotSample(a.creator);
   if (!a.available) throw new FeatureUnavailableError(a.reasons.join(" "), a.rtc.missing);
   if (a.balance < a.ratePerMinute) throw new AppError("Görüşmeyi başlatmak için en az 1 dakikalık kredin olmalı.", "insufficient_credits", 402);
-  await CallSession.updateMany({ userId: oid(user.id), status: "active" }, { $set: { status: "ended", endedAt: new Date(), endReason: "Yeni görüşme başlatıldı" } });
+  await CallSession.updateMany({ userId: oid(user.id), status: "active" }, { $set: { status: "ended", endedAt: new Date(), endReason: "Yeni görüşme başlatıldı" /* i18n-ignore (kayıt notu) */ } });
   const session = await CallSession.create({
     userId: oid(user.id),
     creatorId: a.creator._id,
@@ -63,19 +65,20 @@ export async function tickCall(userId: string, sessionId: string) {
         userId,
         amount: s.ratePerMinute,
         type: s.kind === "voice" ? "spend_voice" : "spend_video",
-        description: `${s.kind === "voice" ? "Sesli" : "Görüntülü"} görüşme — ${minute}. dakika`,
+        description: `${s.kind === "voice" ? "Sesli" : "Görüntülü"} görüşme — ${minute}. dakika`, // i18n-ignore (defter açıklaması saklanır)
         idempotencyKey: `call:${s._id.toString()}:${minute}`,
         creatorId: s.creatorId,
         refType: "CallSession",
         refId: s._id,
       });
+      // i18n-ignore (hak ediş açıklaması saklanır)
       await recordCreditEarning({ creatorId: s.creatorId, sourceType: s.kind, credits: s.ratePerMinute, ledgerEntryId: entry._id, description: `${s.kind === "voice" ? "Sesli" : "Görüntülü"} görüşme` });
       s.minutesBilled = minute;
       s.creditsSpent += s.ratePerMinute;
     } catch (err) {
       s.status = "ended";
       s.endedAt = new Date();
-      s.endReason = "Yetersiz kredi";
+      s.endReason = "Yetersiz kredi"; // i18n-ignore (kayıt notu)
       await s.save();
       throw err;
     }
@@ -89,7 +92,7 @@ export async function endCall(userId: string, sessionId: string) {
   await connectDb();
   return CallSession.findOneAndUpdate(
     { _id: oid(sessionId), userId: oid(userId), status: "active" },
-    { $set: { status: "ended", endedAt: new Date(), endReason: "Kullanıcı bitirdi" } },
+    { $set: { status: "ended", endedAt: new Date(), endReason: "Kullanıcı bitirdi" /* i18n-ignore (kayıt notu) */ } },
     { returnDocument: "after" },
   ).lean<ICallSession>();
 }

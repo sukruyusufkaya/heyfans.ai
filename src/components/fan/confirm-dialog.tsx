@@ -2,6 +2,7 @@
 import * as React from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogClose, DialogContent, DialogTrigger } from "@/components/ui/overlays";
+import { useT } from "@/i18n/client";
 
 /**
  * Onay iletişim kutusu. Ya `trigger` ile (kendi durumunu yönetir) ya da `open`/`onOpenChange` ile (kontrollü;
@@ -13,7 +14,7 @@ export function ConfirmDialog({
   onOpenChange,
   title,
   description,
-  confirmLabel = "Onayla",
+  confirmLabel,
   tone = "primary",
   onConfirm,
   children,
@@ -28,6 +29,7 @@ export function ConfirmDialog({
   onConfirm: () => Promise<boolean> | boolean;
   children?: React.ReactNode;
 }) {
+  const t = useT();
   const [innerOpen, setInnerOpen] = React.useState(false);
   const [busy, setBusy] = React.useState(false);
   const open = controlledOpen ?? innerOpen;
@@ -44,7 +46,7 @@ export function ConfirmDialog({
         <div className="mt-5 flex justify-end gap-2.5">
           <DialogClose asChild>
             <Button variant="secondary" size="md" disabled={busy}>
-              Vazgeç
+              {t("Vazgeç")}
             </Button>
           </DialogClose>
           <Button
@@ -65,7 +67,7 @@ export function ConfirmDialog({
               }
             }}
           >
-            {confirmLabel}
+            {confirmLabel ?? t("Onayla")}
           </Button>
         </div>
       </DialogContent>

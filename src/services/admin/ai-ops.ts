@@ -9,6 +9,8 @@ import { AiUsageRecord, IngestionJob, KnowledgeSource, type IIngestionJob } from
 import { PlatformSettings } from "@/models/platform";
 import { getPlatformSettings } from "@/services/platform/settings";
 import { dayKeyExpr, loadCreators, percentile, type AdminActor } from "./shared";
+import { getLocale } from "@/i18n/server";
+import { LOCALE_META } from "@/i18n/config";
 
 export const AI_RANGES = { "7": 7, "30": 30, "90": 90 } as const;
 export type AiRangeKey = keyof typeof AI_RANGES;
@@ -16,6 +18,7 @@ const SAMPLE_LIMIT = 20_000;
 
 export async function getAiOpsData(rangeDays: number) {
   await connectDb();
+  const locale = await getLocale();
   const now = new Date();
   const from = new Date(now.getTime() - rangeDays * 86_400_000);
   const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
@@ -75,7 +78,7 @@ export async function getAiOpsData(rangeDays: number) {
   // Günlük seri (boş günler 0)
   const dailyMap = new Map(daily.map((d) => [d._id, d]));
   const series: { label: string; requests: number; costUsd: number; errors: number }[] = [];
-  const fmt = new Intl.DateTimeFormat("tr-TR", { day: "2-digit", month: "short", timeZone: "Europe/Istanbul" });
+  const fmt = new Intl.DateTimeFormat(LOCALE_META[locale].intl, { day: "2-digit", month: "short", timeZone: "Europe/Istanbul" });
   const key = new Intl.DateTimeFormat("en-CA", { timeZone: "Europe/Istanbul", year: "numeric", month: "2-digit", day: "2-digit" });
   for (let i = rangeDays - 1; i >= 0; i--) {
     const d = new Date(now.getTime() - i * 86_400_000);

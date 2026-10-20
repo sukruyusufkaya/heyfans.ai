@@ -1,4 +1,5 @@
-import { ConflictError } from "@/lib/errors";
+import { AppError } from "@/lib/errors";
+import { m } from "@/i18n/m";
 import type { CustomRequestStatus } from "@/models/monetization";
 import type { TwinStatus } from "@/models/ai";
 import type { ContentStatus } from "@/models/content";
@@ -12,7 +13,8 @@ export function canTransition<S extends string>(table: TransitionTable<S>, from:
 
 export function assertTransition<S extends string>(table: TransitionTable<S>, from: S, to: S, labels?: Partial<Record<S, string>>) {
   if (!canTransition(table, from, to)) {
-    throw new ConflictError(`Geçersiz durum geçişi: ${labels?.[from] ?? from} → ${labels?.[to] ?? to}`, "invalid_transition");
+    const params = { fromLabel: labels?.[from] ?? from, toLabel: labels?.[to] ?? to };
+    throw new AppError("Geçersiz durum geçişi: {fromLabel} → {toLabel}", "invalid_transition", 409, { params });
   }
 }
 
@@ -27,13 +29,13 @@ export const TWIN_TRANSITIONS: TransitionTable<TwinStatus> = {
 };
 
 export const TWIN_STATUS_LABELS: Record<TwinStatus, string> = {
-  draft: "Taslak",
-  pending_review: "İncelemede",
-  approved: "Onaylandı",
-  live: "Yayında",
-  paused: "Duraklatıldı",
-  rejected: "Reddedildi",
-  revoked: "Geri çekildi",
+  draft: m("Taslak"),
+  pending_review: m("İncelemede"),
+  approved: m("Onaylandı"),
+  live: m("Yayında"),
+  paused: m("Duraklatıldı"),
+  rejected: m("Reddedildi"),
+  revoked: m("Geri çekildi"),
 };
 
 export const CUSTOM_REQUEST_TRANSITIONS: TransitionTable<CustomRequestStatus> = {
@@ -48,14 +50,14 @@ export const CUSTOM_REQUEST_TRANSITIONS: TransitionTable<CustomRequestStatus> = 
 };
 
 export const CUSTOM_REQUEST_LABELS: Record<CustomRequestStatus, string> = {
-  draft: "Taslak",
-  pending: "Beklemede",
-  in_review: "İncelemede",
-  approved: "Onaylandı",
-  processing: "İşleniyor",
-  completed: "Tamamlandı",
-  rejected: "Reddedildi",
-  canceled: "İptal Edildi",
+  draft: m("Taslak"),
+  pending: m("Beklemede"),
+  in_review: m("İncelemede"),
+  approved: m("Onaylandı"),
+  processing: m("İşleniyor"),
+  completed: m("Tamamlandı"),
+  rejected: m("Reddedildi"),
+  canceled: m("İptal Edildi"),
 };
 
 export const CONTENT_TRANSITIONS: TransitionTable<ContentStatus> = {
@@ -67,9 +69,9 @@ export const CONTENT_TRANSITIONS: TransitionTable<ContentStatus> = {
 };
 
 export const CONTENT_STATUS_LABELS: Record<ContentStatus, string> = {
-  draft: "Taslak",
-  in_review: "İncelemede",
-  published: "Yayında",
-  hidden: "Gizli",
-  removed: "Kaldırıldı",
+  draft: m("Taslak"),
+  in_review: m("İncelemede"),
+  published: m("Yayında"),
+  hidden: m("Gizli"),
+  removed: m("Kaldırıldı"),
 };

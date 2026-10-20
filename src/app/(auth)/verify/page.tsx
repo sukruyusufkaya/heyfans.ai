@@ -6,10 +6,15 @@ import { firstParam, safeNext } from "@/features/auth/next-url";
 import { linkErrorMessage } from "@/features/auth/messages";
 import { VerifyPending, VerifySuccess } from "@/features/auth/verify-panel";
 import { getSession } from "@/lib/auth/session";
+import { getT } from "@/i18n/server";
 
-export const metadata: Metadata = { title: "Hesap Doğrulama" };
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getT();
+  return { title: t("Hesap Doğrulama") };
+}
 
 export default async function VerifyPage({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
+  const t = await getT();
   const sp = await searchParams;
   const next = safeNext(firstParam(sp.next));
   const errorCode = firstParam(sp.error);
@@ -19,7 +24,8 @@ export default async function VerifyPage({ searchParams }: { searchParams: Promi
 
   let content: React.ReactNode;
   if (errorCode) {
-    content = <VerifyPending email={email} next={next} showDevOutbox={showDevOutbox} errorMessage={linkErrorMessage(errorCode)} />;
+    const errorSource = linkErrorMessage(errorCode);
+    content = <VerifyPending email={email} next={next} showDevOutbox={showDevOutbox} errorMessage={errorSource ? t(errorSource) : null} />;
   } else if (verified) {
     const session = await getSession();
     content = <VerifySuccess signedIn={!!session} next={next} />;
@@ -35,10 +41,10 @@ export default async function VerifyPage({ searchParams }: { searchParams: Promi
       visual={
         <AuthVisual
           art="portrait-left"
-          eyebrow="Son bir adım"
-          lines={[{ text: "Neredeyse" }, { text: "hazırsın.", accent: true }]}
-          body="Kısa bir doğrulamanın ardından yeni bağlantılar ve deneyimler seni bekliyor."
-          footer={<VisualNote icon={<ShieldCheck />}>Özel. Güvenli. Tam sana göre.</VisualNote>}
+          eyebrow={t("Son bir adım")}
+          lines={[{ text: t("Neredeyse") }, { text: t("hazırsın."), accent: true }]}
+          body={t("Kısa bir doğrulamanın ardından yeni bağlantılar ve deneyimler seni bekliyor.")}
+          footer={<VisualNote icon={<ShieldCheck />}>{t("Özel. Güvenli. Tam sana göre.")}</VisualNote>}
         />
       }
     >

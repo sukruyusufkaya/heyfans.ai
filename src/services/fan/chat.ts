@@ -10,6 +10,7 @@ import { Conversation, Message, type IConversation, type IMessage } from "@/mode
 import { listConversations, openConversation, resolveBilling, type BillingMode } from "@/services/conversations/chat";
 import { getPlatformSettings } from "@/services/platform/settings";
 import { ensureWallet } from "@/services/wallet/wallet";
+import { getT } from "@/i18n/server";
 
 export interface ChatMessageView {
   id: string;
@@ -89,12 +90,13 @@ export async function getChatPage(userId: string, username: string) {
 /** Mesaj sonrası güncel faturalama + bakiye (istemci "kalan hak" göstergesi için). */
 export async function getChatStatus(userId: string, username: string, conversationId?: string) {
   await connectDb();
+  const t = await getT();
   const creator = await CreatorProfile.findOne({ username: username.toLowerCase(), status: "approved" }).lean<ICreatorProfile>();
   if (!creator) throw new NotFoundError("İçerik üreticisi bulunamadı.");
   const twin = await AiTwin.findOne({ creatorId: creator._id }).lean<ITwin>();
   if (!twin) throw new NotFoundError("AI ikizi bulunamadı.");
   const uid = oid(userId);
-  const billing: ChatBillingView = await resolveBilling(uid, creator, twin).catch((e: AppError) => ({ mode: "blocked" as const, credits: 0, freeLeft: 0, reason: e.message }));
+  const billing: ChatBillingView = await resolveBilling(uid, creator, twin).catch((e: AppError) => ({ mode: "blocked" as const, credits: 0, freeLeft: 0, reason: t(e.template, e.params) }));
   const wallet = await ensureWallet(uid);
   // Akış bittikten sonra sunucudaki son kayıtlar: güvenlik filtresinin düzenlediği/engellediği yanıtlar istemciyle eşitlenir.
   const recent = conversationId ? await Message.find({ conversationId: oid(conversationId), userId: uid }).sort({ createdAt: -1 }).limit(3).lean<IMessage[]>() : [];

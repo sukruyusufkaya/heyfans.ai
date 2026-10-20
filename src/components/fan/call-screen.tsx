@@ -4,24 +4,30 @@ import { CallClient } from "@/features/fan/call-client";
 import { AiTwinLabel } from "@/components/ui/badge";
 import { Card, CardHeader } from "@/components/ui/card";
 import { Avatar, PageHeader } from "@/components/ui/display";
-import { formatNumber } from "@/lib/utils";
+import { getFormatters, getT } from "@/i18n/server";
 import type { getCallAvailability } from "@/services/calls/calls";
 
 type Availability = Awaited<ReturnType<typeof getCallAvailability>>;
 
 /** Sesli / görüntülü görüşme ekranı. Altyapı yoksa sahte görüşme gösterilmez; nedenler dürüstçe listelenir. */
-export function CallScreen({ kind, data }: { kind: "voice" | "video"; data: Availability }) {
+export async function CallScreen({ kind, data }: { kind: "voice" | "video"; data: Availability }) {
+  const t = await getT();
+  const { formatNumber } = await getFormatters();
   const name = data.creator.displayName;
   const isVoice = kind === "voice";
   return (
     <div className="mx-auto max-w-[1320px]">
       <PageHeader
-        eyebrow="HEYFANS / FAN EXPERIENCE"
-        title={isVoice ? "Sesli Görüşme" : "Görüntülü Görüşme"}
-        description={isVoice ? `${name} adlı içerik üreticisinin AI ikiziyle gerçek zamanlı sesli etkileşim.` : `${name} adlı içerik üreticisinin AI ikiziyle canlı, etkileşimli ve kişiselleştirilmiş video deneyimi.`}
+        eyebrow={t("HEYFANS / FAN EXPERIENCE")}
+        title={isVoice ? t("Sesli Görüşme") : t("Görüntülü Görüşme")}
+        description={
+          isVoice
+            ? t("{name} adlı içerik üreticisinin AI ikiziyle gerçek zamanlı sesli etkileşim.", { name })
+            : t("{name} adlı içerik üreticisinin AI ikiziyle canlı, etkileşimli ve kişiselleştirilmiş video deneyimi.", { name })
+        }
         actions={
           <Link href={`/chat/${data.creator.username}`} className="inline-flex h-10 items-center gap-2 rounded-full border border-line bg-white px-4 text-xs font-extrabold text-muted-strong hover:border-brand-200">
-            <MessageCircle className="size-4" /> Yazılı sohbet
+            <MessageCircle className="size-4" /> {t("Yazılı sohbet")}
           </Link>
         }
       />
@@ -38,18 +44,18 @@ export function CallScreen({ kind, data }: { kind: "voice" | "video"; data: Avai
                 <span className="mt-2 grid size-12 place-items-center rounded-full bg-white/15" aria-hidden>
                   <PhoneOff className="size-5" />
                 </span>
-                <p className="text-sm font-extrabold">Görüşme şu anda kullanılamıyor</p>
+                <p className="text-sm font-extrabold">{t("Görüşme şu anda kullanılamıyor")}</p>
               </div>
               <div role="status" className="mt-4 rounded-2xl border border-[#f3dca8] bg-warning-soft p-4">
                 <p className="flex items-center gap-2 text-xs font-extrabold text-ink">
-                  <Info className="size-4 text-warning" aria-hidden /> Neden kullanılamıyor?
+                  <Info className="size-4 text-warning" aria-hidden /> {t("Neden kullanılamıyor?")}
                 </p>
                 <ul className="mt-2 list-disc space-y-1 ps-5 text-xs leading-relaxed text-ink-soft">
                   {data.reasons.map((r) => (
-                    <li key={r}>{r}</li>
+                    <li key={r}>{t(r)}</li>
                   ))}
                 </ul>
-                <p className="mt-3 text-[11px] text-muted">Görüşme gerçekleştirilmez ve kredi tahsil edilmez. Altyapı etkinleştiğinde bu ekran otomatik olarak çalışır.</p>
+                <p className="mt-3 text-[11px] text-muted">{t("Görüşme gerçekleştirilmez ve kredi tahsil edilmez. Altyapı etkinleştiğinde bu ekran otomatik olarak çalışır.")}</p>
               </div>
             </div>
           )}
@@ -57,42 +63,42 @@ export function CallScreen({ kind, data }: { kind: "voice" | "video"; data: Avai
 
         <div className="grid content-start gap-4">
           <Card>
-            <CardHeader title="Görüşme bilgileri" action={<span className="rounded-full bg-soft px-2.5 py-1 text-[10px] font-extrabold text-muted-strong">{data.available ? "Hazır" : "Kapalı"}</span>} />
+            <CardHeader title={t("Görüşme bilgileri")} action={<span className="rounded-full bg-soft px-2.5 py-1 text-[10px] font-extrabold text-muted-strong">{data.available ? t("Hazır") : t("Kapalı")}</span>} />
             <div className="mb-4 flex items-center gap-3">
               <Avatar src={data.creator.avatarUrl ?? null} name={name} size={44} />
               <div className="min-w-0">
-                <p className="truncate text-[13px] font-extrabold">{name}&apos;in AI ikizi</p>
-                <p className="text-[11px] text-muted">{isVoice ? "Doğal sesli yanıtlar, anlık konuşma." : "Gerçek zamanlı AI görüntüsü ve sesi."}</p>
+                <p className="truncate text-[13px] font-extrabold">{t("{name}'in AI ikizi", { name })}</p>
+                <p className="text-[11px] text-muted">{isVoice ? t("Doğal sesli yanıtlar, anlık konuşma.") : t("Gerçek zamanlı AI görüntüsü ve sesi.")}</p>
               </div>
             </div>
             <dl className="grid gap-3 border-t border-line-soft pt-4 text-xs">
               <div className="flex items-center justify-between">
-                <dt className="text-muted">Dakika ücreti</dt>
-                <dd className="font-extrabold">{data.ratePerMinute ? `${formatNumber(data.ratePerMinute)} kredi / dk` : "Ücretsiz"}</dd>
+                <dt className="text-muted">{t("Dakika ücreti")}</dt>
+                <dd className="font-extrabold">{data.ratePerMinute ? t("{n} kredi / dk", { n: formatNumber(data.ratePerMinute) }) : t("Ücretsiz")}</dd>
               </div>
               <div className="flex items-center justify-between">
-                <dt className="text-muted">Kredi bakiyen</dt>
-                <dd className="font-extrabold">{formatNumber(data.balance)} kredi</dd>
+                <dt className="text-muted">{t("Kredi bakiyen")}</dt>
+                <dd className="font-extrabold">{t("{n} kredi", { n: formatNumber(data.balance) })}</dd>
               </div>
               {data.ratePerMinute > 0 && (
                 <div className="flex items-center justify-between">
-                  <dt className="text-muted">Tahmini süre</dt>
-                  <dd className="font-extrabold">~{formatNumber(Math.floor(data.balance / data.ratePerMinute))} dk</dd>
+                  <dt className="text-muted">{t("Tahmini süre")}</dt>
+                  <dd className="font-extrabold">{t("~{n} dk", { n: formatNumber(Math.floor(data.balance / data.ratePerMinute)) })}</dd>
                 </div>
               )}
             </dl>
             <Link href="/app/wallet" className="mt-4 flex h-11 items-center justify-center gap-2 rounded-full bg-brand-500 text-xs font-extrabold text-white shadow-[var(--shadow-pink)] hover:bg-brand-600">
-              <Coins className="size-4" /> Kredi satın al
+              <Coins className="size-4" /> {t("Kredi satın al")}
             </Link>
           </Card>
           <Card className="hf-gradient-pink">
             <p className="flex items-center gap-2 text-sm font-extrabold">
-              <ShieldCheck className="size-4 text-brand-500" aria-hidden /> {isVoice ? "Kontrol sende" : "Şeffaf AI deneyimi"}
+              <ShieldCheck className="size-4 text-brand-500" aria-hidden /> {isVoice ? t("Kontrol sende") : t("Şeffaf AI deneyimi")}
             </p>
             <p className="mt-2 text-xs leading-relaxed text-muted-strong">
               {isVoice
-                ? "İstediğin zaman görüşmeyi bitirebilirsin. Ücret, her başlayan dakika için kredi olarak tahsil edilir."
-                : "Bu görüşmedeki görüntü ve ses gerçek zamanlı AI teknolojisiyle oluşturulur; gerçek bir insan görüşmesi değildir. Ücret, her başlayan dakika için tahsil edilir."}
+                ? t("İstediğin zaman görüşmeyi bitirebilirsin. Ücret, her başlayan dakika için kredi olarak tahsil edilir.")
+                : t("Bu görüşmedeki görüntü ve ses gerçek zamanlı AI teknolojisiyle oluşturulur; gerçek bir insan görüşmesi değildir. Ücret, her başlayan dakika için tahsil edilir.")}
             </p>
           </Card>
         </div>

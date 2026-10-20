@@ -5,31 +5,35 @@ import { AdminPage, KpiGrid, Notice, ScoreBar, StatusPill, TabLinks, href } from
 import { Donut } from "@/components/charts/charts";
 import { Card, CardHeader } from "@/components/ui/card";
 import { DataTable, EmptyState, StatCard, Td, Th } from "@/components/ui/display";
+import { getFormatters, getT } from "@/i18n/server";
+import { m } from "@/i18n/m";
 import { requireAdmin } from "@/lib/auth/session";
-import { formatMoney, formatNumber } from "@/lib/utils";
 import { ANALYTICS_RANGES, getAnalyticsData, METRICS, type AnalyticsRangeKey, type Metric } from "@/services/admin/analytics";
 import { pickEnum, type SearchParams } from "@/services/admin/shared";
 
-export const metadata: Metadata = { title: "Platform Analitiği" };
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getT();
+  return { title: t("Platform Analitiği") };
+}
 
-const RANGE_LABELS: Record<AnalyticsRangeKey, string> = { "30": "Son 30 gün", "90": "Son 90 gün", "365": "Son 12 ay" };
-const METRIC_LABELS: Record<Metric, string> = { users: "Kullanıcılar", revenue: "Gelir", engagement: "Etkileşim", creators: "Creator Büyümesi" };
+const RANGE_LABELS: Record<AnalyticsRangeKey, string> = { "30": m("Son 30 gün"), "90": m("Son 90 gün"), "365": m("Son 12 ay") };
+const METRIC_LABELS: Record<Metric, string> = { users: m("Kullanıcılar"), revenue: m("Gelir"), engagement: m("Etkileşim"), creators: m("Creator Büyümesi") };
 const EVENT_LABELS: Record<string, string> = {
-  profile_view: "Profil görüntüleme",
-  content_view: "İçerik görüntüleme",
-  follow: "Takip",
-  unfollow: "Takipten çıkma",
-  favorite: "Favori",
-  chat_message: "Sohbet mesajı",
-  chat_started: "Sohbet başlatma",
-  subscription_started: "Abonelik başlangıcı",
-  content_purchase: "İçerik satın alma",
-  credit_purchase: "Kredi satın alma",
-  search: "Arama",
-  page_view: "Sayfa görüntüleme",
-  signup: "Kayıt",
+  profile_view: m("Profil görüntüleme"),
+  content_view: m("İçerik görüntüleme"),
+  follow: m("Takip"),
+  unfollow: m("Takipten çıkma"),
+  favorite: m("Favori"),
+  chat_message: m("Sohbet mesajı"),
+  chat_started: m("Sohbet başlatma"),
+  subscription_started: m("Abonelik başlangıcı"),
+  content_purchase: m("İçerik satın alma"),
+  credit_purchase: m("Kredi satın alma"),
+  search: m("Arama"),
+  page_view: m("Sayfa görüntüleme"),
+  signup: m("Kayıt"),
 };
-const INTENT_LABELS: Record<string, string> = { fan: "Hayran olarak", creator: "Creator olarak", none: "Belirtilmemiş" };
+const INTENT_LABELS: Record<string, string> = { fan: m("Hayran olarak"), creator: m("Creator olarak"), none: m("Belirtilmemiş") };
 
 function cellStyle(v: number | null) {
   if (v === null) return undefined;
@@ -39,74 +43,76 @@ function cellStyle(v: number | null) {
 
 export default async function AdminAnalyticsPage({ searchParams }: { searchParams: Promise<SearchParams> }) {
   await requireAdmin("analytics.read");
+  const t = await getT();
+  const { formatMoney, formatNumber, formatPercent } = await getFormatters();
   const sp = await searchParams;
   const range = pickEnum(sp, "range", ["30", "90", "365"] as const, "30");
   const metric = pickEnum(sp, "metric", METRICS, "users");
   const [d] = await Promise.all([getAnalyticsData(ANALYTICS_RANGES[range], metric)]);
   const { kpis } = d;
-  const donut = d.intents.map((i) => ({ name: INTENT_LABELS[i.intent] ?? i.intent, value: i.n }));
+  const donut = d.intents.map((i) => ({ name: INTENT_LABELS[i.intent] ? t(INTENT_LABELS[i.intent]!) : i.intent, value: i.n }));
   const top = d.funnel[0]?.n ?? 0;
   const keep = { range: range === "30" ? null : range };
 
   return (
     <AdminPage
-      title="Platform Analitiği"
-      description="Büyüme, dönüşüm, kullanıcı tutundurma ve birim ekonomisini karşılaştırın."
+      title={t("Platform Analitiği")}
+      description={t("Büyüme, dönüşüm, kullanıcı tutundurma ve birim ekonomisini karşılaştırın.")}
       actions={
         <>
-          <TabLinks label="Dönem" active={range} tabs={(["30", "90", "365"] as const).map((r) => ({ key: r, label: RANGE_LABELS[r], href: href("/admin/analytics", { metric: metric === "users" ? null : metric, range: r === "30" ? null : r }) }))} className="mb-0" />
+          <TabLinks label={t("Dönem")} active={range} tabs={(["30", "90", "365"] as const).map((r) => ({ key: r, label: t(RANGE_LABELS[r]), href: href("/admin/analytics", { metric: metric === "users" ? null : metric, range: r === "30" ? null : r }) }))} className="mb-0" />
         </>
       }
     >
       <KpiGrid>
-        <StatCard label={`Aktif Kullanıcı · ${RANGE_LABELS[range]}`} value={formatNumber(kpis.active)} icon={<Activity />} tone="pink" delta={kpis.activeDelta} foot={kpis.activeDelta ? "önceki döneme göre" : "giriş yapmış, etkinliği kayıtlı"} />
-        <StatCard label="Yeni Kayıt" value={formatNumber(kpis.signups)} icon={<UserPlus />} tone="violet" delta={kpis.signupsDelta} foot={kpis.signupsDelta ? "önceki döneme göre" : undefined} />
-        <StatCard label="Ödeme Dönüşümü" value={kpis.conversionPct === null ? "—" : `%${kpis.conversionPct.toLocaleString("tr-TR")}`} icon={<CreditCard />} tone="teal" foot={`${formatNumber(kpis.payers)} ödeme yapan / etkin veya ödeyen kullanıcı`} />
-        <StatCard label="Ödeme Yapan Başına Gelir" value={kpis.arppu === null ? "—" : formatMoney(kpis.arppu, "TRY", { decimals: false })} icon={<Users />} tone="orange" foot="dönem brüt hacmi ÷ ödeme yapan" />
+        <StatCard label={t("Aktif Kullanıcı · {range}", { range: t(RANGE_LABELS[range]) })} value={formatNumber(kpis.active)} icon={<Activity />} tone="pink" delta={kpis.activeDelta} foot={kpis.activeDelta ? t("önceki döneme göre") : t("giriş yapmış, etkinliği kayıtlı")} />
+        <StatCard label={t("Yeni Kayıt")} value={formatNumber(kpis.signups)} icon={<UserPlus />} tone="violet" delta={kpis.signupsDelta} foot={kpis.signupsDelta ? t("önceki döneme göre") : undefined} />
+        <StatCard label={t("Ödeme Dönüşümü")} value={kpis.conversionPct === null ? "—" : formatPercent(kpis.conversionPct * 100)} icon={<CreditCard />} tone="teal" foot={t("{count} ödeme yapan / etkin veya ödeyen kullanıcı", { count: formatNumber(kpis.payers) })} />
+        <StatCard label={t("Ödeme Yapan Başına Gelir")} value={kpis.arppu === null ? "—" : formatMoney(kpis.arppu, "TRY", { decimals: false })} icon={<Users />} tone="orange" foot={t("dönem brüt hacmi ÷ ödeme yapan")} />
       </KpiGrid>
 
       <div className="grid gap-5 xl:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)]">
         <Card>
-          <CardHeader title="Büyüme ve Etkileşim" hint="Son 12 ay · aylık" />
-          <TabLinks label="Metrik" active={metric} tabs={METRICS.map((m) => ({ key: m, label: METRIC_LABELS[m], href: href("/admin/analytics", { metric: m === "users" ? null : m, ...keep }) }))} className="mb-4" />
+          <CardHeader title={t("Büyüme ve Etkileşim")} hint={t("Son 12 ay · aylık")} />
+          <TabLinks label={t("Metrik")} active={metric} tabs={METRICS.map((mt) => ({ key: mt, label: t(METRIC_LABELS[mt]), href: href("/admin/analytics", { metric: mt === "users" ? null : mt, ...keep }) }))} className="mb-4" />
           {metric === "revenue" ? (
-            d.series.every((s) => s.value === 0) ? <EmptyState compact title="Henüz veri bulunmuyor" description="Son 12 ayda başarılı ödeme yok." /> : <MoneyBars data={d.series.map((s) => ({ label: s.label, value: s.value }))} height={240} label="Brüt hacim" />
+            d.series.every((s) => s.value === 0) ? <EmptyState compact title={t("Henüz veri bulunmuyor")} description={t("Son 12 ayda başarılı ödeme yok.")} /> : <MoneyBars data={d.series.map((s) => ({ label: s.label, value: s.value }))} height={240} label={t("Brüt hacim")} />
           ) : d.series.every((s) => s.value === 0) ? (
-            <EmptyState compact title="Henüz veri bulunmuyor" description="Bu metrik için son 12 ayda kayıt yok." />
+            <EmptyState compact title={t("Henüz veri bulunmuyor")} description={t("Bu metrik için son 12 ayda kayıt yok.")} />
           ) : (
             <CountArea
               data={d.series}
               height={240}
-              label={metric === "users" ? "Yeni kullanıcı" : metric === "engagement" ? "Sohbet mesajı" : "Yeni creator profili"}
-              label2={metric === "users" ? "Creator olmak isteyen" : metric === "engagement" ? "Aktif sohbet eden" : "Onaylı"}
+              label={metric === "users" ? t("Yeni kullanıcı") : metric === "engagement" ? t("Sohbet mesajı") : t("Yeni creator profili")}
+              label2={metric === "users" ? t("Creator olmak isteyen") : metric === "engagement" ? t("Aktif sohbet eden") : t("Onaylı")}
             />
           )}
           <div className="mt-4 grid grid-cols-3 gap-3 border-t border-line-soft pt-4 text-center">
             <div>
-              <p className="text-[10px] font-bold text-muted">1. Hafta Tutundurma</p>
-              <p className="mt-1 text-lg font-black tracking-tight">{kpis.week1Pct === null ? "—" : `%${kpis.week1Pct}`}</p>
+              <p className="text-[10px] font-bold text-muted">{t("1. Hafta Tutundurma")}</p>
+              <p className="mt-1 text-lg font-black tracking-tight">{kpis.week1Pct === null ? "—" : formatPercent(kpis.week1Pct * 100)}</p>
             </div>
             <div>
-              <p className="text-[10px] font-bold text-muted">Tekrar Ziyaret</p>
-              <p className="mt-1 text-lg font-black tracking-tight">{kpis.repeatPct === null ? "—" : `%${kpis.repeatPct}`}</p>
+              <p className="text-[10px] font-bold text-muted">{t("Tekrar Ziyaret")}</p>
+              <p className="mt-1 text-lg font-black tracking-tight">{kpis.repeatPct === null ? "—" : formatPercent(kpis.repeatPct * 100)}</p>
             </div>
             <div>
-              <p className="text-[10px] font-bold text-muted">Oturum Süresi</p>
-              <p className="mt-1 text-sm font-extrabold tracking-tight text-muted">Ölçülmüyor</p>
+              <p className="text-[10px] font-bold text-muted">{t("Oturum Süresi")}</p>
+              <p className="mt-1 text-sm font-extrabold tracking-tight text-muted">{t("Ölçülmüyor")}</p>
             </div>
           </div>
         </Card>
 
         <Card>
-          <CardHeader title="Dönüşüm Hunisi" hint={`${RANGE_LABELS[range]} içinde kayıt olanlar`} />
+          <CardHeader title={t("Dönüşüm Hunisi")} hint={t("{range} içinde kayıt olanlar", { range: t(RANGE_LABELS[range]) })} />
           {top === 0 ? (
-            <EmptyState compact title="Henüz veri bulunmuyor" description="Bu dönemde yeni kayıt yok." />
+            <EmptyState compact title={t("Henüz veri bulunmuyor")} description={t("Bu dönemde yeni kayıt yok.")} />
           ) : (
             <>
               {d.funnel.map((f) => (
-                <ScoreBar key={f.key} label={f.label} value={top ? (f.n / top) * 100 : null} hint={`${formatNumber(f.n)} kullanıcı`} tone={f.key === "signup" ? "pink" : f.key === "chat" ? "violet" : "teal"} />
+                <ScoreBar key={f.key} label={t(f.label)} value={top ? (f.n / top) * 100 : null} hint={t("{count} kullanıcı", { count: formatNumber(f.n) })} tone={f.key === "signup" ? "pink" : f.key === "chat" ? "violet" : "teal"} />
               ))}
-              <p className="mt-3 text-[11px] leading-relaxed text-muted">Yüzdeler aynı başlangıç kitlesine (dönemde kayıt olanlar) göredir. Ödeme adımı, sohbet etmeden satın alanları da içerir.</p>
+              <p className="mt-3 text-[11px] leading-relaxed text-muted">{t("Yüzdeler aynı başlangıç kitlesine (dönemde kayıt olanlar) göredir. Ödeme adımı, sohbet etmeden satın alanları da içerir.")}</p>
             </>
           )}
         </Card>
@@ -114,20 +120,22 @@ export default async function AdminAnalyticsPage({ searchParams }: { searchParam
 
       <div className="grid gap-5 xl:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)]">
         <Card>
-          <CardHeader title="Kohort Tutundurma Analizi" hint="Haftalık kayıt grupları · sohbet aktivitesi gösteren kullanıcı oranı" />
+          <CardHeader title={t("Kohort Tutundurma Analizi")} hint={t("Haftalık kayıt grupları · sohbet aktivitesi gösteren kullanıcı oranı")} />
           <div className="-mx-1 overflow-x-auto px-1 scrollbar-thin">
             <table className="w-full min-w-[640px] border-separate border-spacing-1 text-center text-[11px]">
               <thead>
                 <tr>
                   <th scope="col" className="px-2 py-1.5 text-start text-[10px] font-black uppercase tracking-wider text-muted">
-                    Kayıt haftası
+                    
+                    {t("Kayıt haftası")}
                   </th>
                   <th scope="col" className="px-2 py-1.5 text-[10px] font-black uppercase tracking-wider text-muted">
-                    Kullanıcı
+                    
+                    {t("Kullanıcı")}
                   </th>
                   {Array.from({ length: d.cohortWeeks }).map((_, k) => (
                     <th key={k} scope="col" className="px-2 py-1.5 text-[10px] font-black uppercase tracking-wider text-muted">
-                      {k}. hf
+                      {t("{n}. hf", { n: k })}
                     </th>
                   ))}
                 </tr>
@@ -141,7 +149,7 @@ export default async function AdminAnalyticsPage({ searchParams }: { searchParam
                     <td className="px-2 py-1.5 font-bold text-muted-strong">{c.size}</td>
                     {c.cells.map((v, k) => (
                       <td key={k} className="rounded-md px-2 py-1.5 font-extrabold" style={cellStyle(v)}>
-                        {v === null ? "" : `%${v}`}
+                        {v === null ? "" : formatPercent(v * 100)}
                       </td>
                     ))}
                   </tr>
@@ -149,39 +157,39 @@ export default async function AdminAnalyticsPage({ searchParams }: { searchParam
               </tbody>
             </table>
           </div>
-          <p className="mt-3 text-[11px] text-muted">Aktivite = kullanıcının sohbet mesajı veya sohbet başlatma olayı (analitik olayları + mesaj kayıtları). 0. hafta kayıt haftasıdır; boş hücreler henüz yaşanmamış veya kohortu olmayan haftalardır.</p>
+          <p className="mt-3 text-[11px] text-muted">{t("Aktivite = kullanıcının sohbet mesajı veya sohbet başlatma olayı (analitik olayları + mesaj kayıtları). 0. hafta kayıt haftasıdır; boş hücreler henüz yaşanmamış veya kohortu olmayan haftalardır.")}</p>
         </Card>
 
         <div className="grid content-start gap-5">
           <Card>
-            <CardHeader title="Kayıt Niyeti" hint={`${RANGE_LABELS[range]} · kayıt sırasında seçilen`} />
-            {donut.length === 0 ? <EmptyState compact title="Henüz veri bulunmuyor" /> : <Donut data={donut} height={140} centerValue={formatNumber(kpis.signups)} centerLabel="kayıt" />}
+            <CardHeader title={t("Kayıt Niyeti")} hint={t("{range} · kayıt sırasında seçilen", { range: t(RANGE_LABELS[range]) })} />
+            {donut.length === 0 ? <EmptyState compact title={t("Henüz veri bulunmuyor")} /> : <Donut data={donut} height={140} centerValue={formatNumber(kpis.signups)} centerLabel={t("kayıt")} />}
           </Card>
           <Card>
-            <CardHeader title="Trafik Kaynakları" hint="Referrer / UTM" />
-            <Notice tone="neutral">Trafik kaynağı (referrer, UTM, kampanya) ölçümü henüz toplanmıyor; bu yüzden kaynak dağılımı gösterilmiyor. Aşağıda yalnız ürün içi olay hacimleri yer alır.</Notice>
+            <CardHeader title={t("Trafik Kaynakları")} hint={t("Referrer / UTM")} />
+            <Notice tone="neutral">{t("Trafik kaynağı (referrer, UTM, kampanya) ölçümü henüz toplanmıyor; bu yüzden kaynak dağılımı gösterilmiyor. Aşağıda yalnız ürün içi olay hacimleri yer alır.")}</Notice>
           </Card>
         </div>
       </div>
 
       <Card>
-        <CardHeader title="Ürün İçi Olay Hacmi" hint={`${RANGE_LABELS[range]} · önceki dönemle karşılaştırma`} />
+        <CardHeader title={t("Ürün İçi Olay Hacmi")} hint={t("{range} · önceki dönemle karşılaştırma", { range: t(RANGE_LABELS[range]) })} />
         {d.events.length === 0 ? (
-          <EmptyState compact title="Henüz veri bulunmuyor" description="Bu dönemde analitik olayı kaydedilmedi." />
+          <EmptyState compact title={t("Henüz veri bulunmuyor")} description={t("Bu dönemde analitik olayı kaydedilmedi.")} />
         ) : (
           <DataTable>
             <thead>
               <tr>
-                <Th>Olay</Th>
-                <Th className="text-end">Adet</Th>
-                <Th className="text-end">Önceki döneme göre</Th>
+                <Th>{t("Olay")}</Th>
+                <Th className="text-end">{t("Adet")}</Th>
+                <Th className="text-end">{t("Önceki döneme göre")}</Th>
               </tr>
             </thead>
             <tbody>
               {d.events.map((e) => (
                 <tr key={e.type}>
                   <Td>
-                    <b className="text-ink">{EVENT_LABELS[e.type] ?? e.type}</b>
+                    <b className="text-ink">{EVENT_LABELS[e.type] ? t(EVENT_LABELS[e.type]!) : e.type}</b>
                   </Td>
                   <Td className="text-end tabular-nums">{formatNumber(e.count)}</Td>
                   <Td className="text-end">
@@ -190,7 +198,7 @@ export default async function AdminAnalyticsPage({ searchParams }: { searchParam
                         {e.delta.value}
                       </StatusPill>
                     ) : (
-                      <span className="text-[10px] text-muted">karşılaştırma yok</span>
+                      <span className="text-[10px] text-muted">{t("karşılaştırma yok")}</span>
                     )}
                   </Td>
                 </tr>
@@ -199,7 +207,8 @@ export default async function AdminAnalyticsPage({ searchParams }: { searchParam
           </DataTable>
         )}
         <p className="mt-3 flex items-center gap-1.5 text-[11px] text-muted">
-          <Repeat2 className="size-3.5 shrink-0" aria-hidden /> Analitik olayları 400 gün saklanır.{d.anonPct !== null && d.anonPct > 0 ? ` Dönemdeki olayların %${d.anonPct}'i kullanıcı kimliği taşımıyor (anonim/toplu); bu yüzden aktif kullanıcı sayısı alt sınırdır.` : ""}
+          <Repeat2 className="size-3.5 shrink-0" aria-hidden /> {t("Analitik olayları 400 gün saklanır.")}
+          {d.anonPct !== null && d.anonPct > 0 ? <> {t("Dönemdeki olayların %{anonPct}'i kullanıcı kimliği taşımıyor (anonim/toplu); bu yüzden aktif kullanıcı sayısı alt sınırdır.", { anonPct: d.anonPct })}</> : null}
         </p>
       </Card>
     </AdminPage>

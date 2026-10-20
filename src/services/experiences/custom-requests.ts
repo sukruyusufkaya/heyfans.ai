@@ -12,13 +12,14 @@ import { recordCreditEarning } from "@/services/billing/earnings";
 import { assertNotSample } from "@/services/creators/sample";
 import { notify } from "@/services/notifications/notifications";
 import { debitWallet, reverseLedgerEntry } from "@/services/wallet/wallet";
+import { m } from "@/i18n/m";
 
 export const customRequestSchema = z.object({
   username: z.string().trim().toLowerCase().max(30),
   type: z.enum(["photo", "video", "audio", "message", "other"]),
-  title: z.string().trim().min(3, "Başlık en az 3 karakter").max(120),
-  details: z.string().trim().min(10, "Lütfen talebini biraz daha detaylandır").max(3000),
-  priceCredits: z.number().int().min(10, "En az 10 kredi").max(100_000),
+  title: z.string().trim().min(3, m("Başlık en az 3 karakter")).max(120),
+  details: z.string().trim().min(10, m("Lütfen talebini biraz daha detaylandır")).max(3000),
+  priceCredits: z.number().int().min(10, m("En az 10 kredi")).max(100_000),
   dueAt: z.coerce.date().nullable().optional(),
   submit: z.boolean().default(true),
 });
@@ -57,12 +58,12 @@ export async function createCustomRequest(userId: string, raw: unknown) {
     );
     if (input.submit) {
       const entry = await debitWallet(
-        { userId, amount: input.priceCredits, type: "spend_custom_request", description: `Özel talep: ${input.title}`, idempotencyKey: `creq:hold:${doc!._id.toString()}`, creatorId: creator._id, refType: "CustomRequest", refId: doc!._id },
+        { userId, amount: input.priceCredits, type: "spend_custom_request", description: `Özel talep: ${input.title}` /* i18n-ignore (defter açıklaması saklanır) */, idempotencyKey: `creq:hold:${doc!._id.toString()}`, creatorId: creator._id, refType: "CustomRequest", refId: doc!._id },
         session,
       );
       doc!.holdEntryId = entry._id;
       await doc!.save({ session });
-      await notify(creator.userId.toString(), { type: "custom_request", title: "Yeni özel talep", body: input.title, link: "/studio/requests" }, session);
+      await notify(creator.userId.toString(), { type: "custom_request", title: m("Yeni özel talep"), body: input.title, link: "/studio/requests" }, session);
     }
     return doc!.toObject() as ICustomRequest;
   });
@@ -89,15 +90,15 @@ export async function fanUpdateRequest(userId: string, id: string, action: "subm
     if (action === "submit") {
       push(doc, "pending", userId);
       const entry = await debitWallet(
-        { userId, amount: doc.priceCredits, type: "spend_custom_request", description: `Özel talep: ${doc.title}`, idempotencyKey: `creq:hold:${doc._id.toString()}`, creatorId: doc.creatorId, refType: "CustomRequest", refId: doc._id },
+        { userId, amount: doc.priceCredits, type: "spend_custom_request", description: `Özel talep: ${doc.title}` /* i18n-ignore (defter açıklaması saklanır) */, idempotencyKey: `creq:hold:${doc._id.toString()}`, creatorId: doc.creatorId, refType: "CustomRequest", refId: doc._id },
         session,
       );
       doc.holdEntryId = entry._id;
     } else {
       if (!["draft", "pending", "approved"].includes(doc.status)) throw new AppError("Bu aşamada talep iptal edilemez.", "cannot_cancel");
-      push(doc, "canceled", userId, "Hayran tarafından iptal edildi");
+      push(doc, "canceled", userId, "Hayran tarafından iptal edildi"); // i18n-ignore (durum geçmişi notu)
       if (doc.holdEntryId && !doc.refundEntryId) {
-        const refund = await reverseLedgerEntry(doc.holdEntryId, "Özel talep iptali", userId, session);
+        const refund = await reverseLedgerEntry(doc.holdEntryId, "Özel talep iptali" /* i18n-ignore (defter notu saklanır) */, userId, session);
         doc.refundEntryId = refund._id;
       }
     }
@@ -118,7 +119,7 @@ export async function creatorUpdateRequest(userId: string, id: string, action: "
     push(doc, map[action], userId, payload.note);
     if (payload.note) doc.creatorNote = payload.note.slice(0, 2000);
     if (action === "reject" && doc.holdEntryId && !doc.refundEntryId) {
-      const refund = await reverseLedgerEntry(doc.holdEntryId, "Özel talep reddedildi", userId, session);
+      const refund = await reverseLedgerEntry(doc.holdEntryId, "Özel talep reddedildi" /* i18n-ignore (defter notu saklanır) */, userId, session);
       doc.refundEntryId = refund._id;
     }
     if (action === "complete") {
@@ -130,10 +131,11 @@ export async function creatorUpdateRequest(userId: string, id: string, action: "
         throw new AppError("Teslim için en az bir dosya ekleyin.", "deliverable_required");
       }
       doc.deliverableAssetIds = ids;
+      // i18n-ignore (hak ediş açıklaması saklanır)
       if (doc.holdEntryId) await recordCreditEarning({ creatorId: creator._id, sourceType: "custom_request", credits: doc.priceCredits, ledgerEntryId: doc.holdEntryId, description: `Özel talep: ${doc.title}` }, session);
     }
     await doc.save({ session });
-    const titles = { review: "Talebin incelemede", approve: "Talebin onaylandı", reject: "Talebin reddedildi (kredi iade edildi)", start: "Talebin hazırlanıyor", complete: "Talebin tamamlandı" };
+    const titles = { review: m("Talebin incelemede"), approve: m("Talebin onaylandı"), reject: m("Talebin reddedildi (kredi iade edildi)"), start: m("Talebin hazırlanıyor"), complete: m("Talebin tamamlandı") };
     await notify(doc.fanId.toString(), { type: "custom_request", title: titles[action], body: doc.title, link: "/app/experiences" }, session);
   });
   return doc.toObject();

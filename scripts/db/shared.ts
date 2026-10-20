@@ -8,6 +8,7 @@ import path from "node:path";
 import type { TwinBoundaries, TwinPersona, TwinVoiceLikeness } from "@/models/ai";
 import { Category, CmsPage, GiftCatalogItem, HelpArticle, HomepageSection, MembershipPlan } from "@/models";
 import { CATEGORIES, GIFTS, HELP_ARTICLES, LEGAL_PAGES, PLATFORM_PLANS } from "./seed-data";
+import { m } from "@/i18n/m";
 
 export interface CharacterFile {
   creators: {
@@ -31,9 +32,9 @@ export const seedImage = (rel: string) => (existsSync(path.join("public/images/s
 export const contentImageFile = (username: string, index: number) => path.join("scripts/db/seed-media/content", `${username}-${index}.webp`);
 
 export const TIER_INFO = {
-  basic: { name: "Temel", benefits: ["Genel gönderilere erişim", "AI ikiziyle günlük 10 mesaj", "Abonelere özel hikâyeler"], entitlements: { contentAccess: "basic" as const, unlimitedChat: false, dailyChatAllowance: 10, monthlyCredits: 0, customRequests: false, prioritySupport: false } },
-  premium: { name: "Premium", benefits: ["Tüm gönderilere erişim", "AI ikiziyle sınırsız sohbet", "Premium seriler ve rehberler", "Erken erişim"], entitlements: { contentAccess: "premium" as const, unlimitedChat: true, dailyChatAllowance: 0, monthlyCredits: 0, customRequests: true, prioritySupport: false } },
-  vip: { name: "VIP", benefits: ["Tüm Premium avantajları", "Sesli içerikler ve podcast", "Özel isteklerde öncelik", "Aylık 100 kredi"], entitlements: { contentAccess: "vip" as const, unlimitedChat: true, dailyChatAllowance: 0, monthlyCredits: 100, customRequests: true, prioritySupport: true } },
+  basic: { name: m("Temel"), benefits: [m("Genel gönderilere erişim"), m("AI ikiziyle günlük 10 mesaj"), m("Abonelere özel hikâyeler")], entitlements: { contentAccess: "basic" as const, unlimitedChat: false, dailyChatAllowance: 10, monthlyCredits: 0, customRequests: false, prioritySupport: false } },
+  premium: { name: m("Premium"), benefits: [m("Tüm gönderilere erişim"), m("AI ikiziyle sınırsız sohbet"), m("Premium seriler ve rehberler"), m("Erken erişim")], entitlements: { contentAccess: "premium" as const, unlimitedChat: true, dailyChatAllowance: 0, monthlyCredits: 0, customRequests: true, prioritySupport: false } },
+  vip: { name: m("VIP"), benefits: [m("Tüm Premium avantajları"), m("Sesli içerikler ve podcast"), m("Özel isteklerde öncelik"), m("Aylık 100 kredi")], entitlements: { contentAccess: "vip" as const, unlimitedChat: true, dailyChatAllowance: 0, monthlyCredits: 100, customRequests: true, prioritySupport: true } },
 };
 
 export function twinPersona(c: Character): TwinPersona {
@@ -58,8 +59,9 @@ export function twinPersona(c: Character): TwinPersona {
 export function twinBoundaries(c: Character): TwinBoundaries {
   return {
     allowedTopics: c.categories.map((x) => categoryNames.get(x) ?? x),
+    // i18n-ignore (örnek creator içeriği; çevrilmez)
     blockedTopics: ["siyaset", "ev adresi", "telefon numarası", "özel hayatın detayları"],
-    customRules: ["Ücretli içerikleri yalnız HEYFANS içinden öner", "Tıbbi veya hukuki konularda uzmana yönlendir"],
+    customRules: ["Ücretli içerikleri yalnız HEYFANS içinden öner", "Tıbbi veya hukuki konularda uzmana yönlendir"], // i18n-ignore
     allowFlirt: false,
     allowPersonalQuestions: true,
     allowMediaRequests: false,
@@ -73,9 +75,9 @@ export const NO_VOICE: TwinVoiceLikeness = { voiceEnabled: false, videoEnabled: 
 
 /** Ana sayfa CMS bölümleri (doğrulanamayan sayı iddiası içermez). */
 export const HOME_SECTIONS = [
-  { key: "hero", type: "hero", title: "Gerçek İçerik Üreticileri. AI İkizler. Gerçek Bağlantılar.", subtitle: "Sevdiğin içerik üreticilerinin AI ikizleriyle 7/24 sohbet et, ipuçları al, özel içeriklere eriş ve onlarla her zamankinden daha yakın bir bağ kur.", config: { badge: "AI ile daha yakın, daha gerçek bağlantılar", primaryCta: { label: "İçerik Üreticilerini Keşfet", href: "/explore" }, secondaryCta: { label: "Nasıl Çalışır?", href: "/how-it-works" } }, order: 1 },
-  { key: "featured", type: "featured_creators", title: "Öne Çıkan İçerik Üreticileri", config: { limit: 6 }, order: 2 },
-  { key: "announcement", type: "announcement", title: "Şimdi HEYFANS topluluğuna katıl.", subtitle: "İçerik üreticilerini keşfet, AI ikizlerle sohbet et ve sana özel içeriklere eriş.", config: { ctaLabel: "Hemen Başla", ctaHref: "/register" }, order: 9 },
+  { key: "hero", type: "hero", title: m("Gerçek İçerik Üreticileri. AI İkizler. Gerçek Bağlantılar."), subtitle: m("Sevdiğin içerik üreticilerinin AI ikizleriyle 7/24 sohbet et, ipuçları al, özel içeriklere eriş ve onlarla her zamankinden daha yakın bir bağ kur."), config: { badge: m("AI ile daha yakın, daha gerçek bağlantılar"), primaryCta: { label: m("İçerik Üreticilerini Keşfet"), href: "/explore" }, secondaryCta: { label: m("Nasıl Çalışır?"), href: "/how-it-works" } }, order: 1 },
+  { key: "featured", type: "featured_creators", title: m("Öne Çıkan İçerik Üreticileri"), config: { limit: 6 }, order: 2 },
+  { key: "announcement", type: "announcement", title: m("Şimdi HEYFANS topluluğuna katıl."), subtitle: m("İçerik üreticilerini keşfet, AI ikizlerle sohbet et ve sana özel içeriklere eriş."), config: { ctaLabel: m("Hemen Başla"), ctaHref: "/register" }, order: 9 },
 ];
 
 /**

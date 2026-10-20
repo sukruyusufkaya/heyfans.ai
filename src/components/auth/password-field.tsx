@@ -4,9 +4,11 @@ import { Eye, EyeOff } from "lucide-react";
 import { Input } from "@/components/ui/form-controls";
 import { cn } from "@/lib/utils";
 import { passwordStrength } from "@/features/auth/schemas";
+import { useT } from "@/i18n/client";
 
 /** Göster/gizle düğmeli şifre alanı (52px, RHF `register` ile uyumlu). */
 export const PasswordInput = React.forwardRef<HTMLInputElement, Omit<React.InputHTMLAttributes<HTMLInputElement>, "type">>(({ className, ...props }, ref) => {
+  const t = useT();
   const [visible, setVisible] = React.useState(false);
   return (
     <Input
@@ -17,7 +19,7 @@ export const PasswordInput = React.forwardRef<HTMLInputElement, Omit<React.Input
         <button
           type="button"
           onClick={() => setVisible((v) => !v)}
-          aria-label={visible ? "Şifreyi gizle" : "Şifreyi göster"}
+          aria-label={visible ? t("Şifreyi gizle") : t("Şifreyi göster")}
           aria-pressed={visible}
           className="grid size-9 place-items-center rounded-full text-muted hover:bg-soft hover:text-ink"
         >
@@ -28,13 +30,15 @@ export const PasswordInput = React.forwardRef<HTMLInputElement, Omit<React.Input
     />
   );
 });
-PasswordInput.displayName = "PasswordInput";
+PasswordInput.displayName = "PasswordInput"; // i18n-ignore
 
 const BAR_TONE = ["", "bg-danger", "bg-orange", "bg-success", "bg-success"];
 
 /** 4 çubuklu şifre gücü göstergesi. */
 export function PasswordStrength({ value, id }: { value: string; id?: string }) {
-  const { score, label } = passwordStrength(value);
+  const t = useT();
+  const { score, label: rawLabel } = passwordStrength(value);
+  const label = t(rawLabel);
   return (
     <div className="mt-3 flex items-center gap-3" id={id} aria-live="polite">
       <div className="grid flex-1 grid-cols-4 gap-1.5" aria-hidden>
@@ -43,7 +47,7 @@ export function PasswordStrength({ value, id }: { value: string; id?: string }) 
         ))}
       </div>
       <span className="w-[88px] shrink-0 text-end text-[11px] font-bold text-muted-strong">{label}</span>
-      <span className="sr-only">{value ? `Şifre gücü: ${label}` : ""}</span>
+      <span className="sr-only">{value ? t("Şifre gücü: {label}", { label }) : ""}</span>
     </div>
   );
 }

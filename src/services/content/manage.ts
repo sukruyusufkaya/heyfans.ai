@@ -10,11 +10,12 @@ import { CreatorProfile, type ICreatorProfile } from "@/models/creator";
 import { ModerationCase } from "@/models/safety";
 import { Follow } from "@/models/social";
 import { notify } from "@/services/notifications/notifications";
+import { m } from "@/i18n/m";
 
 export const contentInputSchema = z
   .object({
     type: z.enum(["photo", "video", "audio", "text", "collection"]),
-    title: z.string().trim().min(2, "Başlık en az 2 karakter").max(140),
+    title: z.string().trim().min(2, m("Başlık en az 2 karakter")).max(140),
     caption: z.string().trim().max(4000).optional().default(""),
     access: z.enum(["public", "followers", "subscribers", "purchase"]),
     minPlanTier: z.enum(["basic", "premium", "vip"]).nullable().optional(),
@@ -27,8 +28,8 @@ export const contentInputSchema = z
     scheduledAt: z.coerce.date().nullable().optional(),
   })
   .superRefine((v, ctx) => {
-    if (v.access === "purchase" && (!v.priceMinor || v.priceMinor < 100)) ctx.addIssue({ code: "custom", path: ["priceMinor"], message: "Satın alma için en az ₺1 fiyat girin" });
-    if (v.access === "subscribers" && !v.minPlanTier) ctx.addIssue({ code: "custom", path: ["minPlanTier"], message: "Abonelere özel içerik için plan seviyesi seçin" });
+    if (v.access === "purchase" && (!v.priceMinor || v.priceMinor < 100)) ctx.addIssue({ code: "custom", path: ["priceMinor"], message: m("Satın alma için en az ₺1 fiyat girin") });
+    if (v.access === "subscribers" && !v.minPlanTier) ctx.addIssue({ code: "custom", path: ["minPlanTier"], message: m("Abonelere özel içerik için plan seviyesi seçin") });
   });
 export type ContentInput = z.infer<typeof contentInputSchema>;
 
@@ -125,7 +126,7 @@ async function onPublished(creator: ICreatorProfile, content: IContentItem) {
   // Takipçilere bildirim (ilk 500; büyük kitleler için iş kuyruğu)
   const followers = await Follow.find({ creatorId: creator._id, notify: true }, { followerId: 1 }).limit(500).lean();
   for (const f of followers) {
-    await notify(f.followerId.toString(), { type: "new_content", title: `${creator.displayName} yeni içerik paylaştı`, body: content.title, link: `/content/${content._id.toString()}`, actorImage: creator.avatarUrl ?? null });
+    await notify(f.followerId.toString(), { type: "new_content", title: m("{creator} yeni içerik paylaştı"), params: { creator: creator.displayName }, body: content.title, link: `/content/${content._id.toString()}`, actorImage: creator.avatarUrl ?? null });
   }
 }
 
@@ -142,7 +143,8 @@ export async function moderateContent(actor: { id: string; adminRole: string | n
   doc.moderation = { state: action === "restore" ? "approved" : action === "remove" ? "removed" : "flagged", caseId: caseId ? oid(caseId) : doc.moderation.caseId };
   await doc.save();
   const creator = await CreatorProfile.findById(doc.creatorId, { userId: 1 }).lean();
-  if (creator) await notify(creator.userId.toString(), { type: "moderation", title: action === "restore" ? "İçeriğin yeniden yayında" : "İçeriğin hakkında moderasyon kararı", body: `${doc.title}: ${reason}`, link: "/studio/content" });
+  if (creator) await notify(creator.userId.toString(), { type: "moderation", title: action === "restore" ? m("İçeriğin yeniden yayında") : m("İçeriğin hakkında moderasyon kararı"), body: m("{title}: {reason}"), params: { title: doc.title, reason }, link: "/studio/content" });
+  // i18n-ignore (denetim anahtarı)
   await audit({ actorId: actor.id, actorRole: actor.adminRole, action: `content.${action}`, targetType: "ContentItem", targetId: contentId, reason, severity: action === "remove" ? "critical" : "notice" });
   if (caseId) await ModerationCase.updateOne({ _id: oid(caseId) }, { $set: { status: "actioned" } });
 }

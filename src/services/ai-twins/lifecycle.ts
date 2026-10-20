@@ -10,13 +10,14 @@ import { AiTwin, AiTwinVersion, KnowledgeSource, type ITwin, type TwinBoundaries
 import { CreatorConsent, CreatorProfile, type ConsentKind, type ICreatorProfile } from "@/models/creator";
 import { notify } from "@/services/notifications/notifications";
 import { getPlatformSettings } from "@/services/platform/settings";
+import { m } from "@/i18n/m";
 
 export const CONSENT_TEXTS: Record<ConsentKind, { version: string; text: string }> = {
-  ai_twin_persona: { version: "2026-10-draft", text: "AI ikizimin, onayladığım kişilik ayarları ve sınırlarla hayranlarımla HEYFANS üzerinde sohbet etmesine izin veriyorum. Yanıtların 'AI İkizi' etiketiyle gösterileceğini ve iznimi her an geri çekebileceğimi biliyorum." },
-  knowledge_use: { version: "2026-10-draft", text: "Bilgi tabanına eklediğim ve onayladığım içeriklerin, AI ikizimin yanıtlarında bağlam olarak kullanılmasına izin veriyorum." },
-  voice_likeness: { version: "2026-10-draft", text: "Doğrulanmış kimliğimle, sesimin AI ikizim için ses profili oluşturmakta kullanılmasına açıkça izin veriyorum. İznimi geri çektiğimde ses özellikleri derhal durdurulur." },
-  image_likeness: { version: "2026-10-draft", text: "Doğrulanmış kimliğimle, görünümümün AI ikizimin görsel benzerliği için kullanılmasına açıkça izin veriyorum." },
-  video_likeness: { version: "2026-10-draft", text: "Doğrulanmış kimliğimle, görüntülü AI deneyimlerinde görünümümün kullanılmasına açıkça izin veriyorum." },
+  ai_twin_persona: { version: "2026-10-draft", text: m("AI ikizimin, onayladığım kişilik ayarları ve sınırlarla hayranlarımla HEYFANS üzerinde sohbet etmesine izin veriyorum. Yanıtların 'AI İkizi' etiketiyle gösterileceğini ve iznimi her an geri çekebileceğimi biliyorum.") },
+  knowledge_use: { version: "2026-10-draft", text: m("Bilgi tabanına eklediğim ve onayladığım içeriklerin, AI ikizimin yanıtlarında bağlam olarak kullanılmasına izin veriyorum.") },
+  voice_likeness: { version: "2026-10-draft", text: m("Doğrulanmış kimliğimle, sesimin AI ikizim için ses profili oluşturmakta kullanılmasına açıkça izin veriyorum. İznimi geri çektiğimde ses özellikleri derhal durdurulur.") },
+  image_likeness: { version: "2026-10-draft", text: m("Doğrulanmış kimliğimle, görünümümün AI ikizimin görsel benzerliği için kullanılmasına açıkça izin veriyorum.") },
+  video_likeness: { version: "2026-10-draft", text: m("Doğrulanmış kimliğimle, görüntülü AI deneyimlerinde görünümümün kullanılmasına açıkça izin veriyorum.") },
 };
 
 async function creatorFor(userId: string) {
@@ -69,7 +70,7 @@ export async function grantConsent(userId: string, kind: ConsentKind, ip?: strin
 }
 
 /** Rıza geri çekme: ilgili özellikler DERHAL durdurulur. Persona rızası geri çekilirse ikiz "revoked" olur. */
-export async function revokeConsent(userId: string, kind: ConsentKind, reason = "Creator tarafından geri çekildi") {
+export async function revokeConsent(userId: string, kind: ConsentKind, reason = "Creator tarafından geri çekildi" /* i18n-ignore (kayıt notu) */) {
   const creator = await creatorFor(userId);
   await withTransaction(async (session) => {
     await CreatorConsent.updateMany({ creatorId: creator._id, kind, revokedAt: null }, { $set: { revokedAt: new Date(), revokeReason: reason } }, { session });
@@ -111,7 +112,7 @@ export async function updateTwinDraft(
   if (patch.voice) Object.assign(twin.draft.voice, patch.voice);
   if (patch.pricing) {
     if (patch.pricing.messageCredits != null && patch.pricing.messageCredits > settings.chat.maxMessageCredits) {
-      throw new AppError(`Mesaj ücreti en fazla ${settings.chat.maxMessageCredits} kredi olabilir.`, "price_cap");
+      throw new AppError("Mesaj ücreti en fazla {max} kredi olabilir.", "price_cap", 400, { params: { max: settings.chat.maxMessageCredits } });
     }
     Object.assign(twin.pricing, patch.pricing);
   }
@@ -161,7 +162,7 @@ export async function submitTwinForReview(userId: string, changeSummary?: string
   });
   // Yayındaki ikiz, yeni sürüm incelenirken yayında kalır (canlı sürüm değişmez). İncelemedeki ikize
   // yeni sürüm gönderilirse önceki bekleyen sürüm "superseded" olur, durum aynı kalır.
-  if (!["live", "paused", "pending_review"].includes(twin.status)) await setStatus(twin._id, "pending_review", creator.userId, `Sürüm ${versionNo} incelemeye gönderildi`);
+  if (!["live", "paused", "pending_review"].includes(twin.status)) await setStatus(twin._id, "pending_review", creator.userId, `Sürüm ${versionNo} incelemeye gönderildi`); // i18n-ignore (durum geçmişi notu)
   await audit({ actorId: userId, action: "twin.submit", targetType: "AiTwin", targetId: twin._id.toString(), metadata: { version: versionNo } });
   return { version: versionNo };
 }
@@ -191,17 +192,18 @@ export async function reviewTwinVersion(actor: { id: string; adminRole: string |
       await version.save();
       await AiTwin.updateOne({ _id: twin._id }, { $set: { liveVersionId: version._id } });
     } else {
-      await setStatus(twin._id, "approved", actor.id, note);
+      await setStatus(twin._id, "approved", actor.id, note); // i18n-ignore
     }
   } else if (twin.status === "pending_review") {
-    await setStatus(twin._id, "rejected", actor.id, note);
+    await setStatus(twin._id, "rejected", actor.id, note); // i18n-ignore
   }
   await notify(creator.userId.toString(), {
     type: "twin_review",
-    title: decision === "approve" ? "AI ikizin onaylandı" : "AI ikizin için düzenleme gerekiyor",
+    title: decision === "approve" ? m("AI ikizin onaylandı") : m("AI ikizin için düzenleme gerekiyor"),
     body: note,
     link: "/studio/ai-twin",
   });
+  // i18n-ignore (denetim anahtarı)
   await audit({ actorId: actor.id, actorRole: actor.adminRole, action: `twin.${decision}`, targetType: "AiTwinVersion", targetId: versionId, reason: note, severity: "notice" });
 }
 
@@ -219,21 +221,24 @@ export async function publishTwin(userId: string) {
     await version.save();
     await AiTwin.updateOne({ _id: twin._id }, { $set: { liveVersionId: version._id } });
   }
-  await setStatus(twin._id, "live", creator.userId, twin.status === "paused" ? "Devam ettirildi" : "Yayına alındı");
+  await setStatus(twin._id, "live", creator.userId, twin.status === "paused" ? "Devam ettirildi" : "Yayına alındı"); // i18n-ignore (durum geçmişi notu)
   await audit({ actorId: userId, action: "twin.publish", targetType: "AiTwin", targetId: twin._id.toString() });
 }
 
 export async function pauseTwin(userId: string) {
   const { creator, twin } = await getOrCreateTwin(userId);
-  await setStatus(twin._id, "paused", creator.userId, "Creator tarafından duraklatıldı");
+  await setStatus(twin._id, "paused", creator.userId, "Creator tarafından duraklatıldı"); // i18n-ignore (durum geçmişi notu)
 }
+
+const ADMIN_TWIN_NOTICES = { paused: m("AI ikizin duraklatıldı"), revoked: m("AI ikizin geri çekildi"), live: m("AI ikizin yayında") } as const;
 
 /** Admin müdahalesi: duraklat veya geri çek (moderasyon). */
 export async function adminSetTwinStatus(actor: { id: string; adminRole: string | null }, twinId: string, to: "paused" | "revoked" | "live", reason: string) {
   const twin = await setStatus(oid(twinId), to, actor.id, reason);
   if (to === "revoked") await AiTwin.updateOne({ _id: twin._id }, { $set: { "features.chat": false, "features.voice": false, "features.video": false } });
   const creator = await CreatorProfile.findById(twin.creatorId, { userId: 1 }).lean();
-  if (creator) await notify(creator.userId.toString(), { type: "moderation", title: `AI ikizin ${TWIN_STATUS_LABELS[to].toLocaleLowerCase("tr-TR")}`, body: reason, link: "/studio/ai-twin" });
+  if (creator) await notify(creator.userId.toString(), { type: "moderation", title: ADMIN_TWIN_NOTICES[to], body: reason, link: "/studio/ai-twin" });
+  // i18n-ignore (denetim anahtarı)
   await audit({ actorId: actor.id, actorRole: actor.adminRole, action: `twin.admin_${to}`, targetType: "AiTwin", targetId: twinId, reason, severity: "critical" });
 }
 
@@ -260,5 +265,6 @@ export async function setLikenessFeature(userId: string, feature: "voice" | "vid
   }
   twin.markModified("draft");
   await twin.save();
+  // i18n-ignore (denetim anahtarı)
   await audit({ actorId: userId, action: `twin.likeness_${feature}_${enabled ? "on" : "off"}`, targetType: "AiTwin", targetId: twin._id.toString() });
 }

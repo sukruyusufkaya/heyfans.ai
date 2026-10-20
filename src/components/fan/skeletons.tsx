@@ -1,9 +1,12 @@
+"use client";
 import { Skeleton } from "@/components/ui/display";
+import { useT } from "@/i18n/client";
 
 /** Hayran sayfaları için ortak yükleme iskeleti: başlık + istenen düzen. */
 export function PageSkeleton({ variant = "cards" }: { variant?: "cards" | "list" | "split" }) {
+  const t = useT();
   return (
-    <div className="mx-auto max-w-[1320px]" role="status" aria-live="polite" aria-label="Yükleniyor">
+    <div className="mx-auto max-w-[1320px]" role="status" aria-live="polite" aria-label={t("Yükleniyor")}>
       <div className="mb-6 space-y-3">
         <Skeleton className="h-3 w-40" />
         <Skeleton className="h-9 w-72 max-w-full" />
@@ -29,7 +32,7 @@ export function PageSkeleton({ variant = "cards" }: { variant?: "cards" | "list"
           <Skeleton className="h-[480px] rounded-[16px]" />
         </div>
       )}
-      <span className="sr-only">Yükleniyor…</span>
+      <span className="sr-only">{t("Yükleniyor…")}</span>
     </div>
   );
 }

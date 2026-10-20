@@ -19,7 +19,7 @@ export async function addVoiceSample(userId: string, assetId: string) {
   const asset = await MediaAsset.findOne({ _id: oid(assetId), ownerId: creator.userId, purpose: "voice_sample", status: "ready" }).lean();
   if (!asset) throw new AppError("Ses dosyası bulunamadı veya henüz hazır değil.", "asset_invalid");
   const ids = twin.draft.voice.voiceSampleAssetIds;
-  if (ids.length >= MAX_SAMPLES) throw new AppError(`En fazla ${MAX_SAMPLES} ses örneği eklenebilir.`, "limit");
+  if (ids.length >= MAX_SAMPLES) throw new AppError("En fazla {max} ses örneği eklenebilir.", "limit", 400, { params: { max: MAX_SAMPLES } });
   if (!ids.some((i) => i.equals(asset._id))) ids.push(asset._id);
   twin.markModified("draft");
   await twin.save();

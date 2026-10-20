@@ -29,7 +29,7 @@ class LocalStorage implements StorageProvider {
   private root = path.resolve(env().STORAGE_LOCAL_DIR);
   private file(key: string) {
     const p = path.resolve(this.root, key);
-    if (!p.startsWith(this.root)) throw new Error("Geçersiz depolama anahtarı");
+    if (!p.startsWith(this.root)) throw new Error("Geçersiz depolama anahtarı"); // i18n-ignore (geliştirici/günlük hatası)
     return p;
   }
   async uploadTarget(_key: string, mime: string, assetId: string): Promise<UploadTarget> {

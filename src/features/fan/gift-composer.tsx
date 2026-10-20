@@ -9,7 +9,10 @@ import { Button } from "@/components/ui/button";
 import { Card, CardHeader } from "@/components/ui/card";
 import { Checkbox, Field, Input, NativeSelect, Textarea } from "@/components/ui/form-controls";
 import { sendGiftAction } from "@/features/fan/actions";
-import { cn, formatNumber } from "@/lib/utils";
+import { rich } from "@/components/fan/rich";
+import { useFormatters, useT } from "@/i18n/client";
+import { m } from "@/i18n/m";
+import { cn } from "@/lib/utils";
 
 const ICONS: Record<string, React.ComponentType<{ className?: string }>> = { flower: Flower2, heart: Heart, coffee: Coffee, crown: Crown, gem: Gem, rocket: Rocket, star: Star, trophy: Trophy, sparkles: Sparkles, gift: Gift };
 
@@ -29,6 +32,8 @@ const TIP_PRESETS = [10, 25, 50, 100, 250];
 
 /** Hediye / bahşiş gönderme formu. Kredi düşümü sunucuda atomik yapılır; aynı istemci anahtarı çift gönderimi engeller. */
 export function GiftComposer({ catalog, creators, balance, initialCreator }: { catalog: GiftCatalogView[]; creators: GiftCreatorOption[]; balance: number; initialCreator?: string }) {
+  const t = useT();
+  const { formatNumber } = useFormatters();
   const router = useRouter();
   const [kind, setKind] = React.useState<"gift" | "tip">("gift");
   const [giftKey, setGiftKey] = React.useState(catalog[Math.min(3, catalog.length - 1)]?.key ?? "");
@@ -65,7 +70,7 @@ export function GiftComposer({ catalog, creators, balance, initialCreator }: { c
       toast.error(res.error);
       return;
     }
-    toast.success(res.message ?? "Gönderildi.");
+    toast.success(res.message ?? t("Gönderildi."));
     setMessage("");
     setClientKey(crypto.randomUUID()); // bir sonraki gönderim yeni işlem
     router.refresh();
@@ -74,8 +79,12 @@ export function GiftComposer({ catalog, creators, balance, initialCreator }: { c
   return (
     <div className="grid gap-4 lg:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)]">
       <Card>
-        <CardHeader title={kind === "gift" ? "Bir Hediye Seç" : "Bahşiş Miktarı"} hint="Sevdiğin içerik üreticisini krediyle destekle." action={<span className="rounded-full bg-brand-100 px-2.5 py-1.5 text-[10px] font-extrabold text-brand-600">{kind === "gift" ? `${catalog.length} seçenek` : "Serbest tutar"}</span>} />
-        <div role="tablist" aria-label="Gönderim türü" className="mb-4 flex gap-2">
+        <CardHeader
+          title={kind === "gift" ? t("Bir Hediye Seç") : t("Bahşiş Miktarı")}
+          hint={t("Sevdiğin içerik üreticisini krediyle destekle.")}
+          action={<span className="rounded-full bg-brand-100 px-2.5 py-1.5 text-[10px] font-extrabold text-brand-600">{kind === "gift" ? t("{count} seçenek", { count: catalog.length }) : t("Serbest tutar")}</span>}
+        />
+        <div role="tablist" aria-label={t("Gönderim türü")} className="mb-4 flex gap-2">
           {(["gift", "tip"] as const).map((k) => (
             <button
               key={k}
@@ -85,13 +94,13 @@ export function GiftComposer({ catalog, creators, balance, initialCreator }: { c
               onClick={() => setKind(k)}
               className={cn("rounded-[10px] px-4 py-2.5 text-[11px] font-extrabold transition-colors", kind === k ? "bg-brand-500 text-white" : "bg-soft text-muted-strong hover:text-ink")}
             >
-              {k === "gift" ? "Hediye" : "Bahşiş"}
+              {k === "gift" ? t("Hediye") : t("Bahşiş")}
             </button>
           ))}
         </div>
         {kind === "gift" ? (
           catalog.length ? (
-            <div role="radiogroup" aria-label="Hediye" className="grid grid-cols-2 gap-2.5 sm:grid-cols-3 lg:grid-cols-4">
+            <div role="radiogroup" aria-label={t("Hediye")} className="grid grid-cols-2 gap-2.5 sm:grid-cols-3 lg:grid-cols-4">
               {catalog.map((g) => {
                 const Icon = ICONS[g.icon] ?? Gift;
                 const on = g.key === giftKey;
@@ -109,13 +118,13 @@ export function GiftComposer({ catalog, creators, balance, initialCreator }: { c
                       <Icon className="size-6" />
                     </span>
                     <span className="text-xs font-extrabold">{g.name}</span>
-                    <span className="text-[11px] font-bold text-muted">{formatNumber(g.credits)} kredi</span>
+                    <span className="text-[11px] font-bold text-muted">{t("{n} kredi", { n: formatNumber(g.credits) })}</span>
                   </button>
                 );
               })}
             </div>
           ) : (
-            <p className="rounded-xl bg-soft p-4 text-center text-xs text-muted">Şu anda gönderilebilir hediye yok.</p>
+            <p className="rounded-xl bg-soft p-4 text-center text-xs text-muted">{t("Şu anda gönderilebilir hediye yok.")}</p>
           )
         ) : (
           <div className="grid gap-3">
@@ -128,33 +137,31 @@ export function GiftComposer({ catalog, creators, balance, initialCreator }: { c
                   aria-pressed={Number(tip) === p}
                   className={cn("rounded-full border px-4 py-2 text-xs font-extrabold transition-colors", Number(tip) === p ? "border-brand-400 bg-brand-50 text-brand-600" : "border-line text-muted-strong hover:border-brand-200")}
                 >
-                  {p} kredi
+                  {t("{n} kredi", { n: p })}
                 </button>
               ))}
             </div>
-            <Field label="Veya kendi tutarın" htmlFor={`${id}-tip`} hint="En az 5, en fazla 50.000 kredi.">
+            <Field label={t("Veya kendi tutarın")} htmlFor={`${id}-tip`} hint={t("En az 5, en fazla 50.000 kredi.")}>
               <Input id={`${id}-tip`} type="number" inputMode="numeric" min={5} max={50000} step={1} value={tip} onChange={(e) => setTip(e.target.value)} className="max-w-48" />
             </Field>
           </div>
         )}
         <div className="mt-5 flex flex-wrap items-center justify-between gap-3 border-t border-line-soft pt-4 text-xs">
-          <p className="text-muted">
-            Mevcut kredi bakiyen <b className="text-ink">{formatNumber(balance)} kredi</b>
-          </p>
+          <p className="text-muted">{rich(t, m("Mevcut kredi bakiyen <b>{n} kredi</b>"), { n: formatNumber(balance), b: (c) => <b className="text-ink">{c}</b> })}</p>
           <Link href="/app/wallet" className="inline-flex h-9 items-center gap-1.5 rounded-full border border-brand-300 px-4 text-[11px] font-extrabold text-brand-600 hover:bg-brand-50">
-            <Coins className="size-3.5" /> Daha fazla kredi yükle
+            <Coins className="size-3.5" /> {t("Daha fazla kredi yükle")}
           </Link>
         </div>
       </Card>
 
       <Card className="hf-gradient-pink h-fit">
-        <CardHeader title="Gönderi" hint="Hediyenin gönderileceği içerik üreticisi" />
+        <CardHeader title={t("Gönderi")} hint={t("Hediyenin gönderileceği içerik üreticisi")} />
         {creators.length ? (
           <div className="grid gap-4">
             <div className="flex items-center gap-3 rounded-2xl bg-white/80 p-3">
               <Avatar src={creator?.avatarUrl ?? null} name={creator?.displayName ?? "?"} size={42} />
-              <Field className="min-w-0 flex-1" label={<span className="sr-only">İçerik üreticisi</span>} htmlFor={`${id}-c`}>
-                <NativeSelect id={`${id}-c`} value={username} onChange={(e) => setUsername(e.target.value)} aria-label="İçerik üreticisi" className="h-10">
+              <Field className="min-w-0 flex-1" label={<span className="sr-only">{t("İçerik üreticisi")}</span>} htmlFor={`${id}-c`}>
+                <NativeSelect id={`${id}-c`} value={username} onChange={(e) => setUsername(e.target.value)} aria-label={t("İçerik üreticisi")} className="h-10">
                   {creators.map((c) => (
                     <option key={c.username} value={c.username}>
                       {c.displayName}
@@ -164,30 +171,30 @@ export function GiftComposer({ catalog, creators, balance, initialCreator }: { c
               </Field>
             </div>
             <div className="flex items-center justify-between rounded-2xl border border-brand-200 bg-white p-3.5 text-xs">
-              <span className="font-bold text-muted-strong">{kind === "gift" ? (selected ? `Seçili hediye: ${selected.name}` : "Hediye seç") : "Bahşiş"}</span>
-              <span className="font-black">{formatNumber(cost)} kredi</span>
+              <span className="font-bold text-muted-strong">{kind === "gift" ? (selected ? t("Seçili hediye: {name}", { name: selected.name }) : t("Hediye seç")) : t("Bahşiş")}</span>
+              <span className="font-black">{t("{n} kredi", { n: formatNumber(cost) })}</span>
             </div>
-            <Field label="Kısa bir not ekle (isteğe bağlı)" htmlFor={`${id}-m`}>
-              <Textarea id={`${id}-m`} value={message} onChange={(e) => setMessage(e.target.value)} maxLength={300} className="min-h-20 bg-white" placeholder="Seninle konuşmak her zaman harika! 💗" />
+            <Field label={t("Kısa bir not ekle (isteğe bağlı)")} htmlFor={`${id}-m`}>
+              <Textarea id={`${id}-m`} value={message} onChange={(e) => setMessage(e.target.value)} maxLength={300} className="min-h-20 bg-white" placeholder={t("Seninle konuşmak her zaman harika! 💗")} />
             </Field>
             <label className="flex cursor-pointer items-center gap-2.5 text-xs font-bold text-ink-soft">
-              <Checkbox checked={anonymous} onCheckedChange={(v) => setAnonymous(v === true)} /> Adım gizli kalsın (anonim gönder)
+              <Checkbox checked={anonymous} onCheckedChange={(v) => setAnonymous(v === true)} /> {t("Adım gizli kalsın (anonim gönder)")}
             </label>
             {(insufficient || error) && (
               <p role="alert" className="rounded-xl bg-danger-soft px-3.5 py-2.5 text-[11px] font-semibold text-danger">
-                {insufficient ? "Bakiyen bu gönderim için yeterli değil." : error}
+                {insufficient ? t("Bakiyen bu gönderim için yeterli değil.") : error}
               </p>
             )}
             <Button size="lg" shape="pill" onClick={send} loading={busy} disabled={insufficient || cost <= 0 || (kind === "tip" && cost < 5) || !creator}>
-              <Send className="rtl:-scale-x-100" /> {kind === "gift" ? "Hediyeyi gönder" : "Bahşişi gönder"}
+              <Send className="rtl:-scale-x-100" /> {kind === "gift" ? t("Hediyeyi gönder") : t("Bahşişi gönder")}
             </Button>
-            <p className="text-center text-[10px] text-muted">Gönderilen hediye ve bahşişler iade edilmez. Kredi düşümü ve işlem kaydı anında yapılır.</p>
+            <p className="text-center text-[10px] text-muted">{t("Gönderilen hediye ve bahşişler iade edilmez. Kredi düşümü ve işlem kaydı anında yapılır.")}</p>
           </div>
         ) : (
           <p className="rounded-xl bg-white/80 p-4 text-center text-xs leading-relaxed text-muted-strong">
-            Hediye göndermek için önce bir içerik üreticisini takip etmelisin.{" "}
+            {t("Hediye göndermek için önce bir içerik üreticisini takip etmelisin.")}{" "}
             <Link href="/explore" className="font-extrabold text-brand-600 hover:underline">
-              Keşfet
+              {t("Keşfet")}
             </Link>
           </p>
         )}

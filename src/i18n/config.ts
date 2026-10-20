@@ -23,8 +23,6 @@ export const LOCALE_PARAM = "lang";
 export interface LocaleMeta {
   /** Kendi dilinde adı (dil seçicide). */
   label: string;
-  /** Türkçe adı (yönetim ekranları, kayıtlar). */
-  trName: string;
   dir: "ltr" | "rtl";
   /** Intl biçimlendirme yereli. Arapçada Latin rakamları kullanılır (fiyat, kullanıcı adı, kod tutarlılığı). */
   intl: string;
@@ -32,14 +30,15 @@ export interface LocaleMeta {
   og: string;
 }
 
+// Dil adları her dilde kendi adıyla (endonim) gösterilir; çevrilmez.
 export const LOCALE_META: Record<Locale, LocaleMeta> = {
-  tr: { label: "Türkçe", trName: "Türkçe", dir: "ltr", intl: "tr-TR", og: "tr_TR" },
-  en: { label: "English", trName: "İngilizce", dir: "ltr", intl: "en-US", og: "en_US" },
-  ar: { label: "العربية", trName: "Arapça", dir: "rtl", intl: "ar-u-nu-latn", og: "ar_AR" },
-  es: { label: "Español", trName: "İspanyolca", dir: "ltr", intl: "es-ES", og: "es_ES" },
-  fr: { label: "Français", trName: "Fransızca", dir: "ltr", intl: "fr-FR", og: "fr_FR" },
-  pt: { label: "Português", trName: "Portekizce", dir: "ltr", intl: "pt-BR", og: "pt_BR" },
-  de: { label: "Deutsch", trName: "Almanca", dir: "ltr", intl: "de-DE", og: "de_DE" },
+  tr: { label: "Türkçe", dir: "ltr", intl: "tr-TR", og: "tr_TR" }, // i18n-ignore
+  en: { label: "English", dir: "ltr", intl: "en-US", og: "en_US" }, // i18n-ignore
+  ar: { label: "العربية", dir: "rtl", intl: "ar-u-nu-latn", og: "ar_AR" }, // i18n-ignore
+  es: { label: "Español", dir: "ltr", intl: "es-ES", og: "es_ES" }, // i18n-ignore
+  fr: { label: "Français", dir: "ltr", intl: "fr-FR", og: "fr_FR" }, // i18n-ignore
+  pt: { label: "Português", dir: "ltr", intl: "pt-BR", og: "pt_BR" }, // i18n-ignore
+  de: { label: "Deutsch", dir: "ltr", intl: "de-DE", og: "de_DE" }, // i18n-ignore
 };
 
 export const isLocale = (v: unknown): v is Locale => typeof v === "string" && (LOCALES as readonly string[]).includes(v);

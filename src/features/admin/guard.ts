@@ -1,5 +1,6 @@
 import "server-only";
 import { z } from "zod";
+import { m } from "@/i18n/m";
 import { assertAdmin } from "@/lib/auth/session";
 import { ForbiddenError, type Permission } from "@/lib/permissions";
 import { objectIdSchema } from "@/lib/validation/common";
@@ -20,4 +21,4 @@ export async function assertAdminAny(...perms: Permission[]) {
 export { actorOf };
 
 export const idSchema = objectIdSchema;
-export const reasonSchema = z.string().trim().min(5, "Gerekçe en az 5 karakter olmalı.").max(1000, "Gerekçe en çok 1000 karakter olabilir.");
+export const reasonSchema = z.string().trim().min(5, m("Gerekçe en az 5 karakter olmalı.")).max(1000, m("Gerekçe en çok 1000 karakter olabilir."));

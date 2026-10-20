@@ -10,10 +10,11 @@ import { hasSocialProviders, SocialAuth, type SocialFlags } from "@/components/a
 import { Checkbox, Input } from "@/components/ui/form-controls";
 import { authClient } from "@/lib/auth/client";
 import { postLoginRedirect } from "@/features/auth/actions";
-import { authErrorText, NETWORK_ERROR } from "@/features/auth/client-errors";
+import { authErrorText, NETWORK_ERROR, useFieldError } from "@/features/auth/client-errors";
 import { continueUrl } from "@/features/auth/next-url";
 import { LOGIN_NEXT_KEY } from "@/features/auth/constants";
 import { loginSchema, type LoginValues } from "@/features/auth/schemas";
+import { useT } from "@/i18n/client";
 
 export function LoginForm({
   next,
@@ -26,6 +27,8 @@ export function LoginForm({
   notice?: "reset" | null;
   initialError?: string | null;
 }) {
+  const t = useT();
+  const fe = useFieldError();
   const [formError, setFormError] = React.useState<string | null>(initialError ?? null);
   const [unverified, setUnverified] = React.useState<string | null>(null);
   const {
@@ -51,7 +54,7 @@ export function LoginForm({
       const { data, error } = await authClient.signIn.email({ email: values.email, password: values.password, rememberMe: values.rememberMe });
       if (error) {
         if (error.code === "EMAIL_NOT_VERIFIED") setUnverified(values.email);
-        setFormError(authErrorText(error));
+        setFormError(t(authErrorText(error)));
         return;
       }
       if (data && "twoFactorRedirect" in data && data.twoFactorRedirect) return; // yönlendirme istemci eklentisinde
@@ -62,7 +65,7 @@ export function LoginForm({
       }
       window.location.assign(result.data.to);
     } catch {
-      setFormError(NETWORK_ERROR);
+      setFormError(t(NETWORK_ERROR));
     }
   }
 
@@ -70,14 +73,14 @@ export function LoginForm({
 
   return (
     <div>
-      <AuthHeading eyebrow="HEYFANS'A YENİDEN HOŞ GELDİN" title="Yeniden" accent="bağlan." description="Sevdiğin içerik üreticilerine yalnızca bir sohbet uzaklıktasın." />
+      <AuthHeading eyebrow={t("HEYFANS'A YENİDEN HOŞ GELDİN")} title={t("Yeniden")} accent={t("bağlan.")} description={t("Sevdiğin içerik üreticilerine yalnızca bir sohbet uzaklıktasın.")} />
 
       <div className="mt-8 space-y-5">
-        {notice === "reset" && <FormAlert tone="success">Şifren güncellendi. Yeni şifrenle giriş yapabilirsin.</FormAlert>}
+        {notice === "reset" && <FormAlert tone="success">{t("Şifren güncellendi. Yeni şifrenle giriş yapabilirsin.")}</FormAlert>}
         {hasSocialProviders(flags) && (
           <>
             <SocialAuth flags={flags} callbackURL={continueUrl(next)} onError={setFormError} />
-            <TextDivider>veya e-posta ile devam et</TextDivider>
+            <TextDivider>{t("veya e-posta ile devam et")}</TextDivider>
           </>
         )}
 
@@ -88,20 +91,20 @@ export function LoginForm({
               {unverified && (
                 <p className="mt-1.5 font-bold">
                   <Link href={`/verify?email=${encodeURIComponent(unverified)}`} className="underline underline-offset-2">
-                    Doğrulama bağlantısını yeniden gönder
+                    {t("Doğrulama bağlantısını yeniden gönder")}
                   </Link>
                 </p>
               )}
             </FormAlert>
           )}
 
-          <AuthField label="E-posta adresi" htmlFor="login-email" error={errors.email?.message}>
+          <AuthField label={t("E-posta adresi")} htmlFor="login-email" error={fe(errors.email?.message)}>
             <Input
               id="login-email"
               type="email"
               autoComplete="email"
               inputMode="email"
-              placeholder="ornek@eposta.com"
+              placeholder={t("ornek@eposta.com")}
               className="h-[52px] text-[14px]"
               aria-invalid={!!errors.email}
               aria-describedby={errors.email ? "login-email-error" : undefined}
@@ -109,11 +112,11 @@ export function LoginForm({
             />
           </AuthField>
 
-          <AuthField label="Şifre" htmlFor="login-password" error={errors.password?.message}>
+          <AuthField label={t("Şifre")} htmlFor="login-password" error={fe(errors.password?.message)}>
             <PasswordInput
               id="login-password"
               autoComplete="current-password"
-              placeholder="Şifreni gir"
+              placeholder={t("Şifreni gir")}
               aria-invalid={!!errors.password}
               aria-describedby={errors.password ? "login-password-error" : undefined}
               {...register("password")}
@@ -123,27 +126,27 @@ export function LoginForm({
           <div className="flex items-center justify-between gap-3">
             <label htmlFor="login-remember" className="flex cursor-pointer items-center gap-2.5 text-xs font-bold text-ink-soft">
               <Controller control={control} name="rememberMe" render={({ field }) => <Checkbox id="login-remember" checked={field.value} onCheckedChange={(v) => field.onChange(v === true)} />} />
-              Beni hatırla
+              {t("Beni hatırla")}
             </label>
             <Link href="/forgot-password" className={`${linkCls} text-xs`}>
-              Şifreni mi unuttun?
+              {t("Şifreni mi unuttun?")}
             </Link>
           </div>
 
           <PrimaryButton type="submit" loading={isSubmitting}>
-            Giriş Yap
+            {t("Giriş Yap")}
           </PrimaryButton>
         </form>
 
         <p className="text-center text-[13px] text-muted-strong">
-          HEYFANS&apos;ta yeni misin?{" "}
+          {t("HEYFANS'ta yeni misin?")}{" "}
           <Link href={next ? `/register?next=${encodeURIComponent(next)}` : "/register"} className={linkCls}>
-            Hemen katıl
+            {t("Hemen katıl")}
           </Link>
         </p>
         <div className="border-t border-line pt-5">
           <p className="flex items-center justify-center gap-2 text-[11px] text-muted">
-            <ShieldCheck className="size-4" aria-hidden /> Gizliliğin ve güvenliğin bizim için öncelikli.
+            <ShieldCheck className="size-4" aria-hidden /> {t("Gizliliğin ve güvenliğin bizim için öncelikli.")}
           </p>
         </div>
       </div>

@@ -1,4 +1,5 @@
 import type { AdminRole, UserRole } from "@/models/identity";
+import { m } from "@/i18n/m";
 
 /** Admin izinleri. Fan/creator yetkileri kaynak sahipliğiyle (servis katmanında) denetlenir. */
 export const PERMISSIONS = [
@@ -90,13 +91,13 @@ export const ADMIN_ROLE_PERMISSIONS: Record<AdminRole, Permission[]> = {
 };
 
 export const ADMIN_ROLE_LABELS: Record<AdminRole, string> = {
-  super_admin: "Süper Yönetici",
-  operations_admin: "Operasyon Yöneticisi",
-  creator_manager: "Creator Yöneticisi",
-  moderation_specialist: "Moderasyon Uzmanı",
-  finance_manager: "Finans Yöneticisi",
-  ai_operations_manager: "AI Operasyon Yöneticisi",
-  support_agent: "Destek Temsilcisi",
+  super_admin: m("Süper Yönetici"),
+  operations_admin: m("Operasyon Yöneticisi"),
+  creator_manager: m("Creator Yöneticisi"),
+  moderation_specialist: m("Moderasyon Uzmanı"),
+  finance_manager: m("Finans Yöneticisi"),
+  ai_operations_manager: m("AI Operasyon Yöneticisi"),
+  support_agent: m("Destek Temsilcisi"),
 };
 
 export interface Actor {
@@ -117,7 +118,7 @@ export function can(actor: Pick<Actor, "roles" | "adminRole"> | null | undefined
 
 export class ForbiddenError extends Error {
   readonly status = 403;
-  constructor(message = "Bu işlem için yetkiniz yok.") {
+  constructor(message: string = m("Bu işlem için yetkiniz yok.")) {
     super(message);
     this.name = "ForbiddenError";
   }
@@ -125,7 +126,7 @@ export class ForbiddenError extends Error {
 
 export class UnauthorizedError extends Error {
   readonly status = 401;
-  constructor(message = "Bu işlem için giriş yapmalısınız.") {
+  constructor(message: string = m("Bu işlem için giriş yapmalısınız.")) {
     super(message);
     this.name = "UnauthorizedError";
   }

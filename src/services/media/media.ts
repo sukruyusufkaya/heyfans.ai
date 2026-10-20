@@ -64,7 +64,7 @@ function compatible(declared: string, sniffed: string | null) {
 export async function createUpload(user: { id: string }, input: { purpose: MediaPurpose; mime: string; sizeBytes: number; fileName?: string }) {
   const rule = ruleFor(input.mime);
   if (!rule || !PURPOSE_KINDS[input.purpose].includes(rule.kind)) throw new AppError("Bu dosya türü bu alan için desteklenmiyor.", "unsupported_type");
-  if (input.sizeBytes <= 0 || input.sizeBytes > rule.maxBytes) throw new AppError(`Dosya boyutu en fazla ${Math.round(rule.maxBytes / 1024 / 1024)} MB olabilir.`, "too_large");
+  if (input.sizeBytes <= 0 || input.sizeBytes > rule.maxBytes) throw new AppError("Dosya boyutu en fazla {size} MB olabilir.", "too_large", 400, { params: { size: Math.round(rule.maxBytes / 1024 / 1024) } });
   await connectDb();
   const creator = await CreatorProfile.findOne({ userId: oid(user.id) }, { _id: 1 }).lean();
   if (["content", "content_preview", "knowledge", "voice_sample", "deliverable"].includes(input.purpose) && !creator) {

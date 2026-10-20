@@ -2,6 +2,7 @@ import * as React from "react";
 import Link from "next/link";
 import { ChevronLeft, ChevronRight, Inbox, TrendingDown, TrendingUp } from "lucide-react";
 import { cn, initials } from "@/lib/utils";
+import { PaginationNav, PaginationStep, StatusDot } from "./localized";
 
 /* ─── Avatar ─────────────────────────────────────────────── */
 const AVATAR_GRADIENTS = [
@@ -55,10 +56,10 @@ export function Avatar({
         </span>
       )}
       {online !== undefined && (
-        <span
+        <StatusDot
+          online={online}
           className={cn("absolute bottom-0 end-0 rounded-full border-2 border-white", online ? "bg-success" : "bg-[#c9c1cc]")}
           style={{ width: Math.max(8, size * 0.24), height: Math.max(8, size * 0.24) }}
-          aria-label={online ? "Çevrimiçi" : "Çevrimdışı"}
         />
       )}
     </span>
@@ -187,11 +188,9 @@ export function Pagination({ page, pageCount, hrefFor, className }: { page: numb
   for (let p = Math.max(1, page - 2); p <= Math.min(pageCount, page + 2); p++) pages.push(p);
   const item = "grid h-8 min-w-8 place-items-center rounded-lg px-2 text-[11px] font-extrabold";
   return (
-    <nav aria-label="Sayfalama" className={cn("flex items-center justify-center gap-1.5", className)}>
+    <PaginationNav className={cn("flex items-center justify-center gap-1.5", className)}>
       {page > 1 ? (
-        <Link href={hrefFor(page - 1)} className={cn(item, "text-muted-strong hover:bg-soft")} aria-label="Önceki sayfa">
-          <ChevronLeft className="rtl:-scale-x-100 size-4" />
-        </Link>
+        <PaginationStep href={hrefFor(page - 1)} direction="prev" className={cn(item, "text-muted-strong hover:bg-soft")} />
       ) : (
         <span className={cn(item, "text-muted/40")} aria-hidden>
           <ChevronLeft className="rtl:-scale-x-100 size-4" />
@@ -203,15 +202,13 @@ export function Pagination({ page, pageCount, hrefFor, className }: { page: numb
         </Link>
       ))}
       {page < pageCount ? (
-        <Link href={hrefFor(page + 1)} className={cn(item, "text-muted-strong hover:bg-soft")} aria-label="Sonraki sayfa">
-          <ChevronRight className="rtl:-scale-x-100 size-4" />
-        </Link>
+        <PaginationStep href={hrefFor(page + 1)} direction="next" className={cn(item, "text-muted-strong hover:bg-soft")} />
       ) : (
         <span className={cn(item, "text-muted/40")} aria-hidden>
           <ChevronRight className="rtl:-scale-x-100 size-4" />
         </span>
       )}
-    </nav>
+    </PaginationNav>
   );
 }
 

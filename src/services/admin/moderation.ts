@@ -10,6 +10,7 @@ import { CustomRequest } from "@/models/monetization";
 import { Conversation, Message } from "@/models/social";
 import { Appeal, ModerationCase, Report, type IModerationCase } from "@/models/safety";
 import { daysAgo, loadCreators, loadUsers, REGEX_SAFE } from "./shared";
+import { getT } from "@/i18n/server";
 
 export const CASE_TABS = ["open", "in_review", "escalated", "closed", "all"] as const;
 export type CaseTab = (typeof CASE_TABS)[number];
@@ -130,6 +131,7 @@ async function previewTarget(c: IModerationCase) {
 export type CasePreview = Awaited<ReturnType<typeof previewTarget>>;
 
 export async function getCaseDetail(caseId: string, opts: { includeConversations: boolean }) {
+  const t = await getT();
   await connectDb();
   const c = await ModerationCase.findById(oid(caseId)).lean<IModerationCase>();
   if (!c) return null;
@@ -140,7 +142,7 @@ export async function getCaseDetail(caseId: string, opts: { includeConversations
     c.creatorId ? CreatorProfile.findById(c.creatorId, { displayName: 1, username: 1 }).lean() : null,
   ]);
   const actors = await loadUsers([c.assignedTo, c.decision?.by, ...c.history.map((h) => h.by)]);
-  const name = (id: unknown) => (id ? actors.get(String(id))?.name ?? "Yönetici" : "Sistem");
+  const name = (id: unknown) => (id ? actors.get(String(id))?.name ?? t("Yönetici") : t("Sistem"));
 
   // Hassas erişim formu için aday sohbetler: yalnız kimlik içermeyen üst veri.
   let conversations: { id: string; messageCount: number; lastMessageAt: Date | null; kind: string }[] = [];

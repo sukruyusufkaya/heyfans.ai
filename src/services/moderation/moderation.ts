@@ -15,6 +15,7 @@ import { Appeal, ModerationCase, Report, REPORT_REASONS, type IModerationCase, t
 import { adminSetTwinStatus } from "@/services/ai-twins/lifecycle";
 import { moderateContent } from "@/services/content/manage";
 import { notify } from "@/services/notifications/notifications";
+import { m } from "@/i18n/m";
 
 const code = (prefix: string) => `${prefix}-${Date.now().toString(36).toUpperCase().slice(-5)}${randomInt(10, 99)}`;
 
@@ -60,7 +61,7 @@ export async function createReport(reporter: { id: string } | { email: string },
       creatorId,
       subjectUserId,
       source: "report",
-      reason: `Kullanıcı bildirimi: ${input.reason}`,
+      reason: `Kullanıcı bildirimi: ${input.reason}`, // i18n-ignore (vaka kaydı Türkçe saklanır)
       categories: [input.reason],
       riskScore: PRIORITY[input.reason] === "critical" ? 95 : PRIORITY[input.reason] === "high" ? 70 : 40,
       priority: PRIORITY[input.reason] ?? "medium",
@@ -121,11 +122,13 @@ export async function decideCase(actor: { id: string; adminRole: string | null }
     await Report.updateMany({ caseId: c._id, status: { $in: ["open", "triaged"] } }, { $set: { status: action === "dismiss" ? "rejected" : "resolved", resolutionNote: note } });
     if (action === "warn" && c.creatorId) {
       const cr = await CreatorProfile.findById(c.creatorId, { userId: 1 }).lean();
-      if (cr) await notify(cr.userId.toString(), { type: "moderation", title: "Topluluk kuralları uyarısı", body: note, link: "/community-guidelines" });
+      if (cr) await notify(cr.userId.toString(), { type: "moderation", title: m("Topluluk kuralları uyarısı"), body: note, link: "/community-guidelines" });
     }
   }
+  // i18n-ignore (vaka geçmişi notu saklanır)
   c.history.push({ from, to: c.status, by: oid(actor.id), note: `${action}: ${note}`.slice(0, 2000), at: new Date() });
   await c.save();
+  // i18n-ignore (denetim anahtarı)
   await audit({ actorId: actor.id, actorRole: actor.adminRole, action: `moderation.${action}`, targetType: "ModerationCase", targetId: caseId, reason: note, severity: ["suspend_user", "revoke_twin", "remove"].includes(action) ? "critical" : "notice" });
   return c.toObject();
 }
@@ -152,9 +155,10 @@ export async function decideAppeal(actor: { id: string; adminRole: string | null
   await a.save();
   if (decision === "overturned") {
     const c = await ModerationCase.findById(a.caseId).lean();
-    if (c?.targetType === "content" && c.decision && ["hide", "remove"].includes(c.decision.action)) await moderateContent(actor, c.targetId.toString(), "restore", `İtiraz kabul edildi: ${note}`);
+    if (c?.targetType === "content" && c.decision && ["hide", "remove"].includes(c.decision.action)) await moderateContent(actor, c.targetId.toString(), "restore", `İtiraz kabul edildi: ${note}`); // i18n-ignore (karar notu saklanır)
   }
-  await notify(a.userId.toString(), { type: "moderation", title: decision === "overturned" ? "İtirazın kabul edildi" : "İtirazın değerlendirildi", body: note, link: "/help" });
+  await notify(a.userId.toString(), { type: "moderation", title: decision === "overturned" ? m("İtirazın kabul edildi") : m("İtirazın değerlendirildi"), body: note, link: "/help" });
+  // i18n-ignore (denetim anahtarı)
   await audit({ actorId: actor.id, actorRole: actor.adminRole, action: `appeal.${decision}`, targetType: "Appeal", targetId: appealId, reason: note, severity: "notice" });
   return a.toObject();
 }

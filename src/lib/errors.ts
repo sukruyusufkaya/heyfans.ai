@@ -1,3 +1,4 @@
+import { m } from "@/i18n/m";
 import { formatMessage, type MessageParams } from "@/i18n/translate";
 
 /**
@@ -23,20 +24,20 @@ export class AppError extends Error {
 }
 
 export class NotFoundError extends AppError {
-  constructor(message = "Kayıt bulunamadı.") {
+  constructor(message: string = m("Kayıt bulunamadı.")) {
     super(message, "not_found", 404);
   }
 }
 
 export class ConflictError extends AppError {
-  constructor(message = "Bu işlem şu anki durumla çakışıyor.", code = "conflict") {
+  constructor(message: string = m("Bu işlem şu anki durumla çakışıyor."), code = "conflict") {
     super(message, code, 409);
   }
 }
 
 export class InsufficientCreditsError extends AppError {
   constructor(required: number, balance: number) {
-    super("Yetersiz kredi. Gerekli: {required}, bakiye: {balance}.", "insufficient_credits", 402, { required, balance, params: { required, balance } });
+    super(m("Yetersiz kredi. Gerekli: {required}, bakiye: {balance}."), "insufficient_credits", 402, { required, balance, params: { required, balance } });
   }
 }
 
@@ -48,7 +49,7 @@ export class FeatureUnavailableError extends AppError {
 
 export class RateLimitError extends AppError {
   constructor(retryAfterSec: number) {
-    super("Çok fazla istek. {retryAfterSec} sn sonra tekrar deneyin.", "rate_limited", 429, { retryAfterSec, params: { retryAfterSec } });
+    super(m("Çok fazla istek. {retryAfterSec} sn sonra tekrar deneyin."), "rate_limited", 429, { retryAfterSec, params: { retryAfterSec } });
   }
 }
 
@@ -71,13 +72,15 @@ export async function toActionError(err: unknown): Promise<{ ok: false; error: s
   const { getT } = await import("@/i18n/server");
   const t = await getT();
   if (err instanceof AppError) {
-    const message = t(err.template, err.params);
+    // `…Label` ile biten değişkenler kaynak dildeki etiketlerdir (durum adı vb.); onlar da çevrilir.
+    const params = err.params && Object.fromEntries(Object.entries(err.params).map(([k, v]) => [k, /Label$/.test(k) && typeof v === "string" ? t(v) : v]));
+    const message = t(err.template, params);
     // details.field verilmişse hata ilgili form alanının altında da gösterilir.
     const field = typeof err.details?.field === "string" ? err.details.field : null;
     return field ? { ok: false, error: message, code: err.code, fieldErrors: { [field]: [message] } } : { ok: false, error: message, code: err.code };
   }
   const e = err as { name?: string; message?: string; status?: number; issues?: { path: (string | number)[]; message: string }[] };
-  if (e?.name === "ForbiddenError" || e?.name === "UnauthorizedError") return { ok: false, error: t(e.message ?? "Yetkisiz işlem."), code: e.name };
+  if (e?.name === "ForbiddenError" || e?.name === "UnauthorizedError") return { ok: false, error: t(e.message ?? m("Yetkisiz işlem.")), code: e.name };
   if (e?.name === "ZodError" && Array.isArray(e.issues)) {
     const fieldErrors: Record<string, string[]> = {};
     for (const issue of e.issues) {

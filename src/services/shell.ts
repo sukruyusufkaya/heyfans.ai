@@ -6,12 +6,15 @@ import { AiTwin } from "@/models/ai";
 import { Subscription, Wallet, CustomRequest } from "@/models/monetization";
 import { ModerationCase, Report } from "@/models/safety";
 import { Conversation, Notification } from "@/models/social";
+import { m } from "@/i18n/m";
+import { getT } from "@/i18n/server";
 
-const TIER_LABEL: Record<string, string> = { free: "Ücretsiz üye", basic: "Temel üye", premium: "Premium üye", vip: "VIP üye" };
+const TIER_LABEL: Record<string, string> = { free: m("Ücretsiz üye"), basic: m("Temel üye"), premium: m("Premium üye"), vip: m("VIP üye") };
 
 /** Fan kabuğu için tek sorguda başlık/yan menü verisi. */
 export async function getFanShellData(userId: string) {
   await connectDb();
+  const t = await getT();
   const uid = oid(userId);
   const [wallet, unreadNotifications, unreadChatsAgg, platformSub] = await Promise.all([
     Wallet.findOne({ userId: uid }, { balance: 1 }).lean(),
@@ -26,7 +29,7 @@ export async function getFanShellData(userId: string) {
     credits: wallet?.balance ?? 0,
     unreadNotifications,
     unreadChats: unreadChatsAgg[0]?.total ?? 0,
-    membershipLabel: TIER_LABEL[platformSub?.tier ?? "free"] ?? "Üye",
+    membershipLabel: t(TIER_LABEL[platformSub?.tier ?? "free"] ?? m("Üye")),
   };
 }
 

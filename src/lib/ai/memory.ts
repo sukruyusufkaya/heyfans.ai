@@ -21,14 +21,14 @@ export async function loadMemories(userId: Types.ObjectId, creatorId: Types.Obje
 }
 
 const EXTRACTORS: { re: RegExp; category: "preference" | "personal" | "context"; format: (m: RegExpMatchArray) => string }[] = [
-  { re: /\b(?:benim adım|adım)\s+([A-ZÇĞİÖŞÜ][\p{L}]{1,20})/u, category: "personal", format: (m) => `Adı ${m[1]}` },
+  { re: /\b(?:benim adım|adım)\s+([A-ZÇĞİÖŞÜ][\p{L}]{1,20})/u, category: "personal", format: (m) => `Adı ${m[1]}` }, // i18n-ignore
   { re: /\b([\p{L} ]{3,40})\s+(?:çok\s+)?(?:severim|seviyorum|bayılırım)\b/u, category: "preference", format: (m) => `${m[1]!.trim()} seviyor` },
   { re: /\b([\p{L} ]{3,40})\s+(?:sevmem|sevmiyorum|nefret ederim)\b/u, category: "preference", format: (m) => `${m[1]!.trim()} sevmiyor` },
-  { re: /\b(\d{1,2}\s+(?:ocak|şubat|mart|nisan|mayıs|haziran|temmuz|ağustos|eylül|ekim|kasım|aralık))\b.*\bdoğum günüm\b|\bdoğum günüm\b.*\b(\d{1,2}\s+\p{L}+)/iu, category: "personal", format: (m) => `Doğum günü ${m[1] ?? m[2]}` },
-  { re: /\b(?:([\p{L}]+)'(?:da|de|ta|te)\s+yaşıyorum)\b/u, category: "context", format: (m) => `${m[1]} şehrinde yaşıyor` },
+  { re: /\b(\d{1,2}\s+(?:ocak|şubat|mart|nisan|mayıs|haziran|temmuz|ağustos|eylül|ekim|kasım|aralık))\b.*\bdoğum günüm\b|\bdoğum günüm\b.*\b(\d{1,2}\s+\p{L}+)/iu, category: "personal", format: (m) => `Doğum günü ${m[1] ?? m[2]}` }, // i18n-ignore
+  { re: /\b(?:([\p{L}]+)'(?:da|de|ta|te)\s+yaşıyorum)\b/u, category: "context", format: (m) => `${m[1]} şehrinde yaşıyor` }, // i18n-ignore
 ];
 
-/** Basit kural tabanlı çıkarım (LLM çağrısı yok, maliyetsiz). Kullanıcı hafızayı her zaman düzenleyebilir/silebilir. */
+/** Hafıza kayıtları Türkçe kalıplardan çıkarılan veridir (çevrilmez; i18n-ignore işaretleri bu yüzden). Basit kural tabanlı çıkarım (LLM çağrısı yok, maliyetsiz). Kullanıcı hafızayı her zaman düzenleyebilir/silebilir. */
 export async function extractAndStoreMemories(userId: Types.ObjectId, creatorId: Types.ObjectId, message: string, messageId: Types.ObjectId) {
   const facts: { fact: string; category: "preference" | "personal" | "context" }[] = [];
   for (const ex of EXTRACTORS) {

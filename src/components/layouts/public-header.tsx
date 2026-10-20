@@ -8,6 +8,7 @@ import { Avatar } from "@/components/ui/display";
 import { Button } from "@/components/ui/button";
 import { LanguageSwitcher } from "@/components/i18n/language-switcher";
 import { isActive, PUBLIC_NAV, type NavItem } from "@/config/navigation";
+import { useT } from "@/i18n/client";
 import { cn } from "@/lib/utils";
 
 export interface HeaderUser {
@@ -17,6 +18,7 @@ export interface HeaderUser {
 }
 
 export function PublicHeader({ user, extraNav }: { user: HeaderUser | null; extraNav?: NavItem[] }) {
+  const t = useT();
   const pathname = usePathname();
   const router = useRouter();
   const [open, setOpen] = useState(false);
@@ -42,7 +44,7 @@ export function PublicHeader({ user, extraNav }: { user: HeaderUser | null; extr
     <header className="sticky top-0 z-40 border-b border-line/70 bg-white/95 shadow-[var(--shadow-header)] backdrop-blur">
       <div className="mx-auto flex h-[68px] max-w-[1440px] items-center gap-6 px-4 sm:px-6 lg:px-8">
         <LogoLink />
-        <nav aria-label="Ana menü" className="hidden h-full flex-1 items-center justify-center gap-5 xl:flex">
+        <nav aria-label={t("Ana menü")} className="hidden h-full flex-1 items-center justify-center gap-5 xl:flex">
           {nav.map((item) => {
             const active = isActive(pathname, item);
             return (
@@ -55,7 +57,7 @@ export function PublicHeader({ user, extraNav }: { user: HeaderUser | null; extr
                   active ? "text-brand-500 after:absolute after:inset-x-0 after:bottom-0 after:h-[3px] after:rounded-full after:bg-brand-500" : "text-ink-soft hover:text-brand-500",
                 )}
               >
-                {item.label}
+                {t(item.label)}
               </Link>
             );
           })}
@@ -63,7 +65,7 @@ export function PublicHeader({ user, extraNav }: { user: HeaderUser | null; extr
         <div className="ms-auto flex items-center gap-2.5 xl:ms-0">
           <form onSubmit={submit} role="search" className="hidden lg:block">
             <label htmlFor="global-search" className="sr-only">
-              İçerik üreticilerinde ara
+              {t("İçerik üreticilerinde ara")}
             </label>
             <div className="flex h-9 w-[200px] items-center gap-2 rounded-full border border-line bg-soft px-3.5 text-xs focus-within:border-brand-300 focus-within:ring-4 focus-within:ring-brand-100 2xl:w-[230px]">
               <Search className="size-3.5 text-muted" aria-hidden />
@@ -71,7 +73,7 @@ export function PublicHeader({ user, extraNav }: { user: HeaderUser | null; extr
                 id="global-search"
                 value={q}
                 onChange={(e) => setQ(e.target.value)}
-                placeholder="İçerik üreticilerinde ara..."
+                placeholder={t("İçerik üreticilerinde ara...")}
                 className="w-full bg-transparent text-xs text-ink outline-none placeholder:text-[#aaa5ae]"
               />
             </div>
@@ -80,22 +82,22 @@ export function PublicHeader({ user, extraNav }: { user: HeaderUser | null; extr
           {user ? (
             <Link href={panelHref} className="flex items-center gap-2 rounded-full border border-line py-1 ps-1 pe-3 text-xs font-extrabold text-ink hover:border-brand-200">
               <Avatar src={user.image} name={user.name} size={28} ring={false} />
-              <span className="hidden sm:inline">Panelim</span>
+              <span className="hidden sm:inline">{t("Panelim")}</span>
             </Link>
           ) : (
             <>
               <Button asChild variant="secondary" size="sm" shape="pill" className="hidden sm:inline-flex">
-                <Link href="/login">Giriş Yap</Link>
+                <Link href="/login">{t("Giriş Yap")}</Link>
               </Button>
               <Button asChild size="sm" shape="pill" className="px-5">
-                <Link href="/register">Başla</Link>
+                <Link href="/register">{t("Başla")}</Link>
               </Button>
             </>
           )}
           <button
             type="button"
             className="grid size-10 place-items-center rounded-full text-ink hover:bg-soft xl:hidden"
-            aria-label={open ? "Menüyü kapat" : "Menüyü aç"}
+            aria-label={open ? t("Menüyü kapat") : t("Menüyü aç")}
             aria-expanded={open}
             aria-controls="mobile-nav"
             onClick={() => setOpen((v) => !v)}
@@ -109,10 +111,10 @@ export function PublicHeader({ user, extraNav }: { user: HeaderUser | null; extr
           <form onSubmit={submit} role="search" className="mb-3 lg:hidden">
             <div className="flex h-11 items-center gap-2 rounded-full border border-line bg-soft px-4">
               <Search className="size-4 text-muted" aria-hidden />
-              <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="İçerik üreticilerinde ara..." aria-label="İçerik üreticilerinde ara" className="w-full bg-transparent text-sm outline-none" />
+              <input value={q} onChange={(e) => setQ(e.target.value)} placeholder={t("İçerik üreticilerinde ara...")} aria-label={t("İçerik üreticilerinde ara")} className="w-full bg-transparent text-sm outline-none" />
             </div>
           </form>
-          <nav aria-label="Mobil menü" className="grid gap-1">
+          <nav aria-label={t("Mobil menü")} className="grid gap-1">
             {nav.map((item) => {
               const active = isActive(pathname, item);
               return (
@@ -122,18 +124,21 @@ export function PublicHeader({ user, extraNav }: { user: HeaderUser | null; extr
                   aria-current={active ? "page" : undefined}
                   className={cn("rounded-xl px-3 py-3 text-sm font-bold", active ? "bg-brand-50 text-brand-600" : "text-ink-soft hover:bg-soft")}
                 >
-                  {item.label}
+                  {t(item.label)}
                 </Link>
               );
             })}
           </nav>
+          <div className="mt-3 sm:hidden">
+            <LanguageSwitcher variant="select" className="w-full" />
+          </div>
           {!user && (
             <div className="mt-3 grid grid-cols-2 gap-2">
               <Button asChild variant="secondary" shape="pill">
-                <Link href="/login">Giriş Yap</Link>
+                <Link href="/login">{t("Giriş Yap")}</Link>
               </Button>
               <Button asChild shape="pill">
-                <Link href="/register">Başla</Link>
+                <Link href="/register">{t("Başla")}</Link>
               </Button>
             </div>
           )}

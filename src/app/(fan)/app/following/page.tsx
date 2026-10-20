@@ -11,8 +11,13 @@ import { Avatar, EmptyState, PageHeader, Pagination } from "@/components/ui/disp
 import { requireUser } from "@/lib/auth/session";
 import { categoryLabel } from "@/components/creator/category-icon";
 import { getFollowingFeed } from "@/services/fan/feed";
+import { getT } from "@/i18n/server";
+import { m } from "@/i18n/m";
 
-export const metadata: Metadata = { title: "Takip Ettiklerim" };
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getT();
+  return { title: t("Takip Ettiklerim") };
+}
 export const dynamic = "force-dynamic";
 
 const searchSchema = z.object({
@@ -21,25 +26,26 @@ const searchSchema = z.object({
 });
 
 const TABS = [
-  { key: "all", label: "Tüm gönderiler" },
-  { key: "photo", label: "Fotoğraflar" },
-  { key: "video", label: "Videolar" },
-  { key: "ai", label: "AI üretimi paylaşımlar" },
+  { key: "all", label: m("Tüm gönderiler") },
+  { key: "photo", label: m("Fotoğraflar") },
+  { key: "video", label: m("Videolar") },
+  { key: "ai", label: m("AI üretimi paylaşımlar") },
 ] as const;
 
 export default async function FollowingPage({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
   const { user } = await requireUser("/app/following");
+  const t = await getT();
   const sp = searchSchema.parse(flattenSearchParams(await searchParams));
   const feed = await getFollowingFeed({ id: user.id, roles: user.roles }, { tab: sp.tab, page: sp.page });
   const favs = new Set(feed.favoriteIds);
 
   return (
     <div className="mx-auto max-w-[1320px]">
-      <PageHeader eyebrow="HEYFANS / FAN EXPERIENCE" title="Takip Ettiklerim" description="Takip ettiğin içerik üreticilerinin son paylaşımları ve güncellemeleri." />
+      <PageHeader eyebrow={t("HEYFANS / FAN EXPERIENCE")} title={t("Takip Ettiklerim")} description={t("Takip ettiğin içerik üreticilerinin son paylaşımları ve güncellemeleri.")} />
       <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_340px]">
         <div className="grid min-w-0 content-start gap-4">
           <Card padded={false} className="p-3">
-            <LinkTabs label="Paylaşım filtresi" items={TABS.map((t) => ({ href: buildHref("/app/following", { tab: t.key === "all" ? null : t.key }), label: t.label, active: sp.tab === t.key }))} />
+            <LinkTabs label={t("Paylaşım filtresi")} items={TABS.map((tab) => ({ href: buildHref("/app/following", { tab: tab.key === "all" ? null : tab.key }), label: t(tab.label), active: sp.tab === tab.key }))} />
           </Card>
           {feed.posts.length ? (
             <>
@@ -53,24 +59,24 @@ export default async function FollowingPage({ searchParams }: { searchParams: Pr
               {feed.followedCount === 0 ? (
                 <EmptyState
                   icon={<Users />}
-                  title="Henüz kimseyi takip etmiyorsun"
-                  description="İçerik üreticilerini takip et; paylaşımları, yeni içerikleri ve AI ikizi güncellemelerini burada gör."
+                  title={t("Henüz kimseyi takip etmiyorsun")}
+                  description={t("İçerik üreticilerini takip et; paylaşımları, yeni içerikleri ve AI ikizi güncellemelerini burada gör.")}
                   action={
                     <Link href="/explore" className="inline-flex h-10 items-center rounded-full bg-brand-500 px-5 text-xs font-extrabold text-white shadow-[var(--shadow-pink)] hover:bg-brand-600">
-                      İçerik üreticilerini keşfet
+                      {t("İçerik üreticilerini keşfet")}
                     </Link>
                   }
                 />
               ) : (
-                <EmptyState title="Bu filtreyle paylaşım bulunamadı" description="Başka bir sekmeyi dene ya da takip ettiklerin yeni içerik paylaştığında tekrar bak." />
+                <EmptyState title={t("Bu filtreyle paylaşım bulunamadı")} description={t("Başka bir sekmeyi dene ya da takip ettiklerin yeni içerik paylaştığında tekrar bak.")} />
               )}
             </Card>
           )}
         </div>
 
-        <aside className="grid content-start gap-4" aria-label="Takip edilenler">
+        <aside className="grid content-start gap-4" aria-label={t("Takip edilenler")}>
           <Card>
-            <CardHeader title="Takip ettiklerin" action={<Badge tone="pink">{feed.followedCount} kişi</Badge>} />
+            <CardHeader title={t("Takip ettiklerin")} action={<Badge tone="pink">{t("{count} kişi", { count: feed.followedCount })}</Badge>} />
             {feed.followed.length ? (
               <ul className="-mx-2 max-h-[420px] overflow-y-auto scrollbar-thin">
                 {feed.followed.map((c) => (
@@ -81,23 +87,30 @@ export default async function FollowingPage({ searchParams }: { searchParams: Pr
                         <span className="flex items-center gap-1 truncate text-xs font-extrabold">
                           {c.displayName} {c.verified && <Verified className="size-3.5" />}
                         </span>
-                        <span className="block truncate text-[10px] text-muted">{c.category ? `${categoryLabel(c.category)} · ` : ""}{c.hasNew ? "yeni içerik" : "takip ediliyor"}</span>
+                        <span className="block truncate text-[10px] text-muted">
+                          {c.category ? `${t(categoryLabel(c.category))} · ` : ""}
+                          {c.hasNew ? t("yeni içerik") : t("takip ediliyor")}
+                        </span>
                       </span>
-                      {c.hasNew && <Badge tone="pink" size="sm">Yeni</Badge>}
+                      {c.hasNew && (
+                        <Badge tone="pink" size="sm">
+                          {t("Yeni")}
+                        </Badge>
+                      )}
                     </Link>
                   </li>
                 ))}
               </ul>
             ) : (
-              <p className="py-4 text-center text-xs text-muted">Takip listen boş.</p>
+              <p className="py-4 text-center text-xs text-muted">{t("Takip listen boş.")}</p>
             )}
           </Card>
           <div className="hf-card hf-gradient-pink p-5">
-            <p className="eyebrow">SANA ÖZEL ÖNERİ</p>
-            <p className="mt-2 text-[15px] font-extrabold leading-snug tracking-[-0.02em]">Daha fazla insan, daha fazla hikâye.</p>
-            <p className="mt-2 text-xs leading-relaxed text-muted-strong">Takip ettiğin içerik üreticilerine benzeyen yeni AI ikizlerini keşfet.</p>
+            <p className="eyebrow">{t("SANA ÖZEL ÖNERİ")}</p>
+            <p className="mt-2 text-[15px] font-extrabold leading-snug tracking-[-0.02em]">{t("Daha fazla insan, daha fazla hikâye.")}</p>
+            <p className="mt-2 text-xs leading-relaxed text-muted-strong">{t("Takip ettiğin içerik üreticilerine benzeyen yeni AI ikizlerini keşfet.")}</p>
             <Link href="/explore" className="mt-4 inline-flex h-10 items-center gap-2 rounded-full bg-brand-500 px-5 text-xs font-extrabold text-white shadow-[var(--shadow-pink)] hover:bg-brand-600">
-              <Compass className="size-4" /> Keşfetmeye başla
+              <Compass className="size-4" /> {t("Keşfetmeye başla")}
             </Link>
           </div>
         </aside>

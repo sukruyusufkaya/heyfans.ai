@@ -1,14 +1,10 @@
 import * as React from "react";
 import { AlertTriangle, Info, ShieldCheck, TriangleAlert } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
 import { Card, CardHeader } from "@/components/ui/card";
-import { Progress } from "@/components/ui/display";
-import { TWIN_STATUS_LABELS } from "@/lib/state-machines";
-import type { TwinStatus } from "@/models/ai";
 import { cn } from "@/lib/utils";
 
 /** Studio sayfaları için ortak üst başlık eyebrow'u. */
-export const STUDIO_EYEBROW = "HEYFANS / CREATOR STUDIO";
+export const STUDIO_EYEBROW = "HEYFANS / CREATOR STUDIO"; // i18n-ignore (marka adı; tüm dillerde aynı)
 
 const NOTICE_TONES = {
   info: { box: "border-[#e6dcf7] bg-violet-soft/60 text-[#4b2fa0]", icon: Info },
@@ -44,23 +40,6 @@ export function Notice({
         {action && <div className="mt-2.5">{action}</div>}
       </div>
     </div>
-  );
-}
-
-const TWIN_TONES: Record<TwinStatus, React.ComponentProps<typeof Badge>["tone"]> = {
-  live: "green",
-  paused: "warn",
-  pending_review: "violet",
-  approved: "teal",
-  draft: "gray",
-  rejected: "danger",
-  revoked: "danger",
-};
-export function TwinStatusBadge({ status, size }: { status: TwinStatus; size?: "sm" | "md" | "lg" }) {
-  return (
-    <Badge tone={TWIN_TONES[status]} size={size} dot>
-      {TWIN_STATUS_LABELS[status]}
-    </Badge>
   );
 }
 
@@ -105,19 +84,6 @@ export function SettingRow({ title, description, children, className, htmlFor }:
   );
 }
 
-/** Yüzdelik çubuk; değer yoksa dürüstçe "Henüz test edilmedi". */
-export function Meter({ label, value, tone = "pink" }: { label: string; value: number | null | undefined; tone?: "pink" | "green" | "violet" | "teal" | "orange" }) {
-  return (
-    <div>
-      <div className="mb-1.5 flex items-center justify-between text-[11px]">
-        <span className="font-semibold text-ink-soft">{label}</span>
-        <b className="font-extrabold text-ink">{value == null ? <span className="font-semibold text-muted">Henüz test edilmedi</span> : `%${value}`}</b>
-      </div>
-      <Progress value={value ?? 0} tone={tone} label={label} className={value == null ? "opacity-40" : undefined} />
-    </div>
-  );
-}
-
 /** Küçük etiket-değer çifti. */
 export function Fact({ label, value, className }: { label: string; value: React.ReactNode; className?: string }) {
   return (
@@ -128,17 +94,4 @@ export function Fact({ label, value, className }: { label: string; value: React.
   );
 }
 
-/** Tek satır "adım" göstergesi (checklist öğesi). */
-export function CheckItem({ ok, children }: { ok: boolean; children: React.ReactNode }) {
-  return (
-    <li className="flex items-start gap-2 text-[12px]">
-      <span className={cn("mt-0.5 grid size-4 shrink-0 place-items-center rounded-full text-[9px] font-black", ok ? "bg-success text-white" : "bg-line text-muted")} aria-hidden>
-        {ok ? "✓" : "•"}
-      </span>
-      <span className={ok ? "text-ink-soft" : "text-muted"}>
-        {children}
-        <span className="sr-only">{ok ? " (tamamlandı)" : " (eksik)"}</span>
-      </span>
-    </li>
-  );
-}
+export { CheckItem, Meter, TwinStatusBadge } from "./studio-ui-client";

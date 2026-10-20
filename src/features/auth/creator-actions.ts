@@ -2,6 +2,8 @@
 import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
 import { assertUser } from "@/lib/auth/session";
+import { getT } from "@/i18n/server";
+import { m } from "@/i18n/m";
 import { AppError, toActionError, type ActionResult } from "@/lib/errors";
 import { creatorCustomizeSchema, creatorProfileSchema, creatorTwinSchema, creatorVerifySchema, usernameField } from "@/features/auth/schemas";
 import { connectDb } from "@/lib/db/mongo";
@@ -21,7 +23,8 @@ async function viewOrThrow(userId: string) {
   return view;
 }
 
-const done = (message?: string): ActionResult => ({ ok: true, data: undefined, message });
+/** Başarı iletisi: `done(m("Türkçe metin"))` — istek diline burada çevrilir. */
+const done = async (message?: string): Promise<ActionResult> => ({ ok: true, data: undefined, message: message ? (await getT())(message) : undefined });
 
 /** İçerik üreticisi yolculuğunu başlatır (profil + creator rolü + boş AI ikizi taslağı). */
 export async function startCreatorOnboardingAction(): Promise<ActionResult> {
@@ -36,15 +39,19 @@ export async function startCreatorOnboardingAction(): Promise<ActionResult> {
 }
 
 /** Profil sorusu sırasında kullanıcı adının uygunluğu (kendi mevcut adı uygundur). */
-export async function checkCreatorUsernameAction(raw: string): Promise<ActionResult<{ available: boolean; message: string }>> {
+export async function checkCreatorUsernameAction(raw: string): Promise<ActionResult<{ available: boolean; taken: boolean; message: string }>> {
   try {
     const { user } = await assertUser();
+    const t = await getT();
     const parsed = usernameField.safeParse(raw);
-    if (!parsed.success) return { ok: true, data: { available: false, message: parsed.error.issues[0]?.message ?? "Geçersiz kullanıcı adı." } };
+    if (!parsed.success) {
+      const issue = parsed.error.issues[0]?.message;
+      return { ok: true, data: { available: false, taken: false, message: issue ? t(issue) : t("Geçersiz kullanıcı adı.") } };
+    }
     await connectDb();
     const taken = await CreatorProfile.findOne({ username: parsed.data }, { userId: 1 }).lean();
     const available = !taken || taken.userId.toString() === user.id;
-    return { ok: true, data: { available, message: available ? "Bu kullanıcı adı uygun." : "Bu kullanıcı adı alınmış." } };
+    return { ok: true, data: { available, taken: !available, message: available ? t("Bu kullanıcı adı uygun.") : t("Bu kullanıcı adı alınmış.") } };
   } catch (err) {
     return toActionError(err);
   }
@@ -57,7 +64,7 @@ export async function saveCreatorProfileAction(input: unknown): Promise<ActionRe
     const v = creatorProfileSchema.parse(input);
     await viewOrThrow(user.id);
     await saveOnboardingStep(user.id, "account", v);
-    return done("Profil bilgilerin kaydedildi.");
+    return done(m("Profil bilgilerin kaydedildi."));
   } catch (err) {
     return toActionError(err);
   }
@@ -69,7 +76,7 @@ export async function saveCreatorContactAction(input: unknown): Promise<ActionRe
     const { user } = await assertUser();
     await viewOrThrow(user.id);
     await saveOnboardingStep(user.id, "contact", (input ?? {}) as Record<string, unknown>);
-    return done("İletişim bilgilerin kaydedildi.");
+    return done(m("İletişim bilgilerin kaydedildi."));
   } catch (err) {
     return toActionError(err);
   }
@@ -81,7 +88,7 @@ export async function saveCreatorSocialAction(input: unknown): Promise<ActionRes
     const { user } = await assertUser();
     await viewOrThrow(user.id);
     await saveOnboardingStep(user.id, "social", (input ?? {}) as Record<string, unknown>);
-    return done("Sosyal hesapların kaydedildi.");
+    return done(m("Sosyal hesapların kaydedildi."));
   } catch (err) {
     return toActionError(err);
   }
@@ -94,7 +101,7 @@ export async function saveCreatorVerifyAction(input: unknown): Promise<ActionRes
     const v = creatorVerifySchema.parse(input);
     await viewOrThrow(user.id);
     await saveOnboardingStep(user.id, "verify", { legalName: v.legalName, birthYear: String(v.birthYear) });
-    return done("Doğrulama talebin alındı.");
+    return done(m("Doğrulama talebin alındı."));
   } catch (err) {
     return toActionError(err);
   }
@@ -109,7 +116,7 @@ export async function saveCreatorTwinAction(input: unknown): Promise<ActionResul
     await updateTwinDraft(user.id, { persona: { displayName: v.displayName, shortBio: v.shortBio, greeting: v.greeting } });
     await grantConsent(user.id, "ai_twin_persona", await requestIp());
     await saveOnboardingStep(user.id, "twin", { displayName: v.displayName, consent: true });
-    return done("AI ikizinin temelleri kaydedildi.");
+    return done(m("AI ikizinin temelleri kaydedildi."));
   } catch (err) {
     return toActionError(err);
   }
@@ -138,16 +145,16 @@ export async function saveCreatorCustomizeAction(input: unknown): Promise<Action
 
     const ip = await requestIp();
     if (v.knowledgeConsent && !has.has("knowledge_use")) await grantConsent(user.id, "knowledge_use", ip);
-    if (!v.knowledgeConsent && has.has("knowledge_use")) await revokeConsent(user.id, "knowledge_use", "Karşılama sırasında kapatıldı");
+    if (!v.knowledgeConsent && has.has("knowledge_use")) await revokeConsent(user.id, "knowledge_use", "Karşılama sırasında kapatıldı"); // i18n-ignore (denetim kaydı notu)
     await saveOnboardingStep(user.id, "knowledge", { consent: v.knowledgeConsent });
 
     // Ses/görünüm izni yalnız kimliği doğrulanmış creator için; grantConsent bunu servis katmanında da zorlar.
     if (v.voiceConsent && !has.has("voice_likeness")) await grantConsent(user.id, "voice_likeness", ip);
-    if (!v.voiceConsent && has.has("voice_likeness")) await revokeConsent(user.id, "voice_likeness", "Karşılama sırasında kapatıldı");
+    if (!v.voiceConsent && has.has("voice_likeness")) await revokeConsent(user.id, "voice_likeness", "Karşılama sırasında kapatıldı"); // i18n-ignore (denetim kaydı notu)
     await saveOnboardingStep(user.id, "likeness", { voice: v.voiceConsent });
 
     await saveOnboardingStep(user.id, "boundaries", { allowedTopics: v.allowedTopics, blockedTopics: v.blockedTopics });
-    return done("Kişilik ve sınır ayarların kaydedildi.");
+    return done(m("Kişilik ve sınır ayarların kaydedildi."));
   } catch (err) {
     return toActionError(err);
   }
@@ -161,11 +168,11 @@ export async function submitCreatorApplicationAction(): Promise<ActionResult> {
     if (view.status !== "onboarding") throw new AppError("Başvurun zaten gönderilmiş veya sonuçlanmış.", "already_submitted", 409);
     if (view.missingRequired.length) throw new AppError("Başvuruyu göndermeden önce önceki adımları tamamlamalısın.", "steps_missing");
     await saveOnboardingStep(user.id, "preview", {});
-    await submitTwinForReview(user.id, "Creator başvurusuyla birlikte gönderildi");
+    await submitTwinForReview(user.id, "Creator başvurusuyla birlikte gönderildi"); // i18n-ignore (denetim kaydı notu)
     await submitCreatorApplication(user.id);
     await saveOnboardingStep(user.id, "submit", {});
     revalidatePath("/onboarding/creator");
-    return done("Başvurun incelemeye gönderildi.");
+    return done(m("Başvurun incelemeye gönderildi."));
   } catch (err) {
     return toActionError(err);
   }

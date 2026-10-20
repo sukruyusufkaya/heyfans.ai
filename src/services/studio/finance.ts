@@ -4,16 +4,19 @@ import { CreatorEarning, PayoutAccount, PayoutRequest, EARNING_SOURCES, type ICr
 import { earningsBalance } from "@/services/billing/earnings";
 import { getPlatformSettings } from "@/services/platform/settings";
 import { studioCreator } from "./context";
+import { m } from "@/i18n/m";
+import { getT } from "@/i18n/server";
+import { LOCALE_META } from "@/i18n/config";
 
 export const SOURCE_LABELS: Record<(typeof EARNING_SOURCES)[number], string> = {
-  subscription: "Abonelikler",
-  content: "İçerik satışı",
-  tip: "Bahşişler",
-  gift: "Hediyeler",
-  chat: "AI sohbetleri",
-  voice: "Sesli görüşme",
-  video: "Görüntülü görüşme",
-  custom_request: "Özel talepler",
+  subscription: m("Abonelikler"),
+  content: m("İçerik satışı"),
+  tip: m("Bahşişler"),
+  gift: m("Hediyeler"),
+  chat: m("AI sohbetleri"),
+  voice: m("Sesli görüşme"),
+  video: m("Görüntülü görüşme"),
+  custom_request: m("Özel talepler"),
 };
 
 export const earningsQuerySchema = z.object({
@@ -22,10 +25,11 @@ export const earningsQuerySchema = z.object({
 });
 
 const monthKey = (d: Date) => new Intl.DateTimeFormat("en-CA", { timeZone: "Europe/Istanbul", year: "numeric", month: "2-digit" }).format(d);
-const monthLabel = new Intl.DateTimeFormat("tr-TR", { month: "short", timeZone: "Europe/Istanbul" });
 
 /** /studio/earnings: bakiye, kaynak dağılımı, aylık seri ve hak ediş defteri. */
 export async function getEarnings(userId: string, opts: { page: number; source: string }) {
+  const t = await getT();
+  const monthLabel = new Intl.DateTimeFormat(LOCALE_META[t.locale].intl, { month: "short", timeZone: "Europe/Istanbul" });
   const creator = await studioCreator(userId);
   const cid = creator._id;
   const pageSize = 15;
@@ -54,7 +58,7 @@ export async function getEarnings(userId: string, opts: { page: number; source: 
   return {
     creator,
     balance,
-    bySource: bySource.filter((s) => s.v > 0).map((s) => ({ key: s._id as (typeof EARNING_SOURCES)[number], name: SOURCE_LABELS[s._id as (typeof EARNING_SOURCES)[number]] ?? s._id, value: s.v, count: s.n })),
+    bySource: bySource.filter((s) => s.v > 0).map((s) => ({ key: s._id as (typeof EARNING_SOURCES)[number], name: t(SOURCE_LABELS[s._id as (typeof EARNING_SOURCES)[number]] ?? s._id), value: s.v, count: s.n })),
     months,
     rows,
     total,
@@ -67,6 +71,7 @@ export async function getEarnings(userId: string, opts: { page: number; source: 
 
 /** /studio/payouts: hesap, bakiye, uygunluk, geçmiş. */
 export async function getPayouts(userId: string) {
+  const t = await getT();
   const creator = await studioCreator(userId);
   const cid = creator._id;
   const [balance, account, requests, settings] = await Promise.all([
@@ -76,14 +81,14 @@ export async function getPayouts(userId: string) {
     getPlatformSettings(),
   ]);
   const reasons: string[] = [];
-  if (!settings.features.payouts) reasons.push("Ödeme talepleri şu anda platform genelinde kapalı: ödeme sağlayıcısı ve finansal uygunluk süreci henüz tamamlanmadı.");
-  if (creator.status !== "approved") reasons.push("Creator başvurun onaylanmadan ödeme talep edilemez.");
-  if (creator.verification.identity !== "verified") reasons.push("Kimlik doğrulaman tamamlanmadan ödeme talep edilemez.");
-  if (!creator.payoutsEnabled) reasons.push("Hesabın için ödemeler henüz etkinleştirilmedi.");
-  if (!account) reasons.push("Önce bir ödeme hesabı (IBAN) ekle.");
-  else if (account.status !== "verified") reasons.push(account.status === "rejected" ? "Ödeme hesabın reddedildi; yeni bir IBAN ekle." : "Ödeme hesabın henüz doğrulanmadı; doğrulama sonrası talep edebilirsin.");
-  if (requests.some((r) => ["requested", "approved", "processing"].includes(r.status))) reasons.push("Devam eden bir ödeme talebin var.");
-  if (balance.available < settings.revenue.minPayoutMinor) reasons.push(`Kullanılabilir bakiye en düşük ödeme tutarının (₺${settings.revenue.minPayoutMinor / 100}) altında.`);
+  if (!settings.features.payouts) reasons.push(t("Ödeme talepleri şu anda platform genelinde kapalı: ödeme sağlayıcısı ve finansal uygunluk süreci henüz tamamlanmadı."));
+  if (creator.status !== "approved") reasons.push(t("Creator başvurun onaylanmadan ödeme talep edilemez."));
+  if (creator.verification.identity !== "verified") reasons.push(t("Kimlik doğrulaman tamamlanmadan ödeme talep edilemez."));
+  if (!creator.payoutsEnabled) reasons.push(t("Hesabın için ödemeler henüz etkinleştirilmedi."));
+  if (!account) reasons.push(t("Önce bir ödeme hesabı (IBAN) ekle."));
+  else if (account.status !== "verified") reasons.push(account.status === "rejected" ? t("Ödeme hesabın reddedildi; yeni bir IBAN ekle.") : t("Ödeme hesabın henüz doğrulanmadı; doğrulama sonrası talep edebilirsin."));
+  if (requests.some((r) => ["requested", "approved", "processing"].includes(r.status))) reasons.push(t("Devam eden bir ödeme talebin var."));
+  if (balance.available < settings.revenue.minPayoutMinor) reasons.push(t("Kullanılabilir bakiye en düşük ödeme tutarının (₺{min}) altında.", { min: String(settings.revenue.minPayoutMinor / 100) }));
   return {
     creator,
     balance,

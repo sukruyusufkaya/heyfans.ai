@@ -1,4 +1,5 @@
 import { Skeleton } from "@/components/ui/display";
+import { getT } from "@/i18n/server";
 import { cn } from "@/lib/utils";
 
 /** Hero iskeleti (başlık + açıklama + düğme) — public sayfaların loading.tsx dosyaları kullanır. */
@@ -33,10 +34,11 @@ export function CardGridSkeleton({ count = 6, className, tall = true }: { count?
   );
 }
 
-export function SectionSkeleton({ rows = 1, children }: { rows?: number; children?: React.ReactNode }) {
+export async function SectionSkeleton({ rows = 1, children }: { rows?: number; children?: React.ReactNode }) {
+  const t = await getT();
   return (
-    <div className="mx-auto max-w-[1440px] px-4 py-8 sm:px-6 lg:px-8" role="status" aria-label="Yükleniyor">
-      <span className="sr-only">Yükleniyor…</span>
+    <div className="mx-auto max-w-[1440px] px-4 py-8 sm:px-6 lg:px-8" role="status" aria-label={t("Yükleniyor")}>
+      <span className="sr-only">{t("Yükleniyor…")}</span>
       {Array.from({ length: rows }, (_, i) => (
         <div key={i} className="mb-10">
           <Skeleton className="mb-4 h-7 w-64" />

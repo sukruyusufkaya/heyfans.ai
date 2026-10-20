@@ -1,3 +1,4 @@
+"use client";
 import Link from "next/link";
 import { BadgeCheck, MessageCircle, ArrowRight, Users } from "lucide-react";
 import { Badge, SampleProfileLabel } from "@/components/ui/badge";
@@ -5,27 +6,32 @@ import { CreatorPhoto } from "@/components/creator/creator-photo";
 import { FavoriteButton } from "@/components/creator/social-buttons";
 import { categoryLabel } from "@/components/creator/category-icon";
 import type { CreatorCard } from "@/services/creators/public";
-import { cn, formatCompact, formatMoney } from "@/lib/utils";
+import { useFormatters, useT } from "@/i18n/client";
+import { cn } from "@/lib/utils";
 
 function Verified({ className }: { className?: string }) {
-  return <BadgeCheck className={cn("size-4 shrink-0 fill-brand-500 text-white", className)} aria-label="Doğrulanmış" />;
+  const t = useT();
+  return <BadgeCheck className={cn("size-4 shrink-0 fill-brand-500 text-white", className)} aria-label={t("Doğrulanmış")} />;
 }
 
 function OnlinePill({ online }: { online: boolean }) {
+  const t = useT();
   if (!online) return null;
   return (
     <span className="inline-flex items-center gap-1 rounded-full bg-black/45 px-2 py-1 text-[9px] font-bold text-white backdrop-blur">
-      <span className="size-1.5 rounded-full bg-[#2ee59d]" /> Çevrimiçi
+      <span className="size-1.5 rounded-full bg-[#2ee59d]" /> {t("Çevrimiçi")}
     </span>
   );
 }
 
 /** Fotoğraf üstü yazılı kart (Ana sayfa "Öne Çıkan", Kategoriler "Trend"). */
 export function CreatorTile({ creator, className, href }: { creator: CreatorCard; className?: string; href?: string }) {
+  const t = useT();
+  const { formatCompact } = useFormatters();
   const chatHref = creator.twinLive ? `/chat/${creator.username}` : `/creators/${creator.username}`;
   return (
     <article className={cn("group relative overflow-hidden rounded-[15px] shadow-[var(--shadow-card)]", className)}>
-      <Link href={href ?? `/creators/${creator.username}`} className="block aspect-[4/3.1]" aria-label={`${creator.displayName} profili`}>
+      <Link href={href ?? `/creators/${creator.username}`} className="block aspect-[4/3.1]" aria-label={t("{name} profili", { name: creator.displayName })}>
         <CreatorPhoto src={creator.avatarUrl ?? creator.coverUrl} name={creator.displayName} rounded="rounded-none" className="transition-transform duration-500 group-hover:scale-[1.04]" />
         <span className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black/70 via-black/25 to-transparent" aria-hidden />
       </Link>
@@ -37,16 +43,16 @@ export function CreatorTile({ creator, className, href }: { creator: CreatorCard
         <div className="min-w-0 text-white">
           {creator.categories[0] && (
             <Badge tone="white" size="sm" className="mb-1.5">
-              {categoryLabel(creator.categories[0])}
+              {t(categoryLabel(creator.categories[0]))}
             </Badge>
           )}
           <p className="flex items-center gap-1 truncate text-[13px] font-extrabold">
             {creator.displayName} {creator.verified && <Verified />}
           </p>
-          <p className="text-[10px] text-white/80">{formatCompact(creator.followers)} takipçi</p>
+          <p className="text-[10px] text-white/80">{t("{followers} takipçi", { followers: formatCompact(creator.followers) })}</p>
         </div>
         <Link href={chatHref} className="pointer-events-auto shrink-0 rounded-full bg-white px-3 py-2 text-[10px] font-extrabold text-brand-600 shadow hover:bg-brand-50">
-          Sohbet Et
+          {t("Sohbet Et")}
         </Link>
       </div>
     </article>
@@ -67,10 +73,12 @@ export function CreatorCardTall({
   cta?: "profile" | "chat";
   className?: string;
 }) {
+  const t = useT();
+  const { formatCompact } = useFormatters();
   return (
     <article className={cn("hf-card flex flex-col overflow-hidden transition-shadow hover:shadow-[var(--shadow-card-hover)]", className)}>
       <div className="relative aspect-[4/3]">
-        <Link href={`/creators/${creator.username}`} aria-label={`${creator.displayName} profili`} className="block size-full">
+        <Link href={`/creators/${creator.username}`} aria-label={t("{name} profili", { name: creator.displayName })} className="block size-full">
           <CreatorPhoto src={creator.avatarUrl ?? creator.coverUrl} name={creator.displayName} rounded="rounded-none" />
         </Link>
         <div className="absolute start-2.5 top-2.5 flex items-center gap-1.5">
@@ -81,7 +89,7 @@ export function CreatorCardTall({
         <div className="absolute bottom-2.5 start-2.5 flex gap-1.5">
           {creator.categories.slice(0, 2).map((c) => (
             <Badge key={c} tone="white" size="sm">
-              {categoryLabel(c)}
+              {t(categoryLabel(c))}
             </Badge>
           ))}
         </div>
@@ -90,19 +98,19 @@ export function CreatorCardTall({
         <Link href={`/creators/${creator.username}`} className="flex items-center gap-1 truncate text-[15px] font-extrabold hover:text-brand-600">
           {creator.displayName} {creator.verified && <Verified />}
         </Link>
-        <p className="mt-0.5 text-[11px] text-muted">{formatCompact(creator.followers)} takipçi</p>
+        <p className="mt-0.5 text-[11px] text-muted">{t("{followers} takipçi", { followers: formatCompact(creator.followers) })}</p>
         {creator.headline && <p className="mt-2 line-clamp-2 text-[11px] leading-relaxed text-muted-strong">{creator.headline}</p>}
         <div className="mt-auto pt-3">
           {cta === "profile" ? (
             <Link href={`/creators/${creator.username}`} className="flex h-9 items-center justify-center gap-1.5 rounded-full bg-brand-500 text-[11px] font-extrabold text-white shadow-[var(--shadow-pink)] hover:bg-brand-600">
-              Profili Gör <ArrowRight className="rtl:-scale-x-100 size-3.5" />
+              {t("Profili Gör")} <ArrowRight className="rtl:-scale-x-100 size-3.5" />
             </Link>
           ) : (
             <Link
               href={creator.twinLive ? `/chat/${creator.username}` : `/creators/${creator.username}`}
               className="flex h-9 items-center justify-center gap-1.5 rounded-full border border-brand-300 text-[11px] font-extrabold text-brand-600 hover:bg-brand-50"
             >
-              <MessageCircle className="size-3.5" /> Sohbet Et
+              <MessageCircle className="size-3.5" /> {t("Sohbet Et")}
             </Link>
           )}
         </div>
@@ -113,10 +121,12 @@ export function CreatorCardTall({
 
 /** Küçük kart: "Bu Hafta Yeni" / "Popüler" satırları. */
 export function CreatorCardCompact({ creator, favorite, authed, badge, rank }: { creator: CreatorCard; favorite?: boolean; authed: boolean; badge?: string; rank?: number }) {
+  const t = useT();
+  const { formatCompact, formatMoney } = useFormatters();
   return (
     <article className="hf-card overflow-hidden">
       <div className="relative aspect-[16/10]">
-        <Link href={`/creators/${creator.username}`} className="block size-full" aria-label={`${creator.displayName} profili`}>
+        <Link href={`/creators/${creator.username}`} className="block size-full" aria-label={t("{name} profili", { name: creator.displayName })}>
           <CreatorPhoto src={creator.avatarUrl ?? creator.coverUrl} name={creator.displayName} rounded="rounded-none" />
         </Link>
         {badge && <Badge tone="solid" size="sm" className="absolute start-2 top-2">{badge}</Badge>}
@@ -127,23 +137,23 @@ export function CreatorCardCompact({ creator, favorite, authed, badge, rank }: {
         <Link href={`/creators/${creator.username}`} className="flex items-center gap-1 truncate text-[13px] font-extrabold hover:text-brand-600">
           {creator.displayName} {creator.verified && <Verified className="size-3.5" />}
         </Link>
-        <p className="text-[10px] text-muted">{formatCompact(creator.followers)} takipçi</p>
+        <p className="text-[10px] text-muted">{t("{followers} takipçi", { followers: formatCompact(creator.followers) })}</p>
         <div className="mt-2 flex flex-wrap items-center gap-1">
           {creator.categories.slice(0, 2).map((c) => (
             <Badge key={c} tone="gray" size="sm">
-              {categoryLabel(c)}
+              {t(categoryLabel(c))}
             </Badge>
           ))}
           {creator.isSample ? (
             <SampleProfileLabel className="ms-auto" />
           ) : (
             <Badge tone="pink" size="sm" className="ms-auto">
-              {creator.startingPriceMinor ? `${formatMoney(creator.startingPriceMinor, "TRY", { decimals: false })}/ay` : "Ücretsiz"}
+              {creator.startingPriceMinor ? t("{price}/ay", { price: formatMoney(creator.startingPriceMinor, "TRY", { decimals: false }) }) : t("Ücretsiz")}
             </Badge>
           )}
         </div>
         <Link href={`/creators/${creator.username}`} className="mt-2.5 flex h-8 items-center justify-center rounded-full border border-brand-300 text-[11px] font-extrabold text-brand-600 hover:bg-brand-50">
-          Profili Gör
+          {t("Profili Gör")}
         </Link>
       </div>
     </article>
@@ -151,6 +161,8 @@ export function CreatorCardCompact({ creator, favorite, authed, badge, rank }: {
 }
 
 export function CreatorMiniRow({ creator, right }: { creator: Pick<CreatorCard, "username" | "displayName" | "avatarUrl" | "verified" | "followers"> & { isSample?: boolean }; right?: React.ReactNode }) {
+  const t = useT();
+  const { formatCompact } = useFormatters();
   return (
     <div className="flex items-center gap-3">
       <Link href={`/creators/${creator.username}`} className="size-12 shrink-0 overflow-hidden rounded-xl">
@@ -162,7 +174,7 @@ export function CreatorMiniRow({ creator, right }: { creator: Pick<CreatorCard, 
           {creator.isSample && <SampleProfileLabel />}
         </Link>
         <p className="flex items-center gap-1 text-[11px] text-muted">
-          <Users className="size-3" /> {formatCompact(creator.followers)} takipçi
+          <Users className="size-3" /> {t("{followers} takipçi", { followers: formatCompact(creator.followers) })}
         </p>
       </div>
       {right}

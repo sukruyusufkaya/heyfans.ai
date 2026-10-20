@@ -9,6 +9,7 @@ import { ADMIN_ROLES, AgeVerificationRecord, User, type AdminRole, type IUser } 
 import { Subscription, Wallet } from "@/models/monetization";
 import { setCreatorSuspended } from "@/services/creators/onboarding";
 import { daysAgo, REGEX_SAFE, type AdminActor } from "./shared";
+import { getT } from "@/i18n/server";
 
 export const USER_TABS = ["all", "active", "suspended", "banned"] as const;
 export type UserTab = (typeof USER_TABS)[number];
@@ -58,6 +59,7 @@ export async function listAdminUsers(opts: { tab: UserTab; q: string; role: stri
     adminRole: u.adminRole ?? null,
     status: u.status,
     tier: tier.get(u._id.toString()) ?? "free",
+    locale: u.locale ?? null,
     lastSeenAt: u.lastSeenAt ?? null,
     createdAt: u.createdAt,
   }));
@@ -89,6 +91,7 @@ export async function getAdminUserDetail(userId: string) {
     statusReason: user.statusReason ?? null,
     twoFactorEnabled: Boolean(user.twoFactorEnabled),
     signupIntent: user.signupIntent ?? null,
+    locale: user.locale ?? null,
     createdAt: user.createdAt,
     lastSeenAt: user.lastSeenAt ?? null,
     isDemo: Boolean(user.isDemo),
@@ -102,6 +105,7 @@ export async function getAdminUserDetail(userId: string) {
 /** Rol dağılımı: yöneticiler / creator'lar / hayranlar. */
 export async function getUserSegments() {
   await connectDb();
+  const t = await getT();
   const [admins, creators, total] = await Promise.all([
     User.countDocuments({ roles: "admin", status: { $ne: "deleted" } }),
     User.countDocuments({ roles: "creator", status: { $ne: "deleted" } }),
@@ -110,9 +114,9 @@ export async function getUserSegments() {
   const creatorsOnly = Math.max(0, creators);
   const fans = Math.max(0, total - admins - creatorsOnly);
   return [
-    { name: "Hayranlar", value: fans },
-    { name: "Creator'lar", value: creatorsOnly },
-    { name: "Yöneticiler", value: admins },
+    { name: t("Hayranlar"), value: fans },
+    { name: t("Creator'lar"), value: creatorsOnly },
+    { name: t("Yöneticiler"), value: admins },
   ];
 }
 
@@ -162,6 +166,7 @@ export async function setUserStatus(actor: AdminActor, userId: string, to: "acti
   if (to !== "active") {
     const cp = await CreatorProfile.findOne({ userId: target._id }, { status: 1 }).lean();
     if (cp && cp.status === "approved") {
+      // i18n-ignore (denetim gerekçesi: yönetici kaydı, Türkçe saklanır)
       await setCreatorSuspended(actor, cp._id.toString(), true, `Hesap ${to === "banned" ? "yasaklandı" : "askıya alındı"}: ${reason}`);
       creatorSuspended = true;
     }

@@ -104,6 +104,7 @@ export function fillDailySeries(daily: { _id: string; chats: number }[], days = 
     const t = now - (days - 1 - i) * DAY;
     const key = dayKey(t);
     const d = new Date(t);
+    // i18n-ignore (gün.ay etiketi; dile bağlı değil)
     return { label: `${d.getUTCDate()}.${String(d.getUTCMonth() + 1).padStart(2, "0")}`, value: map.get(key) ?? 0 };
   });
 }

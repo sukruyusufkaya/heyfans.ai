@@ -5,9 +5,10 @@ import { toast } from "sonner";
 import { Button, type ButtonProps } from "@/components/ui/button";
 import { Field, Input, NativeSelect, Switch, Textarea } from "@/components/ui/form-controls";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/overlays";
+import { useT } from "@/i18n/client";
 import type { ActionResult } from "@/lib/errors";
 import { cn } from "@/lib/utils";
-import { Notice } from "./ui";
+import { Notice } from "./notice";
 
 /** Sunucu eylemi: tek `unknown` girdi alır, ActionResult döner. */
 export type AdminAction = (input: unknown) => Promise<ActionResult<unknown>>;
@@ -133,6 +134,7 @@ function FieldInputs({
 }
 
 function useRunner(action: AdminAction, successMessage?: string) {
+  const t = useT();
   const router = useRouter();
   const [pending, start] = useTransition();
   const [error, setError] = useState<string | null>(null);
@@ -145,10 +147,10 @@ function useRunner(action: AdminAction, successMessage?: string) {
       try {
         res = await action(input);
       } catch {
-        res = { ok: false, error: "İşlem tamamlanamadı. Bağlantınızı kontrol edip tekrar deneyin." };
+        res = { ok: false, error: t("İşlem tamamlanamadı. Bağlantınızı kontrol edip tekrar deneyin.") };
       }
       if (res.ok) {
-        toast.success(res.message ?? successMessage ?? "İşlem tamamlandı.");
+        toast.success(res.message ?? successMessage ?? t("İşlem tamamlandı."));
         onOk?.();
         router.refresh();
       } else {
@@ -172,7 +174,7 @@ export function ActionDialog({
   payload = {},
   reason = {},
   fields = [],
-  confirmLabel = "Onayla",
+  confirmLabel,
   tone = "primary",
   successMessage,
   warning,
@@ -193,6 +195,7 @@ export function ActionDialog({
   size?: "sm" | "md" | "lg";
   children?: ReactNode;
 }) {
+  const t = useT();
   const uid = useId();
   const [open, setOpen] = useState(false);
   const [values, setValues] = useState<Values>(() => initialValues(fields));
@@ -231,8 +234,8 @@ export function ActionDialog({
           {children}
           <FieldInputs fields={fields} values={values} setValues={setValues} errors={fieldErrors} idPrefix={uid} disabled={pending} />
           {rc && (
-            <Field label={rc.label ?? "Gerekçe"} htmlFor={`${uid}-reason`} required={!rc.optional} error={fieldErrors[reasonName]} hint={rc.hint ?? (rc.optional ? undefined : `En az ${minReason} karakter. Gerekçe denetim kaydına yazılır.`)}>
-              <Textarea id={`${uid}-reason`} value={reasonText} onChange={(e) => setReasonText(e.target.value)} placeholder={rc.placeholder ?? "Kararınızın gerekçesini yazın"} rows={3} maxLength={1000} disabled={pending} aria-invalid={fieldErrors[reasonName] ? true : undefined} />
+            <Field label={rc.label ?? t("Gerekçe")} htmlFor={`${uid}-reason`} required={!rc.optional} error={fieldErrors[reasonName]} hint={rc.hint ?? (rc.optional ? undefined : t("En az {count} karakter. Gerekçe denetim kaydına yazılır.", { count: minReason }))}>
+              <Textarea id={`${uid}-reason`} value={reasonText} onChange={(e) => setReasonText(e.target.value)} placeholder={rc.placeholder ?? t("Kararınızın gerekçesini yazın")} rows={3} maxLength={1000} disabled={pending} aria-invalid={fieldErrors[reasonName] ? true : undefined} />
             </Field>
           )}
           {error && (
@@ -242,10 +245,10 @@ export function ActionDialog({
           )}
           <div className="flex justify-end gap-2.5 pt-1">
             <Button type="button" variant="ghost" onClick={() => setOpen(false)} disabled={pending}>
-              Vazgeç
+              {t("Vazgeç")}
             </Button>
             <Button type="submit" variant={tone === "danger" ? "danger" : "primary"} loading={pending} disabled={!reasonOk || !requiredOk}>
-              {confirmLabel}
+              {confirmLabel ?? t("Onayla")}
             </Button>
           </div>
         </form>
@@ -292,7 +295,7 @@ export function ActionForm({
   action,
   payload = {},
   fields,
-  submitLabel = "Kaydet",
+  submitLabel,
   reason = false,
   resetOnSuccess = false,
   successMessage,
@@ -315,6 +318,7 @@ export function ActionForm({
   disabled?: boolean;
   footer?: ReactNode;
 }) {
+  const t = useT();
   const uid = useId();
   const [values, setValues] = useState<Values>(() => initialValues(fields));
   const rc = reason === false ? null : reason;
@@ -343,7 +347,7 @@ export function ActionForm({
         <FieldInputs fields={fields} values={values} setValues={setValues} errors={fieldErrors} idPrefix={uid} disabled={pending || disabled} />
       </div>
       {rc && (
-        <Field label={rc.label ?? "Gerekçe"} htmlFor={`${uid}-reason`} required={!rc.optional} error={fieldErrors[reasonName]} hint={rc.hint ?? (rc.optional ? undefined : `En az ${minReason} karakter. Denetim kaydına yazılır.`)}>
+        <Field label={rc.label ?? t("Gerekçe")} htmlFor={`${uid}-reason`} required={!rc.optional} error={fieldErrors[reasonName]} hint={rc.hint ?? (rc.optional ? undefined : t("En az {count} karakter. Denetim kaydına yazılır.", { count: minReason }))}>
           <Textarea id={`${uid}-reason`} value={reasonText} onChange={(e) => setReasonText(e.target.value)} placeholder={rc.placeholder} rows={2} maxLength={1000} disabled={pending || disabled} />
         </Field>
       )}
@@ -354,7 +358,7 @@ export function ActionForm({
       )}
       <div className="flex flex-wrap items-center gap-3">
         <Button type="submit" variant={variant} loading={pending} disabled={disabled || !reasonOk}>
-          {submitLabel}
+          {submitLabel ?? t("Kaydet")}
         </Button>
         {footer}
       </div>

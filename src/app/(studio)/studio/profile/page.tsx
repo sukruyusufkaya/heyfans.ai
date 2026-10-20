@@ -1,18 +1,23 @@
 import type { Metadata } from "next";
 import { ProfileEditor } from "@/features/studio/profile-editor";
+import { getT } from "@/i18n/server";
 import { requireCreator } from "@/lib/auth/session";
 import { listCategories } from "@/services/creators/public";
 import { studioCreator } from "@/services/studio/context";
 import { getTwinContext } from "@/services/studio/twin";
 
-export const metadata: Metadata = { title: "Profil Düzenleyici" };
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getT();
+  return { title: t("Profil Düzenleyici") };
+}
 
 export default async function ProfilePage() {
+  const t = await getT();
   const { user } = await requireCreator();
   const [c, cats, ctx] = await Promise.all([studioCreator(user.id), listCategories(), getTwinContext(user.id)]);
   return (
     <ProfileEditor
-      categories={cats.filter((x) => !x.parentSlug).map((x) => ({ slug: x.slug, name: x.name }))}
+      categories={cats.filter((x) => !x.parentSlug).map((x) => ({ slug: x.slug, name: t(x.name) }))}
       initial={{
         username: c.username,
         displayName: c.displayName,

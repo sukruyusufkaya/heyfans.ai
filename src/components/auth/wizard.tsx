@@ -2,6 +2,7 @@
 import * as React from "react";
 import { Check } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useT } from "@/i18n/client";
 
 export interface WizardStep {
   key: string;
@@ -10,8 +11,9 @@ export interface WizardStep {
 
 /** Hayran karşılama: numaralı daireler + etiket + bağlayıcı çizgiler. */
 export function CircleStepper({ steps, current, done }: { steps: readonly WizardStep[]; current: number; done: number }) {
+  const t = useT();
   return (
-    <ol className="flex items-start" aria-label="Karşılama adımları">
+    <ol className="flex items-start" aria-label={t("Karşılama adımları")}>
       {steps.map((s, i) => {
         const active = i === current;
         const complete = i < done && !active;
@@ -27,8 +29,9 @@ export function CircleStepper({ steps, current, done }: { steps: readonly Wizard
                 {complete ? <Check className="size-4" strokeWidth={3} aria-hidden /> : i + 1}
               </span>
               <span className={cn("text-[11px] font-bold", active ? "text-brand-500" : "text-muted")}>
-                {s.label}
-                <span className="sr-only">{active ? " (geçerli adım)" : complete ? " (tamamlandı)" : ""}</span>
+                {t(s.label)}
+                {" "}
+                <span className="sr-only">{active ? t("(geçerli adım)") : complete ? t("(tamamlandı)") : ""}</span>
               </span>
             </li>
             {i < steps.length - 1 && <span className="mt-4 h-px min-w-3 flex-1 bg-line" aria-hidden />}
@@ -53,6 +56,7 @@ export function PillStepper({
   reachable: number;
   onSelect: (index: number) => void;
 }) {
+  const t = useT();
   const listRef = React.useRef<HTMLOListElement>(null);
   // Dar ekranda yatay kaydırılan adım şeridinde geçerli adımı görünür tut (yalnız şerit içinde kaydırır).
   React.useEffect(() => {
@@ -62,7 +66,7 @@ export function PillStepper({
     list.scrollTo({ left: active.offsetLeft - (list.clientWidth - active.offsetWidth) / 2, behavior: "smooth" });
   }, [current]);
   return (
-    <ol ref={listRef} className="relative flex items-center gap-1.5 overflow-x-auto pb-1 no-scrollbar sm:gap-0" aria-label="Başvuru adımları">
+    <ol ref={listRef} className="relative flex items-center gap-1.5 overflow-x-auto pb-1 no-scrollbar sm:gap-0" aria-label={t("Başvuru adımları")}>
       {steps.map((s, i) => {
         const active = i === current;
         const complete = done.includes(i) && !active;
@@ -82,8 +86,9 @@ export function PillStepper({
                 )}
               >
                 {complete ? <Check className="size-3.5" strokeWidth={3} aria-hidden /> : <span>{i + 1}</span>}
-                {s.label}
-                <span className="sr-only">{active ? " (geçerli adım)" : complete ? " (tamamlandı)" : ""}</span>
+                {t(s.label)}
+                {" "}
+                <span className="sr-only">{active ? t("(geçerli adım)") : complete ? t("(tamamlandı)") : ""}</span>
               </button>
             </li>
             {i < steps.length - 1 && <span className="mx-1 hidden h-px min-w-4 flex-1 bg-line sm:block" aria-hidden />}

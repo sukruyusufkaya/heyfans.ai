@@ -1,3 +1,4 @@
+import { getT } from "@/i18n/server";
 import { cn } from "@/lib/utils";
 
 /**
@@ -20,7 +21,8 @@ function hash(s: string) {
   return h;
 }
 
-export function PostCover({ src, title, type, locked, className }: { src?: string | null; title: string; type: string; locked?: boolean; className?: string }) {
+export async function PostCover({ src, title, type, locked, className }: { src?: string | null; title: string; type: string; locked?: boolean; className?: string }) {
+  const t = await getT();
   if (src && !locked) {
     // eslint-disable-next-line @next/next/no-img-element
     return <img src={src} alt={title} loading="lazy" className={cn("size-full object-cover", className)} />;
@@ -30,7 +32,7 @@ export function PostCover({ src, title, type, locked, className }: { src?: strin
   return (
     <span
       role="img"
-      aria-label={locked ? `${title} (kilitli içerik)` : title}
+      aria-label={locked ? t("{title} (kilitli içerik)", { title }) : title}
       className={cn("relative block size-full overflow-hidden", className)}
       style={{ background: `linear-gradient(${120 + (h % 90)}deg, ${a}, ${b} 60%, ${c})` }}
     >

@@ -2,6 +2,7 @@
 import * as React from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogClose, DialogContent, DialogTrigger } from "@/components/ui/overlays";
+import { useT } from "@/i18n/client";
 
 /**
  * Onay penceresi. `trigger` tıklanınca açılır (ya da `open`/`onOpenChange` ile dışarıdan yönetilir);
@@ -13,8 +14,8 @@ export function ConfirmDialog({
   onOpenChange,
   title,
   description,
-  confirmLabel = "Onayla",
-  cancelLabel = "Vazgeç",
+  confirmLabel,
+  cancelLabel,
   tone = "primary",
   onConfirm,
   children,
@@ -35,6 +36,7 @@ export function ConfirmDialog({
   /** Onay düğmesini kilitler (ör. yazıyla doğrulama tamamlanana kadar). */
   confirmDisabled?: boolean;
 }) {
+  const t = useT();
   const [inner, setInner] = React.useState(false);
   const [busy, setBusy] = React.useState(false);
   const controlled = openProp !== undefined;
@@ -64,11 +66,11 @@ export function ConfirmDialog({
         <div className="mt-5 flex flex-wrap justify-end gap-2.5">
           <DialogClose asChild>
             <Button variant="secondary" size="sm" disabled={busy}>
-              {cancelLabel}
+              {cancelLabel ?? t("Vazgeç")}
             </Button>
           </DialogClose>
           <Button variant={tone === "danger" ? "danger" : "primary"} size="sm" onClick={confirm} loading={busy} disabled={confirmDisabled}>
-            {confirmLabel}
+            {confirmLabel ?? t("Onayla")}
           </Button>
         </div>
       </DialogContent>

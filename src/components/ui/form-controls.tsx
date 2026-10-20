@@ -2,6 +2,7 @@
 import * as React from "react";
 import { Checkbox as CheckboxPrimitive, Label as LabelPrimitive, RadioGroup as RadioPrimitive, Slider as SliderPrimitive, Switch as SwitchPrimitive } from "radix-ui";
 import { Check } from "lucide-react";
+import { useT } from "@/i18n/client";
 import { cn } from "@/lib/utils";
 
 export const inputBase =
@@ -19,19 +20,19 @@ export const Input = React.forwardRef<HTMLInputElement, React.InputHTMLAttribute
     );
   },
 );
-Input.displayName = "Input";
+Input.displayName = "Input"; // i18n-ignore
 
 export const Textarea = React.forwardRef<HTMLTextAreaElement, React.TextareaHTMLAttributes<HTMLTextAreaElement>>(({ className, ...props }, ref) => (
   <textarea ref={ref} className={cn(inputBase, "min-h-24 py-3 leading-relaxed", className)} {...props} />
 ));
-Textarea.displayName = "Textarea";
+Textarea.displayName = "Textarea"; // i18n-ignore
 
 export const NativeSelect = React.forwardRef<HTMLSelectElement, React.SelectHTMLAttributes<HTMLSelectElement>>(({ className, children, ...props }, ref) => (
   <select
     ref={ref}
     className={cn(
       inputBase,
-      "h-11 appearance-none bg-[url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%238e8593%22 stroke-width=%222%22><path d=%22m6 9 6 6 6-6%22/></svg>')] bg-[length:16px] bg-[right_12px_center] bg-no-repeat pe-9",
+      "h-11 appearance-none bg-[url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%238e8593%22 stroke-width=%222%22><path d=%22m6 9 6 6 6-6%22/></svg>')] bg-[length:16px] bg-[right_12px_center] bg-no-repeat pe-9 rtl:bg-[left_12px_center]",
       className,
     )}
     {...props}
@@ -39,7 +40,7 @@ export const NativeSelect = React.forwardRef<HTMLSelectElement, React.SelectHTML
     {children}
   </select>
 ));
-NativeSelect.displayName = "NativeSelect";
+NativeSelect.displayName = "NativeSelect"; // i18n-ignore
 
 export function Label({ className, ...props }: React.ComponentProps<typeof LabelPrimitive.Root>) {
   return <LabelPrimitive.Root className={cn("mb-2 block text-[11px] font-extrabold text-ink-soft", className)} {...props} />;
@@ -63,6 +64,7 @@ export function Field({
   className?: string;
   children: React.ReactNode;
 }) {
+  const t = useT();
   const msg = Array.isArray(error) ? error[0] : error;
   return (
     <div className={cn("min-w-0", className)}>
@@ -75,7 +77,7 @@ export function Field({
       {children}
       {msg ? (
         <p id={htmlFor ? `${htmlFor}-error` : undefined} role="alert" className="mt-1.5 text-[11px] font-semibold text-danger">
-          {msg}
+          {t(msg)}
         </p>
       ) : hint ? (
         <p id={htmlFor ? `${htmlFor}-hint` : undefined} className="mt-1.5 text-[11px] text-muted">
@@ -102,7 +104,7 @@ export const Checkbox = React.forwardRef<React.ComponentRef<typeof CheckboxPrimi
     </CheckboxPrimitive.Root>
   ),
 );
-Checkbox.displayName = "Checkbox";
+Checkbox.displayName = "Checkbox"; // i18n-ignore
 
 export const Switch = React.forwardRef<React.ComponentRef<typeof SwitchPrimitive.Root>, React.ComponentProps<typeof SwitchPrimitive.Root>>(
   ({ className, ...props }, ref) => (
@@ -118,7 +120,7 @@ export const Switch = React.forwardRef<React.ComponentRef<typeof SwitchPrimitive
     </SwitchPrimitive.Root>
   ),
 );
-Switch.displayName = "Switch";
+Switch.displayName = "Switch"; // i18n-ignore
 
 export function RadioGroup({ className, ...props }: React.ComponentProps<typeof RadioPrimitive.Root>) {
   return <RadioPrimitive.Root className={cn("grid gap-2.5", className)} {...props} />;
@@ -142,7 +144,7 @@ export function Slider({ className, ...props }: React.ComponentProps<typeof Slid
   return (
     <SliderPrimitive.Root className={cn("relative flex h-5 w-full touch-none select-none items-center", className)} {...props}>
       <SliderPrimitive.Track className="relative h-1.5 grow overflow-hidden rounded-full bg-[#f1e6f0]">
-        <SliderPrimitive.Range className="absolute h-full rounded-full bg-gradient-to-r from-brand-400 to-brand-500" />
+        <SliderPrimitive.Range className="absolute h-full rounded-full bg-gradient-to-r from-brand-400 to-brand-500 rtl:bg-gradient-to-l" />
       </SliderPrimitive.Track>
       {(props.value ?? props.defaultValue ?? [0]).map((_, i) => (
         <SliderPrimitive.Thumb

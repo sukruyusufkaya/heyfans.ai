@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { m } from "@/i18n/m";
 import { idempotencyKeySchema, objectIdSchema } from "@/lib/validation/common";
 
 /** /checkout?type=… adres parametreleri (sunucuda doğrulanır; fiyat asla istemciden alınmaz). */
@@ -30,7 +31,7 @@ export function checkoutHref(p: CheckoutParams) {
 export const startCheckoutInputSchema = z
   .object({
     clientKey: idempotencyKeySchema,
-    acceptTerms: z.literal(true, { error: "Kullanım şartlarını kabul etmelisin." }),
-    acceptPreInfo: z.literal(true, { error: "Ön bilgilendirme formunu onaylamalısın." }),
+    acceptTerms: z.literal(true, { error: m("Kullanım şartlarını kabul etmelisin.") }),
+    acceptPreInfo: z.literal(true, { error: m("Ön bilgilendirme formunu onaylamalısın.") }),
   })
   .and(checkoutParamsSchema);

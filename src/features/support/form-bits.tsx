@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { Check, Copy, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useT } from "@/i18n/client";
 import type { FormState } from "./actions";
 
 export function fieldError(state: FormState, key: string) {
@@ -10,10 +11,11 @@ export function fieldError(state: FormState, key: string) {
 
 /** Bot tuzağı: görünmez, klavye ile erişilemez; gerçek kullanıcılar doldurmaz. */
 export function Honeypot() {
+  const t = useT();
   return (
     <div aria-hidden className="absolute -start-[9999px] top-0 h-0 w-0 overflow-hidden">
       <label>
-        Web sitesi (boş bırakın)
+        {t("Web sitesi (boş bırakın)")}
         <input name="website" type="text" tabIndex={-1} autoComplete="off" defaultValue="" />
       </label>
     </div>
@@ -39,7 +41,8 @@ export function SubmitButton({ pending, children, className }: { pending: boolea
 }
 
 /** Başarı durumu: referans numarasını büyük gösterir, kopyalama + yeni form seçeneği sunar. */
-export function SuccessPanel({ title, children, reference, referenceLabel, onReset, resetLabel = "Yeni bir form doldur" }: { title: string; children?: React.ReactNode; reference: string; referenceLabel: string; onReset: () => void; resetLabel?: string }) {
+export function SuccessPanel({ title, children, reference, referenceLabel, onReset, resetLabel }: { title: string; children?: React.ReactNode; reference: string; referenceLabel: string; onReset: () => void; resetLabel?: string }) {
+  const t = useT();
   const [copied, setCopied] = useState(false);
   return (
     <div role="status" aria-live="polite" className="rounded-2xl border border-success/25 bg-success-soft p-6 text-center">
@@ -52,7 +55,7 @@ export function SuccessPanel({ title, children, reference, referenceLabel, onRes
         <code className="font-mono text-lg font-black tracking-wider text-brand-600">{reference}</code>
         <button
           type="button"
-          aria-label="Numarayı kopyala"
+          aria-label={t("Numarayı kopyala")}
           className="grid size-8 place-items-center rounded-lg text-muted hover:bg-soft hover:text-ink"
           onClick={async () => {
             try {
@@ -69,7 +72,7 @@ export function SuccessPanel({ title, children, reference, referenceLabel, onRes
       </div>
       {children && <div className="mx-auto mt-4 max-w-md text-xs leading-relaxed text-muted-strong">{children}</div>}
       <Button type="button" variant="secondary" shape="pill" size="md" className="mt-5" onClick={onReset}>
-        {resetLabel}
+        {resetLabel ?? t("Yeni bir form doldur")}
       </Button>
     </div>
   );

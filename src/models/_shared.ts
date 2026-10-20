@@ -1,4 +1,5 @@
 import mongoose, { Schema, type Model } from "mongoose";
+import { m } from "@/i18n/m";
 
 export const { Types } = mongoose;
 export type ObjectId = mongoose.Types.ObjectId;
@@ -25,7 +26,7 @@ export const MoneySchema = new Schema<Money>(
     amountMinor: {
       type: Number,
       required: true,
-      validate: { validator: Number.isInteger, message: "Tutar tamsayı (küçük birim) olmalı" },
+      validate: { validator: Number.isInteger, message: m("Tutar tamsayı (küçük birim) olmalı") },
     },
     currency: { type: String, required: true, uppercase: true, minlength: 3, maxlength: 3, default: "TRY" },
   },
@@ -34,7 +35,7 @@ export const MoneySchema = new Schema<Money>(
 
 export const intValidator = {
   validator: (v: number) => Number.isInteger(v),
-  message: "Değer tamsayı olmalı",
+  message: m("Değer tamsayı olmalı"),
 };
 
 /** Defter koleksiyonları için: güncelleme ve silme yasak, düzeltme ters kayıtla yapılır. */
@@ -51,10 +52,12 @@ export function immutable<T>(schema: Schema<T>, label: string) {
   ] as const;
   for (const op of blocked) {
     schema.pre(op, function () {
+      // i18n-ignore (geliştirici hatası; kullanıcıya gösterilmez)
       throw new Error(`${label} değişmez bir defterdir; ${op} yapılamaz. Ters kayıt oluşturun.`);
     });
   }
   schema.pre("save", function () {
+    // i18n-ignore
     if (!this.isNew) throw new Error(`${label} kaydı oluşturulduktan sonra değiştirilemez.`);
   });
   return schema;

@@ -7,23 +7,25 @@ import { Category, MediaAsset } from "@/models/content";
 import { CreatorProfile, SOCIAL_PLATFORMS } from "@/models/creator";
 import { mediaUrl } from "@/services/media/media";
 import { studioCreator } from "./context";
+import { m } from "@/i18n/m";
+import { getLocale } from "@/i18n/server";
 
-const assetId = z.string().regex(/^[a-f0-9]{24}$/i, "Geçersiz dosya");
+const assetId = z.string().regex(/^[a-f0-9]{24}$/i, m("Geçersiz dosya"));
 
 export const profileSchema = z.object({
-  displayName: z.string().trim().min(2, "Görünen ad en az 2 karakter").max(80),
-  headline: z.string().trim().max(140, "En fazla 140 karakter").optional().default(""),
-  bio: z.string().trim().max(1500, "En fazla 1500 karakter").optional().default(""),
-  categories: z.array(z.string().regex(/^[a-z0-9-]{2,60}$/)).max(5, "En fazla 5 kategori"),
-  tags: z.array(z.string().trim().min(1).max(30)).max(12, "En fazla 12 etiket"),
+  displayName: z.string().trim().min(2, m("Görünen ad en az 2 karakter")).max(80),
+  headline: z.string().trim().max(140, m("En fazla 140 karakter")).optional().default(""),
+  bio: z.string().trim().max(1500, m("En fazla 1500 karakter")).optional().default(""),
+  categories: z.array(z.string().regex(/^[a-z0-9-]{2,60}$/)).max(5, m("En fazla 5 kategori")),
+  tags: z.array(z.string().trim().min(1).max(30)).max(12, m("En fazla 12 etiket")),
   location: z.string().trim().max(80).optional().default(""),
-  languages: z.array(z.string().regex(/^[a-z]{2}$/)).min(1, "En az bir dil seçin").max(5),
+  languages: z.array(z.string().regex(/^[a-z]{2}$/)).min(1, m("En az bir dil seçin")).max(5),
   socialLinks: z
     .array(
       z.object({
         platform: z.enum(SOCIAL_PLATFORMS),
-        handle: z.string().trim().min(1, "Hesap adı gerekli").max(120),
-        url: z.union([z.literal(""), z.string().trim().url("Geçerli bir bağlantı girin").max(500).refine((u) => /^https?:\/\//.test(u), "Yalnız http(s) bağlantıları")]).optional(),
+        handle: z.string().trim().min(1, m("Hesap adı gerekli")).max(120),
+        url: z.union([z.literal(""), z.string().trim().url(m("Geçerli bir bağlantı girin")).max(500).refine((u) => /^https?:\/\//.test(u), m("Yalnız http(s) bağlantıları"))]).optional(),
       }),
     )
     .max(7),
@@ -40,6 +42,7 @@ async function resolveImage(ownerId: ReturnType<typeof oid>, id: string, purpose
 }
 
 export async function updateCreatorProfile(userId: string, raw: unknown) {
+  const locale = await getLocale();
   const input = profileSchema.parse(raw);
   const creator = await studioCreator(userId);
   if (input.categories.length) {
@@ -51,7 +54,7 @@ export async function updateCreatorProfile(userId: string, raw: unknown) {
     headline: input.headline,
     bio: input.bio,
     categories: input.categories,
-    tags: [...new Set(input.tags.map((t) => t.toLocaleLowerCase("tr-TR")))],
+    tags: [...new Set(input.tags.map((tag) => tag.toLocaleLowerCase(locale)))],
     location: input.location,
     languages: input.languages,
     socialLinks: input.socialLinks.map((l) => {

@@ -1,9 +1,10 @@
 import { Types } from "mongoose";
 import { z } from "zod";
 import { AppError } from "@/lib/errors";
+import { m } from "@/i18n/m";
 
 /** 24 karakter hex ObjectId — operatör enjeksiyonu (`{$ne: ...}`) bu şemadan geçemez. */
-export const objectIdSchema = z.string().regex(/^[a-f0-9]{24}$/i, "Geçersiz kimlik");
+export const objectIdSchema = z.string().regex(/^[a-f0-9]{24}$/i, m("Geçersiz kimlik"));
 
 export function oid(id: string | Types.ObjectId): Types.ObjectId {
   if (id instanceof Types.ObjectId) return id;
@@ -15,7 +16,7 @@ export const usernameSchema = z
   .string()
   .trim()
   .toLowerCase()
-  .regex(/^[a-z0-9_.]{3,30}$/, "Kullanıcı adı 3-30 karakter olmalı; harf, rakam, _ ve . kullanılabilir");
+  .regex(/^[a-z0-9_.]{3,30}$/, m("Kullanıcı adı 3-30 karakter olmalı; harf, rakam, _ ve . kullanılabilir"));
 
 export const pageSchema = z.coerce.number().int().min(1).max(1000).default(1);
 export const pageSizeSchema = z.coerce.number().int().min(1).max(100).default(20);

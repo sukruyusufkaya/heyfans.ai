@@ -6,21 +6,22 @@ import { audit } from "@/lib/security/audit";
 import { oid } from "@/lib/validation/common";
 import { MembershipPlan, Subscription, type IMembershipPlan, type PlanTier } from "@/models/monetization";
 import { studioCreator } from "./context";
+import { m } from "@/i18n/m";
 
 /** Plan fiyat sınırları (kuruş): ₺19,90 – ₺10.000. */
 export const PLAN_MIN_PRICE_MINOR = 1990;
 export const PLAN_MAX_PRICE_MINOR = 1_000_000;
 
 const money = z
-  .number({ error: "Geçerli bir tutar girin" })
-  .int("Tutar kuruş cinsinden tamsayı olmalı")
-  .min(PLAN_MIN_PRICE_MINOR, "Fiyat en az ₺19,90 olmalı")
-  .max(PLAN_MAX_PRICE_MINOR, "Fiyat en fazla ₺10.000 olabilir");
+  .number({ error: m("Geçerli bir tutar girin") })
+  .int(m("Tutar kuruş cinsinden tamsayı olmalı"))
+  .min(PLAN_MIN_PRICE_MINOR, m("Fiyat en az ₺19,90 olmalı"))
+  .max(PLAN_MAX_PRICE_MINOR, m("Fiyat en fazla ₺10.000 olabilir"));
 
 export const planInputSchema = z
   .object({
     tier: z.enum(["basic", "premium", "vip"]),
-    name: z.string().trim().min(2, "Plan adı en az 2 karakter").max(60),
+    name: z.string().trim().min(2, m("Plan adı en az 2 karakter")).max(60),
     description: z.string().trim().max(300).optional().default(""),
     benefits: z.array(z.string().trim().min(1).max(120)).max(10).default([]),
     priceMonthlyMinor: money,
@@ -33,9 +34,9 @@ export const planInputSchema = z
   })
   .superRefine((v, ctx) => {
     if (v.priceYearlyMinor != null && v.priceYearlyMinor <= v.priceMonthlyMinor)
-      ctx.addIssue({ code: "custom", path: ["priceYearlyMinor"], message: "Yıllık fiyat, aylık fiyattan yüksek olmalı (indirim için 12 aydan düşük)" });
+      ctx.addIssue({ code: "custom", path: ["priceYearlyMinor"], message: m("Yıllık fiyat, aylık fiyattan yüksek olmalı (indirim için 12 aydan düşük)") });
     if (v.priceYearlyMinor != null && v.priceYearlyMinor > v.priceMonthlyMinor * 12)
-      ctx.addIssue({ code: "custom", path: ["priceYearlyMinor"], message: "Yıllık fiyat 12 aylık toplamı aşamaz" });
+      ctx.addIssue({ code: "custom", path: ["priceYearlyMinor"], message: m("Yıllık fiyat 12 aylık toplamı aşamaz") });
   });
 export type PlanInput = z.infer<typeof planInputSchema>;
 
@@ -131,6 +132,7 @@ export async function setPlanStatus(userId: string, planId: string, status: "act
   doc.status = status;
   if (status === "archived") doc.isPopular = false;
   await doc.save();
+  // i18n-ignore (denetim anahtarı)
   await audit({ actorId: userId, action: `plan.${status === "archived" ? "archive" : "restore"}`, targetType: "MembershipPlan", targetId: planId });
   return doc.toObject();
 }

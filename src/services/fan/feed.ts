@@ -11,6 +11,7 @@ import type { Viewer } from "@/services/content/access";
 import { listConversations } from "@/services/conversations/chat";
 import { creatorCardsByIds } from "./creators";
 import { buildPostViews, CONTENT_PROJECTION, type PostView } from "./posts";
+import { getFormatters } from "@/i18n/server";
 
 export type FollowingTab = "all" | "photo" | "video" | "ai";
 
@@ -65,6 +66,7 @@ export type FavoritesSort = "recent" | "oldest" | "name" | "popular";
 /** /app/favorites — favori creator'lar veya içerikler; sıralama sunucuda. */
 export async function getFavorites(viewer: Viewer, opts: { tab: FavoritesTab; sort: FavoritesSort }) {
   await connectDb();
+  const { compare } = await getFormatters();
   const uid = oid(viewer.id);
   const [creatorFavs, contentFavs] = await Promise.all([
     Favorite.find({ userId: uid, targetType: "creator" }).sort({ createdAt: -1 }).limit(300).lean(),
@@ -75,7 +77,7 @@ export async function getFavorites(viewer: Viewer, opts: { tab: FavoritesTab; so
     let cards = await creatorCardsByIds(creatorFavs.map((f) => f.targetId.toString()));
     const since = new Map(creatorFavs.map((f) => [f.targetId.toString(), new Date(f.createdAt).getTime()]));
     if (opts.sort === "oldest") cards = [...cards].sort((a, b) => (since.get(a.id) ?? 0) - (since.get(b.id) ?? 0));
-    else if (opts.sort === "name") cards = [...cards].sort((a, b) => a.displayName.localeCompare(b.displayName, "tr"));
+    else if (opts.sort === "name") cards = [...cards].sort((a, b) => compare(a.displayName, b.displayName));
     else if (opts.sort === "popular") cards = [...cards].sort((a, b) => b.followers - a.followers);
     const rel = await viewerRelations(viewer.id, cards.map((c) => c.id));
     return { counts, creators: cards, following: [...rel.following], contents: [] as PostView[] };
@@ -85,7 +87,7 @@ export async function getFavorites(viewer: Viewer, opts: { tab: FavoritesTab; so
   const order = new Map(contentFavs.map((f, i) => [f.targetId.toString(), i]));
   posts = posts.sort((a, b) => (order.get(a.id) ?? 0) - (order.get(b.id) ?? 0));
   if (opts.sort === "oldest") posts.reverse();
-  else if (opts.sort === "name") posts.sort((a, b) => a.title.localeCompare(b.title, "tr"));
+  else if (opts.sort === "name") posts.sort((a, b) => compare(a.title, b.title));
   else if (opts.sort === "popular") posts.sort((a, b) => b.likes - a.likes);
   return { counts, creators: [] as CreatorCard[], following: [] as string[], contents: posts };
 }

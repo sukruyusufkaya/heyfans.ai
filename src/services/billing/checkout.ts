@@ -26,6 +26,8 @@ import { getPlatformSettings } from "@/services/platform/settings";
 import { assertNotInMaintenance } from "@/services/platform/guards";
 import { creditWallet, debitWallet } from "@/services/wallet/wallet";
 import { recordPaymentEarning, reverseEarning } from "./earnings";
+import { getT } from "@/i18n/server";
+import { m } from "@/i18n/m";
 
 export type CheckoutItem =
   | { type: "credit_pack"; packKey: string }
@@ -46,6 +48,7 @@ export interface PricedItem {
 /** Fiyat HER ZAMAN sunucuda, veritabanındaki tanımlardan hesaplanır; istemciden fiyat alınmaz. */
 export async function priceItem(userId: string, item: CheckoutItem): Promise<PricedItem> {
   await connectDb();
+  const t = await getT();
   if (item.type === "credit_pack") {
     const settings = await getPlatformSettings();
     const pack = settings.credits.packs.find((p) => p.key === item.packKey);
@@ -55,9 +58,9 @@ export async function priceItem(userId: string, item: CheckoutItem): Promise<Pri
       kind: "credit_purchase",
       amountMinor: pack.priceMinor,
       currency: "TRY",
-      label: `${pack.credits} Kredi${pack.bonusCredits ? ` + ${pack.bonusCredits} bonus` : ""}`,
+      label: pack.bonusCredits ? t("{credits} Kredi + {bonus} bonus", { credits: String(pack.credits), bonus: String(pack.bonusCredits) }) : t("{credits} Kredi", { credits: String(pack.credits) }),
       creatorId: null,
-      item: { type: "credit_pack", packKey: pack.key, credits: total, label: `${pack.credits} Kredi paketi` },
+      item: { type: "credit_pack", packKey: pack.key, credits: total, label: t("{credits} Kredi paketi", { credits: String(pack.credits) }) },
       recurring: null,
       details: { credits: pack.credits, bonusCredits: pack.bonusCredits ?? 0 },
     };
@@ -80,7 +83,7 @@ export async function priceItem(userId: string, item: CheckoutItem): Promise<Pri
       kind: "subscription",
       amountMinor: price.amountMinor,
       currency: price.currency,
-      label: `${creatorName ? `${creatorName} · ` : "HEYFANS · "}${plan.name} (${item.interval === "year" ? "Yıllık" : "Aylık"})`,
+      label: t("{owner} · {plan} ({interval})", { owner: creatorName ?? "HEYFANS", plan: t(plan.name), interval: item.interval === "year" ? t("Yıllık") : t("Aylık") }),
       creatorId: plan.creatorId?.toString() ?? null,
       item: { type: "plan", refId: plan._id, interval: item.interval, label: plan.name },
       recurring: { interval: item.interval },
@@ -169,12 +172,12 @@ async function fulfill(tx: IPaymentTransaction & { _id: import("mongoose").Types
       { userId, amount: tx.item.credits ?? 0, type: "purchase", description: tx.item.label, idempotencyKey: `purchase:${tx._id.toString()}`, refType: "PaymentTransaction", refId: tx._id, isDemo: tx.isDemo },
       session,
     );
-    await notify(userId, { type: "payment", title: "Kredi yüklendi", body: `${tx.item.credits} kredi cüzdanına eklendi.`, link: "/app/wallet" }, session);
+    await notify(userId, { type: "payment", title: m("Kredi yüklendi"), body: m("{credits} kredi cüzdanına eklendi."), params: { credits: tx.item.credits ?? 0 }, link: "/app/wallet" }, session);
     return;
   }
   if (tx.kind === "subscription") {
     const plan = await MembershipPlan.findById(tx.item.refId).session(session).lean<IMembershipPlan>();
-    if (!plan) throw new Error("Plan bulunamadı");
+    if (!plan) throw new Error("Plan bulunamadı"); // i18n-ignore (dahili hata)
     const interval = (tx.item.interval ?? "month") as "month" | "year";
     const now = new Date();
     const existing = await Subscription.findOne({ userId: tx.userId, scope: plan.scope, creatorId: plan.creatorId ?? null, status: { $in: ["active", "past_due"] } }).session(session);
@@ -190,7 +193,7 @@ async function fulfill(tx: IPaymentTransaction & { _id: import("mongoose").Types
       existing.cancelAtPeriodEnd = false;
       existing.status = "active";
       existing.lastTransactionId = tx._id;
-      existing.history.push({ from: "active", to: "active", by: tx.userId, note: "Yenileme/yükseltme", at: now });
+      existing.history.push({ from: "active", to: "active", by: tx.userId, note: "Yenileme/yükseltme", at: now }); // i18n-ignore (durum geçmişi notu)
       await existing.save({ session });
     } else {
       await Subscription.create(
@@ -218,29 +221,31 @@ async function fulfill(tx: IPaymentTransaction & { _id: import("mongoose").Types
     }
     if (plan.entitlements.monthlyCredits > 0) {
       await creditWallet(
-        { userId, amount: plan.entitlements.monthlyCredits, type: "subscription_grant", description: `${plan.name} üyelik kredisi`, idempotencyKey: `subgrant:${tx._id.toString()}`, refType: "PaymentTransaction", refId: tx._id },
+        { userId, amount: plan.entitlements.monthlyCredits, type: "subscription_grant", description: `${plan.name} üyelik kredisi` /* i18n-ignore (defter açıklaması saklanır) */, idempotencyKey: `subgrant:${tx._id.toString()}`, refType: "PaymentTransaction", refId: tx._id },
         session,
       );
     }
     if (plan.creatorId) {
+      // i18n-ignore (hak ediş açıklaması saklanır)
       await recordPaymentEarning({ creatorId: plan.creatorId, sourceType: "subscription", grossMinor: tx.amount.amountMinor, currency: tx.amount.currency, transactionId: tx._id, description: `Abonelik: ${plan.name}`, isDemo: tx.isDemo }, session);
       const creator = await CreatorProfile.findById(plan.creatorId, { userId: 1 }).session(session).lean();
-      if (creator) await notify(creator.userId.toString(), { type: "subscription", title: "Yeni abone", body: `${plan.name} planına yeni bir abone katıldı.`, link: "/studio/memberships" }, session);
+      if (creator) await notify(creator.userId.toString(), { type: "subscription", title: m("Yeni abone"), body: m("{plan} planına yeni bir abone katıldı."), params: { plan: plan.name }, link: "/studio/memberships" }, session);
     }
-    await notify(userId, { type: "subscription", title: "Üyeliğin aktif", body: `${tx.item.label} üyeliğin başladı.`, link: "/app/subscriptions" }, session);
+    await notify(userId, { type: "subscription", title: m("Üyeliğin aktif"), body: m("{label} üyeliğin başladı."), params: { label: tx.item.label }, link: "/app/subscriptions" }, session);
     return;
   }
   if (tx.kind === "content_purchase") {
     const content = await ContentItem.findById(tx.item.refId).session(session).lean();
-    if (!content) throw new Error("İçerik bulunamadı");
+    if (!content) throw new Error("İçerik bulunamadı"); // i18n-ignore (dahili hata)
     await ContentAccessGrant.updateOne(
       { userId: tx.userId, contentId: content._id },
       { $set: { revokedAt: null, revokeReason: null }, $setOnInsert: { userId: tx.userId, contentId: content._id, creatorId: content.creatorId, source: "purchase", transactionId: tx._id, grantedAt: new Date() } },
       { upsert: true, session },
     );
     await ContentItem.updateOne({ _id: content._id }, { $inc: { "stats.purchases": 1, "stats.revenueMinor": tx.amount.amountMinor } }, { session });
+    // i18n-ignore (hak ediş açıklaması saklanır)
     await recordPaymentEarning({ creatorId: content.creatorId, sourceType: "content", grossMinor: tx.amount.amountMinor, currency: tx.amount.currency, transactionId: tx._id, description: `İçerik satışı: ${content.title}`, isDemo: tx.isDemo }, session);
-    await notify(userId, { type: "payment", title: "İçeriğin kilidi açıldı", body: content.title, link: `/content/${content._id.toString()}` }, session);
+    await notify(userId, { type: "payment", title: m("İçeriğin kilidi açıldı"), body: content.title, link: `/content/${content._id.toString()}` }, session);
   }
 }
 
@@ -276,16 +281,16 @@ async function handleEvent(providerName: string, event: PaymentEvent): Promise<{
   if (event.type === "payment.failed") {
     if (tx.status === "pending" || tx.status === "created") {
       tx.status = "failed";
-      tx.failureReason = event.failureReason ?? "Ödeme başarısız";
+      tx.failureReason = event.failureReason ?? "Ödeme başarısız"; // i18n-ignore (saklanan sağlayıcı notu)
       tx.history.push({ from: "pending", to: "failed", by: null, at: new Date() });
       await tx.save();
-      await notify(tx.userId.toString(), { type: "payment", title: "Ödeme tamamlanamadı", body: tx.failureReason ?? undefined, link: "/app/settings" });
+      await notify(tx.userId.toString(), { type: "payment", title: m("Ödeme tamamlanamadı"), body: tx.failureReason ?? undefined, link: "/app/settings" });
     }
     return { transactionId: tx._id };
   }
   if (tx.status === "succeeded") return { transactionId: tx._id }; // zaten işlenmiş
-  if (event.amountMinor != null && event.amountMinor !== tx.amount.amountMinor) throw new Error("Tutar uyuşmazlığı");
-  if (event.currency && event.currency !== tx.amount.currency) throw new Error("Para birimi uyuşmazlığı");
+  if (event.amountMinor != null && event.amountMinor !== tx.amount.amountMinor) throw new Error("Tutar uyuşmazlığı"); // i18n-ignore (dahili hata)
+  if (event.currency && event.currency !== tx.amount.currency) throw new Error("Para birimi uyuşmazlığı"); // i18n-ignore (dahili hata)
   await withTransaction(async (session) => {
     const fresh = await PaymentTransaction.findById(tx._id).session(session);
     if (!fresh || fresh.status === "succeeded") return;
@@ -312,7 +317,7 @@ export async function refundTransaction(actor: { id: string; adminRole: string |
   if (!tx) throw new NotFoundError("İşlem bulunamadı.");
   if (tx.status !== "succeeded" && tx.status !== "partially_refunded") throw new ConflictError("Yalnız başarılı işlemler iade edilebilir.");
   const refundable = tx.amount.amountMinor - tx.refundedMinor;
-  if (!Number.isInteger(amountMinor) || amountMinor <= 0 || amountMinor > refundable) throw new AppError(`İade tutarı 0 ile ${refundable} kuruş arasında olmalı.`, "invalid_refund_amount");
+  if (!Number.isInteger(amountMinor) || amountMinor <= 0 || amountMinor > refundable) throw new AppError("İade tutarı 0 ile {refundable} kuruş arasında olmalı.", "invalid_refund_amount", 400, { params: { refundable: String(refundable) } });
   const provider = getPaymentProvider();
   const refund = await Refund.create({
     transactionId: tx._id,
@@ -338,6 +343,7 @@ export async function refundTransaction(actor: { id: string; adminRole: string |
       const credits = Math.floor((fresh.item.credits * amountMinor) / fresh.amount.amountMinor);
       if (credits > 0) {
         try {
+          // i18n-ignore (defter açıklaması saklanır)
           await debitWallet({ userId: fresh.userId, amount: credits, type: "refund_debit", description: `İade: ${fresh.item.label}`, idempotencyKey: `refund_debit:${refund._id.toString()}`, refType: "Refund", refId: refund._id }, session);
         } catch {
           // Krediler harcanmışsa geri alınamaz; denetim kaydına not düşülür.
@@ -355,7 +361,7 @@ export async function refundTransaction(actor: { id: string; adminRole: string |
     await Refund.updateOne({ _id: refund._id }, { $set: { status: result.status === "succeeded" ? "succeeded" : "processing", providerRefundId: result.refundId } }, { session });
   });
   await audit({ actorId: actor.id, actorRole: actor.adminRole, action: "finance.refund", targetType: "PaymentTransaction", targetId: transactionId, reason, severity: "critical", metadata: { amountMinor } });
-  await notify(tx.userId.toString(), { type: "payment", title: "İade işlendi", body: `${tx.item.label} için iade başlatıldı.`, link: "/app/settings" });
+  await notify(tx.userId.toString(), { type: "payment", title: m("İade işlendi"), body: m("{label} için iade başlatıldı."), params: { label: tx.item.label }, link: "/app/settings" });
   return { refundId: refund._id.toString() };
 }
 
@@ -366,7 +372,7 @@ export async function cancelSubscription(userId: string, subscriptionId: string)
   if (!sub) throw new NotFoundError("Etkin abonelik bulunamadı.");
   sub.cancelAtPeriodEnd = true;
   sub.canceledAt = new Date();
-  sub.history.push({ from: sub.status, to: sub.status, by: oid(userId), note: "Dönem sonunda iptal", at: new Date() });
+  sub.history.push({ from: sub.status, to: sub.status, by: oid(userId), note: "Dönem sonunda iptal", at: new Date() }); // i18n-ignore (durum geçmişi notu)
   await sub.save();
   return { endsAt: sub.currentPeriodEnd };
 }

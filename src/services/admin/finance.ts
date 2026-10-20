@@ -6,6 +6,7 @@ import { getPlatformSettings } from "@/services/platform/settings";
 import { GROSS_STATUSES, txDateMatch } from "./dashboard";
 import { audit } from "@/lib/security/audit";
 import { loadCreators, loadUsers, monthBuckets, monthKeyExpr, pctDelta, REGEX_SAFE, type AdminActor } from "./shared";
+import { getT } from "@/i18n/server";
 
 const PAGE_SIZE = 15;
 export const RANGES = { "30": 30, "90": 90, "365": 365 } as const;
@@ -13,10 +14,12 @@ export type RangeKey = keyof typeof RANGES;
 
 export async function getFinanceOverview(rangeDays: number) {
   await connectDb();
+  const t = await getT();
+  const pd = (a: number, b: number) => pctDelta(a, b, t.locale);
   const now = new Date();
   const from = new Date(now.getTime() - rangeDays * 86_400_000);
   const prevFrom = new Date(from.getTime() - rangeDays * 86_400_000);
-  const months = monthBuckets(12, now);
+  const months = monthBuckets(12, now, t.locale);
   const gross = { status: { $in: [...GROSS_STATUSES] }, "amount.currency": "TRY" };
   const sum = (match: Record<string, unknown>) =>
     PaymentTransaction.aggregate<{ total: number; n: number }>([{ $match: match }, { $group: { _id: null, total: { $sum: "$amount.amountMinor" }, n: { $sum: 1 } } }]);
@@ -53,14 +56,14 @@ export async function getFinanceOverview(rangeDays: number) {
   return {
     gross: g[0]?.total ?? 0,
     grossCount: g[0]?.n ?? 0,
-    grossDelta: pctDelta(g[0]?.total ?? 0, gPrev[0]?.total ?? 0),
+    grossDelta: pd(g[0]?.total ?? 0, gPrev[0]?.total ?? 0),
     platformFee: e[0]?.platform ?? 0,
-    platformDelta: pctDelta(e[0]?.platform ?? 0, ePrev[0]?.platform ?? 0),
+    platformDelta: pd(e[0]?.platform ?? 0, ePrev[0]?.platform ?? 0),
     creatorShare: e[0]?.creator ?? 0,
-    creatorDelta: pctDelta(e[0]?.creator ?? 0, ePrev[0]?.creator ?? 0),
+    creatorDelta: pd(e[0]?.creator ?? 0, ePrev[0]?.creator ?? 0),
     refunds: r[0]?.total ?? 0,
     refundCount: r[0]?.n ?? 0,
-    refundDelta: pctDelta(r[0]?.total ?? 0, rPrev[0]?.total ?? 0),
+    refundDelta: pd(r[0]?.total ?? 0, rPrev[0]?.total ?? 0),
     monthly: months.map((m) => ({ label: m.label, value: mm.get(m.key) ?? 0 })),
     byKind: byKind.map((k) => ({ kind: k._id, value: k.total })),
     testCount: tests,
@@ -72,6 +75,7 @@ export const TX_STATUSES = ["all", ...TRANSACTION_STATUSES] as const;
 
 export async function listTransactions(opts: { kind: string; status: string; provider: string; q: string; page: number }) {
   await connectDb();
+  const t = await getT();
   const filter: Record<string, unknown> = {};
   if (opts.kind !== "all") filter.kind = opts.kind;
   if (opts.status !== "all") filter.status = opts.status;
@@ -86,20 +90,20 @@ export async function listTransactions(opts: { kind: string; status: string; pro
     PaymentTransaction.distinct("provider"),
   ]);
   const users = await loadUsers(rows.map((r) => r.userId));
-  const items = rows.map((t) => ({
-    id: t._id.toString(),
-    ref: `TXN-${t._id.toString().slice(-6).toUpperCase()}`,
-    kind: t.kind,
-    label: t.item.label,
-    amountMinor: t.amount.amountMinor,
-    currency: t.amount.currency,
-    refundedMinor: t.refundedMinor,
-    status: t.status,
-    provider: t.provider,
-    isTest: t.isTest,
-    isDemo: t.isDemo,
-    user: users.get(t.userId.toString())?.name ?? "Kullanıcı",
-    createdAt: t.createdAt,
+  const items = rows.map((tx) => ({
+    id: tx._id.toString(),
+    ref: `TXN-${tx._id.toString().slice(-6).toUpperCase()}`,
+    kind: tx.kind,
+    label: tx.item.label,
+    amountMinor: tx.amount.amountMinor,
+    currency: tx.amount.currency,
+    refundedMinor: tx.refundedMinor,
+    status: tx.status,
+    provider: tx.provider,
+    isTest: tx.isTest,
+    isDemo: tx.isDemo,
+    user: users.get(tx.userId.toString())?.name ?? t("Kullanıcı"),
+    createdAt: tx.createdAt,
   }));
   return { ...paged(items, total, opts.page, PAGE_SIZE), providers: providers.map(String).sort() };
 }

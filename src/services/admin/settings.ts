@@ -9,8 +9,11 @@ import { AuditLog, type IAuditLog } from "@/models/safety";
 import { PlatformSettings, type IPlatformSettings } from "@/models/platform";
 import { getPlatformSettings } from "@/services/platform/settings";
 import { loadUsers, REGEX_SAFE, type AdminActor } from "./shared";
+import { getT } from "@/i18n/server";
 
+// i18n-ignore (onay ifadeleri: yöneticinin aynen yazması gereken sabit metin; çevrilmez)
 export const ADULT_CONFIRM_PHRASE = "YETİŞKİN İÇERİĞİ AÇ";
+// i18n-ignore
 export const MFA_CONFIRM_PHRASE = "2FA ZORUNLULUĞUNU KALDIR";
 
 export type SettingsGroupInput =
@@ -82,7 +85,7 @@ export async function updateSettingsGroup(actor: AdminActor, input: SettingsGrou
       next = { ...input.features };
       prev = { ...before.features };
       if (!before.features.adultContent && input.features.adultContent) {
-        if (input.confirmation !== ADULT_CONFIRM_PHRASE) throw new AppError(`Yetişkin içeriği etkinleştirmek için "${ADULT_CONFIRM_PHRASE}" yazarak onaylayın.`, "confirmation_required");
+        if (input.confirmation !== ADULT_CONFIRM_PHRASE) throw new AppError('Yetişkin içeriği etkinleştirmek için "{phrase}" yazarak onaylayın.', "confirmation_required", 400, { params: { phrase: ADULT_CONFIRM_PHRASE } });
         severity = "critical";
       }
       if (before.features.payouts !== input.features.payouts || before.features.likenessGeneration !== input.features.likenessGeneration) severity = "critical";
@@ -92,7 +95,7 @@ export async function updateSettingsGroup(actor: AdminActor, input: SettingsGrou
       path = "security";
       if (before.security.adminMfaRequired && !input.adminMfaRequired) {
         if (env().APP_MODE === "production") throw new AppError("Üretimde yönetici 2FA zorunluluğu kapatılamaz.", "forbidden", 403);
-        if (input.confirmation !== MFA_CONFIRM_PHRASE) throw new AppError(`Yönetici 2FA zorunluluğunu kaldırmak için "${MFA_CONFIRM_PHRASE}" yazarak onaylayın.`, "confirmation_required");
+        if (input.confirmation !== MFA_CONFIRM_PHRASE) throw new AppError('Yönetici 2FA zorunluluğunu kaldırmak için "{phrase}" yazarak onaylayın.', "confirmation_required", 400, { params: { phrase: MFA_CONFIRM_PHRASE } });
       }
       next = { adminMfaRequired: input.adminMfaRequired, sessionMaxAgeDays: input.sessionMaxAgeDays, maxLoginAttempts: input.maxLoginAttempts, sensitiveAccessRequiresReason: true };
       prev = { ...before.security };
@@ -120,6 +123,7 @@ export async function updateSettingsGroup(actor: AdminActor, input: SettingsGrou
   }
   if (!Object.keys(set).length) throw new ConflictError("Değişiklik yok; kaydedilecek bir fark bulunamadı.", "no_changes");
   await PlatformSettings.updateOne({ key: "global" }, { $set: { ...set, updatedBy: oid(actor.id) } });
+  // i18n-ignore (denetim anahtarı)
   await audit({ actorId: actor.id, actorRole: actor.adminRole, action: `settings.${input.group}_update`, targetType: "PlatformSettings", targetId: "global", reason, severity, metadata: { changes } });
   return { changed: Object.keys(changes) };
 }
@@ -147,6 +151,7 @@ export async function getSettingsView() {
 
 /* ─── Denetim kaydı ─── */
 export async function listAuditLogs(opts: { action: string; actor: string; severity: string; target: string; page: number }) {
+  const t = await getT();
   await connectDb();
   const filter: Record<string, unknown> = {};
   if (opts.action) filter.action = { $regex: REGEX_SAFE(opts.action), $options: "i" };
@@ -167,7 +172,7 @@ export async function listAuditLogs(opts: { action: string; actor: string; sever
   const items = rows.map((r) => ({
     id: r._id.toString(),
     action: r.action,
-    actor: r.actorId ? actors.get(r.actorId.toString())?.name ?? "Silinmiş kullanıcı" : "Sistem",
+    actor: r.actorId ? actors.get(r.actorId.toString())?.name ?? t("Silinmiş kullanıcı") : t("Sistem"),
     actorRole: r.actorRole ?? null,
     targetType: r.targetType ?? null,
     targetId: r.targetId ?? null,

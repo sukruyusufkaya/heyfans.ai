@@ -2,7 +2,8 @@ import Link from "next/link";
 import { ArrowRight, Heart, Lock, Send, Sparkles, Zap } from "lucide-react";
 import { CreatorPhoto } from "@/components/creator/creator-photo";
 import { AiTwinLabel } from "@/components/ui/badge";
-import { cn, formatCompact } from "@/lib/utils";
+import { getFormatters, getT } from "@/i18n/server";
+import { cn } from "@/lib/utils";
 
 /** Pembe degrade hero (tüm public sayfalarda ortak iskelet). */
 export function PublicHero({
@@ -59,7 +60,7 @@ export function PublicHero({
 
 export function HeroStats({ items }: { items: { icon: React.ReactNode; value: string; label: string }[] }) {
   // Henüz oluşmamış sayılar (0) "0 içerik üreticisi" gibi gösterilmez; hiçbiri yoksa satır hiç çizilmez.
-  const shown = items.filter((s) => s.value !== "0");
+  const shown = items.filter((s) => s.value && s.value !== "0");
   if (!shown.length) return null;
   return (
     <div>
@@ -97,9 +98,10 @@ export function SecondaryCta({ href, children, icon }: { href: string; children:
 }
 
 /** Telefon içinde canlı görünümlü AI ikizi sohbet maketi (gerçek UI bileşenleriyle). */
-export function PhoneChatMockup({ creatorName, avatarUrl, lines, className }: { creatorName: string; avatarUrl?: string | null; lines: { from: "ai" | "user"; text: string }[]; className?: string }) {
+export async function PhoneChatMockup({ creatorName, avatarUrl, lines, className }: { creatorName: string; avatarUrl?: string | null; lines: { from: "ai" | "user"; text: string }[]; className?: string }) {
+  const t = await getT();
   return (
-    <div className={cn("relative w-[250px] rounded-[38px] border-[7px] border-ink bg-white p-3 shadow-2xl", className)} aria-label="Sohbet ekranı önizlemesi">
+    <div className={cn("relative w-[250px] rounded-[38px] border-[7px] border-ink bg-white p-3 shadow-2xl", className)} aria-label={t("Sohbet ekranı önizlemesi")}>
       <div className="mx-auto mb-2 h-5 w-24 rounded-full bg-ink" aria-hidden />
       <div className="mb-3 flex items-center gap-2 border-b border-line pb-2.5">
         <div className="size-8 overflow-hidden rounded-full">
@@ -110,7 +112,7 @@ export function PhoneChatMockup({ creatorName, avatarUrl, lines, className }: { 
           <AiTwinLabel className="mt-0.5 !px-1.5 !py-0.5 !text-[7px]" />
         </div>
         <span className="flex items-center gap-1 text-[8px] font-bold text-success">
-          <span className="size-1.5 rounded-full bg-success" /> Çevrimiçi
+          <span className="size-1.5 rounded-full bg-success" /> {t("Çevrimiçi")}
         </span>
       </div>
       <div className="flex flex-col gap-2">
@@ -121,12 +123,12 @@ export function PhoneChatMockup({ creatorName, avatarUrl, lines, className }: { 
         ))}
         <div className="relative mt-1 grid h-20 place-items-center overflow-hidden rounded-xl bg-gradient-to-br from-[#3a2340] to-[#6b2a55] text-white">
           <span className="flex flex-col items-center gap-1 text-[9px] font-bold">
-            <Lock className="size-4" /> Özel içeriği görmek için kilidi aç
+            <Lock className="size-4" /> {t("Özel içeriği görmek için kilidi aç")}
           </span>
         </div>
       </div>
       <div className="mt-3 flex h-9 items-center gap-2 rounded-full border border-line bg-soft px-3 text-[9px] text-muted">
-        Mesajını yaz…
+        {t("Mesajını yaz…")}
         <span className="ms-auto grid size-6 place-items-center rounded-full bg-brand-500 text-white">
           <Send className="rtl:-scale-x-100 size-3" />
         </span>
@@ -187,12 +189,17 @@ export function Section({ children, className, id }: { children: React.ReactNode
   );
 }
 
-export function SeeAll({ href, label = "Tümünü Gör" }: { href: string; label?: string }) {
+export async function SeeAll({ href, label }: { href: string; label?: string }) {
+  const t = await getT();
   return (
     <Link href={href} className="inline-flex items-center gap-1 text-xs font-extrabold text-brand-500 hover:text-brand-600">
-      {label} <ArrowRight className="rtl:-scale-x-100 size-3.5" />
+      {label ?? t("Tümünü Gör")} <ArrowRight className="rtl:-scale-x-100 size-3.5" />
     </Link>
   );
 }
 
-export const stat = (n: number, suffix = "+") => `${formatCompact(n)}${n > 0 ? suffix : ""}`;
+/** Hero sayıları için dile göre kısaltılmış değer üretici: `const stat = await getStat(); stat(1200) → "1,2K+"`. Sıfır her dilde "0" döner (HeroStats gizler). */
+export async function getStat() {
+  const { formatCompact } = await getFormatters();
+  return (n: number, suffix = "+") => (n > 0 ? `${formatCompact(n)}${suffix}` : "0");
+}

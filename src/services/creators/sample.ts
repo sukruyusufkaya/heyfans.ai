@@ -2,19 +2,20 @@ import "server-only";
 import type { Types } from "mongoose";
 import { AppError } from "@/lib/errors";
 import { CreatorProfile } from "@/models/creator";
+import { m } from "@/i18n/m";
 
 /**
  * Örnek profiller: platformun kurgusal tanıtım karakterleri (scripts/db/samples.ts ile canlıya aktarılır).
  * Herkese açık görünürler, takip edilebilir ve günlük ücretsiz mesaj hakkıyla sohbet edilebilirler;
  * abonelik, içerik satın alma, hediye/bahşiş, özel talep, ücretli görüşme ve kredili sohbet KAPALIDIR.
  */
-export const SAMPLE_PROFILE_LABEL = "Örnek profil";
+export const SAMPLE_PROFILE_LABEL = m("Örnek profil");
 /** Örnek profil kullanıcılarının e-posta alanı: `.invalid` (RFC 2606) — hiçbir zaman teslim edilmez; parolasız, giriş yapılamaz. */
 export const SAMPLE_EMAIL_DOMAIN = "ornek.heyfans.invalid";
-export const SAMPLE_PURCHASE_MESSAGE = "Bu bir örnek profildir; abonelik, satın alma, hediye ve ücretli etkileşimler kapalıdır.";
+export const SAMPLE_PURCHASE_MESSAGE = m("Bu bir örnek profildir; abonelik, satın alma, hediye ve ücretli etkileşimler kapalıdır.");
 
 export class SampleProfileError extends AppError {
-  constructor(message = SAMPLE_PURCHASE_MESSAGE) {
+  constructor(message: string = SAMPLE_PURCHASE_MESSAGE) {
     super(message, "sample_profile", 403);
   }
 }

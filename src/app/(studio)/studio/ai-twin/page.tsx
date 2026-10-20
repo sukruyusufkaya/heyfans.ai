@@ -9,33 +9,39 @@ import { PageHeader } from "@/components/ui/display";
 import { Meter, Notice, Panel, STUDIO_EYEBROW, TwinStatusBadge } from "@/components/studio/studio-ui";
 import { ConsentCard } from "@/features/studio/consent-card";
 import { TwinControls } from "@/features/studio/twin-controls";
+import { getFormatters, getT } from "@/i18n/server";
+import { m } from "@/i18n/m";
 import { requireCreator } from "@/lib/auth/session";
 import { aiStatus } from "@/lib/ai/provider";
 import { rtcStatus } from "@/lib/rtc";
-import { formatDateTime, formatNumber } from "@/lib/utils";
 import { CONSENT_TEXTS } from "@/services/ai-twins/lifecycle";
 import { getTwinOverview } from "@/services/studio/twin";
 
-export const metadata: Metadata = { title: "AI İkizim" };
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getT();
+  return { title: t("AI İkizim") };
+}
 
 const VERSION_LABEL: Record<string, { label: string; tone: "violet" | "green" | "danger" | "gray" | "teal" }> = {
-  pending_review: { label: "İncelemede", tone: "violet" },
-  approved: { label: "Onaylandı", tone: "teal" },
-  rejected: { label: "Düzenleme gerekli", tone: "danger" },
-  superseded: { label: "Yenisi geldi", tone: "gray" },
-  live: { label: "Canlı sürüm", tone: "green" },
+  pending_review: { label: m("İncelemede"), tone: "violet" },
+  approved: { label: m("Onaylandı"), tone: "teal" },
+  rejected: { label: m("Düzenleme gerekli"), tone: "danger" },
+  superseded: { label: m("Yenisi geldi"), tone: "gray" },
+  live: { label: m("Canlı sürüm"), tone: "green" },
 };
 
 const SHORTCUTS = [
-  { href: "/studio/personality", icon: Brain, title: "Kişilik ve Davranış", hint: "Konuşma tarzı, kişilik profili" },
-  { href: "/studio/knowledge", icon: BookOpen, title: "Bilgi Tabanı", hint: "Onayladığın kaynak ve bilgiler" },
-  { href: "/studio/voice", icon: Mic2, title: "Ses ve Görünüm", hint: "İzinli ses ve görsel ayarları" },
-  { href: "/studio/boundaries", icon: Shield, title: "Sınırlar ve İzinler", hint: "İçerik ve davranış izinleri" },
-  { href: "/studio/test", icon: FlaskConical, title: "AI İkizi Testi", hint: "Yayın öncesi canlı deneme" },
-  { href: "/studio/settings", icon: ImageIcon, title: "Fiyat ve Ayarlar", hint: "Mesaj ücreti, ücretsiz hak" },
+  { href: "/studio/personality", icon: Brain, title: m("Kişilik ve Davranış"), hint: m("Konuşma tarzı, kişilik profili") },
+  { href: "/studio/knowledge", icon: BookOpen, title: m("Bilgi Tabanı"), hint: m("Onayladığın kaynak ve bilgiler") },
+  { href: "/studio/voice", icon: Mic2, title: m("Ses ve Görünüm"), hint: m("İzinli ses ve görsel ayarları") },
+  { href: "/studio/boundaries", icon: Shield, title: m("Sınırlar ve İzinler"), hint: m("İçerik ve davranış izinleri") },
+  { href: "/studio/test", icon: FlaskConical, title: m("AI İkizi Testi"), hint: m("Yayın öncesi canlı deneme") },
+  { href: "/studio/settings", icon: ImageIcon, title: m("Fiyat ve Ayarlar"), hint: m("Mesaj ücreti, ücretsiz hak") },
 ];
 
 export default async function TwinPage() {
+  const t = await getT();
+  const { formatDateTime, formatNumber } = await getFormatters();
   const { user } = await requireCreator();
   const o = await getTwinOverview(user.id);
   const { twin, creator } = o;
@@ -47,30 +53,30 @@ export default async function TwinPage() {
   const live = twin.status === "live";
 
   const features = [
-    { label: "AI ikizi sohbeti", desc: live ? "Hayranlar şu anda sohbet başlatabilir." : "Yalnız yayındayken hayranlara açıktır.", on: live && twin.features.chat },
-    { label: "Sesli mesaj / görüşme", desc: rtc.configured ? "Sesli görüşme altyapısı hazır." : "Sesli görüşme şu anda kapalı.", on: twin.features.voice && rtc.configured },
-    { label: "Görsel benzerlik", desc: "Yalnız kimlik doğrulaması + açık rıza ile.", on: twin.draft.voice.imageLikenessEnabled },
-    { label: "Görüntülü etkileşim", desc: "Yayınlama için ayrıca onay ve sağlayıcı gerekir.", on: twin.features.video && rtc.configured },
+    { label: t("AI ikizi sohbeti"), desc: t(live ? "Hayranlar şu anda sohbet başlatabilir." : "Yalnız yayındayken hayranlara açıktır."), on: live && twin.features.chat },
+    { label: t("Sesli mesaj / görüşme"), desc: t(rtc.configured ? "Sesli görüşme altyapısı hazır." : "Sesli görüşme şu anda kapalı."), on: twin.features.voice && rtc.configured },
+    { label: t("Görsel benzerlik"), desc: t("Yalnız kimlik doğrulaması + açık rıza ile."), on: twin.draft.voice.imageLikenessEnabled },
+    { label: t("Görüntülü etkileşim"), desc: t("Yayınlama için ayrıca onay ve sağlayıcı gerekir."), on: twin.features.video && rtc.configured },
   ];
 
   return (
     <div className="mx-auto max-w-[1280px]">
       <PageHeader
         eyebrow={STUDIO_EYEBROW}
-        title="AI İkizim"
-        description="Dijital ikizinin kimliğini, davranışını ve yayın durumunu yönet."
+        title={t("AI İkizim")}
+        description={t("Dijital ikizinin kimliğini, davranışını ve yayın durumunu yönet.")}
         actions={
           <Button asChild>
             <Link href="/studio/test">
-              <Play /> AI ikizimi test et
+              <Play /> {t("AI ikizimi test et")}
             </Link>
           </Button>
         }
       />
 
       {!ai.available && (
-        <Notice tone="warn" title="AI yanıtları şu anda kapalı" className="mb-5">
-          İkizin şu anda yanıt üretemez; test sohbeti ve hayran sohbetleri yeniden açıldığında kendiliğinden etkinleşir.
+        <Notice tone="warn" title={t("AI yanıtları şu anda kapalı")} className="mb-5">
+          {t("İkizin şu anda yanıt üretemez; test sohbeti ve hayran sohbetleri yeniden açıldığında kendiliğinden etkinleşir.")}
         </Notice>
       )}
 
@@ -85,23 +91,23 @@ export default async function TwinPage() {
                 <TwinStatusBadge status={twin.status} size="md" />
               </div>
               <div className="absolute inset-x-0 bottom-0 p-5 text-white">
-                <p className="text-[22px] font-black leading-tight tracking-[-0.03em]">{creator.displayName} AI İkizi</p>
-                <p className="mt-1 text-[11px] text-white/85">Yetkilendirilmiş, creator kontrolünde dijital temsilci</p>
+                <p className="text-[22px] font-black leading-tight tracking-[-0.03em]">{t("{name} AI İkizi", { name: creator.displayName })}</p>
+                <p className="mt-1 text-[11px] text-white/85">{t("Yetkilendirilmiş, creator kontrolünde dijital temsilci")}</p>
               </div>
             </div>
             <div className="flex flex-wrap items-center justify-between gap-3 p-4">
               <p className="text-[11px] text-muted">
-                {o.identityVerified ? "Creator doğrulaması tamamlandı" : "Kimlik doğrulaması bekleniyor"} · Sürüm {twin.currentVersion || "—"}
+                {t(o.identityVerified ? "Creator doğrulaması tamamlandı · Sürüm {version}" : "Kimlik doğrulaması bekleniyor · Sürüm {version}", { version: twin.currentVersion || "—" })}
               </p>
               <Button asChild variant="outline" size="sm">
                 <Link href={`/creators/${creator.username}`}>
-                  <Eye /> Önizleme
+                  <Eye /> {t("Önizleme")}
                 </Link>
               </Button>
             </div>
           </Card>
 
-          <Panel title="Yayın ve kontrol durumu" hint="Yayın akışı: taslak → inceleme → onay → yayın">
+          <Panel title={t("Yayın ve kontrol durumu")} hint={t("Yayın akışı: taslak → inceleme → onay → yayın")}>
             <div className="mb-4 flex items-center gap-2">
               <TwinStatusBadge status={twin.status} />
               <AiTwinLabel />
@@ -115,7 +121,7 @@ export default async function TwinPage() {
                     <p className="text-[10px] text-muted">{f.desc}</p>
                   </div>
                   <Badge tone={f.on ? "green" : "gray"} size="sm" dot>
-                    {f.on ? "Açık" : "Kapalı"}
+                    {f.on ? t("Açık") : t("Kapalı")}
                   </Badge>
                 </li>
               ))}
@@ -125,7 +131,7 @@ export default async function TwinPage() {
 
         {/* Orta: yönetim alanı + rızalar */}
         <div className="grid content-start gap-5">
-          <Panel title="AI İkizi Yönetim Alanı" hint="Kişilik, bilgi ve sınır ayarlarına buradan ulaş.">
+          <Panel title={t("AI İkizi Yönetim Alanı")} hint={t("Kişilik, bilgi ve sınır ayarlarına buradan ulaş.")}>
             <div className="grid gap-3 sm:grid-cols-2">
               {SHORTCUTS.map((s) => (
                 <Link key={s.href} href={s.href} className="group flex items-center gap-3 rounded-[14px] border border-line bg-white p-3.5 transition-colors hover:border-brand-300 hover:bg-brand-50">
@@ -133,8 +139,8 @@ export default async function TwinPage() {
                     <s.icon className="size-[18px]" aria-hidden />
                   </span>
                   <span className="min-w-0 flex-1">
-                    <span className="block text-[12px] font-extrabold leading-snug text-ink">{s.title}</span>
-                    <span className="block text-[10px] leading-snug text-muted">{s.hint}</span>
+                    <span className="block text-[12px] font-extrabold leading-snug text-ink">{t(s.title)}</span>
+                    <span className="block text-[10px] leading-snug text-muted">{t(s.hint)}</span>
                   </span>
                   <ChevronRight className="rtl:-scale-x-100 size-4 shrink-0 text-muted/60 group-hover:text-brand-500" aria-hidden />
                 </Link>
@@ -143,32 +149,32 @@ export default async function TwinPage() {
             <div className="mt-4 flex gap-3 rounded-2xl bg-brand-50 p-4">
               <ShieldCheck className="mt-0.5 size-5 shrink-0 text-brand-500" aria-hidden />
               <div>
-                <p className="text-[12px] font-extrabold text-brand-700">İzin ve kontrol önceliği</p>
+                <p className="text-[12px] font-extrabold text-brand-700">{t("İzin ve kontrol önceliği")}</p>
                 <p className="mt-1 text-[11px] leading-relaxed text-muted-strong">
-                  AI ikizinin üretebileceği içerikleri ve konuşabileceği konuları her zaman sen belirlersin. Kişilik ve sınır değişiklikleri inceleme gerektirir; izinlerini istediğin an geri çekebilirsin.
+                  {t("AI ikizinin üretebileceği içerikleri ve konuşabileceği konuları her zaman sen belirlersin. Kişilik ve sınır değişiklikleri inceleme gerektirir; izinlerini istediğin an geri çekebilirsin.")}
                 </p>
               </div>
             </div>
           </Panel>
 
-          <Panel title="Açık rızalar" hint="İkizin yalnız verdiğin izinlerle çalışır.">
+          <Panel title={t("Açık rızalar")} hint={t("İkizin yalnız verdiğin izinlerle çalışır.")}>
             <div className="grid gap-3">
               <ConsentCard
                 kind="ai_twin_persona"
-                title="AI ikizi kişiliği"
-                text={CONSENT_TEXTS.ai_twin_persona.text}
+                title={t("AI ikizi kişiliği")}
+                text={t(CONSENT_TEXTS.ai_twin_persona.text)}
                 granted={o.consents.includes("ai_twin_persona")}
                 grantedAt={consentAt("ai_twin_persona")}
                 strongRevoke
-                revokeWarning="İznini geri çekersen AI ikizin DERHAL çevrimdışı olur: yayından kalkar, tüm yeni sohbetler ve özellikler durur ve ikizin 'Geri çekildi' durumuna geçer. Yeniden başlamak için izni tekrar verip ikizi taslaktan incelemeye göndermen gerekir."
+                revokeWarning={t("İznini geri çekersen AI ikizin DERHAL çevrimdışı olur: yayından kalkar, tüm yeni sohbetler ve özellikler durur ve ikizin 'Geri çekildi' durumuna geçer. Yeniden başlamak için izni tekrar verip ikizi taslaktan incelemeye göndermen gerekir.")}
               />
               <ConsentCard
                 kind="knowledge_use"
-                title="Bilgi tabanı kullanımı"
-                text={CONSENT_TEXTS.knowledge_use.text}
+                title={t("Bilgi tabanı kullanımı")}
+                text={t(CONSENT_TEXTS.knowledge_use.text)}
                 granted={o.consents.includes("knowledge_use")}
                 grantedAt={consentAt("knowledge_use")}
-                revokeWarning="İznini geri çekersen bilgi tabanındaki tüm parçalar hemen devre dışı kalır; ikizin yanıtlarında kullanılmaz. Kaynakların silinmez, izni yeniden verdiğinde yeniden indekslemen gerekebilir."
+                revokeWarning={t("İznini geri çekersen bilgi tabanındaki tüm parçalar hemen devre dışı kalır; ikizin yanıtlarında kullanılmaz. Kaynakların silinmez, izni yeniden verdiğinde yeniden indekslemen gerekebilir.")}
               />
             </div>
           </Panel>
@@ -177,13 +183,13 @@ export default async function TwinPage() {
         {/* Sağ: performans + sürüm geçmişi */}
         <div className="grid content-start gap-5 lg:col-span-2 xl:col-span-1">
           <Card>
-            <CardHeader title="Performans özeti" />
+            <CardHeader title={t("Performans özeti")} />
             <dl className="grid grid-cols-2 gap-4 xl:grid-cols-1 xl:gap-0">
               {[
-                { k: "Sohbet sayısı", v: formatNumber(twin.stats.conversations) },
-                { k: "Mesaj sayısı", v: formatNumber(twin.stats.messages) },
-                { k: "Ortalama yanıt puanı", v: twin.stats.avgRating ? `${twin.stats.avgRating.toLocaleString("tr-TR")} / 5` : "Henüz puan yok" },
-                { k: "Hayran sohbeti (kayıtlı)", v: formatNumber(o.fanConversations) },
+                { k: t("Sohbet sayısı"), v: formatNumber(twin.stats.conversations) },
+                { k: t("Mesaj sayısı"), v: formatNumber(twin.stats.messages) },
+                { k: t("Ortalama yanıt puanı"), v: twin.stats.avgRating ? t("{rating} / 5", { rating: formatNumber(twin.stats.avgRating) }) : t("Henüz puan yok") },
+                { k: t("Hayran sohbeti (kayıtlı)"), v: formatNumber(o.fanConversations) },
               ].map((r) => (
                 <div key={r.k} className="border-b border-line-soft py-3 first:pt-0 last:border-0 xl:py-3.5">
                   <dt className="text-[10px] font-bold text-muted">{r.k}</dt>
@@ -192,25 +198,25 @@ export default async function TwinPage() {
               ))}
             </dl>
             <div className="mt-4 grid gap-3 border-t border-line-soft pt-4">
-              <Meter label="Persona tutarlılığı" value={q.personaScore} />
-              <Meter label="Bilgi doğruluğu" value={q.knowledgeScore} tone="violet" />
-              <Meter label="Güvenlik uyumu" value={q.safetyScore} tone="teal" />
+              <Meter label={t("Persona tutarlılığı")} value={q.personaScore} />
+              <Meter label={t("Bilgi doğruluğu")} value={q.knowledgeScore} tone="violet" />
+              <Meter label={t("Güvenlik uyumu")} value={q.safetyScore} tone="teal" />
             </div>
             <div className="mt-4 text-[11px] text-muted">
-              Bilgi tabanı: {o.knowledge.indexed}/{o.knowledge.sources} kaynak indekslendi · {formatNumber(o.knowledge.chunks)} parça
+              {t("Bilgi tabanı: {indexed}/{sources} kaynak indekslendi · {chunks, number} parça", { indexed: o.knowledge.indexed, sources: o.knowledge.sources, chunks: o.knowledge.chunks })}
             </div>
           </Card>
 
           <Card>
-            <CardHeader title="Değişiklik geçmişi" hint="Her incelemeye gönderim bir sürüm oluşturur." />
+            <CardHeader title={t("Değişiklik geçmişi")} hint={t("Her incelemeye gönderim bir sürüm oluşturur.")} />
             {o.versions.length ? (
               <ol className="grid gap-3">
                 {o.versions.map((v) => {
-                  const s = VERSION_LABEL[v.status] ?? { label: v.status, tone: "gray" as const };
+                  const s = VERSION_LABEL[v.status] ? { label: t(VERSION_LABEL[v.status]!.label), tone: VERSION_LABEL[v.status]!.tone } : { label: v.status, tone: "gray" as const };
                   return (
                     <li key={v._id.toString()} className="rounded-xl border border-line-soft p-3">
                       <div className="flex items-center justify-between gap-2">
-                        <p className="text-[12px] font-extrabold">Sürüm {v.version}</p>
+                        <p className="text-[12px] font-extrabold">{t("Sürüm {version}", { version: v.version })}</p>
                         <Badge tone={s.tone} size="sm">
                           {s.label}
                         </Badge>
@@ -219,7 +225,7 @@ export default async function TwinPage() {
                       {v.changeSummary && <p className="mt-1.5 text-[11px] text-muted-strong">“{v.changeSummary}”</p>}
                       {v.reviewNote && (
                         <p className="mt-1.5 rounded-lg bg-soft p-2 text-[11px] text-ink-soft">
-                          <b>İnceleme notu:</b> {v.reviewNote}
+                          <b>{t("İnceleme notu:")}</b> {v.reviewNote}
                         </p>
                       )}
                     </li>
@@ -227,11 +233,11 @@ export default async function TwinPage() {
                 })}
               </ol>
             ) : (
-              <p className="text-[12px] text-muted">Henüz incelemeye gönderilmiş bir sürüm yok.</p>
+              <p className="text-[12px] text-muted">{t("Henüz incelemeye gönderilmiş bir sürüm yok.")}</p>
             )}
             <Button asChild className="mt-4" size="sm">
               <Link href="/studio/test">
-                <Play /> Yeni test başlat
+                <Play /> {t("Yeni test başlat")}
               </Link>
             </Button>
           </Card>
@@ -239,7 +245,7 @@ export default async function TwinPage() {
       </div>
       {twin.statusHistory.length > 0 && (
         <p className="mt-4 text-[10px] text-muted">
-          Son durum değişikliği: {formatDateTime(twin.statusHistory[twin.statusHistory.length - 1]!.at)}
+          {t("Son durum değişikliği: {date}", { date: formatDateTime(twin.statusHistory[twin.statusHistory.length - 1]!.at) })}
         </p>
       )}
     </div>

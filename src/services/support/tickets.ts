@@ -6,31 +6,33 @@ import { AppError } from "@/lib/errors";
 import { rateLimit } from "@/lib/security/rate-limit";
 import { oid } from "@/lib/validation/common";
 import { SupportTicket, type ISupportTicket } from "@/models/platform";
+import { m } from "@/i18n/m";
 
 export const TICKET_CATEGORIES = ["account", "payments", "ai_twin", "creator", "safety", "technical", "legal", "other"] as const;
 
 export const TICKET_CATEGORY_LABELS: Record<(typeof TICKET_CATEGORIES)[number], string> = {
-  account: "Hesap ve üyelik",
-  payments: "Ödemeler ve krediler",
-  ai_twin: "AI ikizi",
-  creator: "İçerik üreticisi başvurusu",
-  safety: "Güvenlik ve gizlilik",
-  technical: "Teknik sorun",
-  legal: "Hukuki / telif",
-  other: "Diğer",
+  account: m("Hesap ve üyelik"),
+  payments: m("Ödemeler ve krediler"),
+  ai_twin: m("AI ikizi"),
+  creator: m("İçerik üreticisi başvurusu"),
+  safety: m("Güvenlik ve gizlilik"),
+  technical: m("Teknik sorun"),
+  legal: m("Hukuki / telif"),
+  other: m("Diğer"),
 };
 
 export const ticketSchema = z.object({
-  name: z.string().trim().min(2, "Ad soyad en az 2 karakter olmalı").max(120, "Ad soyad en fazla 120 karakter olabilir"),
-  email: z.string().trim().toLowerCase().email("Geçerli bir e-posta adresi girin").max(200),
-  category: z.enum(TICKET_CATEGORIES, { error: "Lütfen bir konu seçin" }),
-  subject: z.string().trim().min(3, "Konu en az 3 karakter olmalı").max(200, "Konu en fazla 200 karakter olabilir"),
-  message: z.string().trim().min(10, "Mesaj en az 10 karakter olmalı").max(5000, "Mesaj en fazla 5000 karakter olabilir"),
+  name: z.string().trim().min(2, m("Ad soyad en az 2 karakter olmalı")).max(120, m("Ad soyad en fazla 120 karakter olabilir")),
+  email: z.string().trim().toLowerCase().email(m("Geçerli bir e-posta adresi girin")).max(200),
+  category: z.enum(TICKET_CATEGORIES, { error: m("Lütfen bir konu seçin") }),
+  subject: z.string().trim().min(3, m("Konu en az 3 karakter olmalı")).max(200, m("Konu en fazla 200 karakter olabilir")),
+  message: z.string().trim().min(10, m("Mesaj en az 10 karakter olmalı")).max(5000, m("Mesaj en fazla 5000 karakter olabilir")),
   priority: z.enum(["low", "normal", "high", "urgent"]).optional(),
 });
 export type TicketInput = z.input<typeof ticketSchema>;
 
 function newTicketNo() {
+  // i18n-ignore (kod)
   return `DST-${Date.now().toString(36).toUpperCase().slice(-4)}${randomInt(1000, 9999)}`;
 }
 

@@ -5,10 +5,15 @@ import { firstParam, safeNext } from "@/features/auth/next-url";
 import { requireUser } from "@/lib/auth/session";
 import { getFanOnboarding } from "@/services/auth/onboarding";
 import { listCategories } from "@/services/creators/public";
+import { getT } from "@/i18n/server";
 
-export const metadata: Metadata = { title: "Hayran Karşılama" };
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getT();
+  return { title: t("Hayran Karşılama") };
+}
 
 export default async function FanOnboardingPage({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
+  const t = await getT();
   const sp = await searchParams;
   const next = safeNext(firstParam(sp.next));
   const { user } = await requireUser("/onboarding/fan");
@@ -22,15 +27,15 @@ export default async function FanOnboardingPage({ searchParams }: { searchParams
       visual={
         <AuthVisual
           art="portrait"
-          eyebrow="Sana özel"
-          lines={[{ text: "Kendine uygun" }, { text: "insanları bul.", accent: true }]}
-          body="Sevdiğin şeylerden daha fazla, ilgilenmediklerinden daha az. Deneyimin sana göre şekillensin."
-          footer={<p className="border-t border-white/20 pt-4 text-xs text-white/70">✦ Bu deneyim tamamen sana özel.</p>}
+          eyebrow={t("Sana özel")}
+          lines={[{ text: t("Kendine uygun") }, { text: t("insanları bul."), accent: true }]}
+          body={t("Sevdiğin şeylerden daha fazla, ilgilenmediklerinden daha az. Deneyimin sana göre şekillensin.")}
+          footer={<p className="border-t border-white/20 pt-4 text-xs text-white/70">{t("✦ Bu deneyim tamamen sana özel.")}</p>}
         />
       }
     >
       <FanOnboarding
-        categories={categories.map((c) => ({ slug: c.slug, name: c.name, icon: c.icon }))}
+        categories={categories.map((c) => ({ slug: c.slug, name: t(c.name), icon: c.icon }))}
         initial={{
           step: state.step,
           completed: state.completed,

@@ -4,9 +4,11 @@ import { usePathname, useRouter } from "next/navigation";
 import { useState, useSyncExternalStore } from "react";
 import { Bell, ChevronRight, LogOut, Menu, PanelLeftClose, PanelLeftOpen, Search, Settings, User, X } from "lucide-react";
 import { LogoLink } from "@/components/brand/logo";
+import { LanguageSwitcher } from "@/components/i18n/language-switcher";
 import { Avatar } from "@/components/ui/display";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/overlays";
 import { isActive, type NavGroup } from "@/config/navigation";
+import { useT } from "@/i18n/client";
 import { authClient } from "@/lib/auth/client";
 import { cn } from "@/lib/utils";
 
@@ -35,6 +37,7 @@ function findLabel(nav: NavGroup[], pathname: string) {
 }
 
 export function ConsoleShell(props: ConsoleShellProps) {
+  const t = useT();
   const pathname = usePathname();
   const router = useRouter();
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -57,7 +60,8 @@ export function ConsoleShell(props: ConsoleShellProps) {
     },
     () => false,
   );
-  const current = findLabel(props.nav, pathname);
+  const currentLabel = findLabel(props.nav, pathname);
+  const current = currentLabel ? t(currentLabel) : null;
 
   const [lastPath, setLastPath] = useState(pathname);
   if (lastPath !== pathname) {
@@ -88,10 +92,10 @@ export function ConsoleShell(props: ConsoleShellProps) {
           </div>
         )}
       </div>
-      <nav aria-label={`${props.sectionLabel} menüsü`} className="-mx-1 flex-1 overflow-y-auto px-1 scrollbar-thin">
+      <nav aria-label={t("{section} menüsü", { section: props.sectionLabel })} className="-mx-1 flex-1 overflow-y-auto px-1 scrollbar-thin">
         {props.nav.map((group, gi) => (
           <div key={gi}>
-            {group.label && (isMobile || !collapsed) && <p className="mx-3 mb-2 mt-4 text-[9px] font-black tracking-[0.17em] text-night-muted">{group.label}</p>}
+            {group.label && (isMobile || !collapsed) && <p className="mx-3 mb-2 mt-4 text-[9px] font-black tracking-[0.17em] text-night-muted">{t(group.label)}</p>}
             {group.label && !isMobile && collapsed && <div className="mx-2 my-3 h-px bg-night-line" />}
             <ul className="grid gap-0.5">
               {group.items.map((item) => {
@@ -102,16 +106,16 @@ export function ConsoleShell(props: ConsoleShellProps) {
                   <li key={item.href}>
                     <Link
                       href={item.href}
-                      title={!isMobile && collapsed ? item.label : undefined}
+                      title={!isMobile && collapsed ? t(item.label) : undefined}
                       aria-current={active ? "page" : undefined}
                       className={cn(
                         "flex min-h-10 items-center gap-3 rounded-[11px] px-3 py-2 text-xs font-bold transition-colors",
-                        active ? "bg-gradient-to-r from-brand-500 to-[#d70a87] text-white shadow-[0_7px_18px_rgb(237_0_136/0.24)]" : "hover:bg-white/5 hover:text-white",
+                        active ? "bg-gradient-to-r rtl:bg-gradient-to-l from-brand-500 to-[#d70a87] text-white shadow-[0_7px_18px_rgb(237_0_136/0.24)]" : "hover:bg-white/5 hover:text-white",
                         !isMobile && collapsed && "justify-center px-0",
                       )}
                     >
                       <Icon className="size-[17px] shrink-0 opacity-90" aria-hidden />
-                      {(isMobile || !collapsed) && <span className="truncate">{item.label}</span>}
+                      {(isMobile || !collapsed) && <span className="truncate">{t(item.label)}</span>}
                       {count > 0 && (isMobile || !collapsed) && (
                         <span className={cn("ms-auto rounded-full px-1.5 py-0.5 text-[9px] font-black", active ? "bg-white/25 text-white" : "bg-[#f5e1ef] text-[#d00075]")}>{count}</span>
                       )}
@@ -125,9 +129,14 @@ export function ConsoleShell(props: ConsoleShellProps) {
       </nav>
       {(isMobile || !collapsed) && props.sideCard && <div className="mt-3">{props.sideCard}</div>}
       {(isMobile || !collapsed) && props.footerNote && <div className="mt-3 px-2 text-[9px] text-[#807587]">{props.footerNote}</div>}
+      {isMobile && (
+        <div className="mt-3">
+          <LanguageSwitcher variant="select" className="w-full" />
+        </div>
+      )}
       {!isMobile && (
-        <button type="button" onClick={toggleCollapsed} className="mt-3 flex items-center gap-2 rounded-lg px-3 py-2 text-[10px] font-bold text-[#807587] hover:bg-white/5 hover:text-white" aria-label={collapsed ? "Menüyü genişlet" : "Menüyü daralt"}>
-          {collapsed ? <PanelLeftOpen className="size-4" /> : <><PanelLeftClose className="size-4" /> Menüyü daralt</>}
+        <button type="button" onClick={toggleCollapsed} className="mt-3 flex items-center gap-2 rounded-lg px-3 py-2 text-[10px] font-bold text-[#807587] hover:bg-white/5 hover:text-white" aria-label={collapsed ? t("Menüyü genişlet") : t("Menüyü daralt")}>
+          {collapsed ? <PanelLeftOpen className="size-4 rtl:-scale-x-100" /> : <><PanelLeftClose className="size-4 rtl:-scale-x-100" /> {t("Menüyü daralt")}</>}
         </button>
       )}
     </div>
@@ -136,13 +145,13 @@ export function ConsoleShell(props: ConsoleShellProps) {
   return (
     <div className="min-h-dvh bg-[#f8f7fa]">
       <header className="sticky top-0 z-40 flex h-[72px] items-center gap-4 border-b border-[#eee9f0] bg-white px-4 shadow-[var(--shadow-header)] lg:gap-6 lg:px-7">
-        <button type="button" className="grid size-10 place-items-center rounded-full hover:bg-soft lg:hidden" aria-label="Menüyü aç" onClick={() => setMobileOpen(true)}>
+        <button type="button" className="grid size-10 place-items-center rounded-full hover:bg-soft lg:hidden" aria-label={t("Menüyü aç")} onClick={() => setMobileOpen(true)}>
           <Menu className="size-5" />
         </button>
         <LogoLink href={props.variant === "admin" ? "/admin" : "/studio"} />
         <span className="hidden h-7 w-px bg-[#e9e4ec] md:block" aria-hidden />
         <span className="hidden whitespace-nowrap text-xs font-extrabold text-[#534a57] md:block">{props.sectionLabel}</span>
-        <nav aria-label="Konum" className="hidden min-w-0 flex-1 items-center gap-2 text-[11px] text-[#8a8290] lg:flex">
+        <nav aria-label={t("Konum")} className="hidden min-w-0 flex-1 items-center gap-2 text-[11px] text-[#8a8290] lg:flex">
           <span>{props.rootCrumb}</span>
           {current && (
             <>
@@ -159,12 +168,13 @@ export function ConsoleShell(props: ConsoleShellProps) {
             </div>
           </form>
           {props.headerStatus}
-          <Link href={props.notificationsHref} className="relative text-[#585060] hover:text-brand-500" aria-label="Bildirimler">
+          <LanguageSwitcher className="hidden sm:flex" />
+          <Link href={props.notificationsHref} className="relative text-[#585060] hover:text-brand-500" aria-label={t("Bildirimler")}>
             <Bell className="size-5" />
             {(props.unreadNotifications ?? 0) > 0 && <i className="absolute -end-0.5 -top-0.5 size-2 rounded-full bg-brand-500 ring-2 ring-white" />}
           </Link>
           <DropdownMenu>
-            <DropdownMenuTrigger className="flex items-center gap-2.5 rounded-full text-start" aria-label="Hesap menüsü">
+            <DropdownMenuTrigger className="flex items-center gap-2.5 rounded-full text-start" aria-label={t("Hesap menüsü")}>
               <Avatar src={props.user.image} name={props.user.name} size={36} />
               <span className="hidden text-[11px] font-extrabold leading-tight 2xl:block">
                 {props.user.name}
@@ -180,7 +190,7 @@ export function ConsoleShell(props: ConsoleShellProps) {
               ))}
               <DropdownMenuSeparator />
               <DropdownMenuItem onSelect={signOut} className="text-danger data-[highlighted]:bg-danger-soft data-[highlighted]:text-danger">
-                <LogOut className="rtl:-scale-x-100" /> Çıkış yap
+                <LogOut className="rtl:-scale-x-100" /> {t("Çıkış yap")}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -193,11 +203,11 @@ export function ConsoleShell(props: ConsoleShellProps) {
         </main>
       </div>
       {mobileOpen && (
-        <div className="fixed inset-0 z-50 lg:hidden" role="dialog" aria-modal="true" aria-label="Menü">
-          <button type="button" className="absolute inset-0 bg-night-deep/50" aria-label="Menüyü kapat" onClick={() => setMobileOpen(false)} />
+        <div className="fixed inset-0 z-50 lg:hidden" role="dialog" aria-modal="true" aria-label={t("Menü")}>
+          <button type="button" className="absolute inset-0 bg-night-deep/50" aria-label={t("Menüyü kapat")} onClick={() => setMobileOpen(false)} />
           <div className="absolute inset-y-0 start-0 w-[280px] max-w-[85vw]">
             {sidebar(true)}
-            <button type="button" onClick={() => setMobileOpen(false)} className="absolute end-3 top-4 grid size-8 place-items-center rounded-full bg-white/10 text-white" aria-label="Kapat">
+            <button type="button" onClick={() => setMobileOpen(false)} className="absolute end-3 top-4 grid size-8 place-items-center rounded-full bg-white/10 text-white" aria-label={t("Kapat")}>
               <X className="size-4" />
             </button>
           </div>

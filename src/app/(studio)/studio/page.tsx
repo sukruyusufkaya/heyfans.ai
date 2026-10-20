@@ -9,20 +9,24 @@ import { EmptyState, PageHeader, StatCard } from "@/components/ui/display";
 import { Meter, Notice, STUDIO_EYEBROW, TwinStatusBadge } from "@/components/studio/studio-ui";
 import { Avatar } from "@/components/ui/display";
 import { EarningsTrend } from "@/features/studio/earnings-trend";
+import { getFormatters, getT } from "@/i18n/server";
 import { requireCreator } from "@/lib/auth/session";
-import { formatMoney, formatNumber, formatRelative, formatDate } from "@/lib/utils";
 import { getDashboard } from "@/services/studio/dashboard";
 
-export const metadata: Metadata = { title: "Genel Panel" };
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getT();
+  return { title: t("Genel Panel") };
+}
 
 const ACTIVITY_ICON = { notification: Bell, request: Inbox, subscription: Crown };
 
-function delta(v: number | null | undefined): { value: string; direction: "up" | "down" | "flat" } | null {
-  if (v == null) return null;
-  return { value: `%${Math.abs(v)}`, direction: v > 0 ? "up" : v < 0 ? "down" : "flat" };
-}
-
 export default async function StudioDashboardPage() {
+  const t = await getT();
+  const { formatMoney, formatNumber, formatRelative, formatDate, formatPercent } = await getFormatters();
+  const delta = (v: number | null | undefined): { value: string; direction: "up" | "down" | "flat" } | null => {
+    if (v == null) return null;
+    return { value: formatPercent(Math.abs(v) * 100), direction: v > 0 ? "up" : v < 0 ? "down" : "flat" };
+  };
   const { user } = await requireCreator();
   const d = await getDashboard(user.id);
   const { creator, twin, kpis } = d;
@@ -33,13 +37,13 @@ export default async function StudioDashboardPage() {
     <div className="mx-auto max-w-[1280px]">
       <PageHeader
         eyebrow={STUDIO_EYEBROW}
-        title="Creator Genel Panel"
-        description="Kazançlarını, hayranlarını ve AI ikizinin performansını tek merkezden yönet."
+        title={t("Creator Genel Panel")}
+        description={t("Kazançlarını, hayranlarını ve AI ikizinin performansını tek merkezden yönet.")}
         actions={
           <>
             <Button asChild>
               <Link href="/studio/content/new">
-                <Plus /> Yeni içerik oluştur
+                <Plus /> {t("Yeni içerik oluştur")}
               </Link>
             </Button>
           </>
@@ -47,93 +51,93 @@ export default async function StudioDashboardPage() {
       />
 
       {creator.status !== "approved" && (
-        <Notice tone="info" title={creator.status === "pending_review" ? "Başvurun inceleniyor" : "Hesabın henüz onaylanmadı"} className="mb-5">
-          Onay tamamlanana kadar içeriklerin yayına alınmadan önce incelemeye düşer, AI ikizin yayına alınamaz ve ödeme talep edemezsin. Bu sürede stüdyoyu hazırlamaya devam edebilirsin.
+        <Notice tone="info" title={creator.status === "pending_review" ? t("Başvurun inceleniyor") : t("Hesabın henüz onaylanmadı")} className="mb-5">
+          {t("Onay tamamlanana kadar içeriklerin yayına alınmadan önce incelemeye düşer, AI ikizin yayına alınamaz ve ödeme talep edemezsin. Bu sürede stüdyoyu hazırlamaya devam edebilirsin.")}
         </Notice>
       )}
 
-      <section aria-label="Özet göstergeler" className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <section aria-label={t("Özet göstergeler")} className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <StatCard
-          label="Toplam kazanç"
+          label={t("Toplam kazanç")}
           icon={<Wallet />}
           value={formatMoney(kpis.totalEarnings)}
           delta={delta(kpis.earningsDelta)}
-          foot={<>son 30 gün: {formatMoney(kpis.earnings30)}</>}
+          foot={t("son 30 gün: {amount}", { amount: formatMoney(kpis.earnings30) })}
         />
         <StatCard
-          label="Aktif aboneler"
+          label={t("Aktif aboneler")}
           icon={<Crown />}
           tone="violet"
           value={formatNumber(kpis.activeSubs)}
           delta={delta(kpis.newSubsDelta)}
-          foot={<>30 günde +{formatNumber(kpis.newSubs)} yeni</>}
+          foot={t("30 günde +{count, number} yeni", { count: kpis.newSubs })}
         />
         <StatCard
-          label="AI sohbetleri"
+          label={t("AI sohbetleri")}
           icon={<MessageCircle />}
           tone="teal"
           value={formatNumber(kpis.conversations)}
-          foot={<>30 günde +{formatNumber(kpis.conversations30)} yeni sohbet</>}
+          foot={t("30 günde +{count, number} yeni sohbet", { count: kpis.conversations30 })}
         />
         <StatCard
-          label="Takipçi büyümesi"
+          label={t("Takipçi büyümesi")}
           icon={<Users />}
           tone="orange"
           value={formatNumber(kpis.followers)}
           delta={delta(kpis.followersDelta)}
-          foot={<>30 günde +{formatNumber(kpis.newFollowers)}</>}
+          foot={t("30 günde +{count, number}", { count: kpis.newFollowers })}
         />
       </section>
 
       <div className="mt-5 grid gap-5 lg:grid-cols-[minmax(0,1.9fr)_minmax(0,1fr)]">
         <Card>
-          <CardHeader title="Kazanç performansı" hint="Creator payın (platform, ödeme ve vergi kesintilerinden sonra)" />
+          <CardHeader title={t("Kazanç performansı")} hint={t("Creator payın (platform, ödeme ve vergi kesintilerinden sonra)")} />
           <EarningsTrend series={d.charts} />
         </Card>
 
         <Card>
-          <CardHeader title="AI İkizi Performansı" hint="Test skorları ve etkileşim" action={twin ? <TwinStatusBadge status={twin.status} /> : undefined} />
+          <CardHeader title={t("AI İkizi Performansı")} hint={t("Test skorları ve etkileşim")} action={twin ? <TwinStatusBadge status={twin.status} /> : undefined} />
           {twin ? (
             <>
               <div className="flex items-center gap-4">
                 <Avatar src={creator.avatarUrl} name={creator.displayName} size={64} />
                 <div className="min-w-0">
-                  <p className="truncate text-[15px] font-extrabold">{creator.displayName} AI İkizi</p>
-                  <p className="mt-0.5 text-[11px] text-muted">Son güncelleme: {formatDate(twin.updatedAt)}</p>
+                  <p className="truncate text-[15px] font-extrabold">{t("{name} AI İkizi", { name: creator.displayName })}</p>
+                  <p className="mt-0.5 text-[11px] text-muted">{t("Son güncelleme: {date}", { date: formatDate(twin.updatedAt) })}</p>
                   <div className="mt-2 flex flex-wrap gap-1.5">
                     <Badge tone={twin.features.chat ? "green" : "gray"} size="sm">
-                      Sohbet {twin.features.chat ? "açık" : "kapalı"}
+                      {t(twin.features.chat ? "Sohbet açık" : "Sohbet kapalı")}
                     </Badge>
                     <Badge tone={twin.features.voice ? "green" : "gray"} size="sm">
-                      Ses {twin.features.voice ? "açık" : "kapalı"}
+                      {t(twin.features.voice ? "Ses açık" : "Ses kapalı")}
                     </Badge>
                   </div>
                 </div>
               </div>
               <div className="mt-5 grid gap-3.5">
-                <Meter label="Persona tutarlılığı" value={q?.personaScore} />
-                <Meter label="Bilgi doğruluğu" value={q?.knowledgeScore} tone="violet" />
-                <Meter label="Güvenlik uyumu" value={q?.safetyScore} tone="teal" />
+                <Meter label={t("Persona tutarlılığı")} value={q?.personaScore} />
+                <Meter label={t("Bilgi doğruluğu")} value={q?.knowledgeScore} tone="violet" />
+                <Meter label={t("Güvenlik uyumu")} value={q?.safetyScore} tone="teal" />
               </div>
-              {!tested && <p className="mt-2 text-[11px] text-muted">Skorlar, AI İkizi Testi çalıştırıldığında oluşur.</p>}
+              {!tested && <p className="mt-2 text-[11px] text-muted">{t("Skorlar, AI İkizi Testi çalıştırıldığında oluşur.")}</p>}
               <div className="mt-5 flex items-center justify-between gap-3 border-t border-line-soft pt-4">
                 <p className="text-[11px] text-muted">
-                  {formatNumber(twin.stats.messages)} mesaj{twin.stats.avgRating ? ` · ${twin.stats.avgRating.toLocaleString("tr-TR")}/5 puan` : ""}
+                  {twin.stats.avgRating ? t("{count, number} mesaj · {rating}/5 puan", { count: twin.stats.messages, rating: formatNumber(twin.stats.avgRating) }) : t("{count, number} mesaj", { count: twin.stats.messages })}
                 </p>
                 <Button asChild variant="outline" size="sm">
-                  <Link href="/studio/test">Test et</Link>
+                  <Link href="/studio/test">{t("Test et")}</Link>
                 </Button>
               </div>
             </>
           ) : (
-            <EmptyState compact icon={<Bot />} title="AI ikizin henüz oluşturulmadı" description="Kişiliğini, bilgi tabanını ve sınırlarını tanımlayıp incelemeye gönder." action={<Button asChild size="sm"><Link href="/studio/personality">Başla</Link></Button>} />
+            <EmptyState compact icon={<Bot />} title={t("AI ikizin henüz oluşturulmadı")} description={t("Kişiliğini, bilgi tabanını ve sınırlarını tanımlayıp incelemeye gönder.")} action={<Button asChild size="sm"><Link href="/studio/personality">{t("Başla")}</Link></Button>} />
           )}
         </Card>
       </div>
 
       <div className="mt-5 grid gap-5 lg:grid-cols-[minmax(0,1.25fr)_minmax(0,1.1fr)_minmax(0,0.95fr)]">
         <Card>
-          <CardHeader title="Son aktiviteler" hint="Hayranlarından ve sistemden son gelişmeler" />
+          <CardHeader title={t("Son aktiviteler")} hint={t("Hayranlarından ve sistemden son gelişmeler")} />
           {d.activity.length ? (
             <ul className="-mt-1">
               {d.activity.map((a) => {
@@ -158,20 +162,20 @@ export default async function StudioDashboardPage() {
               })}
             </ul>
           ) : (
-            <EmptyState compact title="Henüz aktivite yok" description="Yeni abonelik, talep ve bildirimler burada listelenir." />
+            <EmptyState compact title={t("Henüz aktivite yok")} description={t("Yeni abonelik, talep ve bildirimler burada listelenir.")} />
           )}
         </Card>
 
         <Card>
-          <CardHeader title="Hızlı işlemler" hint="En çok kullanılan stüdyo araçları" />
+          <CardHeader title={t("Hızlı işlemler")} hint={t("En çok kullanılan stüdyo araçları")} />
           <div className="grid gap-2.5">
             {[
-              { href: "/studio/content/new", label: "Yeni içerik ekle", icon: Plus },
-              { href: "/studio/personality", label: "AI ikizimi düzenle", icon: Bot },
-              { href: "/studio/memberships", label: "Üyelik planları", icon: Crown },
-              { href: "/studio/analytics", label: "Raporları incele", icon: LineChart },
-              { href: "/studio/requests", label: "Özel talepler", icon: Inbox },
-              { href: "/studio/payouts", label: "Ödemeler", icon: CreditCard },
+              { href: "/studio/content/new", label: t("Yeni içerik ekle"), icon: Plus },
+              { href: "/studio/personality", label: t("AI ikizimi düzenle"), icon: Bot },
+              { href: "/studio/memberships", label: t("Üyelik planları"), icon: Crown },
+              { href: "/studio/analytics", label: t("Raporları incele"), icon: LineChart },
+              { href: "/studio/requests", label: t("Özel talepler"), icon: Inbox },
+              { href: "/studio/payouts", label: t("Ödemeler"), icon: CreditCard },
             ].map((q) => (
               <Link key={q.href} href={q.href} className="group flex items-center gap-3 rounded-[13px] border border-line bg-white p-3 text-[12px] font-extrabold transition-colors hover:border-brand-300 hover:bg-brand-50">
                 <span className="grid size-9 shrink-0 place-items-center rounded-[10px] bg-brand-100 text-brand-500">
@@ -186,17 +190,17 @@ export default async function StudioDashboardPage() {
 
         <Card className="overflow-hidden bg-gradient-to-br from-[#fff1f9] to-[#f7eaf7]" padded={false}>
           <div className="p-5">
-            <h2 className="text-[15px] font-extrabold tracking-[-0.02em]">Topluluğun büyüyor</h2>
+            <h2 className="text-[15px] font-extrabold tracking-[-0.02em]">{t("Topluluğun büyüyor")}</h2>
             <div className="mt-3 aspect-[16/9] overflow-hidden rounded-[14px]">
               <CreatorPhoto src={creator.avatarUrl ?? creator.coverUrl} name={creator.displayName} rounded="rounded-[14px]" />
             </div>
-            <p className="mt-3 text-[14px] font-extrabold">Yeni hayranlarla buluş</p>
+            <p className="mt-3 text-[14px] font-extrabold">{t("Yeni hayranlarla buluş")}</p>
             <p className="mt-1 text-[11px] leading-relaxed text-muted">
-              {formatNumber(kpis.followers)} takipçin var; son 30 günde {formatNumber(kpis.newFollowers)} yeni kişi seni takip etti. AI ikizinin kişiliğini geliştirerek bağı güçlendir.
+              {t("{followers, number} takipçin var; son 30 günde {newFollowers, number} yeni kişi seni takip etti. AI ikizinin kişiliğini geliştirerek bağı güçlendir.", { followers: kpis.followers, newFollowers: kpis.newFollowers })}
             </p>
             <Button asChild className="mt-4" size="sm">
               <Link href="/studio/ai-twin">
-                <ArrowRight className="rtl:-scale-x-100" /> AI ikizime git
+                <ArrowRight className="rtl:-scale-x-100" /> {t("AI ikizime git")}
               </Link>
             </Button>
           </div>

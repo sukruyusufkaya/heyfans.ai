@@ -4,6 +4,7 @@ import { oid, paged } from "@/lib/validation/common";
 import { AiTwin, AiTwinVersion, KnowledgeSource, TWIN_STATUSES, type ITwin, type ITwinVersion } from "@/models/ai";
 import { CreatorConsent, CreatorProfile } from "@/models/creator";
 import { loadCreators, REGEX_SAFE } from "./shared";
+import { getT } from "@/i18n/server";
 
 export const TWIN_TABS = ["all", ...TWIN_STATUSES] as const;
 export type TwinTab = (typeof TWIN_TABS)[number];
@@ -35,6 +36,7 @@ export async function getTwinKpis() {
 }
 
 export async function listAdminTwins(opts: { tab: TwinTab; q: string; page: number }) {
+  const t = await getT();
   await connectDb();
   const filter: Record<string, unknown> = {};
   if (opts.tab !== "all") filter.status = opts.tab;
@@ -50,18 +52,18 @@ export async function listAdminTwins(opts: { tab: TwinTab; q: string; page: numb
   const creators = await loadCreators(rows.map((r) => r.creatorId));
   const pending = rows.length ? await AiTwinVersion.find({ twinId: { $in: rows.map((r) => r._id) }, status: "pending_review" }, { twinId: 1 }).lean() : [];
   const pendingSet = new Set(pending.map((p) => p.twinId.toString()));
-  const items = rows.map((t) => {
-    const c = creators.get(t.creatorId.toString());
+  const items = rows.map((tw) => {
+    const c = creators.get(tw.creatorId.toString());
     return {
-      id: t._id.toString(),
-      name: t.draft.persona.displayName || c?.displayName || "AI İkizi",
+      id: tw._id.toString(),
+      name: tw.draft.persona.displayName || c?.displayName || t("AI İkizi"),
       creator: c?.displayName ?? "—",
       avatarUrl: c?.avatarUrl ?? null,
-      status: t.status,
-      version: t.currentVersion,
-      conversations: t.stats.conversations,
-      quality: avg([t.quality.personaScore, t.quality.knowledgeScore, t.quality.safetyScore]),
-      hasPending: pendingSet.has(t._id.toString()),
+      status: tw.status,
+      version: tw.currentVersion,
+      conversations: tw.stats.conversations,
+      quality: avg([tw.quality.personaScore, tw.quality.knowledgeScore, tw.quality.safetyScore]),
+      hasPending: pendingSet.has(tw._id.toString()),
     };
   });
   return paged(items, total, opts.page, PAGE_SIZE);
@@ -110,6 +112,7 @@ function summarizeVersion(v: ITwinVersion) {
 
 export async function getAdminTwinDetail(twinId: string, scope: { consents: boolean }) {
   await connectDb();
+  const t = await getT();
   const twin = await AiTwin.findById(oid(twinId)).lean<ITwin>();
   if (!twin) return null;
   const [creator, versions, consents, sources] = await Promise.all([
@@ -123,7 +126,7 @@ export async function getAdminTwinDetail(twinId: string, scope: { consents: bool
   const focus = pending ?? live ?? versions[0] ?? null;
   return {
     id: twin._id.toString(),
-    name: twin.draft.persona.displayName || creator?.displayName || "AI İkizi",
+    name: twin.draft.persona.displayName || creator?.displayName || t("AI İkizi"),
     status: twin.status,
     currentVersion: twin.currentVersion,
     reviewNote: twin.reviewNote ?? null,

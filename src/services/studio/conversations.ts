@@ -3,6 +3,7 @@ import { z } from "zod";
 import { Conversation, Message, type IConversation } from "@/models/social";
 import { anonymousFanLabel, dayExpr, dayKeys, fillSeries, rangeStart, studioCreator } from "./context";
 import { pageSchema } from "@/lib/validation/common";
+import { getT } from "@/i18n/server";
 
 export const conversationFilterSchema = z.enum(["all", "flagged", "interventions"]).catch("all");
 export { pageSchema };
@@ -12,6 +13,7 @@ export { pageSchema };
  * Bu servis hiçbir mesaj gövdesi ya da önizleme alanı okumaz; yalnız toplamlar ve üst veri döner.
  */
 export async function getConversationAnalytics(userId: string, opts: { filter?: "all" | "flagged" | "interventions"; page?: number } = {}) {
+  const t = await getT();
   const creator = await studioCreator(userId);
   const cid = creator._id;
   const keys = dayKeys(30);
@@ -47,21 +49,21 @@ export async function getConversationAnalytics(userId: string, opts: { filter?: 
     Conversation.countDocuments(q),
   ]);
 
-  const t = totals[0];
+  const tot = totals[0];
   return {
     creator,
     stats: {
-      total: t?.total ?? 0,
-      avgMessages: t && t.total ? Math.round((t.messages / t.total) * 10) / 10 : 0,
+      total: tot?.total ?? 0,
+      avgMessages: tot && tot.total ? Math.round((tot.messages / tot.total) * 10) / 10 : 0,
       activeFans30: activeFans.length,
-      flagged: t?.flagged ?? 0,
+      flagged: tot?.flagged ?? 0,
       interventions: interventionsAgg.reduce((a, r) => a + r.n, 0),
     },
-    convSeries: fillSeries(keys, convDaily),
-    msgSeries: fillSeries(keys, msgDaily),
+    convSeries: fillSeries(keys, convDaily, t.locale),
+    msgSeries: fillSeries(keys, msgDaily, t.locale),
     rows: rows.map((c) => ({
       id: c._id.toString(),
-      label: anonymousFanLabel(c.userId.toString()),
+      label: anonymousFanLabel(c.userId.toString(), t),
       messageCount: c.messageCount,
       lastMessageAt: c.lastMessageAt ?? c.createdAt,
       status: c.status,

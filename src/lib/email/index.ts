@@ -57,18 +57,18 @@ class ResendProvider implements EmailProvider {
       text: message.text,
       attachments: (message.inline ?? []).map((i) => ({ filename: i.filename, content: Buffer.from(i.base64, "base64"), contentType: i.contentType, contentId: i.cid })),
     });
-    if (error) throw new Error(`E-posta gönderilemedi: ${error.message}`);
+    if (error) throw new Error(`E-posta gönderilemedi: ${error.message}`); // i18n-ignore (iç hata; kullanıcıya genel mesaj döner)
   }
 }
 
 export function getEmailProvider(): EmailProvider {
   const e = env();
   if (e.EMAIL_PROVIDER === "resend") {
-    if (!e.RESEND_API_KEY) throw new Error("EMAIL_PROVIDER=resend için RESEND_API_KEY gerekli");
+    if (!e.RESEND_API_KEY) throw new Error("EMAIL_PROVIDER=resend için RESEND_API_KEY gerekli"); // i18n-ignore
     return new ResendProvider(e.RESEND_API_KEY);
   }
   // outbox yalnız yerel geliştirmede: e-postalar /dev/outbox'ta görünür. Demo/üretimde gerçek gönderim şart.
-  if (e.APP_MODE !== "development") throw new Error("EMAIL_PROVIDER=outbox yalnız APP_MODE=development iken kullanılabilir");
+  if (e.APP_MODE !== "development") throw new Error("EMAIL_PROVIDER=outbox yalnız APP_MODE=development iken kullanılabilir"); // i18n-ignore
   return new OutboxProvider();
 }
 

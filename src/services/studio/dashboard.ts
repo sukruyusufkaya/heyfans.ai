@@ -5,6 +5,8 @@ import { Conversation, Follow, Notification, type INotification } from "@/models
 import { User } from "@/models/identity";
 import { earningsBalance } from "@/services/billing/earnings";
 import { dayExpr, dayKeys, dayLabel, DAY_MS, rangeStart, shortName, studioCreator } from "./context";
+import { getT } from "@/i18n/server";
+import { localizeNotification } from "@/services/notifications/notifications";
 
 export interface ActivityItem {
   id: string;
@@ -18,6 +20,7 @@ export interface ActivityItem {
 const pct = (cur: number, prev: number) => (prev > 0 ? Math.round(((cur - prev) / prev) * 100) : null);
 
 export async function getDashboard(userId: string) {
+  const t = await getT();
   const creator = await studioCreator(userId);
   const cid = creator._id;
   const keys = dayKeys(30);
@@ -47,18 +50,18 @@ export async function getDashboard(userId: string) {
   const series = (pick: (s: string) => boolean) => {
     const map = new Map<string, number>();
     for (const r of daily) if (pick(r._id.s)) map.set(r._id.d, (map.get(r._id.d) ?? 0) + r.v);
-    return keys.map((k) => ({ label: dayLabel(k), value: map.get(k) ?? 0 }));
+    return keys.map((k) => ({ label: dayLabel(k, t.locale), value: map.get(k) ?? 0 }));
   };
 
   const userIds = [...reqs.map((r) => r.fanId), ...recentSubs.map((s) => s.userId)];
   const users = userIds.length ? await User.find({ _id: { $in: userIds } }, { name: 1 }).lean() : [];
-  const nameOf = new Map(users.map((u) => [u._id.toString(), shortName(u.name)]));
-  const TIER: Record<string, string> = { basic: "Temel", premium: "Premium", vip: "VIP", free: "Ücretsiz" };
+  const nameOf = new Map(users.map((u) => [u._id.toString(), shortName(u.name, t)]));
+  const TIER: Record<string, string> = { basic: t("Temel"), premium: t("Premium"), vip: t("VIP"), free: t("Ücretsiz") };
 
   const activity: ActivityItem[] = [
-    ...notifs.map((n) => ({ id: `n${n._id}`, kind: "notification" as const, title: n.title, sub: n.body ?? "", at: n.createdAt, href: n.link ?? "/app/notifications" })),
-    ...reqs.map((r) => ({ id: `r${r._id}`, kind: "request" as const, title: `Özel talep: ${r.title}`, sub: `${nameOf.get(r.fanId.toString()) ?? "Hayran"} · ${r.priceCredits} kredi`, at: r.createdAt, href: "/studio/requests" })),
-    ...recentSubs.map((s) => ({ id: `s${s._id}`, kind: "subscription" as const, title: `Yeni ${TIER[s.tier] ?? s.tier} aboneliği`, sub: nameOf.get(s.userId.toString()) ?? "Hayran", at: s.createdAt, href: "/studio/fans" })),
+    ...notifs.map((n) => ({ id: `n${n._id}`, kind: "notification" as const, title: localizeNotification(t, n).title, sub: localizeNotification(t, n).body, at: n.createdAt, href: n.link ?? "/app/notifications" })),
+    ...reqs.map((r) => ({ id: `r${r._id}`, kind: "request" as const, title: t("Özel talep: {title}", { title: r.title }), sub: t("{name} · {credits} kredi", { name: nameOf.get(r.fanId.toString()) ?? t("Hayran"), credits: r.priceCredits }), at: r.createdAt, href: "/studio/requests" })),
+    ...recentSubs.map((s) => ({ id: `s${s._id}`, kind: "subscription" as const, title: t("Yeni {tier} aboneliği", { tier: TIER[s.tier] ?? s.tier }), sub: nameOf.get(s.userId.toString()) ?? t("Hayran"), at: s.createdAt, href: "/studio/fans" })),
   ]
     .sort((a, b) => b.at.getTime() - a.at.getTime())
     .slice(0, 6);

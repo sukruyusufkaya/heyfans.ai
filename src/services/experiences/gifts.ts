@@ -9,6 +9,7 @@ import { recordCreditEarning } from "@/services/billing/earnings";
 import { assertNotSample } from "@/services/creators/sample";
 import { notify } from "@/services/notifications/notifications";
 import { debitWallet } from "@/services/wallet/wallet";
+import { m } from "@/i18n/m";
 
 export async function listGiftCatalog() {
   await connectDb();
@@ -24,19 +25,21 @@ export async function sendGift(userId: string, input: { username: string; kind: 
   assertNotSample(creator);
   let credits: number;
   let label: string;
+  let giftName = "";
   if (input.kind === "gift") {
     const item = await GiftCatalogItem.findOne({ key: input.giftKey, isActive: true }).lean();
     if (!item) throw new NotFoundError("Hediye bulunamadı.");
     credits = item.credits;
+    giftName = item.name;
     label = `${item.name} hediyesi`;
   } else {
     credits = Math.floor(input.credits ?? 0);
     if (credits < 5 || credits > 50_000) throw new AppError("Bahşiş 5 ile 50.000 kredi arasında olmalı.", "invalid_tip");
-    label = `${credits} kredi bahşiş`;
+    label = `${credits} kredi bahşiş`; // i18n-ignore (defter/hak ediş açıklaması saklanır)
   }
   const key = `gift:${userId}:${input.clientKey ?? randomUUID()}`;
   const gift = await withTransaction(async (session) => {
-    const entry = await debitWallet({ userId, amount: credits, type: input.kind === "gift" ? "gift_sent" : "tip_sent", description: `${creator.displayName} için ${label}`, idempotencyKey: key, creatorId: creator._id, refType: "Gift" }, session);
+    const entry = await debitWallet({ userId, amount: credits, type: input.kind === "gift" ? "gift_sent" : "tip_sent", description: `${creator.displayName} için ${label}` /* i18n-ignore (defter açıklaması saklanır) */, idempotencyKey: key, creatorId: creator._id, refType: "Gift" }, session);
     const existing = await Gift.findOne({ ledgerEntryId: entry._id }).session(session).lean<IGift>();
     if (existing) return existing;
     const [g] = await Gift.create(
@@ -44,7 +47,16 @@ export async function sendGift(userId: string, input: { username: string; kind: 
       { session },
     );
     await recordCreditEarning({ creatorId: creator._id, sourceType: input.kind === "gift" ? "gift" : "tip", credits, ledgerEntryId: entry._id, description: label }, session);
-    await notify(creator.userId.toString(), { type: "gift", title: input.kind === "gift" ? "Yeni hediye aldın 🎁" : "Yeni bahşiş aldın", body: `${label}${input.message ? ` — "${input.message.slice(0, 80)}"` : ""}`, link: "/studio/earnings" }, session);
+    const hasNote = Boolean(input.message);
+    const noticeBody =
+      input.kind === "gift"
+        ? hasNote ? m('{name} hediyesi — "{message}"') : m("{name} hediyesi")
+        : hasNote ? m('{credits} kredi bahşiş — "{message}"') : m("{credits} kredi bahşiş");
+    await notify(
+      creator.userId.toString(),
+      { type: "gift", title: input.kind === "gift" ? m("Yeni hediye aldın 🎁") : m("Yeni bahşiş aldın"), body: noticeBody, params: { name: giftName, credits, message: input.message?.slice(0, 80) ?? "" }, link: "/studio/earnings" },
+      session,
+    );
     return g!.toObject() as IGift;
   });
   return gift;

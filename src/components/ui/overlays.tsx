@@ -2,6 +2,7 @@
 import * as React from "react";
 import { Dialog as D, DropdownMenu as DM, Popover as P, Select as S, Tabs as T, Tooltip as TT } from "radix-ui";
 import { Check, ChevronDown, X } from "lucide-react";
+import { useT } from "@/i18n/client";
 import { cn } from "@/lib/utils";
 
 /* ─── Dialog ─────────────────────────────────────────────── */
@@ -17,6 +18,7 @@ export function DialogContent({
   size = "md",
   ...props
 }: React.ComponentProps<typeof D.Content> & { title: React.ReactNode; description?: React.ReactNode; size?: "sm" | "md" | "lg" | "xl" }) {
+  const t = useT();
   const widths = { sm: "max-w-sm", md: "max-w-lg", lg: "max-w-2xl", xl: "max-w-4xl" };
   return (
     <D.Portal>
@@ -34,11 +36,11 @@ export function DialogContent({
           {description ? (
             <D.Description className="mt-1 text-xs leading-relaxed text-muted">{description}</D.Description>
           ) : (
-            <D.Description className="sr-only">{typeof title === "string" ? title : "İletişim kutusu"}</D.Description>
+            <D.Description className="sr-only">{typeof title === "string" ? title : t("İletişim kutusu")}</D.Description>
           )}
         </div>
         {children}
-        <D.Close className="absolute end-4 top-4 grid size-8 place-items-center rounded-full text-muted hover:bg-soft hover:text-ink" aria-label="Kapat">
+        <D.Close className="absolute end-4 top-4 grid size-8 place-items-center rounded-full text-muted hover:bg-soft hover:text-ink" aria-label={t("Kapat")}>
           <X className="size-4" />
         </D.Close>
       </D.Content>
@@ -113,7 +115,7 @@ export function Select({
   value,
   onValueChange,
   options,
-  placeholder = "Seçin",
+  placeholder,
   className,
   id,
   disabled,
@@ -128,6 +130,7 @@ export function Select({
   disabled?: boolean;
   "aria-label"?: string;
 }) {
+  const t = useT();
   return (
     <S.Root value={value} onValueChange={onValueChange} disabled={disabled}>
       <S.Trigger
@@ -138,7 +141,7 @@ export function Select({
           className,
         )}
       >
-        <S.Value placeholder={placeholder} />
+        <S.Value placeholder={placeholder ?? t("Seçin")} />
         <S.Icon>
           <ChevronDown className="size-4 text-muted" />
         </S.Icon>

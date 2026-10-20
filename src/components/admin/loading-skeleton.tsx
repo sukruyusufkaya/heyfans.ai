@@ -1,9 +1,12 @@
+"use client";
 import { Skeleton } from "@/components/ui/display";
+import { useT } from "@/i18n/client";
 
 /** Admin sayfaları için ortak iskelet: başlık + KPI satırı + iki panel. */
 export function AdminLoading({ kpis = 4, panels = 2 }: { kpis?: number; panels?: number }) {
+  const t = useT();
   return (
-    <div className="mx-auto w-full max-w-[1480px]" aria-busy="true" aria-label="Yükleniyor">
+    <div className="mx-auto w-full max-w-[1480px]" aria-busy="true" aria-label={t("Yükleniyor")}>
       <div className="mb-5 grid gap-2.5">
         <Skeleton className="h-3 w-32" />
         <Skeleton className="h-8 w-72 max-w-full" />

@@ -9,6 +9,7 @@ import { Conversation } from "@/models/social";
 import { activeConsents, getOrCreateTwin } from "@/services/ai-twins/lifecycle";
 import { mediaUrl } from "@/services/media/media";
 import { getPlatformSettings } from "@/services/platform/settings";
+import { getT } from "@/i18n/server";
 
 export interface TwinContext {
   creator: ICreatorProfile;
@@ -92,8 +93,9 @@ export async function getKnowledgeView(userId: string) {
 /** Ses örnekleri (voice_sample varlıkları) — ikizin ses profilinde kayıtlı olanlar. */
 export async function getVoiceSamples(ownerUserId: ITwin["userId"], ids: ITwin["draft"]["voice"]["voiceSampleAssetIds"]) {
   if (!ids.length) return [];
+  const t = await getT();
   const assets = await MediaAsset.find({ _id: { $in: ids }, ownerId: ownerUserId, purpose: "voice_sample", status: "ready" }).lean<IMediaAsset[]>();
-  return Promise.all(assets.map(async (a) => ({ assetId: a._id.toString(), name: a.originalName ?? "Ses örneği", sizeBytes: a.sizeBytes, url: await mediaUrl(a) })));
+  return Promise.all(assets.map(async (a) => ({ assetId: a._id.toString(), name: a.originalName ?? t("Ses örneği"), sizeBytes: a.sizeBytes, url: await mediaUrl(a) })));
 }
 
 /**
@@ -106,7 +108,7 @@ export async function reopenRevokedTwin(userId: string) {
   const consents = await activeConsents(creator._id);
   if (!consents.has("ai_twin_persona")) throw new AppError("Yeniden başlamak için önce AI ikizi açık rızasını ver.", "consent_required", 403);
   assertTransition(TWIN_TRANSITIONS, twin.status, "draft", TWIN_STATUS_LABELS);
-  twin.statusHistory.push({ from: twin.status, to: "draft", by: creator.userId, note: "Creator yeniden taslağa aldı", at: new Date() });
+  twin.statusHistory.push({ from: twin.status, to: "draft", by: creator.userId, note: "Creator yeniden taslağa aldı", at: new Date() }); // i18n-ignore (durum geçmişi notu)
   twin.status = "draft";
   twin.features.chat = true;
   await twin.save();

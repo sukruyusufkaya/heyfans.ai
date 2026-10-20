@@ -2,6 +2,8 @@
 import { cookies, headers } from "next/headers";
 import { z } from "zod";
 import { getAuth } from "@/lib/auth/auth";
+import { getT } from "@/i18n/server";
+import { m } from "@/i18n/m";
 import { assertUser } from "@/lib/auth/session";
 import { toActionError, type ActionResult } from "@/lib/errors";
 import { birthDateSchema, fanCompleteSchema, fanInterestsSchema, fanPersonalizeSchema, fanVibesSchema } from "@/features/auth/schemas";
@@ -34,7 +36,7 @@ export async function postLoginRedirect(next?: string | null): Promise<ActionRes
 export async function acceptTermsAction(input: unknown): Promise<ActionResult<{ to: string }>> {
   try {
     const { user } = await assertUser();
-    const v = z.object({ accept: z.literal(true, { error: "Devam etmek için şartları kabul etmelisin." }), next: nextSchema }).parse(input);
+    const v = z.object({ accept: z.literal(true, { error: m("Devam etmek için şartları kabul etmelisin.") }), next: nextSchema }).parse(input);
     void v.accept;
     const { connectDb } = await import("@/lib/db/mongo");
     const { User } = await import("@/models/identity");
@@ -52,7 +54,7 @@ export async function acceptTermsAction(input: unknown): Promise<ActionResult<{ 
 export async function saveFanStepAction(step: 0 | 1 | 2, data: unknown): Promise<ActionResult> {
   try {
     const { user } = await assertUser();
-    if (![0, 1, 2].includes(step)) throw new Error("Geçersiz adım");
+    if (![0, 1, 2].includes(step)) throw new Error("Geçersiz adım"); // i18n-ignore (iç savunma; kullanıcıya gösterilmez)
     // Şemalar servis içinde de uygulanır; burada erken, anlaşılır doğrulama hatası için bir kez daha çalıştırılır.
     if (step === 0) fanInterestsSchema.parse(data);
     if (step === 1) fanVibesSchema.parse(data);
@@ -67,10 +69,11 @@ export async function saveFanStepAction(step: 0 | 1 | 2, data: unknown): Promise
 export async function completeFanOnboardingAction(data: unknown, next?: string | null): Promise<ActionResult<{ to: string }>> {
   try {
     const { user } = await assertUser();
+    const t = await getT();
     fanCompleteSchema.parse(data);
     await completeFanOnboarding(user.id, data);
     const to = await resolvePostLoginDestination(user, safeNext(nextSchema.parse(next)));
-    return { ok: true, data: { to }, message: "Tercihlerin kaydedildi." };
+    return { ok: true, data: { to }, message: t("Tercihlerin kaydedildi.") };
   } catch (err) {
     return toActionError(err);
   }

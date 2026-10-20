@@ -7,10 +7,15 @@ import { RegisterForm } from "@/features/auth/register-form";
 import { getSession } from "@/lib/auth/session";
 import { resolvePostLoginDestination } from "@/services/auth/post-login";
 import { socialProviderFlags } from "@/services/auth/providers";
+import { getT } from "@/i18n/server";
 
-export const metadata: Metadata = { title: "Hesap Oluştur" };
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getT();
+  return { title: t("Hesap Oluştur") };
+}
 
 export default async function RegisterPage({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
+  const t = await getT();
   const sp = await searchParams;
   const next = safeNext(firstParam(sp.next));
   const session = await getSession();
@@ -24,10 +29,10 @@ export default async function RegisterPage({ searchParams }: { searchParams: Pro
       visual={
         <AuthVisual
           art="phones"
-          topBadge={<VisualPill icon={<Sparkles />}>AI ikizi destekli platform</VisualPill>}
-          eyebrow="HEYFANS'a hoş geldin"
-          lines={[{ text: "Yeni bir yol," }, { text: "bağlan.", accent: true }]}
-          body="İlgi alanlarını paylaşan insanlarla tanış, gerçek bağlar kur ve sana özel deneyimleri keşfet."
+          topBadge={<VisualPill icon={<Sparkles />}>{t("AI ikizi destekli platform")}</VisualPill>}
+          eyebrow={t("HEYFANS'a hoş geldin")}
+          lines={[{ text: t("Yeni bir yol,") }, { text: t("bağlan."), accent: true }]}
+          body={t("İlgi alanlarını paylaşan insanlarla tanış, gerçek bağlar kur ve sana özel deneyimleri keşfet.")}
         />
       }
     >

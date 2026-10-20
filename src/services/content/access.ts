@@ -6,6 +6,7 @@ import { ContentAccessGrant, type IContentItem } from "@/models/content";
 import { CreatorProfile } from "@/models/creator";
 import { Subscription, type PlanTier } from "@/models/monetization";
 import { Follow } from "@/models/social";
+import { m } from "@/i18n/m";
 
 const TIER_RANK: Record<string, number> = { free: 0, none: 0, basic: 1, premium: 2, vip: 3 };
 
@@ -118,10 +119,10 @@ export async function decideManyContentAccess(
 }
 
 export const ACCESS_LABELS: Record<string, string> = {
-  public: "Herkese açık",
-  followers: "Takipçilere özel",
-  subscribers: "Abonelere özel",
-  purchase: "Tekil satın alma",
+  public: m("Herkese açık"),
+  followers: m("Takipçilere özel"),
+  subscribers: m("Abonelere özel"),
+  purchase: m("Tekil satın alma"),
 };
 
-export const TIER_LABELS: Record<string, string> = { free: "Ücretsiz", basic: "Temel", premium: "Premium", vip: "VIP" };
+export const TIER_LABELS: Record<string, string> = { free: m("Ücretsiz"), basic: m("Temel"), premium: m("Premium"), vip: m("VIP") };

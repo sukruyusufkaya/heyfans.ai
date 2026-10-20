@@ -7,8 +7,12 @@ import { oid } from "@/lib/validation/common";
 import { CreatorProfile } from "@/models/creator";
 import { User } from "@/models/identity";
 import { resolvePostLoginDestination } from "@/services/auth/post-login";
+import { getT } from "@/i18n/server";
 
-export const metadata: Metadata = { title: "Devam Et" };
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getT();
+  return { title: t("Devam Et") };
+}
 
 /**
  * Sosyal girişin (Google/Apple) geri dönüş adresi: oturum açıldıktan sonra yaş beyanı, karşılama ve rol

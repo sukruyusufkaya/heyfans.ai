@@ -7,6 +7,7 @@ import { CreatorProfile } from "@/models/creator";
 import { AnalyticsEvent } from "@/models/platform";
 import { Favorite, Follow, type IFavorite } from "@/models/social";
 import { notify } from "@/services/notifications/notifications";
+import { m } from "@/i18n/m";
 
 /** Takip et / bırak. Benzersiz indeks sayesinde tekrar kayıt oluşmaz; sayaç yalnız gerçek değişimde güncellenir. */
 export async function setFollow(userId: string, creatorId: string, follow: boolean) {
@@ -35,7 +36,7 @@ export async function setFollow(userId: string, creatorId: string, follow: boole
   });
   if (changed) {
     await AnalyticsEvent.create({ type: follow ? "follow" : "unfollow", userId: uid, creatorId: cid, props: {} });
-    if (follow) await notify(creator.userId.toString(), { type: "follow", title: "Yeni takipçi", body: "Bir hayran seni takip etmeye başladı.", link: "/studio/fans" });
+    if (follow) await notify(creator.userId.toString(), { type: "follow", title: m("Yeni takipçi"), body: m("Bir hayran seni takip etmeye başladı."), link: "/studio/fans" });
   }
   return { following: follow, changed };
 }

@@ -12,7 +12,11 @@ import { Button } from "@/components/ui/button";
 import { Avatar } from "@/components/ui/display";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/overlays";
 import { chatStatusAction, deleteConversationAction, newConversationAction } from "@/features/fan/actions";
-import { cn, formatNumber, formatTime } from "@/lib/utils";
+import { useFormatters, useLocale, useT } from "@/i18n/client";
+import { LOCALE_META } from "@/i18n/config";
+import { m } from "@/i18n/m";
+import type { Translator } from "@/i18n/translate";
+import { cn } from "@/lib/utils";
 
 export interface ChatMsg {
   id: string;
@@ -27,6 +31,8 @@ export interface ChatMsg {
   streaming?: boolean;
   retryKey?: string;
   clientError?: boolean;
+  /** İstemcinin ürettiği "bağlantı koptu" bildirimi (sohbeti yenile düğmesi gösterilir). */
+  connectionLost?: boolean;
 }
 
 export interface ChatBilling {
@@ -55,33 +61,36 @@ type StreamEvent =
   | { type: "done"; aiMessageId: string; isMock: boolean; safetyAction: string }
   | { type: "error"; message: string; code: string };
 
-const STARTERS = ["Bugün nasılsın?", "Bana kendinden bahseder misin?", "Bu hafta için bir önerin var mı?"];
+const STARTERS = [m("Bugün nasılsın?"), m("Bana kendinden bahseder misin?"), m("Bu hafta için bir önerin var mı?")];
 
-function dayLabel(iso: string) {
+function dayLabel(iso: string, t: Translator, intlTag: string) {
   const d = new Date(iso);
   const today = new Date();
   const yesterday = new Date(Date.now() - 86400_000);
-  if (d.toDateString() === today.toDateString()) return "Bugün";
-  if (d.toDateString() === yesterday.toDateString()) return "Dün";
-  return new Intl.DateTimeFormat("tr-TR", { day: "numeric", month: "long" }).format(d);
+  if (d.toDateString() === today.toDateString()) return t("Bugün");
+  if (d.toDateString() === yesterday.toDateString()) return t("Dün");
+  return new Intl.DateTimeFormat(intlTag, { day: "numeric", month: "long" }).format(d);
 }
 
-function billingText(b: ChatBilling, price: number) {
+function billingText(b: ChatBilling, price: number, t: Translator) {
   switch (b.mode) {
     case "subscription":
-      return b.freeLeft != null ? `Üyeliğin kapsamında · bugün ${b.freeLeft} mesaj hakkın kaldı` : "Üyeliğin kapsamında · sınırsız sohbet";
+      return b.freeLeft != null ? t("Üyeliğin kapsamında · bugün {count} mesaj hakkın kaldı", { count: b.freeLeft }) : t("Üyeliğin kapsamında · sınırsız sohbet");
     case "free_daily":
-      return b.freeLeft != null ? `Bugün ${b.freeLeft} ücretsiz mesaj hakkın kaldı` : "Bu sohbet şu an ücretsiz";
+      return b.freeLeft != null ? t("Bugün {count} ücretsiz mesaj hakkın kaldı", { count: b.freeLeft }) : t("Bu sohbet şu an ücretsiz");
     case "credits":
-      return `Mesaj başına ${b.credits || price} kredi`;
+      return t("Mesaj başına {n} kredi", { n: b.credits || price });
     case "blocked":
-      return b.reason ?? "Bugünlük mesaj sınırına ulaştın.";
+      return b.reason ?? t("Bugünlük mesaj sınırına ulaştın.");
     default:
       return "";
   }
 }
 
 export function ChatClient({ conversationId, creator, twin, initialMessages, initialBilling, initialBalance, messagePrice, maxInputChars, ai, memoryEnabled }: Props) {
+  const t = useT();
+  const locale = useLocale();
+  const { formatNumber, formatTime } = useFormatters();
   const router = useRouter();
   const [messages, setMessages] = React.useState<ChatMsg[]>(initialMessages);
   const [billing, setBilling] = React.useState<ChatBilling>(initialBilling);
@@ -98,9 +107,9 @@ export function ChatClient({ conversationId, creator, twin, initialMessages, ini
   const needCredits = billing.mode === "credits" ? billing.credits || messagePrice : 0;
   const lowBalance = billing.mode === "credits" && balance < needCredits;
   const blockedReason = !ai.available
-    ? "Sohbet şu anda kapalı. Geçmiş mesajlarını okuyabilirsin; sohbet yeniden açıldığında kaldığın yerden devam edersin."
+    ? t("Sohbet şu anda kapalı. Geçmiş mesajlarını okuyabilirsin; sohbet yeniden açıldığında kaldığın yerden devam edersin.")
     : billing.mode === "blocked"
-      ? (billing.reason ?? "Bugünlük mesaj sınırına ulaştın. Yarın tekrar görüşelim!")
+      ? (billing.reason ?? t("Bugünlük mesaj sınırına ulaştın. Yarın tekrar görüşelim!"))
       : null;
   const composerDisabled = Boolean(blockedReason) || lowBalance || insufficient;
 
@@ -158,7 +167,7 @@ export function ChatClient({ conversationId, creator, twin, initialMessages, ini
       });
     } catch {
       setMessages((m) => m.map((x) => (x.id === tmpId ? { ...x, pending: false, failed: true, retryKey: key } : x)));
-      toast.error("Bağlantı kurulamadı. Mesajı tekrar deneyebilirsin.");
+      toast.error(t("Bağlantı kurulamadı. Mesajı tekrar deneyebilirsin."));
       setSending(false);
       return;
     }
@@ -166,14 +175,14 @@ export function ChatClient({ conversationId, creator, twin, initialMessages, ini
     if (!res.ok || !res.body) {
       const j = (await res.json().catch(() => null)) as { error?: string; code?: string } | null;
       if (res.status === 409 && j?.code === "duplicate") {
-        toast.info("Bu mesaj zaten gönderilmişti; sohbet yenileniyor.");
+        toast.info(t("Bu mesaj zaten gönderilmişti; sohbet yenileniyor."));
         window.location.reload();
         return;
       }
       setMessages((m) => m.filter((x) => x.id !== tmpId));
       setInput(text);
       if (res.status === 402 || j?.code === "insufficient_credits") setInsufficient(true);
-      else toast.error(j?.error ?? "Mesaj gönderilemedi.");
+      else toast.error(j?.error ?? t("Mesaj gönderilemedi."));
       setSending(false);
       void refreshStatus();
       return;
@@ -227,7 +236,7 @@ export function ChatClient({ conversationId, creator, twin, initialMessages, ini
       if (!finished) {
         setMessages((m) => [
           ...m.map((x) => (x.id === aiTmpId ? { ...x, streaming: false } : x)),
-          { id: `err-${key}`, role: "system", body: "Bağlantı koptu. Yanıt kaydedilmiş olabilir; sohbeti yenileyerek kontrol et.", createdAt: new Date().toISOString(), isMock: false, charged: 0, safetyAction: "none", failed: false, clientError: true },
+          { id: `err-${key}`, role: "system", body: t("Bağlantı koptu. Yanıt kaydedilmiş olabilir; sohbeti yenileyerek kontrol et."), createdAt: new Date().toISOString(), isMock: false, charged: 0, safetyAction: "none", failed: false, clientError: true, connectionLost: true },
         ]);
       }
     } finally {
@@ -239,20 +248,20 @@ export function ChatClient({ conversationId, creator, twin, initialMessages, ini
   const timeline = React.useMemo(() => {
     const out: ({ kind: "day"; label: string; id: string } | { kind: "msg"; msg: ChatMsg })[] = [];
     let last = "";
-    for (const m of messages) {
-      const label = dayLabel(m.createdAt);
+    for (const msg of messages) {
+      const label = dayLabel(msg.createdAt, t, LOCALE_META[locale].intl);
       if (label !== last) {
-        out.push({ kind: "day", label, id: `${m.id}-day` });
+        out.push({ kind: "day", label, id: `${msg.id}-day` });
         last = label;
       }
-      out.push({ kind: "msg", msg: m });
+      out.push({ kind: "msg", msg });
     }
     return out;
-  }, [messages]);
+  }, [messages, t, locale]);
 
   return (
     <section
-      aria-label={`${creator.displayName} AI ikizi ile sohbet`}
+      aria-label={t("{name} AI ikizi ile sohbet", { name: creator.displayName })}
       className={cn(
         "flex flex-col overflow-hidden bg-white",
         // Mobil: tam ekran (üst çubuğun altından, alt menünün üstünde); masaüstü: kart
@@ -262,10 +271,10 @@ export function ChatClient({ conversationId, creator, twin, initialMessages, ini
     >
       {/* Üst bilgi */}
       <header className="flex items-center gap-3 border-b border-line px-3 py-3 sm:px-5">
-        <Link href="/chat" className="grid size-9 shrink-0 place-items-center rounded-full text-muted-strong hover:bg-soft lg:hidden" aria-label="Sohbet listesine dön">
+        <Link href="/chat" className="grid size-9 shrink-0 place-items-center rounded-full text-muted-strong hover:bg-soft lg:hidden" aria-label={t("Sohbet listesine dön")}>
           <ChevronLeft className="rtl:-scale-x-100 size-5" />
         </Link>
-        <Link href={`/creators/${creator.username}`} className="shrink-0" aria-label={`${creator.displayName} profili`}>
+        <Link href={`/creators/${creator.username}`} className="shrink-0" aria-label={t("{name} profili", { name: creator.displayName })}>
           <Avatar src={creator.avatarUrl} name={creator.displayName} size={44} online={creator.isOnline} />
         </Link>
         <div className="min-w-0 flex-1">
@@ -274,52 +283,53 @@ export function ChatClient({ conversationId, creator, twin, initialMessages, ini
             <AiTwinLabel className="ms-1 shrink-0" />
           </p>
           <p className="mt-0.5 flex items-center gap-1.5 text-[11px] font-semibold text-success">
-            <span className="size-1.5 rounded-full bg-success" aria-hidden /> {creator.isSample ? "Örnek profil · AI ikizi" : "Yetkilendirilmiş AI ikizi"}{creator.isOnline ? " · Çevrimiçi" : ""}
+            <span className="size-1.5 rounded-full bg-success" aria-hidden /> {creator.isSample ? t("Örnek profil · AI ikizi") : t("Yetkilendirilmiş AI ikizi")}
+            {creator.isOnline && <> · {t("Çevrimiçi")}</>}
           </p>
         </div>
         <div className="flex items-center gap-1.5">
-          <Link href={`/experiences/voice/${creator.username}`} aria-label="Sesli görüşme başlat" className="hidden size-10 place-items-center rounded-full border border-line text-muted-strong hover:bg-soft sm:grid">
+          <Link href={`/experiences/voice/${creator.username}`} aria-label={t("Sesli görüşme başlat")} className="hidden size-10 place-items-center rounded-full border border-line text-muted-strong hover:bg-soft sm:grid">
             <Mic className="size-[18px]" />
           </Link>
-          <Link href={`/experiences/video/${creator.username}`} aria-label="Görüntülü görüşme başlat" className="hidden size-10 place-items-center rounded-full border border-line text-muted-strong hover:bg-soft sm:grid">
+          <Link href={`/experiences/video/${creator.username}`} aria-label={t("Görüntülü görüşme başlat")} className="hidden size-10 place-items-center rounded-full border border-line text-muted-strong hover:bg-soft sm:grid">
             <Video className="size-[18px]" />
           </Link>
           <DropdownMenu>
-            <DropdownMenuTrigger className="grid size-10 place-items-center rounded-full border border-line text-muted-strong hover:bg-soft" aria-label="Sohbet seçenekleri">
+            <DropdownMenuTrigger className="grid size-10 place-items-center rounded-full border border-line text-muted-strong hover:bg-soft" aria-label={t("Sohbet seçenekleri")}>
               <MoreVertical className="size-[18px]" />
             </DropdownMenuTrigger>
             <DropdownMenuContent>
               <DropdownMenuItem asChild>
                 <Link href={`/creators/${creator.username}`}>
-                  <ShieldCheck /> Profili gör
+                  <ShieldCheck /> {t("Profili gör")}
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
                 <Link href={`/experiences/voice/${creator.username}`}>
-                  <Mic /> Sesli görüşme
+                  <Mic /> {t("Sesli görüşme")}
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
                 <Link href={`/experiences/video/${creator.username}`}>
-                  <Video /> Görüntülü görüşme
+                  <Video /> {t("Görüntülü görüşme")}
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
                 <Link href={`/creators/${creator.username}/content`}>
-                  <ImageIcon /> Özel içerikler
+                  <ImageIcon /> {t("Özel içerikler")}
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
                 <Link href={`/app/gifts?to=${creator.username}`}>
-                  <Gift /> Hediye gönder
+                  <Gift /> {t("Hediye gönder")}
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem onSelect={() => setNewOpen(true)}>
-                <Plus /> Yeni sohbet
+                <Plus /> {t("Yeni sohbet")}
               </DropdownMenuItem>
               <DropdownMenuItem onSelect={() => setDeleteOpen(true)} className="text-danger data-[highlighted]:bg-danger-soft data-[highlighted]:text-danger">
-                <Trash2 /> Sohbeti sil
+                <Trash2 /> {t("Sohbeti sil")}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -329,16 +339,16 @@ export function ChatClient({ conversationId, creator, twin, initialMessages, ini
       <ConfirmDialog
         open={newOpen}
         onOpenChange={setNewOpen}
-        title="Yeni sohbet başlat"
-        description="Mevcut konuşma arşivlenir ve temiz bir sohbet açılır. AI hafızan açıksa tercihlerin korunur."
-        confirmLabel="Yeni sohbet"
+        title={t("Yeni sohbet başlat")}
+        description={t("Mevcut konuşma arşivlenir ve temiz bir sohbet açılır. AI hafızan açıksa tercihlerin korunur.")}
+        confirmLabel={t("Yeni sohbet")}
         onConfirm={async () => {
           const res = await newConversationAction(creator.username);
           if (!res.ok) {
             toast.error(res.error);
             return false;
           }
-          toast.success(res.message ?? "Yeni sohbet başlatıldı.");
+          toast.success(res.message ?? t("Yeni sohbet başlatıldı."));
           router.refresh();
           return true;
         }}
@@ -346,9 +356,9 @@ export function ChatClient({ conversationId, creator, twin, initialMessages, ini
       <ConfirmDialog
         open={deleteOpen}
         onOpenChange={setDeleteOpen}
-        title="Sohbeti sil"
-        description="Bu konuşmadaki tüm mesajlar kalıcı olarak silinir. Kredi hareketlerin cüzdan geçmişinde kalır. Bu işlem geri alınamaz."
-        confirmLabel="Sohbeti sil"
+        title={t("Sohbeti sil")}
+        description={t("Bu konuşmadaki tüm mesajlar kalıcı olarak silinir. Kredi hareketlerin cüzdan geçmişinde kalır. Bu işlem geri alınamaz.")}
+        confirmLabel={t("Sohbeti sil")}
         tone="danger"
         onConfirm={async () => {
           const res = await deleteConversationAction(conversationId);
@@ -356,7 +366,7 @@ export function ChatClient({ conversationId, creator, twin, initialMessages, ini
             toast.error(res.error);
             return false;
           }
-          toast.success("Sohbet silindi.");
+          toast.success(t("Sohbet silindi."));
           router.push("/chat");
           return true;
         }}
@@ -372,16 +382,16 @@ export function ChatClient({ conversationId, creator, twin, initialMessages, ini
         className="min-h-0 flex-1 space-y-3 overflow-y-auto bg-[radial-gradient(circle_at_80%_10%,#fff3fa_0%,#fff_55%)] px-3 py-5 scrollbar-thin sm:px-6"
         role="log"
         aria-live="polite"
-        aria-label="Sohbet mesajları"
+        aria-label={t("Sohbet mesajları")}
       >
         <div className="mx-auto flex w-fit max-w-full items-center gap-1.5 rounded-full border border-brand-200 bg-white/80 px-3.5 py-1.5 text-[10px] font-bold text-brand-600">
-          <ShieldCheck className="size-3.5 shrink-0" aria-hidden /> {creator.isSample ? "Bu görüşme kurgusal bir örnek profilin AI ikiziyle yapılmaktadır." : "Bu görüşme yetkilendirilmiş bir AI ikiziyle yapılmaktadır."}
+          <ShieldCheck className="size-3.5 shrink-0" aria-hidden /> {creator.isSample ? t("Bu görüşme kurgusal bir örnek profilin AI ikiziyle yapılmaktadır.") : t("Bu görüşme yetkilendirilmiş bir AI ikiziyle yapılmaktadır.")}
         </div>
         {memoryEnabled && (
           <p className="text-center text-[10px] text-muted">
-            AI hafızası açık — bu sohbetten çıkarılan bilgiler yalnız bu içerik üreticisi için saklanır.{" "}
+            {t("AI hafızası açık — bu sohbetten çıkarılan bilgiler yalnız bu içerik üreticisi için saklanır.")}{" "}
             <Link href="/app/personalization" className="font-bold text-brand-500 hover:underline">
-              Yönet
+              {t("Yönet")}
             </Link>
           </p>
         )}
@@ -389,8 +399,8 @@ export function ChatClient({ conversationId, creator, twin, initialMessages, ini
         {messages.length === 0 ? (
           <div className="mx-auto mt-6 max-w-sm text-center">
             <Avatar src={creator.avatarUrl} name={creator.displayName} size={64} className="mx-auto" />
-            <p className="mt-3 text-sm font-extrabold">{creator.displayName}&apos;in AI ikiziyle konuş</p>
-            <p className="mt-1 text-xs leading-relaxed text-muted">İçerik üreticisinin onaylı yapay zekâ temsilcisi seninle sohbet etmeye hazır. Bir mesajla başla.</p>
+            <p className="mt-3 text-sm font-extrabold">{t("{name}'in AI ikiziyle konuş", { name: creator.displayName })}</p>
+            <p className="mt-1 text-xs leading-relaxed text-muted">{t("İçerik üreticisinin onaylı yapay zekâ temsilcisi seninle sohbet etmeye hazır. Bir mesajla başla.")}</p>
             {!composerDisabled && (
               <div className="mt-4 flex flex-wrap justify-center gap-2">
                 {STARTERS.map((s) => (
@@ -398,12 +408,12 @@ export function ChatClient({ conversationId, creator, twin, initialMessages, ini
                     key={s}
                     type="button"
                     onClick={() => {
-                      setInput(s);
+                      setInput(t(s));
                       textarea.current?.focus();
                     }}
                     className="rounded-full border border-brand-200 bg-white px-3.5 py-2 text-[11px] font-bold text-brand-600 hover:bg-brand-50"
                   >
-                    {s}
+                    {t(s)}
                   </button>
                 ))}
               </div>
@@ -419,13 +429,13 @@ export function ChatClient({ conversationId, creator, twin, initialMessages, ini
               </p>
             );
           }
-          const m = item.msg;
-          if (m.role === "system") {
-            const crisis = m.safetyAction === "escalated";
+          const msg = item.msg;
+          if (msg.role === "system") {
+            const crisis = msg.safetyAction === "escalated";
             return (
               <div
-                key={m.id}
-                role={m.clientError ? "alert" : undefined}
+                key={msg.id}
+                role={msg.clientError ? "alert" : undefined}
                 className={cn(
                   "mx-auto flex max-w-[92%] items-start gap-2.5 rounded-2xl border px-4 py-3 text-xs leading-relaxed sm:max-w-[80%]",
                   crisis ? "border-danger/25 bg-danger-soft text-ink" : "border-[#f3dca8] bg-warning-soft text-ink-soft",
@@ -433,26 +443,26 @@ export function ChatClient({ conversationId, creator, twin, initialMessages, ini
               >
                 <ShieldAlert className={cn("mt-0.5 size-4 shrink-0", crisis ? "text-danger" : "text-warning")} aria-hidden />
                 <div>
-                  <p className="whitespace-pre-wrap">{m.body}</p>
-                  {m.clientError && m.body.startsWith("Bağlantı koptu") && (
+                  <p className="whitespace-pre-wrap">{msg.body}</p>
+                  {msg.clientError && msg.connectionLost && (
                     <button type="button" onClick={() => window.location.reload()} className="mt-1.5 text-[11px] font-extrabold text-brand-600 hover:underline">
-                      Sohbeti yenile
+                      {t("Sohbeti yenile")}
                     </button>
                   )}
                 </div>
               </div>
             );
           }
-          const mine = m.role === "user";
+          const mine = msg.role === "user";
           return (
-            <div key={m.id} className={cn("flex", mine ? "justify-end" : "justify-start")}>
+            <div key={msg.id} className={cn("flex", mine ? "justify-end" : "justify-start")}>
               <div className={cn("max-w-[86%] sm:max-w-[72%]", mine && "flex flex-col items-end")}>
                 {!mine && (
                   <div className="mb-1 flex items-center gap-1.5">
                     <AiTwinLabel />
-                    {m.isMock && (
-                      <Badge tone="warn" size="sm" title="Bu yanıt test amaçlı sahte bir sağlayıcıdan geldi">
-                        Test yanıtı
+                    {msg.isMock && (
+                      <Badge tone="warn" size="sm" title={t("Bu yanıt test amaçlı sahte bir sağlayıcıdan geldi")}>
+                        {t("Test yanıtı")}
                       </Badge>
                     )}
                   </div>
@@ -461,38 +471,38 @@ export function ChatClient({ conversationId, creator, twin, initialMessages, ini
                   className={cn(
                     "whitespace-pre-wrap break-words rounded-2xl px-4 py-3 text-[13px] leading-relaxed",
                     mine ? "rounded-ee-md bg-brand-500 text-white shadow-[var(--shadow-pink)]" : "rounded-es-md bg-[#f4f2f6] text-ink",
-                    m.pending && "opacity-70",
-                    m.failed && "border border-danger/40 bg-danger-soft text-ink shadow-none",
+                    msg.pending && "opacity-70",
+                    msg.failed && "border border-danger/40 bg-danger-soft text-ink shadow-none",
                   )}
                 >
-                  {m.streaming && !m.body ? (
-                    <span className="inline-flex items-center gap-1 py-1" aria-label="AI ikizi yazıyor">
+                  {msg.streaming && !msg.body ? (
+                    <span className="inline-flex items-center gap-1 py-1" aria-label={t("AI ikizi yazıyor")}>
                       {[0, 1, 2].map((i) => (
                         <i key={i} className="size-1.5 animate-pulse rounded-full bg-muted" style={{ animationDelay: `${i * 160}ms` }} />
                       ))}
                     </span>
                   ) : (
-                    m.body
+                    msg.body
                   )}
                 </div>
                 <div className={cn("mt-1 flex items-center gap-2 text-[10px] text-muted", mine && "flex-row-reverse")}>
-                  <span>{m.pending ? "Gönderiliyor…" : formatTime(m.createdAt)}</span>
-                  {mine && m.charged > 0 && <span>−{m.charged} kredi</span>}
-                  {mine && m.failed && !m.retryKey && <span className="font-bold text-danger">Gönderilemedi{m.charged === 0 ? "" : " · kredi iade edildi"}</span>}
-                  {mine && m.retryKey && (
-                    <button type="button" onClick={() => send(m.body, { key: m.retryKey!, tmpId: m.id })} className="inline-flex items-center gap-1 font-extrabold text-danger hover:underline">
-                      <RotateCcw className="size-3" /> Tekrar dene
+                  <span>{msg.pending ? t("Gönderiliyor…") : formatTime(msg.createdAt)}</span>
+                  {mine && msg.charged > 0 && <span>−{t("{n} kredi", { n: msg.charged })}</span>}
+                  {mine && msg.failed && !msg.retryKey && <span className="font-bold text-danger">{msg.charged === 0 ? t("Gönderilemedi") : t("Gönderilemedi · kredi iade edildi")}</span>}
+                  {mine && msg.retryKey && (
+                    <button type="button" onClick={() => send(msg.body, { key: msg.retryKey!, tmpId: msg.id })} className="inline-flex items-center gap-1 font-extrabold text-danger hover:underline">
+                      <RotateCcw className="size-3" /> {t("Tekrar dene")}
                     </button>
                   )}
-                  {!mine && !m.streaming && m.safetyAction === "rewritten" && <span>Güvenlik filtresi düzenledi</span>}
-                  {!mine && !m.streaming && !m.id.startsWith("ai-") && (
+                  {!mine && !msg.streaming && msg.safetyAction === "rewritten" && <span>{t("Güvenlik filtresi düzenledi")}</span>}
+                  {!mine && !msg.streaming && !msg.id.startsWith("ai-") && (
                     <ReportDialog
                       targetType="message"
-                      targetId={m.id}
-                      title="Yanıtı bildir"
+                      targetId={msg.id}
+                      title={t("Yanıtı bildir")}
                       trigger={
-                        <button type="button" className="inline-flex items-center gap-1 font-bold text-muted hover:text-danger" aria-label="Bu yanıtı bildir">
-                          <Flag className="size-3" /> Bildir
+                        <button type="button" className="inline-flex items-center gap-1 font-bold text-muted hover:text-danger" aria-label={t("Bu yanıtı bildir")}>
+                          <Flag className="size-3" /> {t("Bildir")}
                         </button>
                       }
                     />
@@ -509,12 +519,12 @@ export function ChatClient({ conversationId, creator, twin, initialMessages, ini
         {(blockedReason || lowBalance || insufficient) && (
           <div role="status" className="mb-3 flex flex-wrap items-center justify-between gap-2 rounded-xl border border-brand-200 bg-brand-50 px-3.5 py-2.5 text-xs">
             <p className="font-semibold text-ink-soft">
-              {blockedReason ?? `Yetersiz kredi: bu mesaj için ${needCredits || messagePrice} kredi gerekiyor, bakiyen ${formatNumber(balance)}.`}
+              {blockedReason ?? t("Yetersiz kredi: bu mesaj için {needed} kredi gerekiyor, bakiyen {balance}.", { needed: needCredits || messagePrice, balance: formatNumber(balance) })}
             </p>
             {!blockedReason && (
               <Button asChild size="sm" shape="pill">
                 <Link href="/app/wallet">
-                  <Coins /> Kredi yükle
+                  <Coins /> {t("Kredi yükle")}
                 </Link>
               </Button>
             )}
@@ -528,7 +538,7 @@ export function ChatClient({ conversationId, creator, twin, initialMessages, ini
           className={cn("flex items-end gap-2 rounded-[20px] border border-line bg-[#faf8fb] p-2 focus-within:border-brand-300 focus-within:ring-4 focus-within:ring-brand-100", composerDisabled && "opacity-70")}
         >
           <label htmlFor="chat-input" className="sr-only">
-            Mesajını yaz
+            {t("Mesajını yaz")}
           </label>
           <textarea
             id="chat-input"
@@ -544,26 +554,27 @@ export function ChatClient({ conversationId, creator, twin, initialMessages, ini
                 void send(input);
               }
             }}
-            placeholder={composerDisabled ? "Mesaj gönderilemiyor" : "Mesajını yaz..."}
+            placeholder={composerDisabled ? t("Mesaj gönderilemiyor") : t("Mesajını yaz...")}
             className="max-h-[140px] min-h-10 flex-1 resize-none bg-transparent px-3 py-2.5 text-[13px] leading-relaxed outline-none placeholder:text-[#b2a6b3] disabled:cursor-not-allowed"
           />
-          <Button type="submit" size="icon" aria-label="Mesajı gönder" disabled={composerDisabled || sending || !input.trim()} loading={sending}>
+          <Button type="submit" size="icon" aria-label={t("Mesajı gönder")} disabled={composerDisabled || sending || !input.trim()} loading={sending}>
             {!sending && <ArrowUp />}
           </Button>
         </form>
         <div className="mt-2 flex flex-wrap items-center justify-between gap-x-3 gap-y-1 px-1 text-[11px] text-muted">
           <span className="inline-flex items-center gap-1.5">
-            <Zap className="size-3 text-brand-500" aria-hidden /> {billingText(billing, messagePrice)}
+            <Zap className="size-3 text-brand-500" aria-hidden /> {billingText(billing, messagePrice, t)}
           </span>
           <span className="flex items-center gap-3">
             {input.length > maxInputChars * 0.8 && <span>{input.length}/{maxInputChars}</span>}
-            <Link href="/app/wallet" className="inline-flex items-center gap-1 font-extrabold text-brand-500 hover:underline" aria-label={`Kredi bakiyesi ${formatNumber(balance)}`}>
-              <Coins className="size-3" /> {formatNumber(balance)} kredi
+            <Link href="/app/wallet" className="inline-flex items-center gap-1 font-extrabold text-brand-500 hover:underline" aria-label={t("Kredi bakiyesi {balance}", { balance: formatNumber(balance) })}>
+              <Coins className="size-3" /> {t("{n} kredi", { n: formatNumber(balance) })}
             </Link>
           </span>
         </div>
         <p className="mt-1.5 px-1 text-[10px] leading-snug text-muted">
-          Yanıtlar yapay zekâ tarafından üretilir ve gerçek kişi değildir. {twin.voice || twin.video ? "" : "Bu ikiz şu anda yalnız yazılı sohbete açık."}
+          {t("Yanıtlar yapay zekâ tarafından üretilir ve gerçek kişi değildir.")}
+          {twin.voice || twin.video ? null : <> {t("Bu ikiz şu anda yalnız yazılı sohbete açık.")}</>}
         </p>
       </div>
     </section>

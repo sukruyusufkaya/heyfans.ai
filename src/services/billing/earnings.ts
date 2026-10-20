@@ -97,7 +97,7 @@ export async function reverseEarning(original: ICreatorEarning, refundGrossMinor
       sourceType: original.sourceType,
       split,
       currency: original.currency,
-      description: `Ters kayıt: ${reason}`.slice(0, 300),
+      description: `Ters kayıt: ${reason}`.slice(0, 300), // i18n-ignore (defter açıklaması saklanır)
       transactionId: original.transactionId ?? null,
       reversesEarningId: original._id,
       idempotencyKey: `earning:reverse:${original._id.toString()}:${refundGrossMinor}`,

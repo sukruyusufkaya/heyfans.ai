@@ -6,14 +6,18 @@ import { Lock } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/form-controls";
+import { rich } from "@/components/fan/rich";
 import { startCheckoutAction } from "@/features/fan/actions";
 import type { CheckoutParams } from "@/features/fan/checkout-schema";
+import { useT } from "@/i18n/client";
+import { m } from "@/i18n/m";
 
 /**
  * Ödeme onayı: kart bilgisi ASLA bu uygulamada toplanmaz — kullanıcı ödeme sağlayıcısının güvenli sayfasına yönlendirilir.
  * Tutar istemciden gönderilmez; sunucu fiyatı veritabanından yeniden hesaplar.
  */
 export function CheckoutForm({ params, disabledReason, isTest }: { params: CheckoutParams; disabledReason: string | null; isTest: boolean }) {
+  const t = useT();
   const router = useRouter();
   const [terms, setTerms] = React.useState(false);
   const [preInfo, setPreInfo] = React.useState(false);
@@ -46,26 +50,33 @@ export function CheckoutForm({ params, disabledReason, isTest }: { params: Check
         <label htmlFor={termsId} className="flex cursor-pointer items-start gap-3 text-xs leading-relaxed text-ink-soft">
           <Checkbox id={termsId} checked={terms} onCheckedChange={(v) => setTerms(v === true)} className="mt-0.5" aria-required />
           <span>
-            <Link href="/terms" target="_blank" className="font-extrabold text-brand-600 hover:underline">
-              Kullanım Şartları
-            </Link>{" "}
-            ve{" "}
-            <Link href="/privacy" target="_blank" className="font-extrabold text-brand-600 hover:underline">
-              Gizlilik Politikası
-            </Link>
-            &apos;nı okudum, kabul ediyorum.
+            {rich(t, m("<terms>Kullanım Şartları</terms> ve <privacy>Gizlilik Politikası</privacy>'nı okudum, kabul ediyorum."), {
+              terms: (c) => (
+                <Link href="/terms" target="_blank" className="font-extrabold text-brand-600 hover:underline">
+                  {c}
+                </Link>
+              ),
+              privacy: (c) => (
+                <Link href="/privacy" target="_blank" className="font-extrabold text-brand-600 hover:underline">
+                  {c}
+                </Link>
+              ),
+            })}
           </span>
         </label>
         <label htmlFor={preId} className="flex cursor-pointer items-start gap-3 text-xs leading-relaxed text-ink-soft">
           <Checkbox id={preId} checked={preInfo} onCheckedChange={(v) => setPreInfo(v === true)} className="mt-0.5" aria-required />
           <span>
-            <Link href="/terms#mesafeli-satis" target="_blank" className="font-extrabold text-brand-600 hover:underline">
-              Ön Bilgilendirme Formu ve Mesafeli Satış Sözleşmesi
-            </Link>
-            &apos;ni (taslak) okudum ve onaylıyorum.
+            {rich(t, m("<link>Ön Bilgilendirme Formu ve Mesafeli Satış Sözleşmesi</link>'ni (taslak) okudum ve onaylıyorum."), {
+              link: (c) => (
+                <Link href="/terms#mesafeli-satis" target="_blank" className="font-extrabold text-brand-600 hover:underline">
+                  {c}
+                </Link>
+              ),
+            })}
           </span>
         </label>
-        <p className="text-[10px] text-muted">Hukuki metinler taslak aşamasındadır ve yayın öncesi hukuki incelemeden geçecektir.</p>
+        <p className="text-[10px] text-muted">{t("Hukuki metinler taslak aşamasındadır ve yayın öncesi hukuki incelemeden geçecektir.")}</p>
       </div>
       {error && (
         <p role="alert" className="rounded-xl bg-danger-soft px-4 py-3 text-xs font-semibold text-danger">
@@ -73,10 +84,10 @@ export function CheckoutForm({ params, disabledReason, isTest }: { params: Check
         </p>
       )}
       <Button size="lg" shape="pill" className="w-full" onClick={submit} loading={busy} disabled={!terms || !preInfo || Boolean(disabledReason)}>
-        <Lock /> {isTest ? "Test ödemesine geç" : "Ödemeyi Tamamla"}
+        <Lock /> {isTest ? t("Test ödemesine geç") : t("Ödemeyi Tamamla")}
       </Button>
       {disabledReason && <p className="text-center text-[11px] font-semibold text-danger">{disabledReason}</p>}
-      <p className="text-center text-[10px] text-muted">Ödeme tamamlanmadan ücret alınmaz. Kart bilgilerini yalnızca ödeme sağlayıcısının güvenli sayfasına girersin.</p>
+      <p className="text-center text-[10px] text-muted">{t("Ödeme tamamlanmadan ücret alınmaz. Kart bilgilerini yalnızca ödeme sağlayıcısının güvenli sayfasına girersin.")}</p>
     </div>
   );
 }

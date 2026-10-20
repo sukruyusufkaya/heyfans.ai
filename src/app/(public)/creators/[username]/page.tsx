@@ -17,7 +17,9 @@ import { ProfileMenu } from "@/features/public/profile-menu";
 import { SocialIcon, socialHref, socialLabel } from "@/features/public/social-icon";
 import { getSession } from "@/lib/auth/session";
 import { aiStatus } from "@/lib/ai/provider";
-import { cn, formatCompact, formatNumber } from "@/lib/utils";
+import { getFormatters, getT } from "@/i18n/server";
+import { m } from "@/i18n/m";
+import { cn } from "@/lib/utils";
 import { activeTierFor } from "@/services/content/access";
 import { viewerRelations } from "@/services/creators/public";
 import { getPublicCreator, listCreatorPosts, POST_TYPES, recordProfileView } from "@/services/public/profile";
@@ -26,11 +28,11 @@ import { siteConfig } from "@/config/site";
 type Props = { params: Promise<{ username: string }>; searchParams: Promise<Record<string, string | string[] | undefined>> };
 
 const TABS = [
-  { key: "overview", label: "Genel Bakış", icon: LayoutGrid },
-  { key: "posts", label: "Gönderiler", icon: FileText },
-  { key: "media", label: "Medya", icon: ImageIcon },
-  { key: "twin", label: "AI İkizi", icon: Bot },
-  { key: "plans", label: "Abonelikler", icon: Crown },
+  { key: "overview", label: m("Genel Bakış"), icon: LayoutGrid },
+  { key: "posts", label: m("Gönderiler"), icon: FileText },
+  { key: "media", label: m("Medya"), icon: ImageIcon },
+  { key: "twin", label: m("AI İkizi"), icon: Bot },
+  { key: "plans", label: m("Abonelikler"), icon: Crown },
 ] as const;
 type TabKey = (typeof TABS)[number]["key"];
 
@@ -41,23 +43,25 @@ const querySchema = z.object({
 });
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { username } = await params;
+  const [{ username }, t] = await Promise.all([params, getT()]);
   const c = await getPublicCreator(username);
-  if (!c) return { title: "İçerik üreticisi bulunamadı", robots: { index: false } };
-  const title = `${c.displayName} (@${c.username}) — ${c.twin?.live ? "AI İkizi ve Özel İçerikler" : "Profil ve Özel İçerikler"}`;
-  const description = (c.headline ? `${c.headline}. ` : "") + (c.bio ? c.bio.slice(0, 150) : `${c.displayName} HEYFANS'ta. Takip et, abone ol ve özel içeriklere eriş.`);
+  if (!c) return { title: t("İçerik üreticisi bulunamadı"), robots: { index: false } };
+  const title = c.twin?.live
+    ? t("{name} (@{username}) — AI İkizi ve Özel İçerikler", { name: c.displayName, username: c.username })
+    : t("{name} (@{username}) — Profil ve Özel İçerikler", { name: c.displayName, username: c.username });
+  const description = (c.headline ? `${c.headline}. ` : "") + (c.bio ? c.bio.slice(0, 150) : t("{name} HEYFANS'ta. Takip et, abone ol ve özel içeriklere eriş.", { name: c.displayName }));
   const image = c.coverUrl ?? c.avatarUrl;
   return {
     title,
     description,
     alternates: { canonical: `/creators/${c.username}` },
-    openGraph: { title: `${c.displayName} | HEYFANS`, description, url: `/creators/${c.username}`, type: "profile", images: image ? [{ url: image, alt: c.displayName }] : undefined },
-    twitter: { card: image ? "summary_large_image" : "summary", title: `${c.displayName} | HEYFANS`, description },
+    openGraph: { title: `${c.displayName} | HEYFANS`, description, url: `/creators/${c.username}`, type: "profile", images: image ? [{ url: image, alt: c.displayName }] : undefined }, // i18n-ignore: kullanıcı adı + marka
+    twitter: { card: image ? "summary_large_image" : "summary", title: `${c.displayName} | HEYFANS`, description }, // i18n-ignore: kullanıcı adı + marka
   };
 }
 
 export default async function CreatorProfilePage({ params, searchParams }: Props) {
-  const [{ username }, sp] = await Promise.all([params, searchParams]);
+  const [{ username }, sp, t, { formatCompact, formatNumber }] = await Promise.all([params, searchParams, getT(), getFormatters()]);
   const creator = await getPublicCreator(username);
   if (!creator) notFound();
   const { tab, type, page } = querySchema.parse({ tab: sp.tab, type: sp.type, page: sp.page });
@@ -80,9 +84,9 @@ export default async function CreatorProfilePage({ params, searchParams }: Props
     postsQuery ? listCreatorPosts(viewer, creator.id, postsQuery) : Promise.resolve(null),
   ]);
   const following = relations.following.has(creator.id);
-  const hrefFor = (t: TabKey, extra?: Record<string, string>) => {
+  const hrefFor = (tk: TabKey, extra?: Record<string, string>) => {
     const p = new URLSearchParams();
-    if (t !== "overview") p.set("tab", t);
+    if (tk !== "overview") p.set("tab", tk);
     for (const [k, v] of Object.entries(extra ?? {})) p.set(k, v);
     const qs = p.toString();
     return `/creators/${creator.username}${qs ? `?${qs}` : ""}`;
@@ -91,25 +95,26 @@ export default async function CreatorProfilePage({ params, searchParams }: Props
   const socials = creator.socialLinks.map((s) => ({ ...s, href: socialHref(s) })).filter((s) => s.href);
   const jsonLd = {
     "@context": "https://schema.org",
-    "@type": "ProfilePage",
+    "@type": "ProfilePage", // i18n-ignore: schema.org türü
     dateCreated: creator.createdAt,
     mainEntity: {
-      "@type": "Person",
+      "@type": "Person", // i18n-ignore: schema.org türü
       name: creator.displayName,
       alternateName: `@${creator.username}`,
       description: creator.headline ?? undefined,
       image: creator.avatarUrl ?? undefined,
       url: `${siteConfig.url}/creators/${creator.username}`,
       sameAs: socials.map((s) => s.href),
-      interactionStatistic: { "@type": "InteractionCounter", interactionType: "https://schema.org/FollowAction", userInteractionCount: creator.stats.followers },
+      interactionStatistic: { "@type": "InteractionCounter", // i18n-ignore: schema.org türü
+        interactionType: "https://schema.org/FollowAction", userInteractionCount: creator.stats.followers },
     },
   };
 
   const stats = [
-    { icon: Users, value: formatCompact(creator.stats.followers), label: "Takipçi" },
-    { icon: FileText, value: formatCompact(creator.stats.posts), label: "Gönderi" },
-    { icon: Heart, value: formatCompact(creator.stats.likes), label: "Beğeni" },
-    { icon: MessageCircle, value: formatCompact(creator.stats.conversations), label: "Sohbet" },
+    { icon: Users, value: formatCompact(creator.stats.followers), label: t("Takipçi") },
+    { icon: FileText, value: formatCompact(creator.stats.posts), label: t("Gönderi") },
+    { icon: Heart, value: formatCompact(creator.stats.likes), label: t("Beğeni") },
+    { icon: MessageCircle, value: formatCompact(creator.stats.conversations), label: t("Sohbet") },
   ];
 
   return (
@@ -130,7 +135,7 @@ export default async function CreatorProfilePage({ params, searchParams }: Props
             <span className="block size-full overflow-hidden rounded-full border-[5px] border-white bg-white shadow-xl">
               <CreatorPhoto src={creator.avatarUrl} name={creator.displayName} rounded="rounded-full" priority />
             </span>
-            {creator.isOnline && <span className="absolute bottom-2 end-2 size-5 rounded-full border-[3px] border-white bg-success" role="img" aria-label="Çevrimiçi" />}
+            {creator.isOnline && <span className="absolute bottom-2 end-2 size-5 rounded-full border-[3px] border-white bg-success" role="img" aria-label={t("Çevrimiçi")} />}
           </div>
 
           <div className="min-w-0 flex-1 lg:pt-[96px]">
@@ -143,7 +148,7 @@ export default async function CreatorProfilePage({ params, searchParams }: Props
               <span className="text-sm font-bold text-muted-strong">@{creator.username}</span>
               {creator.isOnline && (
                 <Badge tone="green" size="md" dot>
-                  Şu anda çevrimiçi
+                  {t("Şu anda çevrimiçi")}
                 </Badge>
               )}
               {creator.twin?.live && <AiTwinLabel size="md" />}
@@ -155,7 +160,7 @@ export default async function CreatorProfilePage({ params, searchParams }: Props
             {isOwner ? (
               <Button asChild variant="outline" shape="pill" size="lg">
                 <Link href="/studio/profile">
-                  <Pencil /> Profilimi Düzenle
+                  <Pencil /> {t("Profilimi Düzenle")}
                 </Link>
               </Button>
             ) : (
@@ -164,12 +169,12 @@ export default async function CreatorProfilePage({ params, searchParams }: Props
             {creator.twin?.live && ai.available ? (
               <Button asChild variant="outline" shape="pill" size="lg">
                 <Link href={`/chat/${creator.username}`}>
-                  <MessageCircle /> AI İkizimle Sohbet Et
+                  <MessageCircle /> {t("AI İkizimle Sohbet Et")}
                 </Link>
               </Button>
             ) : (
-              <Button type="button" variant="outline" shape="pill" size="lg" disabled title={creator.twin?.live ? "AI sohbeti şu anda kullanılamıyor" : "AI ikizi henüz yayında değil"}>
-                <MessageCircle /> {creator.twin?.live ? "AI Sohbeti Kullanılamıyor" : "AI İkizi Yayında Değil"}
+              <Button type="button" variant="outline" shape="pill" size="lg" disabled title={creator.twin?.live ? t("AI sohbeti şu anda kullanılamıyor") : t("AI ikizi henüz yayında değil")}>
+                <MessageCircle /> {creator.twin?.live ? t("AI Sohbeti Kullanılamıyor") : t("AI İkizi Yayında Değil")}
               </Button>
             )}
             <ProfileMenu creatorId={creator.id} username={creator.username} displayName={creator.displayName} authed={Boolean(session)} />
@@ -183,15 +188,15 @@ export default async function CreatorProfilePage({ params, searchParams }: Props
             {creator.bio && <p className="mt-2 max-w-3xl whitespace-pre-line text-sm leading-relaxed text-ink-soft">{creator.bio}</p>}
             {creator.isSample && (
               <p className="mt-3 max-w-3xl rounded-xl border border-warning/30 bg-warning-soft px-3.5 py-2.5 text-xs leading-relaxed text-ink-soft" role="note">
-                <strong className="font-extrabold">Örnek profil:</strong> {creator.displayName} gerçek bir kişi değildir; HEYFANS&apos;ın nasıl çalıştığını göstermek için hazırlanmış kurgusal bir karakterdir. Takip edebilir ve AI ikiziyle günlük ücretsiz mesaj hakkınla sohbet edebilirsin; abonelik, satın alma ve hediye kapalıdır.
+                <strong className="font-extrabold">{t("Örnek profil:")}</strong> {t("{name} gerçek bir kişi değildir; HEYFANS'ın nasıl çalıştığını göstermek için hazırlanmış kurgusal bir karakterdir. Takip edebilir ve AI ikiziyle günlük ücretsiz mesaj hakkınla sohbet edebilirsin; abonelik, satın alma ve hediye kapalıdır.", { name: creator.displayName })}
               </p>
             )}
             <ul className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs font-bold">
               {creator.location && <li className="text-muted-strong">{creator.location}</li>}
               {socials.map((s) => (
                 <li key={`${s.platform}-${s.handle}`}>
-                  <a href={s.href!} target="_blank" rel="noopener noreferrer nofollow ugc" className="inline-flex items-center gap-1.5 text-brand-600 hover:underline" aria-label={`${creator.displayName} ${socialLabel(s.platform)} hesabı (yeni sekmede açılır)`}>
-                    <SocialIcon platform={s.platform} /> {socialLabel(s.platform)}
+                  <a href={s.href!} target="_blank" rel="noopener noreferrer nofollow ugc" className="inline-flex items-center gap-1.5 text-brand-600 hover:underline" aria-label={t("{name} {platform} hesabı (yeni sekmede açılır)", { name: creator.displayName, platform: t(socialLabel(s.platform)) })}>
+                    <SocialIcon platform={s.platform} /> {t(socialLabel(s.platform))}
                   </a>
                 </li>
               ))}
@@ -214,10 +219,10 @@ export default async function CreatorProfilePage({ params, searchParams }: Props
               <div className="flex items-center gap-2.5">
                 <Radio className={cn("size-6", creator.isOnline ? "text-success" : "text-muted")} aria-hidden />
                 <div>
-                  <dt className="sr-only">Durum</dt>
-                  <dd className="font-display text-lg font-extrabold leading-tight">{creator.isOnline ? "Çevrimiçi" : "Çevrimdışı"}</dd>
+                  <dt className="sr-only">{t("Durum")}</dt>
+                  <dd className="font-display text-lg font-extrabold leading-tight">{creator.isOnline ? t("Çevrimiçi") : t("Çevrimdışı")}</dd>
                   <dd className="text-[11px] text-muted-strong" aria-hidden>
-                    Şu anda
+                    {t("Şu anda")}
                   </dd>
                 </div>
               </div>
@@ -227,20 +232,26 @@ export default async function CreatorProfilePage({ params, searchParams }: Props
 
         {isOwner && (
           <p role="note" className="mt-5 rounded-xl border border-brand-200 bg-brand-50 px-4 py-3 text-xs text-brand-700">
-            Bu, profilinin herkese açık görünümü. Değişiklik yapmak için <Link href="/studio/profile" className="font-extrabold underline">Profil Düzenleyici</Link>&apos;yi kullan.
+            {t.rich("Bu, profilinin herkese açık görünümü. Değişiklik yapmak için <link>Profil Düzenleyici</link>'yi kullan.", {
+              link: (c) => (
+                <Link key="link" href="/studio/profile" className="font-extrabold underline">
+                  {c}
+                </Link>
+              ),
+            })}
           </p>
         )}
 
         {/* Sekmeler */}
-        <nav aria-label="Profil bölümleri" className="no-scrollbar mt-6 flex gap-1 overflow-x-auto border-b border-line">
-          {TABS.map((t) => (
+        <nav aria-label={t("Profil bölümleri")} className="no-scrollbar mt-6 flex gap-1 overflow-x-auto border-b border-line">
+          {TABS.map((tb) => (
             <Link
-              key={t.key}
-              href={hrefFor(t.key)}
-              aria-current={tab === t.key ? "page" : undefined}
-              className={cn("-mb-px inline-flex shrink-0 items-center gap-2 border-b-[3px] px-4 py-3.5 text-sm font-extrabold transition-colors", tab === t.key ? "border-brand-500 text-brand-600" : "border-transparent text-ink-soft hover:text-brand-600")}
+              key={tb.key}
+              href={hrefFor(tb.key)}
+              aria-current={tab === tb.key ? "page" : undefined}
+              className={cn("-mb-px inline-flex shrink-0 items-center gap-2 border-b-[3px] px-4 py-3.5 text-sm font-extrabold transition-colors", tab === tb.key ? "border-brand-500 text-brand-600" : "border-transparent text-ink-soft hover:text-brand-600")}
             >
-              <t.icon className="size-[18px]" aria-hidden /> {t.label}
+              <tb.icon className="size-[18px]" aria-hidden /> {t(tb.label)}
             </Link>
           ))}
         </nav>
@@ -256,9 +267,9 @@ export default async function CreatorProfilePage({ params, searchParams }: Props
               <section aria-labelledby="recent-posts">
                 <div className="mb-4 flex items-center justify-between gap-3">
                   <h2 id="recent-posts" className="flex items-center gap-2.5 text-xl font-extrabold tracking-[-0.03em]">
-                    <ImageIcon className="size-6 text-brand-500" aria-hidden /> Son Gönderiler
+                    <ImageIcon className="size-6 text-brand-500" aria-hidden /> {t("Son Gönderiler")}
                   </h2>
-                  {posts && posts.total > 0 && <SeeAllLink href={hrefFor("posts")}>Tüm Gönderileri Gör</SeeAllLink>}
+                  {posts && posts.total > 0 && <SeeAllLink href={hrefFor("posts")}>{t("Tüm Gönderileri Gör")}</SeeAllLink>}
                 </div>
                 {posts?.items.length ? <PostGrid posts={posts.items} sample={creator.isSample} /> : <PostsEmpty name={creator.displayName} />}
               </section>
@@ -269,13 +280,13 @@ export default async function CreatorProfilePage({ params, searchParams }: Props
             <section aria-labelledby="posts-title">
               <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
                 <h2 id="posts-title" className="text-xl font-extrabold tracking-[-0.03em]">
-                  {tab === "media" ? "Medya" : "Gönderiler"} <span className="text-sm font-bold text-muted">({formatNumber(posts.total)})</span>
+                  {tab === "media" ? t("Medya") : t("Gönderiler")} <span className="text-sm font-bold text-muted">({formatNumber(posts.total)})</span>
                 </h2>
                 {tab === "posts" && (
-                  <nav aria-label="İçerik türü" className="no-scrollbar flex gap-1.5 overflow-x-auto">
-                    <TypeChip href={hrefFor("posts")} active={!type} label="Tümü" />
-                    {POST_TYPES.map((t) => (
-                      <TypeChip key={t} href={hrefFor("posts", { type: t })} active={type === t} label={TYPE_LABELS[t] ?? t} />
+                  <nav aria-label={t("İçerik türü")} className="no-scrollbar flex gap-1.5 overflow-x-auto">
+                    <TypeChip href={hrefFor("posts")} active={!type} label={t("Tümü")} />
+                    {POST_TYPES.map((pt) => (
+                      <TypeChip key={pt} href={hrefFor("posts", { type: pt })} active={type === pt} label={TYPE_LABELS[pt] ? t(TYPE_LABELS[pt]) : pt} />
                     ))}
                   </nav>
                 )}
@@ -296,34 +307,35 @@ export default async function CreatorProfilePage({ params, searchParams }: Props
               <TwinTeaserCard creator={creator} ai={{ available: ai.available, mock: ai.mock }} />
               <Card>
                 <h2 className="mb-3 flex items-center gap-2.5 text-[15px] font-extrabold">
-                  <Sparkles className="size-[18px] text-brand-500" aria-hidden /> AI İkizi Hakkında
+                  <Sparkles className="size-[18px] text-brand-500" aria-hidden /> {t("AI İkizi Hakkında")}
                 </h2>
                 {creator.twin?.live ? (
                   <div className="grid gap-4 text-xs leading-relaxed text-ink-soft">
                     {creator.twin.shortBio && <p>{creator.twin.shortBio}</p>}
                     <ul className="grid gap-2">
                       <li>
-                        <b className="text-ink">Sohbet:</b> {creator.twin.features.chat ? "Açık" : "Kapalı"}
+                        <b className="text-ink">{t("Sohbet:")}</b> {creator.twin.features.chat ? t("Açık") : t("Kapalı")}
                       </li>
                       <li>
-                        <b className="text-ink">Sesli görüşme:</b> {creator.twin.features.voice ? "Açık" : "Kapalı"}
+                        <b className="text-ink">{t("Sesli görüşme:")}</b> {creator.twin.features.voice ? t("Açık") : t("Kapalı")}
                       </li>
                       <li>
-                        <b className="text-ink">Görüntülü görüşme:</b> {creator.twin.features.video ? "Açık" : "Kapalı"}
+                        <b className="text-ink">{t("Görüntülü görüşme:")}</b> {creator.twin.features.video ? t("Açık") : t("Kapalı")}
                       </li>
                       <li>
-                        <b className="text-ink">Ücretlendirme:</b> günde {creator.twin.freeMessagesPerDay} ücretsiz mesaj, {creator.isSample ? "örnek profilde kredili sohbet yok" : `sonrası mesaj başına ${creator.twin.messageCredits} kredi`}
+                        <b className="text-ink">{t("Ücretlendirme:")}</b>{" "}
+                        {t("günde {count} ücretsiz mesaj, {pricing}", { count: creator.twin.freeMessagesPerDay, pricing: creator.isSample ? t("örnek profilde kredili sohbet yok") : t("sonrası mesaj başına {credits} kredi", { credits: creator.twin.messageCredits }) })}
                       </li>
                     </ul>
                     <p className="rounded-xl bg-soft p-3.5">
-                      Bu AI ikizi, {creator.displayName} adlı içerik üreticisinin açık izniyle, onayladığı kişilik ayarları ve bilgi kaynaklarıyla çalışır. Yanıtlar yapay zekâ tarafından üretilir, gerçek kişi tarafından yazılmaz ve hatalı olabilir.{" "}
+                      {t("Bu AI ikizi, {name} adlı içerik üreticisinin açık izniyle, onayladığı kişilik ayarları ve bilgi kaynaklarıyla çalışır. Yanıtlar yapay zekâ tarafından üretilir, gerçek kişi tarafından yazılmaz ve hatalı olabilir.", { name: creator.displayName })}{" "}
                       <Link href="/trust-and-safety" className="font-extrabold text-brand-600 hover:underline">
-                        Güven yaklaşımımız
+                        {t("Güven yaklaşımımız")}
                       </Link>
                     </p>
                   </div>
                 ) : (
-                  <EmptyState compact icon={<Bot />} title="AI ikizi yayında değil" description="İçerik üreticisi AI ikizini yayına aldığında burada ayrıntıları görünür." />
+                  <EmptyState compact icon={<Bot />} title={t("AI ikizi yayında değil")} description={t("İçerik üreticisi AI ikizini yayına aldığında burada ayrıntıları görünür.")} />
                 )}
               </Card>
             </div>
@@ -332,7 +344,7 @@ export default async function CreatorProfilePage({ params, searchParams }: Props
           {tab === "plans" && (
             <div className="mx-auto max-w-5xl">
               <PlansCard creator={creator} activeTier={activeTier} isOwner={isOwner} full />
-              <p className="mt-4 text-center text-[11px] text-muted">Abonelikler dönem sonunda iptal edilebilir. Fiyatlar KDV dahildir; ödeme sayfasında net tutar gösterilir.</p>
+              <p className="mt-4 text-center text-[11px] text-muted">{t("Abonelikler dönem sonunda iptal edilebilir. Fiyatlar KDV dahildir; ödeme sayfasında net tutar gösterilir.")}</p>
             </div>
           )}
         </div>
@@ -349,10 +361,11 @@ function TypeChip({ href, active, label }: { href: string; active: boolean; labe
   );
 }
 
-function PostsEmpty({ name, filtered }: { name: string; filtered?: boolean }) {
+async function PostsEmpty({ name, filtered }: { name: string; filtered?: boolean }) {
+  const t = await getT();
   return (
     <Card padded={false}>
-      <EmptyState icon={<ImageIcon />} title={filtered ? "Bu türde gönderi yok" : "Henüz gönderi yok"} description={filtered ? "Başka bir içerik türü seçmeyi dene." : `${name} yeni içerik paylaştığında burada göreceksin.`} />
+      <EmptyState icon={<ImageIcon />} title={filtered ? t("Bu türde gönderi yok") : t("Henüz gönderi yok")} description={filtered ? t("Başka bir içerik türü seçmeyi dene.") : t("{name} yeni içerik paylaştığında burada göreceksin.", { name })} />
     </Card>
   );
 }

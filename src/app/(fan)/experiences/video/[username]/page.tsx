@@ -5,8 +5,12 @@ import { requireUser } from "@/lib/auth/session";
 import { AppError } from "@/lib/errors";
 import { usernameSchema } from "@/lib/validation/common";
 import { getCallAvailability } from "@/services/calls/calls";
+import { getT } from "@/i18n/server";
 
-export const metadata: Metadata = { title: "Görüntülü Görüşme" };
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getT();
+  return { title: t("Görüntülü Görüşme") };
+}
 export const dynamic = "force-dynamic";
 
 export default async function VideoCallPage({ params }: { params: Promise<{ username: string }> }) {

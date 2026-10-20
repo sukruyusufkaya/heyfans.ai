@@ -5,6 +5,8 @@ import { connectDb } from "@/lib/db/mongo";
 import type { SessionUser } from "@/lib/auth/session";
 import { CreatorProfile } from "@/models/creator";
 import { User } from "@/models/identity";
+import { LOCALE_META, type Locale } from "@/i18n/config";
+import { createTranslator, type Translator } from "@/i18n/translate";
 
 export type AdminActor = { id: string; adminRole: string | null };
 export const actorOf = (u: Pick<SessionUser, "id" | "adminRole">): AdminActor => ({ id: u.id, adminRole: u.adminRole });
@@ -67,11 +69,11 @@ export async function loadCreators(ids: (Types.ObjectId | string | null | undefi
 export const TZ = "Europe/Istanbul";
 
 /** Son n ayın anahtarları ("2026-10") ve etiketleri; eski → yeni. Europe/Istanbul takvimine göre. */
-export function monthBuckets(n: number, now = new Date()) {
+export function monthBuckets(n: number, now = new Date(), locale: Locale = "tr") {
   const parts = new Intl.DateTimeFormat("en-CA", { timeZone: TZ, year: "numeric", month: "2-digit" }).formatToParts(now);
   const y = Number(parts.find((p) => p.type === "year")!.value);
   const m = Number(parts.find((p) => p.type === "month")!.value);
-  const fmt = new Intl.DateTimeFormat("tr-TR", { month: "short", timeZone: "UTC" });
+  const fmt = new Intl.DateTimeFormat(LOCALE_META[locale].intl, { month: "short", timeZone: "UTC" });
   const out: { key: string; label: string; start: Date; end: Date }[] = [];
   for (let i = n - 1; i >= 0; i--) {
     const d = new Date(Date.UTC(y, m - 1 - i, 1));
@@ -91,11 +93,14 @@ export const DAY_MS = 86_400_000;
 export const daysAgo = (n: number, now = new Date()) => new Date(now.getTime() - n * DAY_MS);
 
 /** Önceki dönemle yüzde fark rozeti (taban 0 ise gösterilmez — sahte yüzde yok). */
-export function pctDelta(cur: number, prev: number): { value: string; direction: "up" | "down" | "flat" } | null {
+export function pctDelta(cur: number, prev: number, locale: Locale = "tr"): { value: string; direction: "up" | "down" | "flat" } | null {
   if (!prev) return null;
   const pct = ((cur - prev) / prev) * 100;
-  if (Math.abs(pct) < 0.05) return { value: "%0", direction: "flat" };
-  return { value: `${pct > 0 ? "+" : "-"}%${Math.abs(pct).toLocaleString("tr-TR", { maximumFractionDigits: 1 })}`, direction: pct > 0 ? "up" : "down" };
+  // Türkçede yüzde işareti öne yazılır (%12,5); diğer dillerde sona (12.5%).
+  const withPct = (n: string) => (locale === "tr" ? `%${n}` : `${n}%`);
+  if (Math.abs(pct) < 0.05) return { value: withPct("0"), direction: "flat" };
+  const n = Math.abs(pct).toLocaleString(LOCALE_META[locale].intl, { maximumFractionDigits: 1 });
+  return { value: `${pct > 0 ? "+" : "-"}${withPct(n)}`, direction: pct > 0 ? "up" : "down" };
 }
 
 export function percentile(sorted: number[], p: number) {
@@ -104,14 +109,18 @@ export function percentile(sorted: number[], p: number) {
   return sorted[idx]!;
 }
 
-export function msToHuman(ms: number | null) {
+const TR_TRANSLATOR = createTranslator("tr", {});
+
+/** Süreyi okunur biçime çevirir. `t` verilmezse Türkçe; istek dilinde için `await getT()` çevirmenini geçin. */
+export function msToHuman(ms: number | null, t: Translator = TR_TRANSLATOR) {
   if (ms === null || !Number.isFinite(ms)) return "—";
+  const nf = new Intl.NumberFormat(LOCALE_META[t.locale].intl, { maximumFractionDigits: 1 });
   const min = ms / 60000;
-  if (min < 1) return "< 1 dk";
-  if (min < 90) return `${Math.round(min)} dk`;
+  if (min < 1) return t("< 1 dk");
+  if (min < 90) return t("{n} dk", { n: Math.round(min) });
   const h = min / 60;
-  if (h < 48) return `${h.toLocaleString("tr-TR", { maximumFractionDigits: 1 })} sa`;
-  return `${(h / 24).toLocaleString("tr-TR", { maximumFractionDigits: 1 })} gün`;
+  if (h < 48) return t("{n} sa", { n: nf.format(h) });
+  return t("{n} gün", { n: nf.format(h / 24) });
 }
 
 export const REGEX_SAFE = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");

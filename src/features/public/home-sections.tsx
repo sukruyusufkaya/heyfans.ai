@@ -38,7 +38,9 @@ import { CategoryIcon, categoryLabel } from "@/components/creator/category-icon"
 import { CreatorPhoto } from "@/components/creator/creator-photo";
 import { AiTwinLabel } from "@/components/ui/badge";
 import { SocialIcon, socialLabel } from "@/features/public/social-icon";
-import { cn, formatCompact } from "@/lib/utils";
+import { getFormatters, getT } from "@/i18n/server";
+import { m } from "@/i18n/m";
+import { cn } from "@/lib/utils";
 import type { CreatorCard } from "@/services/creators/public";
 
 type Person = Pick<CreatorCard, "id" | "username" | "displayName" | "avatarUrl" | "coverUrl" | "categories">;
@@ -103,14 +105,15 @@ function Bubble({ from, children }: { from: "ai" | "user"; children: React.React
   return <p className={cn("max-w-[86%] rounded-2xl px-2.5 py-1.5 text-[9px] leading-snug", from === "ai" ? "self-start rounded-es-sm bg-soft text-ink-soft" : "self-end rounded-ee-sm bg-brand-500 text-white")}>{children}</p>;
 }
 
-function ChatHeader({ p }: { p?: Person }) {
+async function ChatHeader({ p }: { p?: Person }) {
+  const t = await getT();
   return (
     <div className="mb-2 flex items-center gap-2 border-b border-line pb-2">
       <span className="size-7 overflow-hidden rounded-full">
         <CreatorPhoto src={p?.avatarUrl} name={p?.displayName ?? "Creator"} rounded="rounded-full" showMonogram={false} />
       </span>
       <span className="min-w-0 flex-1">
-        <span className="block truncate text-[10px] font-extrabold text-ink">{p?.displayName ?? "Creator"}</span>
+        <span className="block truncate text-[10px] font-extrabold text-ink">{p?.displayName ?? t("Creator")}</span>
         <AiTwinLabel className="mt-0.5 !px-1.5 !py-0.5 !text-[6.5px]" />
       </span>
       <span className="size-1.5 rounded-full bg-success" />
@@ -118,10 +121,11 @@ function ChatHeader({ p }: { p?: Person }) {
   );
 }
 
-function ChatInput() {
+async function ChatInput() {
+  const t = await getT();
   return (
     <div className="mt-2 flex h-8 items-center gap-2 rounded-full border border-line bg-soft px-2.5 text-[8px] text-muted">
-      Mesajını yaz…
+      {t("Mesajını yaz…")}
       <span className="ms-auto grid size-5 place-items-center rounded-full bg-brand-500 text-white">
         <Send className="rtl:-scale-x-100 size-2.5" />
       </span>
@@ -137,7 +141,7 @@ export interface HeroStat {
   hint: string;
 }
 
-export function HomeHero({
+export async function HomeHero({
   people,
   catIcons,
   badge,
@@ -156,7 +160,8 @@ export function HomeHero({
   secondary: { label: string; href: string };
   stats: HeroStat[];
 }) {
-  const parts = title.split(". ").map((t) => t.replace(/\.$/, "")).filter(Boolean);
+  const t = await getT();
+  const parts = title.split(". ").map((s) => s.replace(/\.$/, "")).filter(Boolean);
   const cols = [0, 1, 2].map((c) => [0, 1, 2].map((r) => pick(people, c * 3 + r)));
   const lead = pick(people, 0);
   return (
@@ -190,15 +195,15 @@ export function HomeHero({
           </div>
           <ul className="mt-9 grid max-w-[560px] grid-cols-3 gap-3">
             {[
-              { icon: BadgeCheck, t: "Doğrulanmış creator'lar", d: "Kimliği ve hesabı doğrulanan gerçek kişiler" },
-              { icon: MessageCircle, t: "Gerçek sohbetler", d: "Metin, ses ve görsellerle etkileşim" },
-              { icon: ShieldCheck, t: "Güvenli ve kontrollü", d: "Sınırları creator belirler" },
+              { icon: BadgeCheck, title: t("Doğrulanmış creator'lar"), d: t("Kimliği ve hesabı doğrulanan gerçek kişiler") },
+              { icon: MessageCircle, title: t("Gerçek sohbetler"), d: t("Metin, ses ve görsellerle etkileşim") },
+              { icon: ShieldCheck, title: t("Güvenli ve kontrollü"), d: t("Sınırları creator belirler") },
             ].map((f) => (
-              <li key={f.t} className="flex flex-col gap-2">
+              <li key={f.title} className="flex flex-col gap-2">
                 <span className="grid size-10 place-items-center rounded-2xl bg-white text-brand-500 shadow-[0_8px_20px_-10px_rgba(236,0,136,0.5)] ring-1 ring-brand-100">
                   <f.icon className="size-5" />
                 </span>
-                <span className="text-[12px] font-extrabold leading-tight text-ink">{f.t}</span>
+                <span className="text-[12px] font-extrabold leading-tight text-ink">{f.title}</span>
                 <span className="text-[11px] leading-snug text-muted-strong">{f.d}</span>
               </li>
             ))}
@@ -220,7 +225,7 @@ export function HomeHero({
                       <span className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/55 to-transparent" />
                       {cat && (
                         <span className="absolute bottom-2.5 start-3 inline-flex skew-x-[8deg] items-center gap-1.5 rounded-full bg-white/20 px-2.5 py-1 text-[10px] font-extrabold text-white ring-1 ring-white/30 backdrop-blur-md">
-                          <CategoryIcon name={catIcons[cat] ?? "sparkles"} className="size-3" /> {categoryLabel(cat)}
+                          <CategoryIcon name={catIcons[cat] ?? "sparkles"} className="size-3" /> {t(categoryLabel(cat))}
                         </span>
                       )}
                     </div>
@@ -243,7 +248,7 @@ export function HomeHero({
           <span className="pointer-events-none absolute inset-y-0 start-0 hidden w-24 bg-gradient-to-r from-white to-transparent lg:block" />
 
           {/* Uygulama ana ekranı */}
-          <Phone label="Uygulama ana ekranı" className="hf-float absolute end-[16%] top-[8%] z-10 hidden md:block">
+          <Phone label={t("Uygulama ana ekranı")} className="hf-float absolute end-[16%] top-[8%] z-10 hidden md:block">
             <div className="mb-2 flex items-center justify-between">
               <LogoMark className="h-5" />
               <span className="flex gap-1.5 text-muted">
@@ -252,14 +257,14 @@ export function HomeHero({
               </span>
             </div>
             <div className="mb-2 flex gap-1">
-              {["Senin için", "Trend", "Yeni"].map((t, i) => (
-                <span key={t} className={cn("rounded-full px-2 py-0.5 text-[7.5px] font-extrabold", i === 0 ? "bg-brand-500 text-white" : "bg-soft text-muted-strong")}>
-                  {t}
+              {[t("Senin için"), t("Trend"), t("Yeni")].map((label, i) => (
+                <span key={label} className={cn("rounded-full px-2 py-0.5 text-[7.5px] font-extrabold", i === 0 ? "bg-brand-500 text-white" : "bg-soft text-muted-strong")}>
+                  {label}
                 </span>
               ))}
             </div>
             <p className="mb-1.5 flex items-center justify-between text-[9px] font-extrabold text-ink">
-              Trend creator&apos;lar <span className="text-[7px] text-brand-500">Tümü</span>
+              {t("Trend creator'lar")} <span className="text-[7px] text-brand-500">{t("Tümü")}</span>
             </p>
             <div className="grid grid-cols-2 gap-1.5">
               {[0, 1, 2, 3].map((i) => {
@@ -274,29 +279,29 @@ export function HomeHero({
                 );
               })}
             </div>
-            <p className="mb-1 mt-2 text-[9px] font-extrabold text-ink">Kategoriler</p>
+            <p className="mb-1 mt-2 text-[9px] font-extrabold text-ink">{t("Kategoriler")}</p>
             <div className="grid grid-cols-4 gap-1">
               {Object.entries(catIcons)
                 .slice(0, 4)
                 .map(([slug, icon]) => (
                   <span key={slug} className="flex flex-col items-center gap-0.5 rounded-lg bg-brand-50 py-1.5 text-[6.5px] font-bold text-brand-700">
                     <CategoryIcon name={icon} className="size-3" />
-                    <span className="max-w-full truncate px-0.5">{categoryLabel(slug)}</span>
+                    <span className="max-w-full truncate px-0.5">{t(categoryLabel(slug))}</span>
                   </span>
                 ))}
             </div>
           </Phone>
 
           {/* Sohbet ekranı */}
-          <Phone label="AI ikizi sohbet ekranı" className="hf-float-delay absolute -end-1 top-[30%] z-20 hidden lg:block" size="sm">
+          <Phone label={t("AI ikizi sohbet ekranı")} className="hf-float-delay absolute -end-1 top-[30%] z-20 hidden lg:block" size="sm">
             <ChatHeader p={lead} />
             <div className="flex flex-col gap-1.5">
-              <Bubble from="ai">Selam! Seni görmek çok güzel 💕 Bugün ne yapmak istersin?</Bubble>
-              <Bubble from="user">Hafta sonu için bir şehir rotası önerir misin?</Bubble>
-              <Bubble from="ai">Tabii! Sana özel bir plan hazırladım ✨</Bubble>
+              <Bubble from="ai">{t("Selam! Seni görmek çok güzel 💕 Bugün ne yapmak istersin?")}</Bubble>
+              <Bubble from="user">{t("Hafta sonu için bir şehir rotası önerir misin?")}</Bubble>
+              <Bubble from="ai">{t("Tabii! Sana özel bir plan hazırladım ✨")}</Bubble>
               <div className="grid h-14 place-items-center rounded-xl bg-gradient-to-br from-[#2b0f2f] to-[#7a1a5c] text-[8px] font-bold text-white">
                 <span className="flex items-center gap-1">
-                  <Lock className="size-3" /> Özel rota planı
+                  <Lock className="size-3" /> {t("Özel rota planı")}
                 </span>
               </div>
             </div>
@@ -328,11 +333,12 @@ export function HomeHero({
 }
 
 /* ─── 02 · Yolculuk (creator → bağlantı) ─────────────────── */
-export function JourneySection({ people }: { people: Person[] }) {
+export async function JourneySection({ people }: { people: Person[] }) {
+  const t = await getT();
   const steps = [
     {
-      title: "Creator katılır",
-      text: "Sosyal hesaplarını bağlar, kimliğini doğrular ve AI ikizini oluşturur.",
+      title: t("Creator katılır"),
+      text: t("Sosyal hesaplarını bağlar, kimliğini doğrular ve AI ikizini oluşturur."),
       visual: (
         <div className="flex h-full gap-2">
           <div className="w-[42%] overflow-hidden rounded-xl">
@@ -342,7 +348,7 @@ export function JourneySection({ people }: { people: Person[] }) {
             {(["instagram", "tiktok", "youtube", "x"] as const).map((p) => (
               <li key={p} className="flex items-center gap-1.5 rounded-lg bg-white px-2 py-1.5 text-[9px] font-bold text-ink shadow-sm ring-1 ring-line">
                 <SocialIcon platform={p} className="size-3" />
-                <span className="flex-1">{socialLabel(p)}</span>
+                <span className="flex-1">{t(socialLabel(p))}</span>
                 <Check className="size-3 text-success" strokeWidth={3} />
               </li>
             ))}
@@ -351,23 +357,23 @@ export function JourneySection({ people }: { people: Person[] }) {
       ),
     },
     {
-      title: "AI ikizi doğar",
-      text: "Creator'ın onayladığı kişilik, bilgi ve sınırlarla, açıkça etiketlenmiş bir ikiz.",
+      title: t("AI ikizi doğar"),
+      text: t("Creator'ın onayladığı kişilik, bilgi ve sınırlarla, açıkça etiketlenmiş bir ikiz."),
       visual: (
         <div className="relative h-full overflow-hidden rounded-xl">
           <CreatorPhoto src={pick(people, 2)?.avatarUrl} name="Creator" rounded="rounded-none" showMonogram={false} />
           <span className="absolute inset-y-0 end-0 w-1/2 bg-gradient-to-l from-[#8b3dff]/70 via-brand-500/40 to-transparent mix-blend-multiply" />
           <span className="absolute inset-y-3 start-1/2 w-px bg-white/80" />
-          <span className="absolute bottom-2 start-2 rounded-full bg-black/45 px-2 py-0.5 text-[8px] font-extrabold text-white">Gerçek creator</span>
+          <span className="absolute bottom-2 start-2 rounded-full bg-black/45 px-2 py-0.5 text-[8px] font-extrabold text-white">{t("Gerçek creator")}</span>
           <span className="absolute bottom-2 end-2 inline-flex items-center gap-1 rounded-full bg-white/90 px-2 py-0.5 text-[8px] font-extrabold text-violet">
-            <Sparkles className="size-2.5" /> AI ikizi
+            <Sparkles className="size-2.5" /> {t("AI ikizi")}
           </span>
         </div>
       ),
     },
     {
-      title: "Hayranlar keşfeder",
-      text: "Kategori, trend ve ilgi alanına göre sevdiği creator'ları bulur.",
+      title: t("Hayranlar keşfeder"),
+      text: t("Kategori, trend ve ilgi alanına göre sevdiği creator'ları bulur."),
       visual: (
         <div className="grid h-full grid-cols-2 gap-1.5">
           {[3, 4, 5, 6].map((i) => {
@@ -383,13 +389,13 @@ export function JourneySection({ people }: { people: Person[] }) {
       ),
     },
     {
-      title: "Sohbet başlar",
-      text: "Metin, ses ve görsellerle kişisel, her an ulaşılabilir sohbetler.",
+      title: t("Sohbet başlar"),
+      text: t("Metin, ses ve görsellerle kişisel, her an ulaşılabilir sohbetler."),
       visual: (
         <div className="flex h-full flex-col justify-center gap-1.5 rounded-xl bg-white p-2.5 ring-1 ring-line">
-          <Bubble from="ai">Selam! Bugün nasıl hissediyorsun? 😊</Bubble>
-          <Bubble from="user">Çok iyiyim! Bir tarif önerir misin?</Bubble>
-          <Bubble from="ai">Sana en sevdiğim tarifi hazırladım 🍝</Bubble>
+          <Bubble from="ai">{t("Selam! Bugün nasıl hissediyorsun? 😊")}</Bubble>
+          <Bubble from="user">{t("Çok iyiyim! Bir tarif önerir misin?")}</Bubble>
+          <Bubble from="ai">{t("Sana en sevdiğim tarifi hazırladım 🍝")}</Bubble>
           <span className="mt-1 flex gap-1.5 text-muted">
             <Mic className="size-3" />
             <ImageIcon className="size-3" />
@@ -399,18 +405,18 @@ export function JourneySection({ people }: { people: Person[] }) {
       ),
     },
     {
-      title: "Değer büyür",
-      text: "Abonelik, özel içerik, hediye ve özel deneyimlerle sürdürülebilir gelir.",
+      title: t("Değer büyür"),
+      text: t("Abonelik, özel içerik, hediye ve özel deneyimlerle sürdürülebilir gelir."),
       visual: (
         <div className="grid h-full grid-cols-2 gap-1.5">
           {[
-            { i: Crown, t: "Abonelik" },
-            { i: MessageCircle, t: "Mesaj başına" },
-            { i: Lock, t: "Premium içerik" },
-            { i: Gift, t: "Hediye ve bahşiş" },
+            { i: Crown, title: t("Abonelik") },
+            { i: MessageCircle, title: t("Mesaj başına") },
+            { i: Lock, title: t("Premium içerik") },
+            { i: Gift, title: t("Hediye ve bahşiş") },
           ].map((x) => (
-            <span key={x.t} className="flex flex-col items-center justify-center gap-1 rounded-xl bg-white text-center text-[9px] font-extrabold text-ink ring-1 ring-line">
-              <x.i className="size-4 text-brand-500" /> {x.t}
+            <span key={x.title} className="flex flex-col items-center justify-center gap-1 rounded-xl bg-white text-center text-[9px] font-extrabold text-ink ring-1 ring-line">
+              <x.i className="size-4 text-brand-500" /> {x.title}
             </span>
           ))}
         </div>
@@ -421,10 +427,10 @@ export function JourneySection({ people }: { people: Person[] }) {
     <section className="mx-auto max-w-[1440px] px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
       <SectionHead
         n="02"
-        eyebrow="Nasıl çalışır"
-        title="Creator'dan bağlantıya,"
-        accent="basit ve güçlü bir yolculuk."
-        text="HEYFANS, creator'ın mevcut kitlesini etkileşimli AI ikizi deneyimlerine dönüştürür. Katılımdan kazanca kadar her adım hem creator hem hayran için akıcıdır."
+        eyebrow={t("Nasıl çalışır")}
+        title={t("Creator'dan bağlantıya,")}
+        accent={t("basit ve güçlü bir yolculuk.")}
+        text={t("HEYFANS, creator'ın mevcut kitlesini etkileşimli AI ikizi deneyimlerine dönüştürür. Katılımdan kazanca kadar her adım hem creator hem hayran için akıcıdır.")}
         align="split"
       />
       <ol className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
@@ -450,15 +456,15 @@ export function JourneySection({ people }: { people: Person[] }) {
       </ol>
       <ul className="mt-6 grid gap-px overflow-hidden rounded-[20px] border border-line bg-line sm:grid-cols-2 lg:grid-cols-4">
         {[
-          { i: Users, t: "Daha fazla etkileşim", d: "Hayranlarla daha derin ve sık iletişim" },
-          { i: TrendingUp, t: "Yeni gelir akışları", d: "Birden fazla kazanç modeli bir arada" },
-          { i: Heart, t: "Güçlü hayran bağı", d: "Kişisel ve her an ulaşılabilir deneyim" },
-          { i: InfinityIcon, t: "Uzun vadeli büyüme", d: "Ölçeklenebilir bir creator ekonomisi" },
+          { i: Users, title: t("Daha fazla etkileşim"), d: t("Hayranlarla daha derin ve sık iletişim") },
+          { i: TrendingUp, title: t("Yeni gelir akışları"), d: t("Birden fazla kazanç modeli bir arada") },
+          { i: Heart, title: t("Güçlü hayran bağı"), d: t("Kişisel ve her an ulaşılabilir deneyim") },
+          { i: InfinityIcon, title: t("Uzun vadeli büyüme"), d: t("Ölçeklenebilir bir creator ekonomisi") },
         ].map((b) => (
-          <li key={b.t} className="flex items-center gap-3 bg-white px-5 py-4">
+          <li key={b.title} className="flex items-center gap-3 bg-white px-5 py-4">
             <b.i className="size-6 shrink-0 text-brand-500" />
             <span>
-              <span className="block text-[13px] font-extrabold text-ink">{b.t}</span>
+              <span className="block text-[13px] font-extrabold text-ink">{b.title}</span>
               <span className="block text-[11px] text-muted-strong">{b.d}</span>
             </span>
           </li>
@@ -469,12 +475,13 @@ export function JourneySection({ people }: { people: Person[] }) {
 }
 
 /* ─── 04 · Hayran deneyimi ───────────────────────────────── */
-export function FanExperienceSection({ people, catIcons }: { people: Person[]; catIcons: CategoryIconMap }) {
+export async function FanExperienceSection({ people, catIcons }: { people: Person[]; catIcons: CategoryIconMap }) {
+  const t = await getT();
   const lead = pick(people, 4);
   const screens = [
     {
-      title: "Creator'ları keşfet",
-      text: "Kategorilere göz at, trendleri takip et.",
+      title: t("Creator'ları keşfet"),
+      text: t("Kategorilere göz at, trendleri takip et."),
       body: (
         <>
           <div className="mb-1.5 flex gap-1">
@@ -482,7 +489,7 @@ export function FanExperienceSection({ people, catIcons }: { people: Person[]; c
               .slice(0, 3)
               .map(([slug, icon]) => (
                 <span key={slug} className="inline-flex items-center gap-0.5 rounded-full bg-brand-50 px-1.5 py-0.5 text-[6.5px] font-bold text-brand-700">
-                  <CategoryIcon name={icon} className="size-2.5" /> {categoryLabel(slug)}
+                  <CategoryIcon name={icon} className="size-2.5" /> {t(categoryLabel(slug))}
                 </span>
               ))}
           </div>
@@ -503,44 +510,44 @@ export function FanExperienceSection({ people, catIcons }: { people: Person[]; c
       ),
     },
     {
-      title: "Sohbet başlat",
-      text: "AI ikizine ilk mesajını gönder.",
+      title: t("Sohbet başlat"),
+      text: t("AI ikizine ilk mesajını gönder."),
       body: (
         <>
           <ChatHeader p={lead} />
           <div className="flex flex-col gap-1">
-            <Bubble from="ai">Hoş geldin! Seni tanımak isterim 😊</Bubble>
-            <Bubble from="user">Bu hafta sonu Kapadokya&apos;ya gidiyorum!</Bubble>
-            <Bubble from="ai">Harika! Gün doğumu rotamı paylaşayım mı? 🎈</Bubble>
+            <Bubble from="ai">{t("Hoş geldin! Seni tanımak isterim 😊")}</Bubble>
+            <Bubble from="user">{t("Bu hafta sonu Kapadokya'ya gidiyorum!")}</Bubble>
+            <Bubble from="ai">{t("Harika! Gün doğumu rotamı paylaşayım mı? 🎈")}</Bubble>
           </div>
           <ChatInput />
         </>
       ),
     },
     {
-      title: "Deneyimi kişiselleştir",
-      text: "İlgi alanların ve tarzınla şekillenir.",
+      title: t("Deneyimi kişiselleştir"),
+      text: t("İlgi alanların ve tarzınla şekillenir."),
       body: (
         <div className="space-y-2">
-          <p className="text-[8px] font-extrabold text-ink">İlgi alanların</p>
+          <p className="text-[8px] font-extrabold text-ink">{t("İlgi alanların")}</p>
           <div className="flex flex-wrap gap-1">
-            {["Seyahat", "Fitness", "Müzik", "Yemek"].map((t, i) => (
-              <span key={t} className={cn("rounded-full px-1.5 py-0.5 text-[6.5px] font-bold", i < 2 ? "bg-brand-500 text-white" : "bg-soft text-muted-strong")}>
-                {t}
+            {[t("Seyahat"), t("Fitness"), t("Müzik"), t("Yemek")].map((label, i) => (
+              <span key={label} className={cn("rounded-full px-1.5 py-0.5 text-[6.5px] font-bold", i < 2 ? "bg-brand-500 text-white" : "bg-soft text-muted-strong")}>
+                {label}
               </span>
             ))}
           </div>
-          <p className="text-[8px] font-extrabold text-ink">Sohbet tarzı</p>
+          <p className="text-[8px] font-extrabold text-ink">{t("Sohbet tarzı")}</p>
           <div className="grid grid-cols-3 gap-1 text-center text-[6.5px] font-bold">
-            {["Samimi", "Eğlenceli", "Sakin"].map((t, i) => (
-              <span key={t} className={cn("rounded-md py-1", i === 0 ? "bg-brand-100 text-brand-700" : "bg-soft text-muted-strong")}>
-                {t}
+            {[t("Samimi"), t("Eğlenceli"), t("Sakin")].map((label, i) => (
+              <span key={label} className={cn("rounded-md py-1", i === 0 ? "bg-brand-100 text-brand-700" : "bg-soft text-muted-strong")}>
+                {label}
               </span>
             ))}
           </div>
-          {["Beni hatırla", "Yeni içerik bildirimi"].map((t) => (
-            <p key={t} className="flex items-center justify-between rounded-md bg-soft px-1.5 py-1 text-[7px] font-bold text-ink">
-              {t}
+          {[t("Beni hatırla"), t("Yeni içerik bildirimi")].map((label) => (
+            <p key={label} className="flex items-center justify-between rounded-md bg-soft px-1.5 py-1 text-[7px] font-bold text-ink">
+              {label}
               <span className="flex h-3 w-5 items-center justify-end rounded-full bg-brand-500 px-0.5">
                 <span className="size-2 rounded-full bg-white" />
               </span>
@@ -550,19 +557,19 @@ export function FanExperienceSection({ people, catIcons }: { people: Person[]; c
       ),
     },
     {
-      title: "Daha fazlasının kilidini aç",
-      text: "Üyelik veya tekil içerikle derinleş.",
+      title: t("Daha fazlasının kilidini aç"),
+      text: t("Üyelik veya tekil içerikle derinleş."),
       body: (
         <div className="space-y-1.5">
-          <p className="text-center text-[8px] font-extrabold text-ink">Üyelik planları</p>
+          <p className="text-center text-[8px] font-extrabold text-ink">{t("Üyelik planları")}</p>
           {[
-            { n: "Temel", d: "Genel gönderiler" },
-            { n: "Premium", d: "Sınırsız sohbet", pop: true },
-            { n: "VIP", d: "Özel deneyimler" },
+            { n: t("Temel"), d: t("Genel gönderiler") },
+            { n: t("Premium"), d: t("Sınırsız sohbet"), pop: true },
+            { n: t("VIP"), d: t("Özel deneyimler") },
           ].map((pl) => (
             <div key={pl.n} className={cn("rounded-lg px-2 py-1.5", pl.pop ? "bg-gradient-to-r from-brand-500 to-[#c4007a] text-white" : "bg-soft text-ink")}>
               <p className="flex items-center justify-between text-[8px] font-extrabold">
-                {pl.n} {pl.pop && <span className="rounded-full bg-white/25 px-1 text-[6px]">En popüler</span>}
+                {pl.n} {pl.pop && <span className="rounded-full bg-white/25 px-1 text-[6px]">{t("En popüler")}</span>}
               </p>
               <p className={cn("text-[6.5px]", pl.pop ? "text-white/85" : "text-muted-strong")}>{pl.d}</p>
             </div>
@@ -570,7 +577,7 @@ export function FanExperienceSection({ people, catIcons }: { people: Person[]; c
           <div className="grid grid-cols-3 gap-1">
             {[0, 1, 2].map((i) => (
               <div key={i} className="relative aspect-square overflow-hidden rounded-md">
-                <CreatorPhoto src={pick(people, i + 5)?.coverUrl} name="İçerik" rounded="rounded-none" showMonogram={false} />
+                <CreatorPhoto src={pick(people, i + 5)?.coverUrl} name={t("İçerik")} rounded="rounded-none" showMonogram={false} />
                 {i > 0 && (
                   <span className="absolute inset-0 grid place-items-center bg-black/45 text-white">
                     <Lock className="size-2.5" />
@@ -583,22 +590,22 @@ export function FanExperienceSection({ people, catIcons }: { people: Person[]; c
       ),
     },
     {
-      title: "Hep yeni bir şey",
-      text: "Yeni paylaşımlar ve sana özel anlar.",
+      title: t("Hep yeni bir şey"),
+      text: t("Yeni paylaşımlar ve sana özel anlar."),
       body: (
         <div className="space-y-1.5">
           <p className="flex items-center gap-1 rounded-lg bg-brand-50 px-1.5 py-1 text-[7px] font-bold text-brand-700">
-            <Bell className="size-2.5" /> Senin için yeni bir paylaşım var
+            <Bell className="size-2.5" /> {t("Senin için yeni bir paylaşım var")}
           </p>
           <div className="relative aspect-[4/3] overflow-hidden rounded-lg">
-            <CreatorPhoto src={pick(people, 7)?.coverUrl} name="Paylaşım" rounded="rounded-none" showMonogram={false} />
-            <span className="absolute bottom-1 start-1 rounded-full bg-black/50 px-1.5 py-0.5 text-[6.5px] font-bold text-white">Kamera arkası</span>
+            <CreatorPhoto src={pick(people, 7)?.coverUrl} name={t("Paylaşım")} rounded="rounded-none" showMonogram={false} />
+            <span className="absolute bottom-1 start-1 rounded-full bg-black/50 px-1.5 py-0.5 text-[6.5px] font-bold text-white">{t("Kamera arkası")}</span>
           </div>
           <div className="flex items-center gap-1.5 rounded-lg bg-soft px-1.5 py-1">
             <span className="size-5 overflow-hidden rounded-full">
               <CreatorPhoto src={pick(people, 7)?.avatarUrl} name="Creator" rounded="rounded-full" showMonogram={false} />
             </span>
-            <span className="flex-1 text-[6.5px] font-bold text-ink">Sesli mesaj</span>
+            <span className="flex-1 text-[6.5px] font-bold text-ink">{t("Sesli mesaj")}</span>
             <span className="flex items-end gap-px" aria-hidden>
               {[3, 6, 4, 8, 5, 7, 3].map((h, i) => (
                 <span key={i} className="w-0.5 rounded-full bg-brand-500" style={{ height: h * 1.4 }} />
@@ -612,7 +619,7 @@ export function FanExperienceSection({ people, catIcons }: { people: Person[]; c
   return (
     <section className="relative overflow-hidden bg-[linear-gradient(180deg,#fff7fb_0%,#ffffff_100%)] py-16 lg:py-20">
       <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8">
-        <SectionHead n="04" eyebrow="Hayran deneyimi" title="Keşfet. Sohbet et. Kişiselleştir." accent="Kilidi aç, tekrar gel." text="Sevdiğin creator'ların AI ikizleriyle eğlenceli, güvenli ve kişisel bir bağ kurmanın en kolay yolu." align="split" />
+        <SectionHead n="04" eyebrow={t("Hayran deneyimi")} title={t("Keşfet. Sohbet et. Kişiselleştir.")} accent={t("Kilidi aç, tekrar gel.")} text={t("Sevdiğin creator'ların AI ikizleriyle eğlenceli, güvenli ve kişisel bir bağ kurmanın en kolay yolu.")} align="split" />
         <ol className="-mx-4 flex snap-x snap-mandatory gap-5 overflow-x-auto px-4 pb-4 no-scrollbar lg:mx-0 lg:grid lg:grid-cols-5 lg:overflow-visible lg:px-0">
           {screens.map((s, i) => (
             <li key={s.title} className="flex snap-center flex-col items-center text-center">
@@ -623,7 +630,7 @@ export function FanExperienceSection({ people, catIcons }: { people: Person[]; c
                   <span className="block text-[11px] text-muted-strong">{s.text}</span>
                 </span>
               </div>
-              <Phone label={`${s.title} ekranı`} size="sm" className={cn(i % 2 === 1 && "lg:translate-y-6")}>
+              <Phone label={t("{title} ekranı", { title: s.title })} size="sm" className={cn(i % 2 === 1 && "lg:translate-y-6")}>
                 <div className="min-h-[220px]">{s.body}</div>
               </Phone>
             </li>
@@ -631,16 +638,16 @@ export function FanExperienceSection({ people, catIcons }: { people: Person[]; c
         </ol>
         <ul className="mt-10 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
           {[
-            { i: Sparkles, t: "Anında başla", d: "Birkaç saniyede kaydol, keşfetmeye başla" },
-            { i: HandHeart, t: "Kişisel deneyim", d: "Ne kadar konuşursan o kadar sana özel" },
-            { i: MessageCircle, t: "Çok yönlü etkileşim", d: "Metin, ses, görsel ve özel deneyimler" },
-            { i: Lock, t: "Özel içerik", d: "Creator'a özel içeriklerin kilidini aç" },
-            { i: Bell, t: "Hep yeni bir şey", d: "Taze içerikler ve süregelen sohbetler" },
+            { i: Sparkles, title: t("Anında başla"), d: t("Birkaç saniyede kaydol, keşfetmeye başla") },
+            { i: HandHeart, title: t("Kişisel deneyim"), d: t("Ne kadar konuşursan o kadar sana özel") },
+            { i: MessageCircle, title: t("Çok yönlü etkileşim"), d: t("Metin, ses, görsel ve özel deneyimler") },
+            { i: Lock, title: t("Özel içerik"), d: t("Creator'a özel içeriklerin kilidini aç") },
+            { i: Bell, title: t("Hep yeni bir şey"), d: t("Taze içerikler ve süregelen sohbetler") },
           ].map((f) => (
-            <li key={f.t} className="flex items-start gap-3 rounded-2xl bg-white p-4 ring-1 ring-line">
+            <li key={f.title} className="flex items-start gap-3 rounded-2xl bg-white p-4 ring-1 ring-line">
               <f.i className="mt-0.5 size-5 shrink-0 text-brand-500" />
               <span>
-                <span className="block text-[13px] font-extrabold text-ink">{f.t}</span>
+                <span className="block text-[13px] font-extrabold text-ink">{f.title}</span>
                 <span className="block text-[11px] leading-snug text-muted-strong">{f.d}</span>
               </span>
             </li>
@@ -652,14 +659,15 @@ export function FanExperienceSection({ people, catIcons }: { people: Person[]; c
 }
 
 /* ─── 05 · Creator avantajı ──────────────────────────────── */
-export function CreatorAdvantageSection({ people }: { people: Person[] }) {
+export async function CreatorAdvantageSection({ people }: { people: Person[] }) {
+  const t = await getT();
   const hero = pick(people, 2);
   const points = [
-    { i: Users, t: "Kitleni getir", d: "Instagram, TikTok, YouTube ve X'teki takipçilerini AI ikizine taşı." },
-    { i: SlidersHorizontal, t: "AI ikizin, senin kontrolün", d: "Kişilik, konuşma tarzı, içerik erişimi, sınırlar ve fiyatları sen belirle." },
-    { i: Wallet, t: "Yeni gelir akışları", d: "Abonelik, mesaj başına ödeme, premium içerik, hediye ve özel deneyimler." },
-    { i: Heart, t: "Daha derin hayran ilişkileri", d: "Hayranların 7/24 seninle bağ kurar, sadakat ve etkileşim artar." },
-    { i: BarChart3, t: "İçgörü ve analitik", d: "Gelirini, etkileşimi, öne çıkan konuları ve hayran büyümesini izle." },
+    { i: Users, title: t("Kitleni getir"), d: t("Instagram, TikTok, YouTube ve X'teki takipçilerini AI ikizine taşı.") },
+    { i: SlidersHorizontal, title: t("AI ikizin, senin kontrolün"), d: t("Kişilik, konuşma tarzı, içerik erişimi, sınırlar ve fiyatları sen belirle.") },
+    { i: Wallet, title: t("Yeni gelir akışları"), d: t("Abonelik, mesaj başına ödeme, premium içerik, hediye ve özel deneyimler.") },
+    { i: Heart, title: t("Daha derin hayran ilişkileri"), d: t("Hayranların 7/24 seninle bağ kurar, sadakat ve etkileşim artar.") },
+    { i: BarChart3, title: t("İçgörü ve analitik"), d: t("Gelirini, etkileşimi, öne çıkan konuları ve hayran büyümesini izle.") },
   ];
   return (
     <section className="relative overflow-hidden bg-night py-16 text-white lg:py-24">
@@ -668,21 +676,21 @@ export function CreatorAdvantageSection({ people }: { people: Person[] }) {
       <div className="relative mx-auto grid max-w-[1440px] gap-12 px-4 sm:px-6 lg:grid-cols-[0.9fr_1fr_0.95fr] lg:items-center lg:px-8">
         <div>
           <p className="flex items-center gap-3 text-[11px] font-black uppercase tracking-[0.22em] text-white/60">
-            <span className="font-display text-brand-400">05</span> <span className="h-px w-10 bg-white/25" /> Creator avantajı
+            <span className="font-display text-brand-400">05</span> <span className="h-px w-10 bg-white/25" /> {t("Creator avantajı")}
           </p>
           <h2 className="mt-4 font-display text-[40px] font-extrabold leading-[0.98] tracking-[-0.05em] sm:text-[54px]">
-            Senin kitlen.
+            {t("Senin kitlen.")}
             <br />
-            <span className="bg-gradient-to-r from-[#ff69b8] to-[#b98cff] bg-clip-text text-transparent">Senin ikizin.</span>
+            <span className="bg-gradient-to-r from-[#ff69b8] to-[#b98cff] bg-clip-text text-transparent">{t("Senin ikizin.")}</span>
             <br />
-            Senin kuralların.
+            {t("Senin kuralların.")}
           </h2>
-          <p className="mt-5 max-w-md text-[15px] leading-relaxed text-white/75">Mevcut takipçilerini etkileşimli bir AI ikizi deneyimine dönüştür. Daha fazla etkileşim, daha fazla gelir, tam kontrol.</p>
+          <p className="mt-5 max-w-md text-[15px] leading-relaxed text-white/75">{t("Mevcut takipçilerini etkileşimli bir AI ikizi deneyimine dönüştür. Daha fazla etkileşim, daha fazla gelir, tam kontrol.")}</p>
           <div className="relative mt-8 h-[260px] max-w-[340px] overflow-hidden rounded-[28px] ring-1 ring-white/15" aria-hidden>
             <CreatorPhoto src={hero?.avatarUrl ?? hero?.coverUrl} name={hero?.displayName ?? "Creator"} rounded="rounded-none" showMonogram={false} />
             <span className="absolute inset-0 bg-gradient-to-t from-night/80 via-transparent to-transparent" />
             <span className="absolute bottom-4 start-4 end-4 flex items-center justify-between">
-              <span className="rounded-full bg-white/15 px-3 py-1.5 text-[11px] font-extrabold backdrop-blur-md">Senin kitlen</span>
+              <span className="rounded-full bg-white/15 px-3 py-1.5 text-[11px] font-extrabold backdrop-blur-md">{t("Senin kitlen")}</span>
               <span className="flex gap-1.5">
                 {(["instagram", "tiktok", "youtube", "x"] as const).map((p) => (
                   <span key={p} className="grid size-7 place-items-center rounded-full bg-white text-ink">
@@ -696,11 +704,11 @@ export function CreatorAdvantageSection({ people }: { people: Person[] }) {
 
         <ol className="space-y-3">
           {points.map((p, i) => (
-            <li key={p.t} className="flex gap-4 rounded-2xl bg-white/[0.06] p-4 ring-1 ring-white/10 transition hover:bg-white/[0.09]">
+            <li key={p.title} className="flex gap-4 rounded-2xl bg-white/[0.06] p-4 ring-1 ring-white/10 transition hover:bg-white/[0.09]">
               <StepNo n={i + 1} />
               <div>
                 <p className="flex items-center gap-2 text-[15px] font-extrabold">
-                  <p.i className="size-4 text-brand-400" /> {p.t}
+                  <p.i className="size-4 text-brand-400" /> {p.title}
                 </p>
                 <p className="mt-1 text-[12.5px] leading-relaxed text-white/70">{p.d}</p>
               </div>
@@ -708,38 +716,38 @@ export function CreatorAdvantageSection({ people }: { people: Person[] }) {
           ))}
           <li>
             <Link href="/register?intent=creator" className="mt-2 inline-flex h-12 items-center gap-2 rounded-full bg-gradient-to-r from-brand-500 to-[#d4007c] px-7 text-sm font-extrabold text-white shadow-[0_14px_30px_-10px_rgba(236,0,136,0.7)] hover:brightness-110">
-              Creator olarak başvur <ArrowRight className="rtl:-scale-x-100 size-4" />
+              {t("Creator olarak başvur")} <ArrowRight className="rtl:-scale-x-100 size-4" />
             </Link>
           </li>
         </ol>
 
         {/* Creator Studio görünümü */}
-        <div className="rounded-[26px] bg-white p-4 text-ink shadow-[0_40px_80px_-30px_rgba(0,0,0,0.6)]" role="img" aria-label="Creator Studio görünümü">
+        <div className="rounded-[26px] bg-white p-4 text-ink shadow-[0_40px_80px_-30px_rgba(0,0,0,0.6)]" role="img" aria-label={t("Creator Studio görünümü")}>
           <div aria-hidden>
             <div className="mb-3 flex items-center justify-between">
               <span className="flex items-center gap-2 text-[12px] font-extrabold">
-                <LogoMark className="h-5" /> Creator Studio
+                <LogoMark className="h-5" /> {t("Creator Studio")}
               </span>
               <span className="size-6 overflow-hidden rounded-full">
                 <CreatorPhoto src={hero?.avatarUrl} name="Creator" rounded="rounded-full" showMonogram={false} />
               </span>
             </div>
             <div className="mb-3 flex gap-1.5 text-[9px] font-bold">
-              {["Kişilik", "Bilgi", "Sınırlar", "Ses"].map((t, i) => (
-                <span key={t} className={cn("rounded-full px-2.5 py-1", i === 0 ? "bg-brand-500 text-white" : "bg-soft text-muted-strong")}>
-                  {t}
+              {[t("Kişilik"), t("Bilgi"), t("Sınırlar"), t("Ses")].map((label, i) => (
+                <span key={label} className={cn("rounded-full px-2.5 py-1", i === 0 ? "bg-brand-500 text-white" : "bg-soft text-muted-strong")}>
+                  {label}
                 </span>
               ))}
             </div>
             <div className="space-y-2.5 rounded-2xl bg-soft p-3">
               {[
-                { t: "Samimiyet", v: 82 },
-                { t: "Mizah", v: 64 },
-                { t: "Enerji", v: 71 },
-                { t: "Resmiyet", v: 28 },
+                { title: t("Samimiyet"), v: 82 },
+                { title: t("Mizah"), v: 64 },
+                { title: t("Enerji"), v: 71 },
+                { title: t("Resmiyet"), v: 28 },
               ].map((s) => (
-                <div key={s.t}>
-                  <p className="mb-1 text-[9px] font-bold text-ink-soft">{s.t}</p>
+                <div key={s.title}>
+                  <p className="mb-1 text-[9px] font-bold text-ink-soft">{s.title}</p>
                   <span className="block h-1.5 rounded-full bg-white">
                     <span className="block h-full rounded-full bg-gradient-to-r from-brand-500 to-[#8b3dff]" style={{ width: `${s.v}%` }} />
                   </span>
@@ -748,10 +756,10 @@ export function CreatorAdvantageSection({ people }: { people: Person[] }) {
             </div>
             <div className="mt-3 grid grid-cols-2 gap-2">
               <div className="rounded-2xl bg-soft p-3">
-                <p className="text-[9px] font-extrabold">İçerik erişimi</p>
-                {["Genel", "Abonelere özel", "Tekil satış"].map((t, i) => (
-                  <p key={t} className="mt-1.5 flex items-center justify-between text-[8.5px] text-ink-soft">
-                    {t}
+                <p className="text-[9px] font-extrabold">{t("İçerik erişimi")}</p>
+                {[t("Genel"), t("Abonelere özel"), t("Tekil satış")].map((label, i) => (
+                  <p key={label} className="mt-1.5 flex items-center justify-between text-[8.5px] text-ink-soft">
+                    {label}
                     <span className={cn("flex h-3 w-5 items-center rounded-full px-0.5", i < 2 ? "justify-end bg-brand-500" : "bg-line")}>
                       <span className="size-2 rounded-full bg-white" />
                     </span>
@@ -759,7 +767,7 @@ export function CreatorAdvantageSection({ people }: { people: Person[] }) {
                 ))}
               </div>
               <div className="rounded-2xl bg-soft p-3">
-                <p className="text-[9px] font-extrabold">Gelir akışları</p>
+                <p className="text-[9px] font-extrabold">{t("Gelir akışları")}</p>
                 <div className="mt-2 flex h-[54px] items-end gap-1" aria-hidden>
                   {[34, 48, 40, 62, 55, 78, 70, 92].map((h, i) => (
                     <span key={i} className="flex-1 rounded-t bg-gradient-to-t from-brand-500 to-[#ff69b8]" style={{ height: `${h}%` }} />
@@ -769,7 +777,7 @@ export function CreatorAdvantageSection({ people }: { people: Person[] }) {
             </div>
             <div className="mt-3 flex items-center gap-2 rounded-2xl bg-gradient-to-r from-brand-50 to-[#f3ebff] px-3 py-2.5">
               <Eye className="size-4 text-brand-500" />
-              <span className="text-[9px] font-bold text-ink-soft">Her yanıt &quot;AI İkizi&quot; etiketiyle gösterilir; dilediğin an duraklatabilirsin.</span>
+              <span className="text-[9px] font-bold text-ink-soft">{t("Her yanıt \"AI İkizi\" etiketiyle gösterilir; dilediğin an duraklatabilirsin.")}</span>
             </div>
           </div>
         </div>
@@ -779,27 +787,30 @@ export function CreatorAdvantageSection({ people }: { people: Person[] }) {
 }
 
 /* ─── 06 · Gelir modeli ──────────────────────────────────── */
-export function RevenueSection({ creatorPercent }: { creatorPercent: number }) {
+export async function RevenueSection({ creatorPercent }: { creatorPercent: number }) {
+  const t = await getT();
+  const { formatPercent } = await getFormatters();
+  const pct = formatPercent(creatorPercent * 100);
   const streams = [
-    { i: Crown, t: "Abonelikler", d: "Temel, Premium ve VIP üyeliklerle düzenli aylık gelir.", chips: ["Temel", "Premium", "VIP"] },
-    { i: MessageCircle, t: "Mesaj başına ödeme", d: "Kredilerle esnek, kullandıkça öde sohbetler.", chips: ["Kredi paketleri", "Günlük ücretsiz hak"] },
-    { i: Lock, t: "Premium içerik", d: "Fotoğraf, video, koleksiyon ve rehberlerin tekil satışı.", chips: ["Tekil satış", "Abonelere özel"] },
-    { i: Mic, t: "Sesli ve görüntülü", d: "Creator'ın açtığı, dakika bazlı sesli ve görüntülü AI ikizi görüşmeleri.", chips: ["Sesli görüşme", "Görüntülü görüşme"] },
-    { i: Gift, t: "Hediye ve özel deneyim", d: "Hediyeler, bahşişler ve kişiye özel içerik talepleri.", chips: ["Hediye", "Bahşiş", "Özel talep"] },
+    { i: Crown, title: t("Abonelikler"), d: t("Temel, Premium ve VIP üyeliklerle düzenli aylık gelir."), chips: [t("Temel"), t("Premium"), t("VIP")] },
+    { i: MessageCircle, title: t("Mesaj başına ödeme"), d: t("Kredilerle esnek, kullandıkça öde sohbetler."), chips: [t("Kredi paketleri"), t("Günlük ücretsiz hak")] },
+    { i: Lock, title: t("Premium içerik"), d: t("Fotoğraf, video, koleksiyon ve rehberlerin tekil satışı."), chips: [t("Tekil satış"), t("Abonelere özel")] },
+    { i: Mic, title: t("Sesli ve görüntülü"), d: t("Creator'ın açtığı, dakika bazlı sesli ve görüntülü AI ikizi görüşmeleri."), chips: [t("Sesli görüşme"), t("Görüntülü görüşme")] },
+    { i: Gift, title: t("Hediye ve özel deneyim"), d: t("Hediyeler, bahşişler ve kişiye özel içerik talepleri."), chips: [t("Hediye"), t("Bahşiş"), t("Özel talep")] },
   ];
   const deg = Math.round((creatorPercent / 100) * 360);
   return (
     <section className="mx-auto max-w-[1440px] px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
-      <SectionHead n="06" eyebrow="Gelir modeli" title="Birden fazla gelir akışı," accent="tek bir platformda." text="Creator'lar, hayranlar ve platform için değer üreten çeşitlendirilmiş bir model: her kazanç kalemi şeffaf biçimde creator panelinde görünür." align="split" />
+      <SectionHead n="06" eyebrow={t("Gelir modeli")} title={t("Birden fazla gelir akışı,")} accent={t("tek bir platformda.")} text={t("Creator'lar, hayranlar ve platform için değer üreten çeşitlendirilmiş bir model: her kazanç kalemi şeffaf biçimde creator panelinde görünür.")} align="split" />
       <div className="grid gap-4 lg:grid-cols-[1fr_340px]">
         <ul className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
           {streams.map((s, i) => (
-            <li key={s.t} className="flex flex-col rounded-[22px] border border-line bg-white p-5 transition hover:border-brand-200 hover:shadow-[0_24px_50px_-30px_rgba(236,0,136,0.5)]">
+            <li key={s.title} className="flex flex-col rounded-[22px] border border-line bg-white p-5 transition hover:border-brand-200 hover:shadow-[0_24px_50px_-30px_rgba(236,0,136,0.5)]">
               <div className="flex items-center gap-2.5">
                 <StepNo n={i + 1} className="size-8 text-xs" />
                 <s.i className="size-5 text-brand-500" />
               </div>
-              <h3 className="mt-4 text-[15px] font-extrabold text-ink">{s.t}</h3>
+              <h3 className="mt-4 text-[15px] font-extrabold text-ink">{s.title}</h3>
               <p className="mt-1.5 flex-1 text-[12px] leading-relaxed text-muted-strong">{s.d}</p>
               <div className="mt-4 flex flex-wrap gap-1.5">
                 {s.chips.map((c) => (
@@ -813,26 +824,33 @@ export function RevenueSection({ creatorPercent }: { creatorPercent: number }) {
         </ul>
         <div className="flex flex-col justify-between rounded-[22px] bg-gradient-to-br from-[#2b0f2f] via-[#5b1044] to-[#8d1666] p-6 text-white">
           <div>
-            <p className="text-[11px] font-black uppercase tracking-[0.18em] text-white/60">Gelir paylaşımı</p>
+            <p className="text-[11px] font-black uppercase tracking-[0.18em] text-white/60">{t("Gelir paylaşımı")}</p>
             <div className="mt-5 flex items-center gap-5">
               <div className="relative grid size-[116px] shrink-0 place-items-center rounded-full" style={{ background: `conic-gradient(#ff69b8 0deg ${deg}deg, rgba(255,255,255,0.18) ${deg}deg 360deg)` }} aria-hidden>
                 <span className="grid size-[84px] place-items-center rounded-full bg-[#3d0f37] text-center">
-                  <span className="font-display text-[26px] font-extrabold leading-none">%{creatorPercent}</span>
+                  <span className="font-display text-[26px] font-extrabold leading-none">{pct}</span>
                 </span>
               </div>
               <p className="text-[13px] leading-relaxed text-white/85">
-                Net gelirin <strong className="text-white">%{creatorPercent}&apos;i creator&apos;a</strong>, kalan kısmı platform geliştirme, altyapı, ödeme işlemleri ve güvenliğe ayrılır.
+                {t.rich("Net gelirin <strong>{percent}'i creator'a</strong>, kalan kısmı platform geliştirme, altyapı, ödeme işlemleri ve güvenliğe ayrılır.", {
+                  percent: pct,
+                  strong: (c) => (
+                    <strong key="strong" className="text-white">
+                      {c}
+                    </strong>
+                  ),
+                })}
               </p>
             </div>
           </div>
           <ul className="mt-6 space-y-2.5">
             {[
-              { i: Scale, t: "Şeffaf ve adil hesaplama" },
-              { i: Wallet, t: "Hak edişler panelde anlık" },
-              { i: ShieldCheck, t: "Güvenli ödeme altyapısı" },
+              { i: Scale, title: t("Şeffaf ve adil hesaplama") },
+              { i: Wallet, title: t("Hak edişler panelde anlık") },
+              { i: ShieldCheck, title: t("Güvenli ödeme altyapısı") },
             ].map((b) => (
-              <li key={b.t} className="flex items-center gap-2.5 text-[13px] font-bold">
-                <b.i className="size-4 text-[#ff69b8]" /> {b.t}
+              <li key={b.title} className="flex items-center gap-2.5 text-[13px] font-bold">
+                <b.i className="size-4 text-[#ff69b8]" /> {b.title}
               </li>
             ))}
           </ul>
@@ -845,24 +863,24 @@ export function RevenueSection({ creatorPercent }: { creatorPercent: number }) {
 /* ─── 07 · Karşılaştırma ─────────────────────────────────── */
 type Mark = "yes" | "no" | "partial";
 const COMPARE: { feature: string; icon: typeof Users; heyfans: string; cols: [Mark, string][] }[] = [
-  { feature: "Gerçek, doğrulanmış creator'lar", icon: UserCheck, heyfans: "Kimliği doğrulanmış gerçek creator'lar", cols: [["yes", "Gerçek creator'lar"], ["no", "Kurgusal karakterler"], ["yes", "Gerçek kişiler"]] },
-  { feature: "Creator'ın yetkili AI ikizi", icon: Sparkles, heyfans: "Creator'ın açık izniyle, onaylı ikiz", cols: [["no", "Yok"], ["partial", "Kurgusal AI karakterleri"], ["no", "Yok"]] },
-  { feature: "Etkileşimli sohbet", icon: MessageCircle, heyfans: "Kişisel, 7/24, çok yönlü sohbet", cols: [["partial", "Mesajlaşmayla sınırlı"], ["yes", "AI sohbet"], ["partial", "Tek yönlü içerik"]] },
-  { feature: "Premium ve özel deneyimler", icon: Crown, heyfans: "Abonelik, tekil içerik, özel talep", cols: [["yes", "Abonelik ve tekil satış"], ["partial", "Sınırlı"], ["partial", "Sınırlı seçenek"]] },
-  { feature: "Çoklu gelir modeli", icon: Wallet, heyfans: "Creator ve platform için çoklu akış", cols: [["partial", "Çoğunlukla abonelik"], ["partial", "Abonelik"], ["partial", "Marka iş birlikleri"]] },
-  { feature: "Creator kontrolü ve güvenlik", icon: ShieldCheck, heyfans: "AI davranışı, içerik ve fiyat üzerinde tam kontrol", cols: [["partial", "Kısmi kontrol"], ["no", "Creator kontrolü yok"], ["partial", "Kısmi kontrol"]] },
-  { feature: "Mevcut sosyal kitleyi taşıma", icon: Users, heyfans: "Instagram, TikTok, YouTube, X kitlesi", cols: [["partial", "Kısmen"], ["no", "Yok"], ["yes", "Kendi platformunda"]] },
+  { feature: m("Gerçek, doğrulanmış creator'lar"), icon: UserCheck, heyfans: m("Kimliği doğrulanmış gerçek creator'lar"), cols: [["yes", m("Gerçek creator'lar")], ["no", m("Kurgusal karakterler")], ["yes", m("Gerçek kişiler")]] },
+  { feature: m("Creator'ın yetkili AI ikizi"), icon: Sparkles, heyfans: m("Creator'ın açık izniyle, onaylı ikiz"), cols: [["no", m("Yok")], ["partial", m("Kurgusal AI karakterleri")], ["no", m("Yok")]] },
+  { feature: m("Etkileşimli sohbet"), icon: MessageCircle, heyfans: m("Kişisel, 7/24, çok yönlü sohbet"), cols: [["partial", m("Mesajlaşmayla sınırlı")], ["yes", m("AI sohbet")], ["partial", m("Tek yönlü içerik")]] },
+  { feature: m("Premium ve özel deneyimler"), icon: Crown, heyfans: m("Abonelik, tekil içerik, özel talep"), cols: [["yes", m("Abonelik ve tekil satış")], ["partial", m("Sınırlı")], ["partial", m("Sınırlı seçenek")]] },
+  { feature: m("Çoklu gelir modeli"), icon: Wallet, heyfans: m("Creator ve platform için çoklu akış"), cols: [["partial", m("Çoğunlukla abonelik")], ["partial", m("Abonelik")], ["partial", m("Marka iş birlikleri")]] },
+  { feature: m("Creator kontrolü ve güvenlik"), icon: ShieldCheck, heyfans: m("AI davranışı, içerik ve fiyat üzerinde tam kontrol"), cols: [["partial", m("Kısmi kontrol")], ["no", m("Creator kontrolü yok")], ["partial", m("Kısmi kontrol")]] },
+  { feature: m("Mevcut sosyal kitleyi taşıma"), icon: Users, heyfans: m("Instagram, TikTok, YouTube, X kitlesi"), cols: [["partial", m("Kısmen")], ["no", m("Yok")], ["yes", m("Kendi platformunda")]] },
 ];
-const COLS = ["Geleneksel creator platformları", "AI arkadaş uygulamaları", "Sosyal medya"];
+const COLS = [m("Geleneksel creator platformları"), m("AI arkadaş uygulamaları"), m("Sosyal medya")];
 
-function MarkIcon({ m }: { m: Mark }) {
-  if (m === "yes")
+function MarkIcon({ mark }: { mark: Mark }) {
+  if (mark === "yes")
     return (
       <span className="grid size-5 shrink-0 place-items-center rounded-full bg-success-soft text-success">
         <Check className="size-3" strokeWidth={3.5} />
       </span>
     );
-  if (m === "no")
+  if (mark === "no")
     return (
       <span className="grid size-5 shrink-0 place-items-center rounded-full bg-danger-soft text-danger">
         <X className="size-3" strokeWidth={3.5} />
@@ -875,27 +893,28 @@ function MarkIcon({ m }: { m: Mark }) {
   );
 }
 
-export function CompareSection({ people }: { people: Person[] }) {
+export async function CompareSection({ people }: { people: Person[] }) {
+  const t = await getT();
   return (
     <section className="bg-[linear-gradient(180deg,#ffffff_0%,#fff5fa_100%)] py-16 lg:py-20">
       <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8">
-        <SectionHead n="07" eyebrow="Neden HEYFANS" title="Gerçek creator'lar, yetkili AI ikizleri" accent="ve tamamen etkileşimli deneyimler." text="Creator ekonomisinin ve yapay zekânın en iyi yanlarını; gerçek creator'lara, özgün deneyimlere ve tam kontrole odaklanarak bir araya getiriyoruz." align="split" />
+        <SectionHead n="07" eyebrow={t("Neden HEYFANS")} title={t("Gerçek creator'lar, yetkili AI ikizleri")} accent={t("ve tamamen etkileşimli deneyimler.")} text={t("Creator ekonomisinin ve yapay zekânın en iyi yanlarını; gerçek creator'lara, özgün deneyimlere ve tam kontrole odaklanarak bir araya getiriyoruz.")} align="split" />
         <div className="overflow-x-auto rounded-[24px] border border-line bg-white shadow-[0_30px_60px_-40px_rgba(43,10,40,0.35)]">
           <table className="w-full min-w-[860px] border-collapse text-start">
-            <caption className="sr-only">HEYFANS ve diğer platform türlerinin karşılaştırması</caption>
+            <caption className="sr-only">{t("HEYFANS ve diğer platform türlerinin karşılaştırması")}</caption>
             <thead>
               <tr className="text-[12px]">
                 <th scope="col" className="w-[22%] p-4 font-extrabold text-muted">
-                  Özellik
+                  {t("Özellik")}
                 </th>
                 <th scope="col" className="w-[24%] bg-gradient-to-b from-brand-50 to-white p-4">
                   <span className="flex items-center gap-2 font-display text-[15px] font-extrabold text-brand-600">
-                    <LogoMark className="h-6" /> HEYFANS
+                    <LogoMark className="h-6" /> HEYFANS{/* i18n-ignore */}
                   </span>
                 </th>
                 {COLS.map((c) => (
                   <th key={c} scope="col" className="p-4 text-[12px] font-extrabold text-ink-soft">
-                    {c}
+                    {t(c)}
                   </th>
                 ))}
               </tr>
@@ -905,18 +924,18 @@ export function CompareSection({ people }: { people: Person[] }) {
                 <tr key={r.feature} className="border-t border-line text-[12px]">
                   <th scope="row" className="p-4 font-extrabold text-ink">
                     <span className="flex items-center gap-2.5">
-                      <r.icon className="size-4 shrink-0 text-brand-500" /> {r.feature}
+                      <r.icon className="size-4 shrink-0 text-brand-500" /> {t(r.feature)}
                     </span>
                   </th>
                   <td className="bg-brand-50/50 p-4">
                     <span className="flex items-center gap-2 font-bold text-ink">
-                      <MarkIcon m="yes" /> {r.heyfans}
+                      <MarkIcon mark="yes" /> {t(r.heyfans)}
                     </span>
                   </td>
-                  {r.cols.map(([m, t], i) => (
+                  {r.cols.map(([mark, label], i) => (
                     <td key={i} className="p-4 text-muted-strong">
                       <span className="flex items-center gap-2">
-                        <MarkIcon m={m} /> {t}
+                        <MarkIcon mark={mark} /> {t(label)}
                       </span>
                     </td>
                   ))}
@@ -927,19 +946,19 @@ export function CompareSection({ people }: { people: Person[] }) {
         </div>
         <ul className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
           {[
-            { t: "Gerçek insanlar.", a: "Gerçek bağlantı.", d: "Hayranlar tanıdıkları ve sevdikleri creator'ların AI ikizleriyle etkileşir.", img: pick(people, 0) },
-            { t: "Gerçekten etkileşimli.", a: "Gerçekten kişisel.", d: "Metin, ses ve görsellerle sürükleyici, kişisel sohbetler.", img: pick(people, 6) },
-            { t: "İçerikten fazlası.", a: "Özgün deneyimler.", d: "Kişisel sohbetlerden özel isteklere kadar benzersiz anlar.", img: pick(people, 8) },
-            { t: "Kazanmanın", a: "daha çok yolu.", d: "Çoklu gelir modeli creator'lar için daha sürdürülebilir bir büyüme sunar.", img: pick(people, 3) },
-            { t: "Tam creator", a: "kontrolü.", d: "Kişilik, içerik, sınırlar ve fiyatlar creator'ın elindedir.", img: pick(people, 5) },
+            { title: t("Gerçek insanlar."), a: t("Gerçek bağlantı."), d: t("Hayranlar tanıdıkları ve sevdikleri creator'ların AI ikizleriyle etkileşir."), img: pick(people, 0) },
+            { title: t("Gerçekten etkileşimli."), a: t("Gerçekten kişisel."), d: t("Metin, ses ve görsellerle sürükleyici, kişisel sohbetler."), img: pick(people, 6) },
+            { title: t("İçerikten fazlası."), a: t("Özgün deneyimler."), d: t("Kişisel sohbetlerden özel isteklere kadar benzersiz anlar."), img: pick(people, 8) },
+            { title: t("Kazanmanın"), a: t("daha çok yolu."), d: t("Çoklu gelir modeli creator'lar için daha sürdürülebilir bir büyüme sunar."), img: pick(people, 3) },
+            { title: t("Tam creator"), a: t("kontrolü."), d: t("Kişilik, içerik, sınırlar ve fiyatlar creator'ın elindedir."), img: pick(people, 5) },
           ].map((c) => (
-            <li key={c.t} className="overflow-hidden rounded-[22px] bg-white ring-1 ring-line">
+            <li key={c.title} className="overflow-hidden rounded-[22px] bg-white ring-1 ring-line">
               <div className="h-28 overflow-hidden" aria-hidden>
                 <CreatorPhoto src={c.img?.coverUrl ?? c.img?.avatarUrl} name="HEYFANS" rounded="rounded-none" showMonogram={false} />
               </div>
               <div className="p-4">
                 <p className="font-display text-[16px] font-extrabold leading-tight tracking-tight text-ink">
-                  {c.t} <span className="text-brand-500">{c.a}</span>
+                  {c.title} <span className="text-brand-500">{c.a}</span>
                 </p>
                 <p className="mt-1.5 text-[12px] leading-relaxed text-muted-strong">{c.d}</p>
               </div>
@@ -952,28 +971,29 @@ export function CompareSection({ people }: { people: Person[] }) {
 }
 
 /* ─── 08 · Güven ve güvenlik ─────────────────────────────── */
-export function TrustSection() {
+export async function TrustSection() {
+  const t = await getT();
   const pillars = [
-    { i: BadgeCheck, t: "Doğrulanmış creator'lar", d: "Resmî AI ikizini yalnız doğrulanmış creator'lar oluşturabilir.", items: ["Kimlik doğrulama", "Sosyal hesap sahipliği", "18+ yaş şartı", "Resmî AI ikizi yetkisi"] },
-    { i: Sparkles, t: "Açık AI bildirimi", d: "Hayranlar her zaman bir AI ikiziyle konuştuğunu bilir.", items: ["Her yanıtta AI etiketi", "Sohbet başında bilgilendirme", "İnsan olduğunu iddia etmez", "Şeffaf deneyim"] },
-    { i: SlidersHorizontal, t: "Creator rızası ve kontrolü", d: "AI ikizinin neyi yapıp neyi yapamayacağına creator karar verir.", items: ["Ayrıntılı izin ayarları", "İçerik ve konu sınırları", "İkizi dilediğinde duraklatma", "Benzerlik üzerinde tam kontrol"] },
-    { i: Eye, t: "İçerik moderasyonu", d: "Otomatik güvenlik filtreleri ve insan incelemesi birlikte çalışır.", items: ["Otomatik güvenlik taraması", "İnsan incelemesi ve itiraz", "Politika uygulaması", "Kriz anında yönlendirme"] },
-    { i: Lock, t: "Hayran gizliliği ve güvenliği", d: "Kişisel veriler ve sohbetler korunur.", items: ["Şifreli bağlantı (HTTPS)", "Hassas verilerde şifreleme", "Kişisel veriler satılmaz", "Güvenli ödeme altyapısı"] },
-    { i: Scale, t: "Hukuki ve etik uyum", d: "Yerel mevzuata ve etik yapay zekâ ilkelerine bağlıyız.", items: ["18+ erişim kısıtlaması", "KVKK ve GDPR ilkeleri", "Etik yapay zekâ kuralları", "Creator fikri hakları"] },
+    { i: BadgeCheck, title: t("Doğrulanmış creator'lar"), d: t("Resmî AI ikizini yalnız doğrulanmış creator'lar oluşturabilir."), items: [t("Kimlik doğrulama"), t("Sosyal hesap sahipliği"), t("18+ yaş şartı"), t("Resmî AI ikizi yetkisi")] },
+    { i: Sparkles, title: t("Açık AI bildirimi"), d: t("Hayranlar her zaman bir AI ikiziyle konuştuğunu bilir."), items: [t("Her yanıtta AI etiketi"), t("Sohbet başında bilgilendirme"), t("İnsan olduğunu iddia etmez"), t("Şeffaf deneyim")] },
+    { i: SlidersHorizontal, title: t("Creator rızası ve kontrolü"), d: t("AI ikizinin neyi yapıp neyi yapamayacağına creator karar verir."), items: [t("Ayrıntılı izin ayarları"), t("İçerik ve konu sınırları"), t("İkizi dilediğinde duraklatma"), t("Benzerlik üzerinde tam kontrol")] },
+    { i: Eye, title: t("İçerik moderasyonu"), d: t("Otomatik güvenlik filtreleri ve insan incelemesi birlikte çalışır."), items: [t("Otomatik güvenlik taraması"), t("İnsan incelemesi ve itiraz"), t("Politika uygulaması"), t("Kriz anında yönlendirme")] },
+    { i: Lock, title: t("Hayran gizliliği ve güvenliği"), d: t("Kişisel veriler ve sohbetler korunur."), items: [t("Şifreli bağlantı (HTTPS)"), t("Hassas verilerde şifreleme"), t("Kişisel veriler satılmaz"), t("Güvenli ödeme altyapısı")] },
+    { i: Scale, title: t("Hukuki ve etik uyum"), d: t("Yerel mevzuata ve etik yapay zekâ ilkelerine bağlıyız."), items: [t("18+ erişim kısıtlaması"), t("KVKK ve GDPR ilkeleri"), t("Etik yapay zekâ kuralları"), t("Creator fikri hakları")] },
   ];
   return (
     <section className="mx-auto max-w-[1440px] px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
-      <SectionHead n="08" eyebrow="Güven ve güvenlik" title="Gerçek creator'lar. Gerçek rıza." accent="Gerçek kontrol." text="HEYFANS; güven, rıza ve şeffaflık üzerine kurulu. Creator'ları, hayranları ve platformun uzun vadeli geleceğini korur." align="split" />
+      <SectionHead n="08" eyebrow={t("Güven ve güvenlik")} title={t("Gerçek creator'lar. Gerçek rıza.")} accent={t("Gerçek kontrol.")} text={t("HEYFANS; güven, rıza ve şeffaflık üzerine kurulu. Creator'ları, hayranları ve platformun uzun vadeli geleceğini korur.")} align="split" />
       <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
         {pillars.map((p, i) => (
-          <li key={p.t} className="flex flex-col rounded-[22px] border border-line bg-white p-5">
+          <li key={p.title} className="flex flex-col rounded-[22px] border border-line bg-white p-5">
             <div className="flex items-center gap-2.5">
               <StepNo n={i + 1} className="size-8 text-xs" />
               <span className="grid size-9 place-items-center rounded-xl bg-brand-50 text-brand-500">
                 <p.i className="size-[18px]" />
               </span>
             </div>
-            <h3 className="mt-4 text-[15px] font-extrabold text-ink">{p.t}</h3>
+            <h3 className="mt-4 text-[15px] font-extrabold text-ink">{p.title}</h3>
             <p className="mt-1.5 text-[12px] leading-relaxed text-muted-strong">{p.d}</p>
             <ul className="mt-4 space-y-1.5 border-t border-line pt-3.5">
               {p.items.map((it) => (
@@ -992,20 +1012,20 @@ export function TrustSection() {
         <div className="relative flex items-center gap-4 bg-gradient-to-r from-brand-500 to-[#a1007c] px-6 py-6 text-white [clip-path:polygon(0_0,94%_0,100%_50%,94%_100%,0_100%)] lg:pe-14">
           <ShieldCheck className="size-10 shrink-0" />
           <div>
-            <p className="font-display text-[20px] font-extrabold">Taahhüdümüz</p>
-            <p className="text-[13px] text-white/85">Creator&apos;lar ve hayranlar için bugün ve yarın güvenli, etik ve şeffaf bir platform.</p>
+            <p className="font-display text-[20px] font-extrabold">{t("Taahhüdümüz")}</p>
+            <p className="text-[13px] text-white/85">{t("Creator'lar ve hayranlar için bugün ve yarın güvenli, etik ve şeffaf bir platform.")}</p>
           </div>
         </div>
         <ul className="grid grid-cols-2 gap-4 px-6 py-5 sm:grid-cols-5">
           {[
-            { i: Users, t: "Creator'ları korumak" },
-            { i: Heart, t: "Hayranlara saygı" },
-            { i: Lock, t: "Şeffaflık" },
-            { i: ShieldCheck, t: "Güvenli topluluk" },
-            { i: Globe2, t: "Uzun vadeli güven" },
+            { i: Users, title: t("Creator'ları korumak") },
+            { i: Heart, title: t("Hayranlara saygı") },
+            { i: Lock, title: t("Şeffaflık") },
+            { i: ShieldCheck, title: t("Güvenli topluluk") },
+            { i: Globe2, title: t("Uzun vadeli güven") },
           ].map((c) => (
-            <li key={c.t} className="flex items-center gap-2 text-[12px] font-extrabold text-ink">
-              <c.i className="size-6 shrink-0 text-brand-500" /> {c.t}
+            <li key={c.title} className="flex items-center gap-2 text-[12px] font-extrabold text-ink">
+              <c.i className="size-6 shrink-0 text-brand-500" /> {c.title}
             </li>
           ))}
         </ul>
@@ -1015,7 +1035,8 @@ export function TrustSection() {
 }
 
 /* ─── 09 · Kapanış çağrısı ───────────────────────────────── */
-export function FinalCta({ people, title, text }: { people: Person[]; title: string; text?: string | null }) {
+export async function FinalCta({ people, title, text }: { people: Person[]; title: string; text?: string | null }) {
+  const t = await getT();
   return (
     <section className="mx-auto max-w-[1440px] px-4 pb-16 sm:px-6 lg:px-8">
       <div className="relative overflow-hidden rounded-[32px] bg-gradient-to-br from-[#2b0f2f] via-[#6b0f52] to-brand-500 px-6 py-12 text-white sm:px-12 lg:py-16">
@@ -1026,10 +1047,10 @@ export function FinalCta({ people, title, text }: { people: Person[]; title: str
             {text && <p className="mt-4 max-w-xl text-[16px] leading-relaxed text-white/80">{text}</p>}
             <div className="mt-8 flex flex-wrap gap-3">
               <Link href="/register" className="inline-flex h-[52px] items-center gap-2 rounded-full bg-white px-7 text-sm font-extrabold text-brand-600 shadow-lg hover:bg-brand-50">
-                Hayran olarak katıl <ArrowRight className="rtl:-scale-x-100 size-4" />
+                {t("Hayran olarak katıl")} <ArrowRight className="rtl:-scale-x-100 size-4" />
               </Link>
               <Link href="/register?intent=creator" className="inline-flex h-[52px] items-center gap-2 rounded-full border border-white/40 px-7 text-sm font-extrabold text-white hover:bg-white/10">
-                <Crown className="size-4" /> Creator olarak başvur
+                <Crown className="size-4" /> {t("Creator olarak başvur")}
               </Link>
             </div>
           </div>
@@ -1058,4 +1079,5 @@ export const heroIcons = {
   grid: <BrainCircuit />,
   device: <MonitorSmartphone />,
 };
-export const compactStat = (n: number) => `${formatCompact(n)}+`;
+/** `compactStat(formatCompact, 1200)` → "1,2K+" (dile göre kısaltma). */
+export const compactStat = (formatCompact: (n: number) => string, n: number) => `${formatCompact(n)}+`;

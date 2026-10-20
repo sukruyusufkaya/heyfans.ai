@@ -44,6 +44,13 @@ const PROSE = /^[A-ZÇĞİÖŞÜ][^\s]*\s+\S/;
 /** Büyük harfle başlayan Türkçe kelime ("Aktif", "Kaydet") — yalnız .tsx dosyalarında işaretlenir. */
 const CAPITAL_WORD = /^[A-ZÇĞİÖŞÜ][a-zçğıöşü]{2,}/;
 const STYLE_CALLS = new Set(["cn", "clsx", "twMerge", "cva"]);
+const CODE_ATTRS = new Set([
+  "className", "class", "href", "src", "srcSet", "id", "key", "type", "name", "value", "defaultValue", "role", "variant", "size", "tone", "shape",
+  "align", "side", "as", "method", "action", "target", "rel", "htmlFor", "autoComplete", "inputMode", "pattern", "accept", "lang", "dir", "style",
+  "icon", "sizes", "media", "fill", "stroke", "viewBox", "d", "color", "mode", "art", "ratio", "kind", "status", "sort", "tab", "layout", "form",
+  "path", "slug", "username", "platform", "provider", "intent", "area", "locale", "position", "orientation", "sideOffset", "asChild", "width", "height",
+]);
+const CODE_ATTR_RE = /^(on[A-Z]|data-|aria-(controls|labelledby|describedby|hidden|current|expanded|live|haspopup|selected|checked|pressed|orientation|level|modal|owns|activedescendant|busy|disabled|invalid|required|sort))/;
 const MESSAGE_CALLS = /^(toast(\.\w+)?|set\w*(Error|Message|Notice|Status|Hint|Info|Warning|Success)|alert|confirm|onError|reject)$/;
 
 export interface Issue {
@@ -164,11 +171,12 @@ function parseFile(file: string): FileInfo {
       const isComparison = parent && ts.isBinaryExpression(parent) && [ts.SyntaxKind.EqualsEqualsEqualsToken, ts.SyntaxKind.ExclamationEqualsEqualsToken, ts.SyntaxKind.EqualsEqualsToken].includes(parent.operatorToken.kind);
       const isCase = parent && ts.isCaseClause(parent);
       if (!isModuleLike && !isDirective && !isElementAccessKey && !isComparison && !isCase && LETTER.test(s)) {
-        const attrIsText = ctx.attr !== null && (TEXT_ATTRS.has(ctx.attr) || TR_CHARS.test(s));
-        const attrIsCode = ctx.attr !== null && !attrIsText;
-        const keyIsText = ctx.key !== null && TEXT_KEYS.has(ctx.key) && !IDENTIFIER_LIKE.test(s);
         const messageArg = parent && ts.isCallExpression(parent) && MESSAGE_CALLS.test(parent.expression.getText(sf));
         const looksLikeCopy = PROSE.test(s) || (file.endsWith(".tsx") && CAPITAL_WORD.test(s));
+        // Kod özellikleri (className, href, variant…) atlanır; diğer her özellikte (main, foot, fields…) metin kopya sayılır.
+        const attrIsCode = ctx.attr !== null && (CODE_ATTRS.has(ctx.attr) || CODE_ATTR_RE.test(ctx.attr)) && !TR_CHARS.test(s);
+        const attrIsText = ctx.attr !== null && !attrIsCode && (TEXT_ATTRS.has(ctx.attr) || TR_CHARS.test(s) || looksLikeCopy);
+        const keyIsText = ctx.key !== null && TEXT_KEYS.has(ctx.key) && !IDENTIFIER_LIKE.test(s);
         if (!attrIsCode && (attrIsText || keyIsText || messageArg || TR_CHARS.test(s) || looksLikeCopy)) issue(node, ctx.attr ? `özellik ${ctx.attr}` : ctx.key ? `alan ${ctx.key}` : "metin", s);
       }
     }

@@ -10,6 +10,7 @@ import { listFanRequests } from "@/services/experiences/custom-requests";
 import { listGiftCatalog, listSentGifts } from "@/services/experiences/gifts";
 import { ensureWallet } from "@/services/wallet/wallet";
 import type { CustomRequestStatus } from "@/models/monetization";
+import { getT } from "@/i18n/server";
 
 export interface FollowedCreatorOption {
   username: string;
@@ -55,6 +56,7 @@ export interface RequestView {
 
 /** /app/experiences — talepler, durum geçmişi ve teslim dosyaları (yalnız tamamlanan talepte). */
 export async function getFanRequestViews(userId: string, status?: CustomRequestStatus | "all") {
+  const t = await getT();
   const rows = await listFanRequests(userId, status);
   const completedAssetIds = rows.filter((r) => r.request.status === "completed").flatMap((r) => r.request.deliverableAssetIds);
   const assets = completedAssetIds.length ? await MediaAsset.find({ _id: { $in: completedAssetIds }, status: "ready" }, { kind: 1, originalName: 1 }).lean() : [];
@@ -76,7 +78,7 @@ export async function getFanRequestViews(userId: string, status?: CustomRequestS
       history: (r.history ?? []).map((h) => ({ to: h.to as CustomRequestStatus, at: new Date(h.at).toISOString(), note: h.note ?? null })),
       deliverables:
         r.status === "completed"
-          ? r.deliverableAssetIds.map((id) => ({ id: id.toString(), kind: assetMap.get(id.toString())?.kind ?? "document", name: assetMap.get(id.toString())?.originalName ?? "Teslim dosyası", url: `/api/media/${id.toString()}` }))
+          ? r.deliverableAssetIds.map((id) => ({ id: id.toString(), kind: assetMap.get(id.toString())?.kind ?? "document", name: assetMap.get(id.toString())?.originalName ?? t("Teslim dosyası"), url: `/api/media/${id.toString()}` }))
           : [],
     }),
   );

@@ -2,11 +2,15 @@ import type { Metadata } from "next";
 import { AuthHeader } from "@/components/auth/auth-header";
 import { getSession } from "@/lib/auth/session";
 import { AreaMessages } from "@/i18n/area";
+import { getT } from "@/i18n/server";
 
-export const metadata: Metadata = {
-  robots: { index: false, follow: false },
-  title: { default: "Hesap", template: "%s | HEYFANS" },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getT();
+  return {
+    robots: { index: false, follow: false },
+    title: { default: t("Hesap"), template: "%s | HEYFANS" },
+  };
+}
 
 /** Giriş, kayıt, karşılama ve güvenlik sayfalarının ortak iskeleti (sade üst çubuk + pembe zemin). */
 export default async function AuthLayout({ children }: { children: React.ReactNode }) {

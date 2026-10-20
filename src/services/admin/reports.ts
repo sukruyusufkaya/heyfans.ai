@@ -7,6 +7,8 @@ import { Appeal, ModerationCase, Report, REPORT_REASONS, type IAppeal, type IRep
 import { SupportTicket, type ISupportTicket } from "@/models/platform";
 import { notify } from "@/services/notifications/notifications";
 import { daysAgo, loadUsers, msToHuman, REGEX_SAFE, type AdminActor } from "./shared";
+import { getT } from "@/i18n/server";
+import { m } from "@/i18n/m";
 
 const PAGE_SIZE = 12;
 export const REPORT_STATUS_FILTERS = ["all", "open", "triaged", "resolved", "rejected"] as const;
@@ -15,6 +17,7 @@ export const TICKET_STATUS_FILTERS = ["all", "open", "pending", "resolved", "clo
 
 export async function getReportKpis() {
   await connectDb();
+  const t = await getT();
   const now = new Date();
   const [openReports, newToday, pendingAppeals, newAppeals, resolved, resolvedRows] = await Promise.all([
     Report.countDocuments({ status: { $in: ["open", "triaged"] } }),
@@ -26,7 +29,7 @@ export async function getReportKpis() {
   ]);
   const durs = resolvedRows.map((r) => r.updatedAt.getTime() - r.createdAt.getTime()).filter((d) => d >= 0);
   const avgMs = durs.length ? durs.reduce((a, b) => a + b, 0) / durs.length : null;
-  return { openReports, newToday, pendingAppeals, newAppeals, resolved, avgResolution: msToHuman(avgMs), avgSample: durs.length };
+  return { openReports, newToday, pendingAppeals, newAppeals, resolved, avgResolution: msToHuman(avgMs, t), avgSample: durs.length };
 }
 
 /** SLA göstergeleri: gerçek vaka/itiraz/destek kayıtlarından; örnek yoksa null (sahte yüzde yok). */
@@ -73,6 +76,7 @@ export async function listReports(opts: { status: string; reason: string; q: str
 
 export async function getReportDetail(id: string) {
   await connectDb();
+  const t = await getT();
   const r = await Report.findById(oid(id)).lean<IReport>();
   if (!r) return null;
   const c = r.caseId ? await ModerationCase.findById(r.caseId, { caseNo: 1, priority: 1, status: 1, reason: 1 }).lean() : null;
@@ -87,7 +91,7 @@ export async function getReportDetail(id: string) {
     resolutionNote: r.resolutionNote ?? null,
     createdAt: r.createdAt,
     updatedAt: r.updatedAt,
-    reporter: reporter ? { name: reporter.name } : r.reporterEmail ? { name: "Anonim (e-posta ile)" } : null,
+    reporter: reporter ? { name: reporter.name } : r.reporterEmail ? { name: t("Anonim (e-posta ile)") } : null,
     case: c ? { id: c._id.toString(), caseNo: c.caseNo, priority: c.priority, status: c.status, reason: c.reason } : null,
   };
 }
@@ -99,17 +103,19 @@ export async function updateReportStatus(actor: AdminActor, reportId: string, to
   if (note.trim().length < 5) throw new AppError("Not en az 5 karakter olmalı.", "reason_required");
   const r = await Report.findById(oid(reportId));
   if (!r) throw new NotFoundError("Rapor bulunamadı.");
-  if (!REPORT_FLOW[r.status]?.includes(to)) throw new ConflictError(`Geçersiz durum geçişi: ${r.status} → ${to}`);
+  if (!REPORT_FLOW[r.status]?.includes(to)) throw new AppError("Geçersiz durum geçişi: {from} → {to}", "conflict", 409, { params: { from: r.status, to } });
   const from = r.status;
   r.status = to;
   r.resolutionNote = note;
   await r.save();
+  // i18n-ignore (denetim anahtarı)
   await audit({ actorId: actor.id, actorRole: actor.adminRole, action: `report.${to}`, targetType: "Report", targetId: reportId, reason: note, severity: "notice", metadata: { from, to, reportNo: r.reportNo } });
   return { status: to };
 }
 
 export async function listAppeals(opts: { status: string; page: number }) {
   await connectDb();
+  const t = await getT();
   const filter: Record<string, unknown> = {};
   if (opts.status !== "all") filter.status = opts.status;
   const [rows, total] = await Promise.all([
@@ -126,7 +132,7 @@ export async function listAppeals(opts: { status: string; page: number }) {
     return {
       id: a._id.toString(),
       appealNo: a.appealNo,
-      user: users.get(a.userId.toString())?.name ?? "Kullanıcı",
+      user: users.get(a.userId.toString())?.name ?? t("Kullanıcı"),
       status: a.status,
       reason: a.reason,
       createdAt: a.createdAt,
@@ -140,6 +146,7 @@ export async function listAppeals(opts: { status: string; page: number }) {
 
 export async function listTickets(opts: { status: string; q: string; page: number }) {
   await connectDb();
+  const t = await getT();
   const filter: Record<string, unknown> = {};
   if (opts.status !== "all") filter.status = opts.status;
   if (opts.q) {
@@ -150,20 +157,20 @@ export async function listTickets(opts: { status: string; q: string; page: numbe
     SupportTicket.find(filter).sort({ createdAt: -1 }).skip((opts.page - 1) * PAGE_SIZE).limit(PAGE_SIZE).lean<ISupportTicket[]>(),
     SupportTicket.countDocuments(filter),
   ]);
-  const agents = await loadUsers(rows.flatMap((t) => [t.assignedTo, ...t.replies.map((r) => r.authorId)]));
-  const items = rows.map((t) => ({
-    id: t._id.toString(),
-    ticketNo: t.ticketNo,
-    subject: t.subject,
-    name: t.name,
-    email: t.email,
-    category: t.category,
-    priority: t.priority,
-    status: t.status,
-    message: t.message,
-    createdAt: t.createdAt,
-    assignedTo: t.assignedTo ? agents.get(t.assignedTo.toString())?.name ?? "Temsilci" : null,
-    replies: t.replies.map((r) => ({ authorType: r.authorType, author: r.authorType === "agent" ? (r.authorId ? agents.get(r.authorId.toString())?.name ?? "Temsilci" : "Temsilci") : t.name, body: r.body, at: r.at })),
+  const agents = await loadUsers(rows.flatMap((tk) => [tk.assignedTo, ...tk.replies.map((r) => r.authorId)]));
+  const items = rows.map((tk) => ({
+    id: tk._id.toString(),
+    ticketNo: tk.ticketNo,
+    subject: tk.subject,
+    name: tk.name,
+    email: tk.email,
+    category: tk.category,
+    priority: tk.priority,
+    status: tk.status,
+    message: tk.message,
+    createdAt: tk.createdAt,
+    assignedTo: tk.assignedTo ? agents.get(tk.assignedTo.toString())?.name ?? t("Temsilci") : null,
+    replies: tk.replies.map((r) => ({ authorType: r.authorType, author: r.authorType === "agent" ? (r.authorId ? agents.get(r.authorId.toString())?.name ?? t("Temsilci") : t("Temsilci")) : tk.name, body: r.body, at: r.at })),
   }));
   return paged(items, total, opts.page, PAGE_SIZE);
 }
@@ -210,7 +217,7 @@ export async function replyToTicket(actor: AdminActor, ticketId: string, body: s
   if (t.status === "open") t.status = "pending";
   if (!t.assignedTo) t.assignedTo = oid(actor.id);
   await t.save();
-  if (t.userId) await notify(t.userId.toString(), { type: "system", title: `Destek talebine yanıt: ${t.ticketNo}`, body: text.slice(0, 200), link: "/help" });
+  if (t.userId) await notify(t.userId.toString(), { type: "system", title: m("Destek talebine yanıt: {ticketNo}"), params: { ticketNo: t.ticketNo }, body: text.slice(0, 200), link: "/help" });
   await audit({ actorId: actor.id, actorRole: actor.adminRole, action: "support.reply", targetType: "SupportTicket", targetId: ticketId, severity: "info", metadata: { ticketNo: t.ticketNo } });
   return { status: t.status };
 }

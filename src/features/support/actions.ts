@@ -6,6 +6,7 @@ import { env } from "@/config/env";
 import { getSession } from "@/lib/auth/session";
 import { toActionError, type ActionResult } from "@/lib/errors";
 import { hashIp } from "@/lib/security/audit";
+import { getT } from "@/i18n/server";
 import { recordCookieConsent, consentInputSchema, type ConsentInput } from "@/services/support/consent";
 import { voteHelpArticle } from "@/services/support/help";
 import { submitCopyrightClaim, submitSafetyReport } from "@/services/support/reports";
@@ -33,6 +34,7 @@ const fakeOk = (reference = "DST-0000"): FormState => ({ ok: true, data: { refer
 export async function submitContactAction(_prev: FormState, formData: FormData): Promise<FormState> {
   try {
     if (isBot(formData)) return fakeOk();
+    const t = await getT();
     const session = await getSession();
     const { ipKey } = await requestIdentity();
     const res = await createSupportTicket(
@@ -45,7 +47,7 @@ export async function submitContactAction(_prev: FormState, formData: FormData):
       },
       { userId: session?.user.id ?? null, ipKey },
     );
-    return { ok: true, data: { reference: res.ticketNo, kind: "ticket" }, message: "Talebin alındı." };
+    return { ok: true, data: { reference: res.ticketNo, kind: "ticket" }, message: t("Talebin alındı.") };
   } catch (err) {
     return toActionError(err);
   }
@@ -55,13 +57,14 @@ export async function submitContactAction(_prev: FormState, formData: FormData):
 export async function submitSafetyReportAction(_prev: FormState, formData: FormData): Promise<FormState> {
   try {
     if (isBot(formData)) return fakeOk();
+    const t = await getT();
     const session = await getSession();
     const { ipKey } = await requestIdentity();
     const res = await submitSafetyReport(
       { reason: str(formData, "reason"), targetUrl: str(formData, "targetUrl"), details: str(formData, "details"), name: str(formData, "name"), email: str(formData, "email") },
       { userId: session?.user.id ?? null, name: session?.user.name ?? null, email: session?.user.email ?? null, ipKey },
     );
-    return { ok: true, data: { reference: res.reference, kind: res.kind }, message: "Bildirimin alındı." };
+    return { ok: true, data: { reference: res.reference, kind: res.kind }, message: t("Bildirimin alındı.") };
   } catch (err) {
     return toActionError(err);
   }
@@ -71,6 +74,7 @@ export async function submitSafetyReportAction(_prev: FormState, formData: FormD
 export async function submitCopyrightAction(_prev: FormState, formData: FormData): Promise<FormState> {
   try {
     if (isBot(formData)) return fakeOk();
+    const t = await getT();
     const session = await getSession();
     const { ipKey } = await requestIdentity();
     const res = await submitCopyrightClaim(
@@ -85,7 +89,7 @@ export async function submitCopyrightAction(_prev: FormState, formData: FormData
       },
       { userId: session?.user.id ?? null, ipKey },
     );
-    return { ok: true, data: { reference: res.ticketNo, kind: "ticket", reportNo: res.reportNo }, message: "Başvurun alındı." };
+    return { ok: true, data: { reference: res.ticketNo, kind: "ticket", reportNo: res.reportNo }, message: t("Başvurun alındı.") };
   } catch (err) {
     return toActionError(err);
   }
@@ -94,6 +98,7 @@ export async function submitCopyrightAction(_prev: FormState, formData: FormData
 /* ─── Çerez rızası ─────────────────────────────────────────── */
 export async function saveCookieConsentAction(input: ConsentInput): Promise<ActionResult<{ preferences: boolean; analytics: boolean; marketing: boolean }>> {
   try {
+    const t = await getT();
     const parsed = consentInputSchema.parse(input);
     const jar = await cookies();
     const existing = decodeConsent(jar.get(CONSENT_COOKIE)?.value);
@@ -113,7 +118,7 @@ export async function saveCookieConsentAction(input: ConsentInput): Promise<Acti
       secure: env().NODE_ENV === "production",
       httpOnly: false, // istemci tarafı banner ve yazılımın okuyabilmesi için bilinçli olarak okunabilir
     });
-    return { ok: true, data: choices, message: parsed.action === "withdraw" ? "Rızan geri çekildi; yalnız zorunlu çerezler kullanılacak." : "Tercihlerin kaydedildi." };
+    return { ok: true, data: choices, message: parsed.action === "withdraw" ? t("Rızan geri çekildi; yalnız zorunlu çerezler kullanılacak.") : t("Tercihlerin kaydedildi.") };
   } catch (err) {
     return toActionError(err);
   }
@@ -122,11 +127,12 @@ export async function saveCookieConsentAction(input: ConsentInput): Promise<Acti
 /* ─── Yardım makalesi geri bildirimi ───────────────────────── */
 export async function voteHelpfulAction(slug: string, helpful: boolean): Promise<ActionResult> {
   try {
+    const t = await getT();
     z.string().regex(/^[a-z0-9-]{2,80}$/).parse(slug);
     const { ipKey } = await requestIdentity();
     const ok = await voteHelpArticle(slug, Boolean(helpful), ipKey);
-    if (!ok) return { ok: false, error: "Makale bulunamadı." };
-    return { ok: true, data: undefined, message: "Geri bildirimin için teşekkürler." };
+    if (!ok) return { ok: false, error: t("Makale bulunamadı.") };
+    return { ok: true, data: undefined, message: t("Geri bildirimin için teşekkürler.") };
   } catch (err) {
     return toActionError(err);
   }

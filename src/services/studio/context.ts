@@ -3,6 +3,8 @@ import { connectDb } from "@/lib/db/mongo";
 import { NotFoundError } from "@/lib/errors";
 import { oid } from "@/lib/validation/common";
 import { CreatorProfile, type ICreatorProfile } from "@/models/creator";
+import { LOCALE_META, SOURCE_LOCALE, type Locale } from "@/i18n/config";
+import { createTranslator, type Translator } from "@/i18n/translate";
 
 /** Oturumdaki kullanıcının creator profili (Studio servislerinin ortak giriş noktası). */
 export async function studioCreator(userId: string) {
@@ -11,6 +13,8 @@ export async function studioCreator(userId: string) {
   if (!creator) throw new NotFoundError("Creator profili bulunamadı.");
   return creator;
 }
+
+const TR_TRANSLATOR = createTranslator("tr", {});
 
 export const DAY_MS = 86_400_000;
 export const STUDIO_TZ = "Europe/Istanbul";
@@ -29,27 +33,35 @@ export function dayKeys(days: number, now = new Date()) {
 /** Gün anahtarı listesinin başlangıç anı (İstanbul 00:00, UTC+3 sabit). */
 export const rangeStart = (keys: string[]) => new Date(`${keys[0]}T00:00:00+03:00`);
 
-const dayLabelFmt = new Intl.DateTimeFormat("tr-TR", { day: "numeric", month: "short", timeZone: STUDIO_TZ });
-export const dayLabel = (key: string) => dayLabelFmt.format(new Date(`${key}T12:00:00+03:00`));
+const dayLabelFmts = new Map<Locale, Intl.DateTimeFormat>();
+/** Gün etiketi ("19 Eki"); `locale` verilmezse Türkçe. */
+export function dayLabel(key: string, locale: Locale = SOURCE_LOCALE) {
+  let fmt = dayLabelFmts.get(locale);
+  if (!fmt) {
+    fmt = new Intl.DateTimeFormat(LOCALE_META[locale].intl, { day: "numeric", month: "short", timeZone: STUDIO_TZ });
+    dayLabelFmts.set(locale, fmt);
+  }
+  return fmt.format(new Date(`${key}T12:00:00+03:00`));
+}
 
 /** `$dateToString` ifadesi (İstanbul saat dilimi). */
 export const dayExpr = (field = "$createdAt") => ({ $dateToString: { format: "%Y-%m-%d", date: field, timezone: STUDIO_TZ } });
 
 /** `[{_id: "2026-10-19", n: 3}]` → gün anahtarlarına göre doldurulmuş seri. */
-export function fillSeries(keys: string[], rows: { _id: string; n: number }[]) {
+export function fillSeries(keys: string[], rows: { _id: string; n: number }[], locale: Locale = SOURCE_LOCALE) {
   const map = new Map(rows.map((r) => [r._id, r.n]));
-  return keys.map((k) => ({ label: dayLabel(k), value: map.get(k) ?? 0 }));
+  return keys.map((k) => ({ label: dayLabel(k, locale), value: map.get(k) ?? 0 }));
 }
 
 /** Hayran etiketi: kimlik sızdırmayan, kararlı kısa kod. */
-export function anonymousFanLabel(id: string) {
-  return `Hayran #${id.slice(-4).toUpperCase()}`;
+export function anonymousFanLabel(id: string, t: Translator = TR_TRANSLATOR) {
+  return t("Hayran #{code}", { code: id.slice(-4).toUpperCase() });
 }
 
 /** "Deniz Kaya" → "Deniz K." (görünen ad; soyadı kısaltılır). */
-export function shortName(name: string | null | undefined) {
+export function shortName(name: string | null | undefined, t: Translator = TR_TRANSLATOR) {
   const parts = (name ?? "").trim().split(/\s+/).filter(Boolean);
-  if (!parts.length) return "Hayran";
+  if (!parts.length) return t("Hayran");
   if (parts.length === 1) return parts[0]!;
-  return `${parts[0]} ${parts[parts.length - 1]![0]!.toLocaleUpperCase("tr-TR")}.`;
+  return `${parts[0]} ${parts[parts.length - 1]![0]!.toLocaleUpperCase(t.locale)}.`;
 }

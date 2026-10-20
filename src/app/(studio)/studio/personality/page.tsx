@@ -1,9 +1,13 @@
 import type { Metadata } from "next";
 import { PersonaEditor } from "@/features/studio/persona-editor";
+import { getT } from "@/i18n/server";
 import { requireCreator } from "@/lib/auth/session";
 import { getTwinContext } from "@/services/studio/twin";
 
-export const metadata: Metadata = { title: "Kişilik Stüdyosu" };
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getT();
+  return { title: t("Kişilik Stüdyosu") };
+}
 
 export default async function PersonalityPage() {
   const { user } = await requireCreator();

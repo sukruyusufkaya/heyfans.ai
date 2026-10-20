@@ -10,6 +10,8 @@ import { postLoginRedirect } from "@/features/auth/actions";
 import { authErrorText, NETWORK_ERROR } from "@/features/auth/client-errors";
 import { emailField } from "@/features/auth/schemas";
 import { useCooldown } from "@/features/auth/use-cooldown";
+import { useT } from "@/i18n/client";
+import { m } from "@/i18n/m";
 
 const WEBMAIL: { test: RegExp; url: string }[] = [
   { test: /@(gmail|googlemail)\.com$/i, url: "https://mail.google.com" },
@@ -22,20 +24,21 @@ const WEBMAIL: { test: RegExp; url: string }[] = [
 const mailHref = (email: string) => WEBMAIL.find((w) => w.test.test(email))?.url ?? "mailto:";
 
 const STEPS = [
-  { n: "01", label: "E-postanı aç", Icon: Mail },
-  { n: "02", label: "Doğrula", Icon: BadgeCheck },
-  { n: "03", label: "Keşfetmeye başla", Icon: Sparkles },
+  { n: "01", label: m("E-postanı aç"), Icon: Mail },
+  { n: "02", label: m("Doğrula"), Icon: BadgeCheck },
+  { n: "03", label: m("Keşfetmeye başla"), Icon: Sparkles },
 ];
 
 function StepStrip({ active }: { active: 0 | 1 | 2 }) {
+  const t = useT();
   return (
-    <ol className="flex items-start justify-between gap-2" aria-label="Doğrulama adımları">
+    <ol className="flex items-start justify-between gap-2" aria-label={t("Doğrulama adımları")}>
       {STEPS.map(({ n, label, Icon }, i) => (
         <React.Fragment key={n}>
           <li className="flex w-[84px] shrink-0 flex-col items-center gap-1 text-center" aria-current={i === active ? "step" : undefined}>
             <Icon className={cn("size-[18px]", i <= active ? "text-brand-500" : "text-muted")} aria-hidden />
             <span className="text-[11px] font-extrabold text-ink">{n}</span>
-            <span className="text-[10px] leading-tight text-muted">{label}</span>
+            <span className="text-[10px] leading-tight text-muted">{t(label)}</span>
           </li>
           {i < STEPS.length - 1 && <span className="mt-3 h-px min-w-2 flex-1 bg-line" aria-hidden />}
         </React.Fragment>
@@ -46,6 +49,7 @@ function StepStrip({ active }: { active: 0 | 1 | 2 }) {
 
 /** "Gelen kutunu kontrol et" durumu + yeniden gönderme (60 sn bekleme). `error` varsa bağlantı sorunu da gösterilir. */
 export function VerifyPending({ email: initialEmail, next, showDevOutbox, errorMessage }: { email: string; next: string | null; showDevOutbox: boolean; errorMessage?: string | null }) {
+  const t = useT();
   const [email, setEmail] = React.useState(initialEmail);
   const [draft, setDraft] = React.useState("");
   const [draftError, setDraftError] = React.useState<string | null>(null);
@@ -60,13 +64,13 @@ export function VerifyPending({ email: initialEmail, next, showDevOutbox, errorM
     try {
       const { error } = await authClient.sendVerificationEmail({ email: target, callbackURL });
       if (error) {
-        setNotice({ tone: "danger", text: authErrorText(error) });
+        setNotice({ tone: "danger", text: t(authErrorText(error)) });
         return;
       }
       cooldown.start();
-      setNotice({ tone: "success", text: "Doğrulama bağlantısı gönderildi (bu adresle bekleyen bir kayıt varsa)." });
+      setNotice({ tone: "success", text: t("Doğrulama bağlantısı gönderildi (bu adresle bekleyen bir kayıt varsa).") });
     } catch {
-      setNotice({ tone: "danger", text: NETWORK_ERROR });
+      setNotice({ tone: "danger", text: t(NETWORK_ERROR) });
     } finally {
       setSending(false);
     }
@@ -76,7 +80,8 @@ export function VerifyPending({ email: initialEmail, next, showDevOutbox, errorM
     e.preventDefault();
     const parsed = emailField.safeParse(draft);
     if (!parsed.success) {
-      setDraftError(parsed.error.issues[0]?.message ?? "Geçerli bir e-posta adresi gir.");
+      const issue = parsed.error.issues[0]?.message;
+      setDraftError(issue ? t(issue) : t("Geçerli bir e-posta adresi gir."));
       return;
     }
     setDraftError(null);
@@ -89,7 +94,7 @@ export function VerifyPending({ email: initialEmail, next, showDevOutbox, errorM
       <IconBadge badge={errorMessage ? undefined : <CheckCheck />} className={cn(errorMessage && "bg-warning-soft text-warning")}>
         {errorMessage ? <MailWarning aria-hidden /> : <Mail aria-hidden />}
       </IconBadge>
-      <AuthHeading center eyebrow="HESAP DOĞRULAMA" title={errorMessage ? "Bağlantı" : "E-postanı"} accent={errorMessage ? "sorunu." : "kontrol et."} />
+      <AuthHeading center eyebrow={t("HESAP DOĞRULAMA")} title={errorMessage ? t("Bağlantı") : t("E-postanı")} accent={errorMessage ? t("sorunu.") : t("kontrol et.")} />
       {errorMessage && (
         <FormAlert className="mt-5 text-start">
           <p>{errorMessage}</p>
@@ -98,22 +103,22 @@ export function VerifyPending({ email: initialEmail, next, showDevOutbox, errorM
 
       {email ? (
         <>
-          <p className="mt-4 text-[15px] text-muted-strong">{errorMessage ? "Yeni bir doğrulama bağlantısı isteyebilirsin:" : "Doğrulama bağlantısını bu adrese gönderdik:"}</p>
+          <p className="mt-4 text-[15px] text-muted-strong">{errorMessage ? t("Yeni bir doğrulama bağlantısı isteyebilirsin:") : t("Doğrulama bağlantısını bu adrese gönderdik:")}</p>
           <p className="mx-auto mt-3 inline-block max-w-full break-all rounded-full bg-soft px-5 py-2.5 text-[15px] font-extrabold text-ink">{email}</p>
-          <p className="mt-4 text-xs text-muted-strong">HEYFANS hesabını etkinleştirmek için gelen kutundaki bağlantıya tıkla. Bağlantı 24 saat geçerlidir.</p>
+          <p className="mt-4 text-xs text-muted-strong">{t("HEYFANS hesabını etkinleştirmek için gelen kutundaki bağlantıya tıkla. Bağlantı 24 saat geçerlidir.")}</p>
           <div className="mt-6">
             <StepStrip active={errorMessage ? 1 : 0} />
           </div>
           <div className="mt-7 space-y-4">
-            <PrimaryLink href={mailHref(email)}>E-posta Uygulamasını Aç</PrimaryLink>
+            <PrimaryLink href={mailHref(email)}>{t("E-posta Uygulamasını Aç")}</PrimaryLink>
             <div className="text-xs text-muted">
-              <p>E-posta ulaşmadı mı?</p>
+              <p>{t("E-posta ulaşmadı mı?")}</p>
               <button type="button" disabled={cooldown.active || sending} onClick={() => resend(email)} className={cn(linkCls, "mt-1 text-xs disabled:cursor-not-allowed disabled:text-muted disabled:no-underline")}>
-                {cooldown.active ? `Yeniden göndermek için ${cooldown.remaining} sn bekle` : sending ? "Gönderiliyor…" : "Bağlantıyı yeniden gönder"}
+                {cooldown.active ? t("Yeniden göndermek için {n} sn bekle", { n: cooldown.remaining }) : sending ? t("Gönderiliyor…") : t("Bağlantıyı yeniden gönder")}
               </button>
               <div className="mt-2">
                 <button type="button" onClick={() => setEmail("")} className={cn(linkCls, "text-xs")}>
-                  E-posta adresini değiştir
+                  {t("E-posta adresini değiştir")}
                 </button>
               </div>
             </div>
@@ -124,9 +129,9 @@ export function VerifyPending({ email: initialEmail, next, showDevOutbox, errorM
             )}
             {showDevOutbox && (
               <p className="rounded-xl bg-warning-soft px-3 py-2.5 text-xs font-semibold text-warning">
-                Geliştirme ortamı: e-posta gerçekten gönderilmez.{" "}
+                {t("Geliştirme ortamı: e-posta gerçekten gönderilmez.")}{" "}
                 <Link href={`/dev/outbox?to=${encodeURIComponent(email)}`} className="underline underline-offset-2">
-                  Geliştirme posta kutusunu aç
+                  {t("Geliştirme posta kutusunu aç")}
                 </Link>
               </p>
             )}
@@ -134,9 +139,9 @@ export function VerifyPending({ email: initialEmail, next, showDevOutbox, errorM
         </>
       ) : (
         <form onSubmit={submitDraft} noValidate className="mt-6 space-y-4 text-start">
-          <p className="text-center text-[15px] text-muted-strong">Doğrulama bağlantısını almak istediğin e-posta adresini yaz.</p>
-          <AuthField label="E-posta adresi" htmlFor="vf-email" error={draftError}>
-            <Input id="vf-email" type="email" autoComplete="email" inputMode="email" placeholder="ornek@eposta.com" className="h-[52px] text-[14px]" value={draft} onChange={(e) => setDraft(e.target.value)} aria-invalid={!!draftError} aria-describedby={draftError ? "vf-email-error" : undefined} />
+          <p className="text-center text-[15px] text-muted-strong">{t("Doğrulama bağlantısını almak istediğin e-posta adresini yaz.")}</p>
+          <AuthField label={t("E-posta adresi")} htmlFor="vf-email" error={draftError}>
+            <Input id="vf-email" type="email" autoComplete="email" inputMode="email" placeholder={t("ornek@eposta.com")} className="h-[52px] text-[14px]" value={draft} onChange={(e) => setDraft(e.target.value)} aria-invalid={!!draftError} aria-describedby={draftError ? "vf-email-error" : undefined} />
           </AuthField>
           {notice && (
             <FormAlert tone={notice.tone}>
@@ -144,11 +149,11 @@ export function VerifyPending({ email: initialEmail, next, showDevOutbox, errorM
             </FormAlert>
           )}
           <PrimaryButton type="submit" loading={sending}>
-            Bağlantı Gönder
+            {t("Bağlantı Gönder")}
           </PrimaryButton>
           <p className="text-center">
             <Link href="/login" className={cn(linkCls, "text-[13px]")}>
-              ← Girişe Dön
+              {t("← Girişe Dön")}
             </Link>
           </p>
         </form>
@@ -159,6 +164,7 @@ export function VerifyPending({ email: initialEmail, next, showDevOutbox, errorM
 
 /** Doğrulama başarılı: oturum açıksa devam et (yönlendirme kararı sunucuda), değilse girişe git. */
 export function VerifySuccess({ signedIn, next }: { signedIn: boolean; next: string | null }) {
+  const t = useT();
   const [busy, setBusy] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
 
@@ -174,7 +180,7 @@ export function VerifySuccess({ signedIn, next }: { signedIn: boolean; next: str
       }
       window.location.assign(result.data.to);
     } catch {
-      setError(NETWORK_ERROR);
+      setError(t(NETWORK_ERROR));
       setBusy(false);
     }
   }
@@ -184,7 +190,7 @@ export function VerifySuccess({ signedIn, next }: { signedIn: boolean; next: str
       <IconBadge className="bg-success-soft text-success">
         <BadgeCheck aria-hidden />
       </IconBadge>
-      <AuthHeading center eyebrow="HESAP DOĞRULAMA" title="E-postan" accent="doğrulandı." description="Hesabın etkinleştirildi. Artık HEYFANS'ı keşfetmeye hazırsın." />
+      <AuthHeading center eyebrow={t("HESAP DOĞRULAMA")} title={t("E-postan")} accent={t("doğrulandı.")} description={t("Hesabın etkinleştirildi. Artık HEYFANS'ı keşfetmeye hazırsın.")} />
       <div className="mt-6">
         <StepStrip active={2} />
       </div>
@@ -196,12 +202,12 @@ export function VerifySuccess({ signedIn, next }: { signedIn: boolean; next: str
         )}
         {signedIn ? (
           <PrimaryButton type="button" onClick={go} loading={busy}>
-            Devam Et
+            {t("Devam Et")}
           </PrimaryButton>
         ) : (
           <>
-            <PrimaryLink href={next ? `/login?next=${encodeURIComponent(next)}` : "/login"}>Giriş Yap</PrimaryLink>
-            <p className="text-xs text-muted">Doğrulama farklı bir tarayıcıda tamamlandıysa şifrenle giriş yapman gerekir.</p>
+            <PrimaryLink href={next ? `/login?next=${encodeURIComponent(next)}` : "/login"}>{t("Giriş Yap")}</PrimaryLink>
+            <p className="text-xs text-muted">{t("Doğrulama farklı bir tarayıcıda tamamlandıysa şifrenle giriş yapman gerekir.")}</p>
           </>
         )}
       </div>

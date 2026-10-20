@@ -1,4 +1,5 @@
 "use client";
+import { useFormatters, useT } from "@/i18n/client";
 import { Area, AreaChart, Bar, BarChart, CartesianGrid, Cell, Line, LineChart, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 
 const PINK = "#ec0088";
@@ -15,9 +16,13 @@ export interface Point {
   value2?: number;
 }
 
-export function AreaTrend({ data, height = 220, format, seriesLabel = "Değer", series2Label }: { data: Point[]; height?: number; format?: (v: number) => string; seriesLabel?: string; series2Label?: string }) {
+export function AreaTrend({ data, height = 220, format, seriesLabel, series2Label }: { data: Point[]; height?: number; format?: (v: number) => string; seriesLabel?: string; series2Label?: string }) {
+  const t = useT();
+  const { formatNumber } = useFormatters();
+  const fmt = format ?? formatNumber;
+  const name = seriesLabel ?? t("Değer");
   return (
-    <div style={{ height }} className="w-full" role="img" aria-label={`${seriesLabel} grafiği`}>
+    <div style={{ height }} className="w-full" role="img" aria-label={t("{label} grafiği", { label: name })}>
       <ResponsiveContainer width="100%" height="100%">
         <AreaChart data={data} margin={{ top: 8, right: 8, left: -14, bottom: 0 }}>
           <defs>
@@ -28,9 +33,9 @@ export function AreaTrend({ data, height = 220, format, seriesLabel = "Değer", 
           </defs>
           <CartesianGrid stroke="#f3eef4" vertical={false} />
           <XAxis dataKey="label" tick={{ fontSize: 10, fill: "#9b929f" }} axisLine={false} tickLine={false} minTickGap={16} />
-          <YAxis tick={{ fontSize: 10, fill: "#9b929f" }} axisLine={false} tickLine={false} tickFormatter={format} width={56} />
-          <Tooltip {...tooltipStyle} formatter={(v) => [format ? format(Number(v)) : String(v), seriesLabel]} />
-          <Area type="monotone" dataKey="value" name={seriesLabel} stroke={PINK} strokeWidth={2.4} fill="url(#hfArea)" dot={false} activeDot={{ r: 4 }} />
+          <YAxis tick={{ fontSize: 10, fill: "#9b929f" }} axisLine={false} tickLine={false} tickFormatter={fmt} width={56} />
+          <Tooltip {...tooltipStyle} formatter={(v) => [fmt(Number(v)), name]} />
+          <Area type="monotone" dataKey="value" name={name} stroke={PINK} strokeWidth={2.4} fill="url(#hfArea)" dot={false} activeDot={{ r: 4 }} />
           {series2Label && <Area type="monotone" dataKey="value2" name={series2Label} stroke="#773cee" strokeWidth={2} fill="transparent" dot={false} />}
         </AreaChart>
       </ResponsiveContainer>
@@ -38,15 +43,19 @@ export function AreaTrend({ data, height = 220, format, seriesLabel = "Değer", 
   );
 }
 
-export function Bars({ data, height = 200, format, highlightLast = true, label = "Değer" }: { data: Point[]; height?: number; format?: (v: number) => string; highlightLast?: boolean; label?: string }) {
+export function Bars({ data, height = 200, format, highlightLast = true, label }: { data: Point[]; height?: number; format?: (v: number) => string; highlightLast?: boolean; label?: string }) {
+  const t = useT();
+  const { formatNumber } = useFormatters();
+  const fmt = format ?? formatNumber;
+  const name = label ?? t("Değer");
   return (
-    <div style={{ height }} className="w-full" role="img" aria-label={`${label} çubuk grafiği`}>
+    <div style={{ height }} className="w-full" role="img" aria-label={t("{label} çubuk grafiği", { label: name })}>
       <ResponsiveContainer width="100%" height="100%">
         <BarChart data={data} margin={{ top: 8, right: 4, left: -14, bottom: 0 }}>
           <CartesianGrid stroke="#f3eef4" vertical={false} />
           <XAxis dataKey="label" tick={{ fontSize: 10, fill: "#9b929f" }} axisLine={false} tickLine={false} />
-          <YAxis tick={{ fontSize: 10, fill: "#9b929f" }} axisLine={false} tickLine={false} tickFormatter={format} width={56} />
-          <Tooltip {...tooltipStyle} cursor={{ fill: "#fff0f9" }} formatter={(v) => [format ? format(Number(v)) : String(v), label]} />
+          <YAxis tick={{ fontSize: 10, fill: "#9b929f" }} axisLine={false} tickLine={false} tickFormatter={fmt} width={56} />
+          <Tooltip {...tooltipStyle} cursor={{ fill: "#fff0f9" }} formatter={(v) => [fmt(Number(v)), name]} />
           <Bar dataKey="value" radius={[6, 6, 0, 0]} maxBarSize={28}>
             {data.map((_, i) => (
               <Cell key={i} fill={highlightLast && i === data.length - 1 ? PINK : "#f9a8d4"} />
@@ -59,10 +68,13 @@ export function Bars({ data, height = 200, format, highlightLast = true, label =
 }
 
 export function Donut({ data, height = 180, centerLabel, centerValue }: { data: { name: string; value: number }[]; height?: number; centerLabel?: string; centerValue?: string }) {
+  const t = useT();
+  const { formatPercent } = useFormatters();
   const total = data.reduce((a, d) => a + d.value, 0);
+  const share = (v: number) => formatPercent((total ? Math.round((v / total) * 100) : 0) * 100);
   return (
     <div className="flex items-center gap-5">
-      <div style={{ height, width: height }} className="relative shrink-0" role="img" aria-label={`Dağılım: ${data.map((d) => `${d.name} ${total ? Math.round((d.value / total) * 100) : 0}%`).join(", ")}`}>
+      <div style={{ height, width: height }} className="relative shrink-0" role="img" aria-label={t("Dağılım: {items}", { items: data.map((d) => `${d.name} ${share(d.value)}`).join(", ") })}>
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
             <Pie data={data} dataKey="value" nameKey="name" innerRadius="66%" outerRadius="96%" paddingAngle={2} stroke="none">
@@ -74,7 +86,7 @@ export function Donut({ data, height = 180, centerLabel, centerValue }: { data: 
         </ResponsiveContainer>
         <div className="pointer-events-none absolute inset-0 grid place-items-center text-center">
           <div>
-            <p className="text-lg font-black tracking-tight">{centerValue ?? "%100"}</p>
+            <p className="text-lg font-black tracking-tight">{centerValue ?? formatPercent(10000)}</p>
             {centerLabel && <p className="text-[9px] text-muted">{centerLabel}</p>}
           </div>
         </div>
@@ -84,7 +96,7 @@ export function Donut({ data, height = 180, centerLabel, centerValue }: { data: 
           <li key={d.name} className="flex items-center gap-2 text-[11px]">
             <span className="size-2.5 rounded-full" style={{ background: CHART_COLORS[i % CHART_COLORS.length] }} aria-hidden />
             <span className="flex-1 text-muted-strong">{d.name}</span>
-            <b className="font-extrabold">{total ? Math.round((d.value / total) * 100) : 0}%</b>
+            <b className="font-extrabold">{share(d.value)}</b>
           </li>
         ))}
       </ul>

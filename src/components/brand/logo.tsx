@@ -1,5 +1,7 @@
+"use client";
 import Image from "next/image";
 import Link from "next/link";
+import { useT } from "@/i18n/client";
 import { cn } from "@/lib/utils";
 
 /**
@@ -26,7 +28,7 @@ export function Wordmark({ className, tone = "dark", size = "md", markOnly = fal
       {!markOnly && (
         <Image
           src={tone === "light" ? "/brand/heyfans-wordmark-light.png" : "/brand/heyfans-wordmark.png"}
-          alt="Heyfans"
+          alt="Heyfans" // i18n-ignore (marka)
           width={479}
           height={120}
           priority={priority}
@@ -34,14 +36,16 @@ export function Wordmark({ className, tone = "dark", size = "md", markOnly = fal
           draggable={false}
         />
       )}
+      {/* i18n-ignore (marka) */}
       {markOnly && <span className="sr-only">Heyfans</span>}
     </span>
   );
 }
 
 export function LogoLink({ href = "/", className, tone, size }: { href?: string; className?: string; dot?: boolean; tone?: "dark" | "light"; size?: LogoSize }) {
+  const t = useT();
   return (
-    <Link href={href} aria-label="Heyfans ana sayfa" className={cn("inline-flex shrink-0 items-center", className)}>
+    <Link href={href} aria-label={t("Heyfans ana sayfa")} className={cn("inline-flex shrink-0 items-center", className)}>
       <Wordmark tone={tone} size={size} priority />
     </Link>
   );

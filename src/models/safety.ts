@@ -183,5 +183,5 @@ AuditLogSchema.index({ createdAt: -1 });
 AuditLogSchema.index({ actorId: 1, createdAt: -1 });
 AuditLogSchema.index({ targetType: 1, targetId: 1, createdAt: -1 });
 AuditLogSchema.index({ action: 1, createdAt: -1 });
-immutable(AuditLogSchema, "Denetim kaydı");
+immutable(AuditLogSchema, "Denetim kaydı"); // i18n-ignore
 export const AuditLog = defineModel<IAuditLog>("AuditLog", AuditLogSchema, "auditLogs");

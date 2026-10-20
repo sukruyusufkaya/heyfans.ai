@@ -1,10 +1,12 @@
 import { CardGridSkeleton } from "@/components/public/skeletons";
 import { Skeleton } from "@/components/ui/display";
+import { getT } from "@/i18n/server";
 
-export default function Loading() {
+export default async function Loading() {
+  const t = await getT();
   return (
-    <div role="status" aria-label="Profil yükleniyor">
-      <span className="sr-only">Profil yükleniyor…</span>
+    <div role="status" aria-label={t("Profil yükleniyor")}>
+      <span className="sr-only">{t("Profil yükleniyor…")}</span>
       <Skeleton className="h-[170px] w-full rounded-none sm:h-[230px] lg:h-[290px]" />
       <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8">
         <div className="-mt-14 flex flex-col gap-5 sm:-mt-20 lg:flex-row lg:items-end">

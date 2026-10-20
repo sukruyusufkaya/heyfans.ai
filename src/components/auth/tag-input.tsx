@@ -3,6 +3,7 @@ import * as React from "react";
 import { X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { inputBase } from "@/components/ui/form-controls";
+import { useLocale, useT } from "@/i18n/client";
 
 /** Enter veya virgülle etiket ekleyen alan (konu listeleri için). Etiketler silinebilir; klavye ile kullanılabilir. */
 export function TagInput({
@@ -22,6 +23,8 @@ export function TagInput({
   tone?: "pink" | "danger";
   describedBy?: string;
 }) {
+  const t = useT();
+  const locale = useLocale();
   const [draft, setDraft] = React.useState("");
 
   function commit(raw: string) {
@@ -35,7 +38,7 @@ export function TagInput({
       return;
     }
     const next = [...value];
-    for (const p of parts) if (next.length < max && !next.some((n) => n.toLocaleLowerCase("tr-TR") === p.toLocaleLowerCase("tr-TR"))) next.push(p);
+    for (const p of parts) if (next.length < max && !next.some((n) => n.toLocaleLowerCase(locale) === p.toLocaleLowerCase(locale))) next.push(p);
     onChange(next);
     setDraft("");
   }
@@ -56,16 +59,16 @@ export function TagInput({
         }}
         onBlur={() => commit(draft)}
         disabled={value.length >= max}
-        placeholder={value.length >= max ? `En fazla ${max} konu` : placeholder}
+        placeholder={value.length >= max ? t("En fazla {max} konu", { max }) : placeholder}
         aria-describedby={describedBy}
         className={cn(inputBase, "h-11")}
       />
       {value.length > 0 && (
-        <ul className="mt-2 flex flex-wrap gap-1.5" aria-label="Eklenen konular">
-          {value.map((t) => (
-            <li key={t} className={cn("inline-flex items-center gap-1 rounded-full py-1 ps-3 pe-1.5 text-[11px] font-extrabold", tone === "pink" ? "bg-brand-100 text-brand-600" : "bg-danger-soft text-danger")}>
-              {t}
-              <button type="button" onClick={() => onChange(value.filter((v) => v !== t))} aria-label={`${t} konusunu kaldır`} className="grid size-5 place-items-center rounded-full hover:bg-white/70">
+        <ul className="mt-2 flex flex-wrap gap-1.5" aria-label={t("Eklenen konular")}>
+          {value.map((tag) => (
+            <li key={tag} className={cn("inline-flex items-center gap-1 rounded-full py-1 ps-3 pe-1.5 text-[11px] font-extrabold", tone === "pink" ? "bg-brand-100 text-brand-600" : "bg-danger-soft text-danger")}>
+              {tag}
+              <button type="button" onClick={() => onChange(value.filter((v) => v !== tag))} aria-label={t("{topic} konusunu kaldır", { topic: tag })} className="grid size-5 place-items-center rounded-full hover:bg-white/70">
                 <X className="size-3" aria-hidden />
               </button>
             </li>
