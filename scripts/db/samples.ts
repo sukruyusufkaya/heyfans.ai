@@ -59,7 +59,7 @@ async function main() {
   let ok = 0;
   for (const c of creators) if ((await importSampleCreator(c, storage)) === "ok") ok++;
   const ai = aiStatus();
-  console.log(`✓ ${ok}/${creators.length} örnek profil hazır.${ai.available ? "" : " AI sağlayıcısı yok: bilgi tabanı indekslenmedi → sağlayıcı bağlanınca `npm run db:samples -- --reindex`."}`);
+  console.log(`✓ ${ok}/${creators.length} örnek profil hazır.${ai.available ? "" : " AI sağlayıcısı yok: bilgi tabanı indekslenmedi → sağlayıcı bağlanınca `npm run db:samples -- --reindex` (canlı: `npm run db:samples:prod -- --reindex`)."}`);
 }
 
 main()

@@ -25,3 +25,6 @@ coverage/
 # demo hesap parolaları ve yerel notlar (asla depoya girmez)
 *.local.json
 *.local.md
+
+.vercel
+.env*
