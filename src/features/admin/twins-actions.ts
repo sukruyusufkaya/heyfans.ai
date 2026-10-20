@@ -3,7 +3,8 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { getT } from "@/i18n/server";
 import { assertAdmin } from "@/lib/auth/session";
-import { toActionError, type ActionResult } from "@/lib/errors";
+import { type ActionResult } from "@/lib/errors";
+import { toActionError } from "@/lib/action-error";
 import { adminSetTwinStatus, reviewTwinVersion } from "@/services/ai-twins/lifecycle";
 import { actorOf, idSchema, reasonSchema } from "./guard";
 

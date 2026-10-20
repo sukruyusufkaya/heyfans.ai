@@ -17,7 +17,7 @@ import { ProfileMenu } from "@/features/public/profile-menu";
 import { SocialIcon, socialHref, socialLabel } from "@/features/public/social-icon";
 import { getSession } from "@/lib/auth/session";
 import { aiStatus } from "@/lib/ai/provider";
-import { getFormatters, getT } from "@/i18n/server";
+import { getFormatters, getT, localeAlternates } from "@/i18n/server";
 import { m } from "@/i18n/m";
 import { cn } from "@/lib/utils";
 import { activeTierFor } from "@/services/content/access";
@@ -54,7 +54,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title,
     description,
-    alternates: { canonical: `/creators/${c.username}` },
+    alternates: await localeAlternates(`/creators/${c.username}`),
     openGraph: { title: `${c.displayName} | HEYFANS`, description, url: `/creators/${c.username}`, type: "profile", images: image ? [{ url: image, alt: c.displayName }] : undefined }, // i18n-ignore: kullanıcı adı + marka
     twitter: { card: image ? "summary_large_image" : "summary", title: `${c.displayName} | HEYFANS`, description }, // i18n-ignore: kullanıcı adı + marka
   };

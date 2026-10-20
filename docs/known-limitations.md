@@ -42,3 +42,5 @@
 - Hız sınırı MongoDB üzerinde; çok yüksek trafikte Redis adaptörü önerilir.
 - Trend skorları analitik olaylarından basit ağırlıklı hesapla üretilir; anomali/bot filtrelemesi yok.
 - AI hafıza çıkarımı kural tabanlıdır (LLM çağrısı yok); kullanıcı düzenleyip silebilir.
+- Çok dillilik: çeviriler yapay zekâ ile üretildi; yasal metinler, onay metinleri ve ödeme/iade koşullarının her dilde **hukukçu ve anadil kontrolünden** geçmesi gerekir (Türkçe metin esastır). Yöneticinin panelden değiştirdiği içerik (kategori, plan, yardım, yasal sayfa) yeniden çevrilene kadar diğer dillerde Türkçe görünür; yeni metin eklendiğinde `npm run i18n:extract` + çeviri gerekir (test eksik çeviriyi yakalar). Bazı kısa anahtarlar (ör. "Ses", "İşlem", "Sırada") birden çok bağlamda tek çeviriyi paylaşır.
+- Eski (çok dillilik öncesi) bildirimler ve kayıtlı açıklamalar Türkçe metin olarak saklandığı için Türkçe görünür; yeni bildirimler okuyanın dilinde gösterilir.

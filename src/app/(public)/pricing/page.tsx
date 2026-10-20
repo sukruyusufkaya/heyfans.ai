@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, SectionTitle } from "@/components/ui/card";
 import { DataTable, EmptyState, Td, Th } from "@/components/ui/display";
 import { PricingPlans, type PlanCardData } from "@/features/public/pricing-plans";
-import { getFormatters, getT } from "@/i18n/server";
+import { getFormatters, getT, localeAlternates } from "@/i18n/server";
 import { m } from "@/i18n/m";
 import { cn } from "@/lib/utils";
 import type { Translator } from "@/i18n/translate";
@@ -21,7 +21,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: t("Fiyatlandırma — Üyelik Planları ve Kredi Paketleri"),
     description: t("Ücretsiz başla; Temel, Premium veya VIP planıyla özel içeriklere eriş, AI ikizleriyle sohbet et. Sohbet kredisi paketleri ve tekil içerik satın alma seçenekleri."),
-    alternates: { canonical: "/pricing" },
+    alternates: await localeAlternates("/pricing"),
     openGraph: { title: t("Fiyatlandırma | HEYFANS"), description: t("Üyelik planları, sohbet kredisi paketleri ve özel içerik açma."), url: "/pricing", type: "website" },
   };
 }

@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { HelpFeedback } from "@/features/support/help-feedback";
 import { Breadcrumbs, PageBody } from "@/features/support/support-ui";
-import { getFormatters, getLocale, getT } from "@/i18n/server";
+import { getFormatters, getLocale, getT, localeAlternates } from "@/i18n/server";
 import { getHelpArticle, helpCategoryLabel, incrementHelpViews } from "@/services/support/help";
 
 type Props = { params: Promise<{ slug: string }> };
@@ -24,7 +24,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title: t("{title} — Yardım Merkezi", { title }),
     description: summary,
-    alternates: { canonical: `/help/${slug}` },
+    alternates: await localeAlternates(`/help/${slug}`),
     openGraph: { title: t("{title} | HEYFANS Yardım", { title }), description: summary, url: `/help/${slug}`, type: "article" },
   };
 }

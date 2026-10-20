@@ -2,7 +2,8 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { assertAdmin } from "@/lib/auth/session";
-import { toActionError, type ActionResult } from "@/lib/errors";
+import { type ActionResult } from "@/lib/errors";
+import { toActionError } from "@/lib/action-error";
 import { getT } from "@/i18n/server";
 import { ADMIN_ROLES } from "@/models/identity";
 import { setUserAdminRole, setUserStatus } from "@/services/admin/users";

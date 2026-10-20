@@ -11,7 +11,7 @@ import { CtaBand, HeroStats, PublicHero, Section, SeeAll } from "@/components/pu
 import { Card, SectionTitle } from "@/components/ui/card";
 import { EmptyState } from "@/components/ui/display";
 import { getSession } from "@/lib/auth/session";
-import { getFormatters, getT } from "@/i18n/server";
+import { getFormatters, getT, localeAlternates } from "@/i18n/server";
 import { exploreCreators, listCategories, viewerRelations } from "@/services/creators/public";
 import { categoryTopTags, getCategoryCached, listTwinCreators } from "@/services/public/discover";
 import { Breadcrumbs } from "@/features/support/support-ui";
@@ -28,7 +28,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title: t("{name} — İçerik Üreticileri ve AI İkizleri", { name }),
     description,
-    alternates: { canonical: `/categories/${category.slug}` },
+    alternates: await localeAlternates(`/categories/${category.slug}`),
     openGraph: { title: t("{name} | HEYFANS", { name }), description, url: `/categories/${category.slug}`, type: "website" },
   };
 }

@@ -26,6 +26,8 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
+  // Geliştirme sunucusu açıkken ayrı klasöre derlemek için: NEXT_DIST_DIR=.next-build npm run build
+  distDir: process.env.NEXT_DIST_DIR || ".next",
   reactStrictMode: true,
   poweredByHeader: false,
   serverExternalPackages: ["mongoose", "mongodb"],

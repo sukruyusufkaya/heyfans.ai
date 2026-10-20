@@ -6,14 +6,14 @@ import { ContactForm } from "@/features/support/contact-form";
 import { Breadcrumbs, PageBody, SupportHero } from "@/features/support/support-ui";
 import { getSession } from "@/lib/auth/session";
 import { TICKET_CATEGORIES, TICKET_CATEGORY_LABELS } from "@/services/support/tickets";
-import { getT } from "@/i18n/server";
+import { getT, localeAlternates } from "@/i18n/server";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getT();
   return {
     title: t("İletişim — Birlikte Çözebiliriz"),
     description: t("Sorular, öneriler, içerik üreticisi başvuruları veya güvenlik bildirimleri için HEYFANS destek ekibine ulaş."),
-    alternates: { canonical: "/contact" },
+    alternates: await localeAlternates("/contact"),
     openGraph: { title: t("İletişim | HEYFANS"), description: t("HEYFANS destek ekibine ulaş."), url: "/contact", type: "website" },
   };
 }

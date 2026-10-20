@@ -7,7 +7,7 @@ import { CreatorTile } from "@/components/creator/creator-cards";
 import { CtaBand, HeroStats, PolaroidStack, PrimaryCta, PublicHero, Section, SeeAll, getStat } from "@/components/public/marketing";
 import { Card, SectionTitle } from "@/components/ui/card";
 import { EmptyState } from "@/components/ui/display";
-import { getFormatters, getT } from "@/i18n/server";
+import { getFormatters, getT, localeAlternates } from "@/i18n/server";
 import { listCategories, listCreators, platformCounters } from "@/services/creators/public";
 import { categoryTopTags } from "@/services/public/discover";
 
@@ -16,7 +16,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: t("Kategoriler — İlgi Alanına Göre İçerik Üreticilerini Keşfet"),
     description: t("Yaşam tarzı, fitness, seyahat, oyun, müzik ve daha fazlası: ilgi alanlarına uygun içerik üreticilerini ve AI ikizlerini kategorilere göre keşfet."),
-    alternates: { canonical: "/categories" },
+    alternates: await localeAlternates("/categories"),
     openGraph: { title: t("Kategoriler | HEYFANS"), description: t("İlgi alanına uygun içerik üreticilerini kategorilere göre keşfet."), url: "/categories", type: "website" },
   };
 }

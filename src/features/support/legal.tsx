@@ -4,7 +4,7 @@ import { ChevronRight, CircleHelp, FileText, ScrollText, TriangleAlert } from "l
 import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/ui/display";
 import { siteConfig } from "@/config/site";
-import { getFormatters, getT } from "@/i18n/server";
+import { getFormatters, getT, localeAlternates } from "@/i18n/server";
 import type { Translator } from "@/i18n/translate";
 import type { ICmsPage } from "@/models/platform";
 import { getCmsPage } from "@/services/cms/cms";
@@ -21,7 +21,7 @@ export async function legalMetadata(slug: string, title: string, description: st
   return {
     title,
     description,
-    alternates: { canonical: path },
+    alternates: await localeAlternates(path),
     openGraph: { title: `${title} | ${siteConfig.name}`, description, url: path, type: "website" }, // i18n-ignore (başlık çağıran tarafından çevrilmiş gelir)
     robots: indexable ? { index: true, follow: true } : { index: false, follow: true },
   };

@@ -6,7 +6,7 @@ import { SectionTitle } from "@/components/ui/card";
 import { EmptyState } from "@/components/ui/display";
 import { siteConfig } from "@/config/site";
 import { CompareSection, CreatorAdvantageSection, FanExperienceSection, FinalCta, HomeHero, JourneySection, RevenueSection, TrustSection, compactStat, type HeroStat } from "@/features/public/home-sections";
-import { getFormatters, getT } from "@/i18n/server";
+import { getFormatters, getT, localeAlternates } from "@/i18n/server";
 import { getSections } from "@/services/cms/cms";
 import { listCategories, listCreators, platformCounters } from "@/services/creators/public";
 import { getPlatformSettings } from "@/services/platform/settings";
@@ -16,7 +16,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: { absolute: `${siteConfig.name} — ${t(siteConfig.tagline)}` },
     description: t(siteConfig.description),
-    alternates: { canonical: "/" },
+    alternates: await localeAlternates("/"),
   };
 }
 

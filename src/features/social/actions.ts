@@ -2,7 +2,8 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { assertUser } from "@/lib/auth/session";
-import { toActionError, type ActionResult } from "@/lib/errors";
+import { type ActionResult } from "@/lib/errors";
+import { toActionError } from "@/lib/action-error";
 import { objectIdSchema } from "@/lib/validation/common";
 import { getT } from "@/i18n/server";
 import { createReport } from "@/services/moderation/moderation";

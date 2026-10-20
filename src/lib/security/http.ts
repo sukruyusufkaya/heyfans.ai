@@ -1,7 +1,8 @@
 import "server-only";
 import { NextResponse } from "next/server";
 import { env } from "@/config/env";
-import { AppError, httpStatusOf, toActionError } from "@/lib/errors";
+import { AppError, httpStatusOf } from "@/lib/errors";
+import { toActionError } from "@/lib/action-error";
 import { getT } from "@/i18n/server";
 
 /**

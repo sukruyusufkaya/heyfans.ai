@@ -11,7 +11,7 @@ import { EmptyState, Pagination } from "@/components/ui/display";
 import { ExploreFilters } from "@/features/public/explore-filters";
 import { exploreHref, type FilterValues } from "@/features/public/explore-url";
 import { getSession } from "@/lib/auth/session";
-import { getFormatters, getT } from "@/i18n/server";
+import { getFormatters, getT, localeAlternates } from "@/i18n/server";
 import { m } from "@/i18n/m";
 import { cn } from "@/lib/utils";
 import { exploreCreators, listCategories, listCreators, viewerRelations, type CreatorCard } from "@/services/creators/public";
@@ -49,7 +49,7 @@ export async function generateMetadata({ searchParams }: { searchParams: Promise
   return {
     title: t("Keşfet — İçerik Üreticilerini ve AI İkizlerini Bul"),
     description: t("Yetenekli içerik üreticilerini kategoriye, fiyata ve çevrimiçi durumuna göre keşfet; AI ikizleriyle sohbet et ve özel içeriklere eriş."),
-    alternates: { canonical: "/explore" },
+    alternates: await localeAlternates("/explore"),
     openGraph: { title: t("Keşfet | HEYFANS"), description: t("İlgi alanlarına uygun içerik üreticilerini keşfet, takip et ve onlarla daha yakın bir bağ kur."), url: "/explore", type: "website" },
     robots: filtered ? { index: false, follow: true } : undefined,
   };

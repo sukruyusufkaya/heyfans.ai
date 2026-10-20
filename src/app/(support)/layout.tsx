@@ -5,7 +5,7 @@ import { CookieBanner } from "@/components/public/cookie-banner";
 import { getSession } from "@/lib/auth/session";
 import { CONSENT_COOKIE, decodeConsent } from "@/features/support/consent";
 import { AreaMessages } from "@/i18n/area";
-import { m } from "@/i18n/m";
+import { SUPPORT_EXTRA_NAV } from "@/config/navigation";
 
 /** Destek, Güvenlik ve Yasal sayfaları: genel başlık + "Destek" menü öğesi. */
 export default async function SupportLegalLayout({ children }: { children: React.ReactNode }) {
@@ -15,7 +15,7 @@ export default async function SupportLegalLayout({ children }: { children: React
   return (
     <AreaMessages area="support">
       <>
-        <PublicHeader user={user} extraNav={[{ href: "/help", label: m("Destek"), match: "prefix" }]} />
+        <PublicHeader user={user} extraNav={SUPPORT_EXTRA_NAV} />
         <main id="main" className="bg-gradient-to-b from-white to-[#fffafd]">
           {children}
         </main>

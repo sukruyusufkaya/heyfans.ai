@@ -1,7 +1,8 @@
 import "server-only";
 import { cache } from "react";
 import { cookies, headers } from "next/headers";
-import { isLocale, LOCALE_COOKIE, LOCALE_HEADER, LOCALE_META, LOCALE_SOURCE_HEADER, SOURCE_LOCALE, type Locale } from "./config";
+import { unstable_rethrow } from "next/navigation";
+import { isLocale, LOCALE_COOKIE, LOCALE_HEADER, LOCALE_META, LOCALE_PARAM, LOCALE_SOURCE_HEADER, LOCALES, SOURCE_LOCALE, type Locale } from "./config";
 import { COUNTRY_HEADER, resolveLocale, type LocaleSource } from "./resolve";
 import { createTranslator, type Catalog, type Translator } from "./translate";
 import { createFormatters, type Formatters } from "./formatters";
@@ -27,9 +28,11 @@ export function getCatalog(locale: Locale): Promise<Catalog> {
 }
 
 const warned = new Set<string>();
-const devMissing =
+/** Yalnız katalogda olup çevirisi boş anahtarlar uyarılır; katalogda hiç olmayan metin dinamik içeriktir (kullanıcı/DB metni). */
+const missingIn = (catalog: Catalog) =>
   process.env.NODE_ENV === "development"
     ? (source: string) => {
+        if (!Object.prototype.hasOwnProperty.call(catalog, source)) return;
         if (warned.has(source) || warned.size > 500) return;
         warned.add(source);
         console.warn(`[i18n] çeviri eksik: ${JSON.stringify(source.slice(0, 80))}`);
@@ -61,7 +64,9 @@ export const getLocale = cache(async (): Promise<Locale> => {
     if (isLocale(fromProxy)) return fromProxy;
     const jar = await cookies();
     return resolveLocale({ cookie: jar.get(LOCALE_COOKIE)?.value, country: h.get(COUNTRY_HEADER), acceptLanguage: h.get("accept-language") }).locale;
-  } catch {
+  } catch (err) {
+    // Next'in dinamik oluşturma sinyallerini yutma (yutulursa sayfa derleme anında Türkçe olarak sabitlenir).
+    unstable_rethrow(err);
     return SOURCE_LOCALE;
   }
 });
@@ -69,13 +74,15 @@ export const getLocale = cache(async (): Promise<Locale> => {
 /** İsteğin dilinde çevirmen. Sunucu bileşenleri, server action'lar ve servisler için. */
 export const getT = cache(async (): Promise<Translator> => {
   const locale = await getLocale();
-  return createTranslator(locale, await getCatalog(locale), devMissing);
+  const catalog = await getCatalog(locale);
+  return createTranslator(locale, catalog, missingIn(catalog));
 });
 
 /** Belirli bir dilde çevirmen (başka kullanıcıya giden e-posta/bildirim, AI istemi vb.). */
 export async function getTranslatorFor(locale: Locale | null | undefined): Promise<Translator> {
   const l = isLocale(locale) ? locale : SOURCE_LOCALE;
-  return createTranslator(l, await getCatalog(l), devMissing);
+  const catalog = await getCatalog(l);
+  return createTranslator(l, catalog, missingIn(catalog));
 }
 
 /** İsteğin dilinde sayı/para/tarih biçimlendiricileri. */
@@ -102,4 +109,17 @@ export async function getClientMessages(area: ClientArea, locale?: Locale): Prom
   }
   picked.set(key, out);
   return out;
+}
+
+/**
+ * Arama motorları için dil alternatifleri (metadata `alternates`): bu dilin canonical adresi + her dilin `?lang=` adresi.
+ * Türkçe (kaynak) adres parametresizdir ve `x-default` olarak işaretlenir.
+ */
+export async function localeAlternates(path: string) {
+  const locale = await getLocale();
+  const withLang = (l: Locale) => (l === SOURCE_LOCALE ? path : `${path}${path.includes("?") ? "&" : "?"}${LOCALE_PARAM}=${l}`);
+  return {
+    canonical: withLang(locale),
+    languages: { ...Object.fromEntries(LOCALES.map((l) => [l, withLang(l)])), "x-default": path },
+  };
 }

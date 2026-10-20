@@ -61,6 +61,9 @@ export const PUBLIC_NAV: NavItem[] = [
   { href: "/about", label: m("Hakkımızda") },
 ];
 
+/** Destek/yasal sayfalarında genel menüye eklenen öğe (istemci başlığında çevrilir). */
+export const SUPPORT_EXTRA_NAV: NavItem[] = [{ href: "/help", label: m("Destek"), match: "prefix" }];
+
 export const FAN_TOP_NAV: NavItem[] = [
   { href: "/app", label: m("Ana Sayfa"), match: "exact" },
   { href: "/explore", label: m("Keşfet") },

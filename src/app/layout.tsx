@@ -5,8 +5,8 @@ import { Toaster } from "sonner";
 import { Providers } from "@/components/providers";
 import { siteConfig } from "@/config/site";
 import { I18nProvider } from "@/i18n/client";
-import { LOCALE_META, LOCALE_PARAM, LOCALES, PATH_HEADER } from "@/i18n/config";
-import { getClientMessages, getLocale, getT } from "@/i18n/server";
+import { LOCALE_META, LOCALES, PATH_HEADER } from "@/i18n/config";
+import { getClientMessages, getLocale, getT, localeAlternates } from "@/i18n/server";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin", "latin-ext"], variable: "--font-inter", display: "swap" });
@@ -29,15 +29,7 @@ export async function generateMetadata(): Promise<Metadata> {
     title: { default: title, template: `%s | ${siteConfig.name}` },
     description,
     applicationName: siteConfig.name,
-    alternates: isPublic
-      ? {
-          canonical: locale === "tr" ? path : `${path}?${LOCALE_PARAM}=${locale}`,
-          languages: {
-            ...Object.fromEntries(LOCALES.map((l) => [l, `${path}?${LOCALE_PARAM}=${l}`])),
-            "x-default": path,
-          },
-        }
-      : undefined,
+    alternates: isPublic ? await localeAlternates(path) : undefined,
     openGraph: {
       type: "website",
       siteName: siteConfig.name,

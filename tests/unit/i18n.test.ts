@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { readFileSync } from "node:fs";
 import { IntlMessageFormat } from "intl-messageformat";
+import { parse, TYPE, type MessageFormatElement } from "@formatjs/icu-messageformat-parser";
 import { localeForCountry, negotiateAcceptLanguage, resolveLocale } from "@/i18n/resolve";
 import { createTranslator, formatMessage } from "@/i18n/translate";
 import { createFormatters } from "@/i18n/formatters";
@@ -92,9 +93,24 @@ describe("biçimlendiriciler", () => {
   });
 });
 
+/** Mesajdaki değişken adları (ICU ayrıştırıcısıyla; çoğul dallarındaki düz kelimeler değişken sayılmaz). */
 const placeholders = (s: string) => {
   const out = new Set<string>();
-  for (const m of s.matchAll(/\{\s*([A-Za-z_][\w]*)\s*(?:[,}])/g)) out.add(m[1]!);
+  const walk = (els: MessageFormatElement[]) => {
+    for (const el of els) {
+      if (el.type === TYPE.argument || el.type === TYPE.number || el.type === TYPE.date || el.type === TYPE.time) out.add(el.value);
+      if (el.type === TYPE.plural || el.type === TYPE.select) {
+        out.add(el.value);
+        for (const o of Object.values(el.options)) walk(o.value);
+      }
+      if (el.type === TYPE.tag) walk(el.children);
+    }
+  };
+  try {
+    walk(parse(s.replace(/'/g, "''"), { ignoreTag: false }));
+  } catch {
+    out.add("__parse_error__");
+  }
   return out;
 };
 
@@ -118,6 +134,8 @@ describe("çeviri katalogları", () => {
         const dst = placeholders(v);
         for (const p of dst) if (!src.has(p)) broken.push(`${p} kaynakta yok: ${s.slice(0, 60)}`);
         for (const p of src) if (!dst.has(p) && !/suffix/i.test(p)) broken.push(`${p} çeviride yok: ${s.slice(0, 60)}`);
+        // Baştaki/sondaki boşluk yan yana birleştirilen metinleri ayırır; çeviride aynen korunmalı.
+        if (/^\s/.test(s) !== /^\s/.test(v) || /\s$/.test(s) !== /\s$/.test(v)) broken.push(`kenar boşluğu farklı: ${JSON.stringify(s.slice(0, 50))}`);
         try {
           new IntlMessageFormat(v.replace(/'/g, "''"), LOCALE_META[locale].intl);
         } catch (e) {

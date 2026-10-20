@@ -3,7 +3,7 @@ import Link from "next/link";
 import { ArrowDown, ArrowRight, BadgeCheck, Eye, Flag, Globe2, Heart, KeyRound, Lightbulb, Lock, MessageCircle, Rocket, Scale, ShieldCheck, Sparkles, Target, Users, UsersRound, Crown } from "lucide-react";
 import { CtaBand, HeroStats, PolaroidStack, PrimaryCta, PublicHero, Section, getStat } from "@/components/public/marketing";
 import { Card, SectionTitle } from "@/components/ui/card";
-import { getFormatters, getT } from "@/i18n/server";
+import { getFormatters, getT, localeAlternates } from "@/i18n/server";
 import { m } from "@/i18n/m";
 import { listCreators, platformCounters } from "@/services/creators/public";
 
@@ -12,7 +12,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: t("Hakkımızda — Yeni Nesil İçerik Ekonomisinin Evi"),
     description: t("HEYFANS'ın misyonu, değerleri ve güven yaklaşımı: içerik üreticilerinin kontrolü ve açık rızasıyla çalışan AI ikizleri, şeffaf gelir paylaşımı ve güvenli deneyim."),
-    alternates: { canonical: "/about" },
+    alternates: await localeAlternates("/about"),
     openGraph: { title: t("Hakkımızda | HEYFANS"), description: t("Misyonumuz, değerlerimiz ve güven yaklaşımımız."), url: "/about", type: "website" },
   };
 }

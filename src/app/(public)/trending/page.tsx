@@ -12,7 +12,7 @@ import { Card, SectionTitle } from "@/components/ui/card";
 import { EmptyState, Progress, StatCard } from "@/components/ui/display";
 import { TrendChart } from "@/features/public/trend-chart";
 import { getSession } from "@/lib/auth/session";
-import { getFormatters, getT } from "@/i18n/server";
+import { getFormatters, getT, localeAlternates } from "@/i18n/server";
 import type { Translator } from "@/i18n/translate";
 import { cn } from "@/lib/utils";
 import { listCategories, platformCounters, trendingCreators, trendingSummary, viewerRelations, type TrendingCreator } from "@/services/creators/public";
@@ -23,7 +23,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: t("Trendler — Şu Anda Yükselen AI İkizleri ve İçerik Üreticileri"),
     description: t("Son 7 günde en çok takip edilen, en çok sohbet edilen ve en hızlı yükselen AI ikizlerini ve içerik üreticilerini keşfet."),
-    alternates: { canonical: "/trending" },
+    alternates: await localeAlternates("/trending"),
     openGraph: { title: t("Trendler | HEYFANS"), description: t("Şu anda en çok konuşulan AI ikizleri ve içerik üreticileri."), url: "/trending", type: "website" },
   };
 }

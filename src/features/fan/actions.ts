@@ -2,7 +2,8 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { assertUser } from "@/lib/auth/session";
-import { AppError, toActionError, type ActionResult } from "@/lib/errors";
+import { AppError, type ActionResult } from "@/lib/errors";
+import { toActionError } from "@/lib/action-error";
 import { paymentsConfigured } from "@/lib/payments/provider";
 import { rateLimit } from "@/lib/security/rate-limit";
 import { getT } from "@/i18n/server";

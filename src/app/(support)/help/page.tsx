@@ -6,7 +6,7 @@ import { z } from "zod";
 import { Card } from "@/components/ui/card";
 import { EmptyState } from "@/components/ui/display";
 import { PageBody, SupportHero } from "@/features/support/support-ui";
-import { getLocale, getT } from "@/i18n/server";
+import { getLocale, getT, localeAlternates } from "@/i18n/server";
 import { cn } from "@/lib/utils";
 import { HELP_CATEGORIES, helpCategoryCounts, helpCategoryLabel, popularHelp, searchHelp } from "@/services/support/help";
 
@@ -23,7 +23,7 @@ export async function generateMetadata({ searchParams }: { searchParams: Promise
   return {
     title: t("Yardım Merkezi — Her Sorunun Bir Cevabı Var"),
     description: t("Hesap, AI ikizleri, abonelikler, ödemeler ve güvenlik hakkında sık sorulan soruların yanıtları. Bulamazsan destek talebi oluştur."),
-    alternates: { canonical: "/help" },
+    alternates: await localeAlternates("/help"),
     openGraph: { title: t("Yardım Merkezi | HEYFANS"), description: t("Sık sorulan soruların yanıtları ve destek."), url: "/help", type: "website" },
     robots: filtered ? { index: false, follow: true } : undefined,
   };

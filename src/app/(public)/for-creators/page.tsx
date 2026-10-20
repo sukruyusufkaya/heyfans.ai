@@ -6,7 +6,7 @@ import { CreatorTile } from "@/components/creator/creator-cards";
 import { CtaBand, HeroStats, PrimaryCta, PublicHero, Section, SecondaryCta, getStat } from "@/components/public/marketing";
 import { AiTwinLabel } from "@/components/ui/badge";
 import { Card, SectionTitle } from "@/components/ui/card";
-import { getFormatters, getT } from "@/i18n/server";
+import { getFormatters, getT, localeAlternates } from "@/i18n/server";
 import { splitDirectPayment } from "@/services/billing/revenue";
 import { listCreators, platformCounters } from "@/services/creators/public";
 import { getPlatformSettings } from "@/services/platform/settings";
@@ -17,7 +17,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: t("İçerik Üreticileri İçin — Yaratıcılığını Gelire Dönüştür"),
     description: t("HEYFANS'ta içeriklerini paylaş, açık izninle AI ikizini oluştur, abonelik ve içerik satışıyla gelir elde et. Fiyatlar ve sınırlar tamamen senin kontrolünde."),
-    alternates: { canonical: "/for-creators" },
+    alternates: await localeAlternates("/for-creators"),
     openGraph: { title: t("İçerik Üreticileri İçin | HEYFANS"), description: t("Yaratıcılığını gerçek bir gelire dönüştür."), url: "/for-creators", type: "website" },
   };
 }

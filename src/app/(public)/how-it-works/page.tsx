@@ -5,7 +5,7 @@ import { ArrowRight, BadgeCheck, BarChart3, Camera, Crown, Eye, Heart, Lock, Mes
 import { CreatorTile } from "@/components/creator/creator-cards";
 import { CtaBand, HeroStats, PhoneChatMockup, PolaroidStack, PublicHero, Section, getStat } from "@/components/public/marketing";
 import { SectionTitle } from "@/components/ui/card";
-import { getT } from "@/i18n/server";
+import { getT, localeAlternates } from "@/i18n/server";
 import { cn } from "@/lib/utils";
 import { listCreators, platformCounters } from "@/services/creators/public";
 
@@ -14,7 +14,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: t("Nasıl Çalışır? — HEYFANS'ı Birkaç Adımda Keşfet"),
     description: t("Hayranlar için kayıt, keşif, AI ikizi sohbeti ve özel içerikler; içerik üreticileri için doğrulama, içerik paylaşımı, AI ikizi ve gelir. HEYFANS nasıl çalışır?"),
-    alternates: { canonical: "/how-it-works" },
+    alternates: await localeAlternates("/how-it-works"),
     openGraph: { title: t("Nasıl Çalışır? | HEYFANS"), description: t("HEYFANS'ı birkaç adımda keşfet."), url: "/how-it-works", type: "website" },
   };
 }

@@ -98,7 +98,7 @@ export default async function TrustAndSafetyPage() {
             </h2>
             <ol className="mt-4 grid gap-3 sm:grid-cols-3">
               {[
-                { title: t("Bildirim"), desc: t("İhlali veya içeriği bildir.") },
+                { title: t("Bildir"), desc: t("İhlali veya içeriği bildir.") },
                 { title: t("İnceleme"), desc: t("Talep ilgili kontrol akışında değerlendirilir.") },
                 { title: t("Sonuç"), desc: t("Karar ve itiraz yolları sunulur.") },
               ].map((s, i) => (

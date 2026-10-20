@@ -155,7 +155,7 @@ export function GiftComposer({ catalog, creators, balance, initialCreator }: { c
       </Card>
 
       <Card className="hf-gradient-pink h-fit">
-        <CardHeader title={t("Gönderi")} hint={t("Hediyenin gönderileceği içerik üreticisi")} />
+        <CardHeader title={t("Alıcı")} hint={t("Hediyenin gönderileceği içerik üreticisi")} />
         {creators.length ? (
           <div className="grid gap-4">
             <div className="flex items-center gap-3 rounded-2xl bg-white/80 p-3">
