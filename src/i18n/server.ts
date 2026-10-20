@@ -1,7 +1,6 @@
 import "server-only";
 import { cache } from "react";
 import { cookies, headers } from "next/headers";
-import { unstable_rethrow } from "next/navigation";
 import { isLocale, LOCALE_COOKIE, LOCALE_HEADER, LOCALE_META, LOCALE_PARAM, LOCALE_SOURCE_HEADER, LOCALES, SOURCE_LOCALE, type Locale } from "./config";
 import { COUNTRY_HEADER, resolveLocale, type LocaleSource } from "./resolve";
 import { createTranslator, type Catalog, type Translator } from "./translate";
@@ -11,6 +10,13 @@ import AREAS from "./generated/areas.json";
 
 export type ClientArea = keyof typeof AREAS;
 const SESSION_COOKIES = ["hf.session_token", "__Secure-hf.session_token"];
+
+/** Next'in iç hataları `digest` taşır (DYNAMIC_SERVER_USAGE, NEXT_REDIRECT, …); React ertelemesi `$$typeof` ile işaretlenir. */
+function isNextSignal(err: unknown): boolean {
+  if (!err || typeof err !== "object") return false;
+  const e = err as { digest?: unknown; $$typeof?: unknown };
+  return typeof e.digest === "string" || e.$$typeof === Symbol.for("react.postpone");
+}
 
 const catalogs = new Map<Locale, Promise<Catalog>>();
 
@@ -65,8 +71,9 @@ export const getLocale = cache(async (): Promise<Locale> => {
     const jar = await cookies();
     return resolveLocale({ cookie: jar.get(LOCALE_COOKIE)?.value, country: h.get(COUNTRY_HEADER), acceptLanguage: h.get("accept-language") }).locale;
   } catch (err) {
-    // Next'in dinamik oluşturma sinyallerini yutma (yutulursa sayfa derleme anında Türkçe olarak sabitlenir).
-    unstable_rethrow(err);
+    // Next'in iç sinyallerini (dinamik oluşturma, yönlendirme, ertele) yutma; yutulursa sayfa derleme anında Türkçe olarak sabitlenir.
+    // `next/navigation` içe aktarılmaz: betiklerde (react-server koşulu) istemci kopyası yüklenip çöküyor.
+    if (isNextSignal(err)) throw err;
     return SOURCE_LOCALE;
   }
 });
