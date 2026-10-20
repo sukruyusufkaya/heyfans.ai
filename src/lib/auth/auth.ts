@@ -10,6 +10,14 @@ import { connectDb } from "@/lib/db/mongo";
 import { sendAuthEmail } from "@/lib/email";
 import { onUserCreated } from "@/services/users/lifecycle";
 
+/** APP_URL kaynağı + (gerçek alan adlarında) www'li/www'siz eşi. localhost için yalnız kendisi. */
+export function appOrigins(appUrl: string): string[] {
+  const u = new URL(appUrl);
+  if (!u.hostname.includes(".") || /^\d+\.\d+\.\d+\.\d+$/.test(u.hostname)) return [u.origin];
+  const twin = u.hostname.startsWith("www.") ? u.hostname.slice(4) : `www.${u.hostname}`;
+  return [u.origin, `${u.protocol}//${twin}${u.port ? `:${u.port}` : ""}`];
+}
+
 function buildAuth(db: Db, client: MongoClient) {
   const e = env();
   // Yerelde istekler IP taşımaz (tek kova); geliştirme/testte sınırlar gevşetilir, üretimde aynen uygulanır.
@@ -27,8 +35,9 @@ function buildAuth(db: Db, client: MongoClient) {
     baseURL: e.APP_URL,
     secret: e.BETTER_AUTH_SECRET,
     database: mongodbAdapter(db, { client, usePlural: true }),
+    // Alan adının www'li/www'siz eşi de güvenilir (Vercel www → apex yönlendirse de önbellekte kalmış sayfalar için).
     // Apple, giriş dönüşünü appleid.apple.com'dan form POST ile gönderir; bu kaynak güvenilir olmalı.
-    trustedOrigins: [e.APP_URL, ...(socialProviders.apple ? ["https://appleid.apple.com"] : [])],
+    trustedOrigins: [...appOrigins(e.APP_URL), ...(socialProviders.apple ? ["https://appleid.apple.com"] : [])],
     emailAndPassword: {
       enabled: true,
       requireEmailVerification: true,

@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { appOrigins } from "@/lib/auth/auth";
 import { formatNational, maskPhone, normalizePhone, normalizeSocial } from "@/lib/creator-contact";
 
 describe("telefon", () => {
@@ -41,5 +42,13 @@ describe("sosyal hesap", () => {
   it("web sitesi https'e çevrilir; javascript: gibi şemalar kabul edilmez", () => {
     expect(normalizeSocial("website", "alanadi.com")).toMatchObject({ ok: true, url: "https://alanadi.com" });
     expect(normalizeSocial("website", "javascript:alert(1)").ok).toBe(false);
+  });
+});
+
+describe("kimlik doğrulama · güvenilir kaynaklar", () => {
+  it("alan adının www'li ve www'siz hâlleri birlikte güvenilir; localhost tek", () => {
+    expect(appOrigins("https://heyfans.ai")).toEqual(["https://heyfans.ai", "https://www.heyfans.ai"]);
+    expect(appOrigins("https://www.heyfans.ai/")).toEqual(["https://www.heyfans.ai", "https://heyfans.ai"]);
+    expect(appOrigins("http://localhost:3070")).toEqual(["http://localhost:3070"]);
   });
 });
