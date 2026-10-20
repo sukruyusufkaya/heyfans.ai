@@ -52,3 +52,15 @@ describe("kimlik doğrulama · güvenilir kaynaklar", () => {
     expect(appOrigins("http://localhost:3070")).toEqual(["http://localhost:3070"]);
   });
 });
+
+describe("kimlik doğrulama · sosyal giriş hata mesajları", () => {
+  it("iptal, süresi dolmuş oturum ve bağlanamayan hesap Türkçe karşılanır", async () => {
+    const { socialErrorMessage } = await import("@/features/auth/messages");
+    expect(socialErrorMessage("access_denied")).toMatch(/izni verilmedi/);
+    expect(socialErrorMessage("user_cancelled_authorize")).toMatch(/iptal/);
+    expect(socialErrorMessage("state_mismatch")).toMatch(/süresi doldu/);
+    expect(socialErrorMessage("account_not_linked")).toMatch(/kayıtlı bir hesap/);
+    expect(socialErrorMessage("bilinmeyen_kod")).toMatch(/tamamlanamadı/);
+    expect(socialErrorMessage(undefined)).toBeNull();
+  });
+});

@@ -37,7 +37,8 @@ export function SocialAuth({
   async function go(provider: Provider) {
     setBusy(provider);
     try {
-      const { error } = await authClient.signIn.social({ provider, callbackURL });
+      // İptal veya sağlayıcı hatasında Better Auth'un İngilizce hata sayfası yerine Türkçe mesajla giriş sayfasına dönülür.
+      const { error } = await authClient.signIn.social({ provider, callbackURL, errorCallbackURL: "/login?social=1" });
       if (error) {
         onError?.(authErrorText(error));
         setBusy(null);

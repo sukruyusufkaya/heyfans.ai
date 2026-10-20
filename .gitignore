@@ -28,3 +28,6 @@ coverage/
 
 .vercel
 .env*
+
+# Apple "Sign in with Apple" özel anahtarı (asla depoya girmez)
+*.p8

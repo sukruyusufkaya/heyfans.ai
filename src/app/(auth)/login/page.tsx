@@ -4,7 +4,7 @@ import { Heart, Sparkles } from "lucide-react";
 import { AuthShell, AuthVisual, VisualNote, VisualPill } from "@/components/auth/auth-shell";
 import { firstParam, safeNext } from "@/features/auth/next-url";
 import { LoginForm } from "@/features/auth/login-form";
-import { linkErrorMessage } from "@/features/auth/messages";
+import { linkErrorMessage, socialErrorMessage } from "@/features/auth/messages";
 import { getSession } from "@/lib/auth/session";
 import { resolvePostLoginDestination } from "@/services/auth/post-login";
 import { socialProviderFlags } from "@/services/auth/providers";
@@ -18,6 +18,7 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
   if (session) redirect(await resolvePostLoginDestination(session.user, next));
 
   const errorCode = firstParam(sp.error);
+  const errorText = firstParam(sp.social) === "1" ? socialErrorMessage(errorCode) : errorCode ? linkErrorMessage(errorCode) : null;
   return (
     <AuthShell
       mode="cards"
@@ -33,7 +34,7 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
         />
       }
     >
-      <LoginForm next={next} flags={socialProviderFlags()} notice={firstParam(sp.reset) === "1" ? "reset" : null} initialError={errorCode ? linkErrorMessage(errorCode) : null} />
+      <LoginForm next={next} flags={socialProviderFlags()} notice={firstParam(sp.reset) === "1" ? "reset" : null} initialError={errorText} />
     </AuthShell>
   );
 }

@@ -51,4 +51,6 @@ Değerleri **Vercel → Project → Settings → Environment Variables (Producti
 
 - Giriş sayfasında yalnız tanımlı sağlayıcıların düğmesi görünür.
 - İlk Google/Apple girişinde aynı e-postayla kayıtlı bir hesap varsa hesaplar bağlanır (Better Auth hesap bağlama, `trustedProviders: google, apple`).
+- Kullanıcı sağlayıcı ekranında vazgeçerse ya da dönüşte hata olursa `/login?social=1&error=<kod>` adresine dönülür ve Türkçe mesaj gösterilir (`socialErrorMessage`, `src/features/auth/messages.ts`).
+- `.p8` dosyaları `.gitignore`'dadır; yine de proje klasörü dışında saklayın.
 - Apple dönüşü `appleid.apple.com`'dan POST ile gelir; uygulama bu kaynağı Apple tanımlıyken otomatik olarak güvenilir sayar (`src/lib/auth/auth.ts`).
