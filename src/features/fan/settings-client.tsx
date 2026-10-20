@@ -159,7 +159,7 @@ export function SessionsList() {
               </div>
               {!current && (
                 <Button variant="secondary" size="xs" shape="pill" loading={busy === s.token} disabled={busy !== null} onClick={() => revoke(s.token)}>
-                  <LogOut /> Kapat
+                  <LogOut className="rtl:-scale-x-100" /> Kapat
                 </Button>
               )}
             </li>

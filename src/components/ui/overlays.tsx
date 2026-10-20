@@ -29,7 +29,7 @@ export function DialogContent({
         )}
         {...props}
       >
-        <div className="mb-4 pr-8">
+        <div className="mb-4 pe-8">
           <D.Title className="text-lg font-extrabold tracking-tight text-ink">{title}</D.Title>
           {description ? (
             <D.Description className="mt-1 text-xs leading-relaxed text-muted">{description}</D.Description>
@@ -38,7 +38,7 @@ export function DialogContent({
           )}
         </div>
         {children}
-        <D.Close className="absolute right-4 top-4 grid size-8 place-items-center rounded-full text-muted hover:bg-soft hover:text-ink" aria-label="Kapat">
+        <D.Close className="absolute end-4 top-4 grid size-8 place-items-center rounded-full text-muted hover:bg-soft hover:text-ink" aria-label="Kapat">
           <X className="size-4" />
         </D.Close>
       </D.Content>
@@ -66,7 +66,7 @@ export function DropdownMenuItem({ className, inset, ...props }: React.Component
     <DM.Item
       className={cn(
         "flex cursor-pointer select-none items-center gap-2.5 rounded-lg px-2.5 py-2 text-xs font-bold text-ink-soft outline-none data-[highlighted]:bg-brand-50 data-[highlighted]:text-brand-600 data-[disabled]:opacity-50 [&_svg]:size-4",
-        inset && "pl-8",
+        inset && "ps-8",
         className,
       )}
       {...props}
@@ -150,9 +150,9 @@ export function Select({
               <S.Item
                 key={o.value}
                 value={o.value}
-                className="relative flex cursor-pointer select-none items-center rounded-lg py-2 pl-8 pr-3 text-xs font-bold text-ink-soft outline-none data-[highlighted]:bg-brand-50 data-[highlighted]:text-brand-600"
+                className="relative flex cursor-pointer select-none items-center rounded-lg py-2 ps-8 pe-3 text-xs font-bold text-ink-soft outline-none data-[highlighted]:bg-brand-50 data-[highlighted]:text-brand-600"
               >
-                <S.ItemIndicator className="absolute left-2.5">
+                <S.ItemIndicator className="absolute start-2.5">
                   <Check className="size-3.5" />
                 </S.ItemIndicator>
                 <S.ItemText>{o.label}</S.ItemText>

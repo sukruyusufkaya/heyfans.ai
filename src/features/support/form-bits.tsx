@@ -11,7 +11,7 @@ export function fieldError(state: FormState, key: string) {
 /** Bot tuzağı: görünmez, klavye ile erişilemez; gerçek kullanıcılar doldurmaz. */
 export function Honeypot() {
   return (
-    <div aria-hidden className="absolute -left-[9999px] top-0 h-0 w-0 overflow-hidden">
+    <div aria-hidden className="absolute -start-[9999px] top-0 h-0 w-0 overflow-hidden">
       <label>
         Web sitesi (boş bırakın)
         <input name="website" type="text" tabIndex={-1} autoComplete="off" defaultValue="" />

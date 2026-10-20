@@ -91,7 +91,7 @@ export function VerifyPending({ email: initialEmail, next, showDevOutbox, errorM
       </IconBadge>
       <AuthHeading center eyebrow="HESAP DOĞRULAMA" title={errorMessage ? "Bağlantı" : "E-postanı"} accent={errorMessage ? "sorunu." : "kontrol et."} />
       {errorMessage && (
-        <FormAlert className="mt-5 text-left">
+        <FormAlert className="mt-5 text-start">
           <p>{errorMessage}</p>
         </FormAlert>
       )}
@@ -118,7 +118,7 @@ export function VerifyPending({ email: initialEmail, next, showDevOutbox, errorM
               </div>
             </div>
             {notice && (
-              <FormAlert tone={notice.tone} className="text-left">
+              <FormAlert tone={notice.tone} className="text-start">
                 <p>{notice.text}</p>
               </FormAlert>
             )}
@@ -133,7 +133,7 @@ export function VerifyPending({ email: initialEmail, next, showDevOutbox, errorM
           </div>
         </>
       ) : (
-        <form onSubmit={submitDraft} noValidate className="mt-6 space-y-4 text-left">
+        <form onSubmit={submitDraft} noValidate className="mt-6 space-y-4 text-start">
           <p className="text-center text-[15px] text-muted-strong">Doğrulama bağlantısını almak istediğin e-posta adresini yaz.</p>
           <AuthField label="E-posta adresi" htmlFor="vf-email" error={draftError}>
             <Input id="vf-email" type="email" autoComplete="email" inputMode="email" placeholder="ornek@eposta.com" className="h-[52px] text-[14px]" value={draft} onChange={(e) => setDraft(e.target.value)} aria-invalid={!!draftError} aria-describedby={draftError ? "vf-email-error" : undefined} />
@@ -190,7 +190,7 @@ export function VerifySuccess({ signedIn, next }: { signedIn: boolean; next: str
       </div>
       <div className="mt-7 space-y-3">
         {error && (
-          <FormAlert className="text-left">
+          <FormAlert className="text-start">
             <p>{error}</p>
           </FormAlert>
         )}

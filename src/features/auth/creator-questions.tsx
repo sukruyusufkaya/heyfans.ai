@@ -151,7 +151,7 @@ export function QCategories({ draft, set, errors, qRef, number, total, categorie
                 onClick={() => toggle(c.slug)}
                 disabled={!on && draft.categories.length >= 5}
                 className={cn(
-                  "flex h-[52px] items-center gap-2.5 rounded-xl border px-3.5 text-left text-[13px] font-extrabold transition-all disabled:cursor-not-allowed disabled:opacity-45",
+                  "flex h-[52px] items-center gap-2.5 rounded-xl border px-3.5 text-start text-[13px] font-extrabold transition-all disabled:cursor-not-allowed disabled:opacity-45",
                   on ? "border-brand-500 bg-brand-50 text-brand-700 shadow-[0_0_0_3px_rgba(236,0,136,0.08)]" : "border-line bg-white text-ink-soft hover:border-brand-200",
                 )}
               >
@@ -217,7 +217,7 @@ export function QPhone({ draft, set, errors, qRef, number, total }: QProps) {
             onChange={(e) => set("phoneNational", formatNational(country.code, e.target.value.replace(/\D/g, "").slice(0, country.max + 1)))}
             placeholder={country.example}
             leftIcon={<span className="text-sm font-bold">+{country.dial}</span>}
-            className={cn(inputCls, country.dial.length > 2 ? "pl-14" : "pl-12")}
+            className={cn(inputCls, country.dial.length > 2 ? "ps-14" : "ps-12")}
             aria-invalid={!!errors.national}
             aria-describedby={errors.national ? "cr-phone-error" : "cr-phone-hint"}
           />
@@ -248,7 +248,7 @@ export function QPreference({ draft, set, errors, qRef, number, total }: QProps)
               role="radio"
               aria-checked={on}
               onClick={() => set("contactPreference", p.key)}
-              className={cn("flex h-[60px] items-center gap-3 rounded-xl border px-4 text-left text-[13px] font-extrabold transition-all", on ? "border-brand-500 bg-brand-50 text-brand-700" : "border-line bg-white text-ink-soft hover:border-brand-200")}
+              className={cn("flex h-[60px] items-center gap-3 rounded-xl border px-4 text-start text-[13px] font-extrabold transition-all", on ? "border-brand-500 bg-brand-50 text-brand-700" : "border-line bg-white text-ink-soft hover:border-brand-200")}
             >
               <span className={cn("grid size-9 shrink-0 place-items-center rounded-lg [&_svg]:size-[18px]", on ? "bg-brand-500 text-white" : "bg-soft text-muted-strong")}>{PREF_ICON[p.key]}</span>
               {p.label}

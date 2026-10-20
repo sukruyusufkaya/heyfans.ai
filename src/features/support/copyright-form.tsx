@@ -70,7 +70,7 @@ function Inner({ claimTypes, defaults, onReset }: Props & { onReset: () => void 
       </div>
       <FormError state={state} />
       <SubmitButton pending={pending} className="justify-self-start">
-        Başvuru Oluştur <ArrowRight aria-hidden />
+        Başvuru Oluştur <ArrowRight className="rtl:-scale-x-100" aria-hidden />
       </SubmitButton>
     </form>
   );

@@ -151,7 +151,7 @@ export default async function StudioDashboardPage() {
                           {formatRelative(a.at)}
                         </span>
                       </span>
-                      <ChevronRight className="size-4 shrink-0 text-muted/60 group-hover:text-brand-500" aria-hidden />
+                      <ChevronRight className="rtl:-scale-x-100 size-4 shrink-0 text-muted/60 group-hover:text-brand-500" aria-hidden />
                     </Link>
                   </li>
                 );
@@ -178,7 +178,7 @@ export default async function StudioDashboardPage() {
                   <q.icon className="size-4" aria-hidden />
                 </span>
                 <span className="flex-1 truncate">{q.label}</span>
-                <ChevronRight className="size-4 text-muted/60 group-hover:text-brand-500" aria-hidden />
+                <ChevronRight className="rtl:-scale-x-100 size-4 text-muted/60 group-hover:text-brand-500" aria-hidden />
               </Link>
             ))}
           </div>
@@ -196,7 +196,7 @@ export default async function StudioDashboardPage() {
             </p>
             <Button asChild className="mt-4" size="sm">
               <Link href="/studio/ai-twin">
-                <ArrowRight /> AI ikizime git
+                <ArrowRight className="rtl:-scale-x-100" /> AI ikizime git
               </Link>
             </Button>
           </div>

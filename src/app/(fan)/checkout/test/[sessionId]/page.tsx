@@ -41,7 +41,7 @@ export default async function MockPaymentPage({ params }: { params: Promise<{ se
         <dl className="mt-5 grid gap-3 rounded-2xl border border-line-soft bg-[#fbf9fc] p-4 text-xs">
           <div className="flex items-start justify-between gap-4">
             <dt className="text-muted">Ürün</dt>
-            <dd className="text-right font-extrabold">{tx.item.label}</dd>
+            <dd className="text-end font-extrabold">{tx.item.label}</dd>
           </div>
           <div className="flex items-center justify-between">
             <dt className="text-muted">Tür</dt>

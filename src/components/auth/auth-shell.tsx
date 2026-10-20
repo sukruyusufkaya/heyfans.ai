@@ -15,19 +15,19 @@ function VisualArt({ kind }: { kind: ArtKind }) {
     <div aria-hidden className="absolute inset-0 -z-10 overflow-hidden bg-[linear-gradient(162deg,#8d1666_0%,#5b1044_38%,#270a23_100%)]">
       {kind === "phones" ? (
         <>
-          <div className="absolute -right-[6%] top-[3%] h-[58%] w-[40%] rotate-[9deg] overflow-hidden rounded-[30px] border-[3px] border-white/20 opacity-80">
+          <div className="absolute -end-[6%] top-[3%] h-[58%] w-[40%] rotate-[9deg] overflow-hidden rounded-[30px] border-[3px] border-white/20 opacity-80">
             <CreatorPhoto src="/images/seed/creators/damladeniz-portrait.webp" name="Damla Deniz" rounded="rounded-none" showMonogram={false} />
           </div>
-          <div className="absolute left-[7%] top-[13%] h-[60%] w-[42%] -rotate-[7deg] overflow-hidden rounded-[30px] border-[3px] border-brand-300/60">
+          <div className="absolute start-[7%] top-[13%] h-[60%] w-[42%] -rotate-[7deg] overflow-hidden rounded-[30px] border-[3px] border-brand-300/60">
             <CreatorPhoto src="/images/seed/creators/mervearslan-portrait.webp" name="Merve Arslan" rounded="rounded-none" showMonogram={false} />
           </div>
-          <div className="absolute left-[34%] top-[6%] h-[62%] w-[42%] rotate-[4deg] overflow-hidden rounded-[30px] border-[4px] border-brand-400 shadow-[0_20px_50px_rgba(0,0,0,0.35)]">
+          <div className="absolute start-[34%] top-[6%] h-[62%] w-[42%] rotate-[4deg] overflow-hidden rounded-[30px] border-[4px] border-brand-400 shadow-[0_20px_50px_rgba(0,0,0,0.35)]">
             <CreatorPhoto src="/images/seed/creators/meliserturk-portrait.webp" name="Melis Ertürk" rounded="rounded-none" showMonogram={false} />
           </div>
         </>
       ) : (
         <>
-          <div className={cn("absolute inset-y-0 w-full", kind === "portrait" ? "right-0" : "left-0")}>
+          <div className={cn("absolute inset-y-0 w-full", kind === "portrait" ? "end-0" : "start-0")}>
             <CreatorPhoto
               src={kind === "portrait" ? "/images/seed/creators/meliserturk-portrait.webp" : "/images/seed/creators/gizemaydin-portrait.webp"}
               name={kind === "portrait" ? "Melis Ertürk" : "Gizem Aydın"}

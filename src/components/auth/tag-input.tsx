@@ -63,7 +63,7 @@ export function TagInput({
       {value.length > 0 && (
         <ul className="mt-2 flex flex-wrap gap-1.5" aria-label="Eklenen konular">
           {value.map((t) => (
-            <li key={t} className={cn("inline-flex items-center gap-1 rounded-full py-1 pl-3 pr-1.5 text-[11px] font-extrabold", tone === "pink" ? "bg-brand-100 text-brand-600" : "bg-danger-soft text-danger")}>
+            <li key={t} className={cn("inline-flex items-center gap-1 rounded-full py-1 ps-3 pe-1.5 text-[11px] font-extrabold", tone === "pink" ? "bg-brand-100 text-brand-600" : "bg-danger-soft text-danger")}>
               {t}
               <button type="button" onClick={() => onChange(value.filter((v) => v !== t))} aria-label={`${t} konusunu kaldır`} className="grid size-5 place-items-center rounded-full hover:bg-white/70">
                 <X className="size-3" aria-hidden />

@@ -68,13 +68,13 @@ export default async function CategoriesPage() {
               <Link key={c.slug} href={`/categories/${c.slug}`} className="group relative block aspect-[16/10] overflow-hidden rounded-2xl shadow-[var(--shadow-card)]">
                 <CreatorPhoto src={c.coverUrl} name={c.name} rounded="rounded-none" showMonogram={false} className="transition-transform duration-500 group-hover:scale-105" />
                 <span className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" aria-hidden />
-                <span className="absolute left-3.5 top-3.5 grid size-10 place-items-center rounded-xl bg-white text-brand-500 shadow">
+                <span className="absolute start-3.5 top-3.5 grid size-10 place-items-center rounded-xl bg-white text-brand-500 shadow">
                   <CategoryIcon name={c.icon} className="size-5" />
                 </span>
                 <span className="absolute inset-x-3.5 bottom-3.5 text-white">
                   <span className="block text-base font-extrabold leading-tight">{c.name}</span>
                   <span className="mt-0.5 flex items-center gap-1 text-[11px] text-white/90">
-                    {formatNumber(c.creatorCount)} içerik üreticisi <ArrowRight className="size-3" aria-hidden />
+                    {formatNumber(c.creatorCount)} içerik üreticisi <ArrowRight className="rtl:-scale-x-100 size-3" aria-hidden />
                   </span>
                 </span>
               </Link>

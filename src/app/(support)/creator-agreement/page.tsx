@@ -56,7 +56,7 @@ export default async function CreatorAgreementPage() {
           <p className="text-xs font-bold text-ink-soft">Sözleşmeyi gözden geçirdin mi? Creator Studio&apos;dan devam edebilirsin.</p>
           <Button asChild shape="pill" size="md">
             <Link href="/studio">
-              Creator Studio&apos;ya Git <ArrowRight />
+              Creator Studio&apos;ya Git <ArrowRight className="rtl:-scale-x-100" />
             </Link>
           </Button>
         </>

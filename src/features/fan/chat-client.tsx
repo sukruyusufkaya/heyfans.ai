@@ -263,7 +263,7 @@ export function ChatClient({ conversationId, creator, twin, initialMessages, ini
       {/* Üst bilgi */}
       <header className="flex items-center gap-3 border-b border-line px-3 py-3 sm:px-5">
         <Link href="/chat" className="grid size-9 shrink-0 place-items-center rounded-full text-muted-strong hover:bg-soft lg:hidden" aria-label="Sohbet listesine dön">
-          <ChevronLeft className="size-5" />
+          <ChevronLeft className="rtl:-scale-x-100 size-5" />
         </Link>
         <Link href={`/creators/${creator.username}`} className="shrink-0" aria-label={`${creator.displayName} profili`}>
           <Avatar src={creator.avatarUrl} name={creator.displayName} size={44} online={creator.isOnline} />
@@ -271,7 +271,7 @@ export function ChatClient({ conversationId, creator, twin, initialMessages, ini
         <div className="min-w-0 flex-1">
           <p className="flex items-center gap-1.5 truncate text-sm font-extrabold">
             <span className="truncate">{creator.displayName}</span> {creator.verified && <Verified />}
-            <AiTwinLabel className="ml-1 shrink-0" />
+            <AiTwinLabel className="ms-1 shrink-0" />
           </p>
           <p className="mt-0.5 flex items-center gap-1.5 text-[11px] font-semibold text-success">
             <span className="size-1.5 rounded-full bg-success" aria-hidden /> {creator.isSample ? "Örnek profil · AI ikizi" : "Yetkilendirilmiş AI ikizi"}{creator.isOnline ? " · Çevrimiçi" : ""}
@@ -460,7 +460,7 @@ export function ChatClient({ conversationId, creator, twin, initialMessages, ini
                 <div
                   className={cn(
                     "whitespace-pre-wrap break-words rounded-2xl px-4 py-3 text-[13px] leading-relaxed",
-                    mine ? "rounded-br-md bg-brand-500 text-white shadow-[var(--shadow-pink)]" : "rounded-bl-md bg-[#f4f2f6] text-ink",
+                    mine ? "rounded-ee-md bg-brand-500 text-white shadow-[var(--shadow-pink)]" : "rounded-es-md bg-[#f4f2f6] text-ink",
                     m.pending && "opacity-70",
                     m.failed && "border border-danger/40 bg-danger-soft text-ink shadow-none",
                   )}

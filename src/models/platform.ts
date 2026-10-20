@@ -1,10 +1,11 @@
 import { Schema } from "mongoose";
+import { LOCALES, type Locale } from "@/i18n/config";
 import { baseOptions, defineModel, StatusEventSchema, type ObjectId, type StatusEvent } from "./_shared";
 
 export interface ICmsPage {
   _id: ObjectId;
   slug: string; // ör. "privacy", "terms", "about"
-  locale: "tr" | "en";
+  locale: Locale;
   kind: "legal" | "marketing" | "help";
   title: string;
   summary?: string;
@@ -22,7 +23,7 @@ export interface ICmsPage {
 const CmsPageSchema = new Schema<ICmsPage>(
   {
     slug: { type: String, required: true, match: /^[a-z0-9-]{2,60}$/ },
-    locale: { type: String, enum: ["tr", "en"], default: "tr" },
+    locale: { type: String, enum: LOCALES, default: "tr" },
     kind: { type: String, enum: ["legal", "marketing", "help"], required: true },
     title: { type: String, required: true, maxlength: 160 },
     summary: { type: String, maxlength: 600 },

@@ -54,7 +54,7 @@ export function FanShell({ user, credits, unreadNotifications, unreadChats, memb
               );
             })}
           </nav>
-          <div className="ml-auto flex items-center gap-3 lg:ml-0">
+          <div className="ms-auto flex items-center gap-3 lg:ms-0">
             <form
               role="search"
               className="hidden md:block"
@@ -73,14 +73,14 @@ export function FanShell({ user, credits, unreadNotifications, unreadChats, memb
             </Link>
             <Link href="/chat" className="relative hidden text-[#55505d] hover:text-brand-500 sm:block" aria-label={`Sohbetler${unreadChats ? `, ${unreadChats} okunmamış` : ""}`}>
               <MessageCircle className="size-5" />
-              {unreadChats > 0 && <i className="absolute -right-0.5 -top-0.5 size-2 rounded-full bg-brand-500 ring-2 ring-white" />}
+              {unreadChats > 0 && <i className="absolute -end-0.5 -top-0.5 size-2 rounded-full bg-brand-500 ring-2 ring-white" />}
             </Link>
             <Link href="/app/favorites" className="hidden text-[#55505d] hover:text-brand-500 sm:block" aria-label="Favoriler">
               <Heart className="size-5" />
             </Link>
             <Link href="/app/notifications" className="relative text-[#55505d] hover:text-brand-500" aria-label={`Bildirimler${unreadNotifications ? `, ${unreadNotifications} okunmamış` : ""}`}>
               <Bell className="size-5" />
-              {unreadNotifications > 0 && <i className="absolute -right-0.5 -top-0.5 size-2 rounded-full bg-brand-500 ring-2 ring-white" />}
+              {unreadNotifications > 0 && <i className="absolute -end-0.5 -top-0.5 size-2 rounded-full bg-brand-500 ring-2 ring-white" />}
             </Link>
             <DropdownMenu>
               <DropdownMenuTrigger className="rounded-full" aria-label="Hesap menüsü">
@@ -106,7 +106,7 @@ export function FanShell({ user, credits, unreadNotifications, unreadChats, memb
                 )}
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onSelect={signOut} className="text-danger data-[highlighted]:bg-danger-soft data-[highlighted]:text-danger">
-                  <LogOut /> Çıkış yap
+                  <LogOut className="rtl:-scale-x-100" /> Çıkış yap
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -115,7 +115,7 @@ export function FanShell({ user, credits, unreadNotifications, unreadChats, memb
       </header>
 
       <div className="lg:grid lg:grid-cols-[248px_minmax(0,1fr)]">
-        <aside className="sticky top-[70px] hidden h-[calc(100dvh-70px)] flex-col gap-1 overflow-y-auto border-r border-line bg-white px-4 py-6 scrollbar-thin lg:flex">
+        <aside className="sticky top-[70px] hidden h-[calc(100dvh-70px)] flex-col gap-1 overflow-y-auto border-e border-line bg-white px-4 py-6 scrollbar-thin lg:flex">
           <div className="mb-5 flex items-center gap-2.5 rounded-2xl border border-[#f3ebf0] bg-[#faf8fb] p-2.5">
             <Avatar src={user.image} name={user.name} size={38} />
             <div className="min-w-0">
@@ -144,7 +144,7 @@ export function FanShell({ user, credits, unreadNotifications, unreadChats, memb
                 >
                   <Icon className="size-[18px]" aria-hidden />
                   {item.label}
-                  {count > 0 && <span className="ml-auto size-[7px] rounded-full bg-brand-500" aria-label={`${count} yeni`} />}
+                  {count > 0 && <span className="ms-auto size-[7px] rounded-full bg-brand-500" aria-label={`${count} yeni`} />}
                 </Link>
               );
             })}

@@ -91,7 +91,7 @@ export default async function AdminUsersPage({ searchParams }: { searchParams: P
                       <Th>Üyelik</Th>
                       <Th>Son aktivite</Th>
                       <Th>Hesap durumu</Th>
-                      <Th className="text-right">İşlem</Th>
+                      <Th className="text-end">İşlem</Th>
                     </tr>
                   </thead>
                   <tbody>
@@ -126,7 +126,7 @@ export default async function AdminUsersPage({ searchParams }: { searchParams: P
                           <Td>
                             <StatusPill tone={USER_STATUS_TONES[u.status] ?? "gray"}>{USER_STATUS_LABELS[u.status] ?? u.status}</StatusPill>
                           </Td>
-                          <Td className="text-right">
+                          <Td className="text-end">
                             <Button asChild size="xs" variant={on ? "primary" : "secondary"}>
                               <Link href={hrefFor({ sel: u.id, page: page > 1 ? page : null })} scroll={false} aria-label={`${u.name} ayrıntıları`}>
                                 Detay

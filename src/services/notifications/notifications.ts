@@ -4,10 +4,15 @@ import { connectDb } from "@/lib/db/mongo";
 import { oid } from "@/lib/validation/common";
 import { Notification, type INotification } from "@/models/social";
 
+/**
+ * `title` / `body` kaynak (Türkçe) ICU kalıbıdır; değişkenler `params` ile verilir ve `data.params` içinde saklanır.
+ * Bildirim gösterilirken okuyanın dilinde çevrilir: `t(n.title, n.data?.params)` (ör. "{plan} planına yeni bir abone katıldı.").
+ */
 export interface NotifyInput {
   type: INotification["type"];
   title: string;
   body?: string;
+  params?: Record<string, string | number>;
   link?: string | null;
   actorImage?: string | null;
   data?: Record<string, unknown>;
@@ -16,7 +21,8 @@ export interface NotifyInput {
 /** Uygulama içi bildirim oluşturur (e-posta/push tercihleri ileride bu noktadan dağıtılır). */
 export async function notify(userId: string, input: NotifyInput, session?: ClientSession) {
   await connectDb();
-  await Notification.create([{ userId: oid(userId), ...input, data: input.data ?? {} }], { session });
+  const { params, ...rest } = input;
+  await Notification.create([{ userId: oid(userId), ...rest, data: params ? { ...(input.data ?? {}), params } : (input.data ?? {}) }], { session });
 }
 
 export async function listNotifications(userId: string, opts: { filter?: "all" | "unread" | INotification["type"]; page?: number; pageSize?: number } = {}) {

@@ -44,7 +44,7 @@ export function IconBadge({ children, badge, className }: { children: React.Reac
   return (
     <div className={cn("relative mx-auto mb-5 grid size-[76px] place-items-center rounded-[22px] bg-brand-100 text-brand-500 [&>svg]:size-8", className)}>
       {children}
-      {badge && <span className="absolute -bottom-1 -right-1 grid size-6 place-items-center rounded-full border-2 border-white bg-success text-white [&_svg]:size-3.5">{badge}</span>}
+      {badge && <span className="absolute -bottom-1 -end-1 grid size-6 place-items-center rounded-full border-2 border-white bg-success text-white [&_svg]:size-3.5">{badge}</span>}
     </div>
   );
 }
@@ -75,7 +75,7 @@ export function PrimaryButton({ children, arrow = true, outline = false, classNa
       className={cn("h-[54px] w-full rounded-[10px] text-[14px] font-extrabold", outline ? "shadow-none" : "bg-gradient-to-r from-brand-500 to-brand-600", className)}
     >
       {children}
-      {arrow && !props.loading && <ArrowRight className="size-[18px]" aria-hidden />}
+      {arrow && !props.loading && <ArrowRight className="rtl:-scale-x-100 size-[18px]" aria-hidden />}
     </Button>
   );
 }
@@ -88,7 +88,7 @@ export function PrimaryLink({ href, children, arrow = true, outline = false, cla
       className={cn(buttonVariants({ variant: outline ? "outline" : "primary" }), "h-[54px] w-full rounded-[10px] text-[14px] font-extrabold", outline ? "shadow-none" : "bg-gradient-to-r from-brand-500 to-brand-600", className)}
     >
       {children}
-      {arrow && <ArrowRight className="size-[18px]" aria-hidden />}
+      {arrow && <ArrowRight className="rtl:-scale-x-100 size-[18px]" aria-hidden />}
     </Link>
   );
 }

@@ -162,10 +162,10 @@ export function PersonaEditor({ initial, avatarUrl, creatorName, personaScore, l
                   <AiTwinLabel className="mt-1" />
                 </div>
               </div>
-              <div className="mt-4 rounded-2xl rounded-tl-sm bg-soft p-4 text-[12px] leading-relaxed text-ink-soft" aria-live="polite">
+              <div className="mt-4 rounded-2xl rounded-ss-sm bg-soft p-4 text-[12px] leading-relaxed text-ink-soft" aria-live="polite">
                 {p.greeting || <span className="text-muted">Karşılama mesajını yazdığında burada görünür.</span>}
               </div>
-              {p.sampleReplies[0] && <div className="ml-6 mt-2.5 rounded-2xl rounded-tl-sm bg-brand-50 p-3.5 text-[12px] leading-relaxed text-ink-soft">{p.sampleReplies[0]}</div>}
+              {p.sampleReplies[0] && <div className="ms-6 mt-2.5 rounded-2xl rounded-ss-sm bg-brand-50 p-3.5 text-[12px] leading-relaxed text-ink-soft">{p.sampleReplies[0]}</div>}
               <ul className="mt-4 flex flex-wrap gap-1.5" aria-label="Üslup özeti">
                 {summary.map((s) => (
                   <li key={s} className="rounded-full bg-brand-100 px-2.5 py-1 text-[10px] font-extrabold text-brand-600">

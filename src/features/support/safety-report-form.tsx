@@ -74,7 +74,7 @@ function Inner({ reasons, authed, onReset }: Props & { onReset: () => void }) {
           &apos;na bak.
         </p>
         <SubmitButton pending={pending}>
-          Güvenlik Bildirimi Gönder <ArrowRight aria-hidden />
+          Güvenlik Bildirimi Gönder <ArrowRight className="rtl:-scale-x-100" aria-hidden />
         </SubmitButton>
       </div>
     </form>

@@ -118,11 +118,11 @@ export default async function AdminAiOperationsPage({ searchParams }: { searchPa
               <tr>
                 <Th>Model</Th>
                 <Th>Tür</Th>
-                <Th className="text-right">İstek</Th>
-                <Th className="text-right">Token</Th>
-                <Th className="text-right">p95 gecikme</Th>
-                <Th className="text-right">Hata</Th>
-                <Th className="text-right">Maliyet</Th>
+                <Th className="text-end">İstek</Th>
+                <Th className="text-end">Token</Th>
+                <Th className="text-end">p95 gecikme</Th>
+                <Th className="text-end">Hata</Th>
+                <Th className="text-end">Maliyet</Th>
               </tr>
             </thead>
             <tbody>
@@ -140,15 +140,15 @@ export default async function AdminAiOperationsPage({ searchParams }: { searchPa
                     </span>
                   </Td>
                   <Td>{AI_KIND_LABELS[m.kind] ?? m.kind}</Td>
-                  <Td className="text-right tabular-nums">{formatNumber(m.requests)}</Td>
-                  <Td className="text-right tabular-nums">{formatCompact(m.tokens)}</Td>
-                  <Td className="text-right tabular-nums">{ms(m.p95)}</Td>
-                  <Td className="text-right">
+                  <Td className="text-end tabular-nums">{formatNumber(m.requests)}</Td>
+                  <Td className="text-end tabular-nums">{formatCompact(m.tokens)}</Td>
+                  <Td className="text-end tabular-nums">{ms(m.p95)}</Td>
+                  <Td className="text-end">
                     <StatusPill size="sm" tone={m.errorRatePct >= 5 ? "danger" : m.errorRatePct > 0 ? "warn" : "green"}>
                       %{m.errorRatePct.toLocaleString("tr-TR")}
                     </StatusPill>
                   </Td>
-                  <Td className="text-right tabular-nums">{usd(m.costUsd)}</Td>
+                  <Td className="text-end tabular-nums">{usd(m.costUsd)}</Td>
                 </tr>
               ))}
             </tbody>
@@ -176,7 +176,7 @@ export default async function AdminAiOperationsPage({ searchParams }: { searchPa
                   <Th>İş</Th>
                   <Th>Deneme</Th>
                   <Th>Son hata</Th>
-                  <Th className="text-right">İşlem</Th>
+                  <Th className="text-end">İşlem</Th>
                 </tr>
               </thead>
               <tbody>
@@ -192,7 +192,7 @@ export default async function AdminAiOperationsPage({ searchParams }: { searchPa
                     <Td className="max-w-[220px]">
                       <span className="line-clamp-2 text-[11px] text-danger">{j.lastError ?? "—"}</span>
                     </Td>
-                    <Td className="text-right">
+                    <Td className="text-end">
                       {canManage ? (
                         <ActionDialog
                           trigger={

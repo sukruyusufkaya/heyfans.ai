@@ -118,7 +118,7 @@ export default async function AboutPage() {
               </h2>
               <p className="mt-3 text-sm leading-relaxed text-ink-soft">Topluluğumuzun güvenliği bizim için her şeyden önce gelir. Doğrulama, açık rıza, şeffaf AI etiketleme, moderasyon ve itiraz süreçleriyle hem içerik üreticilerinin hem de kullanıcıların güvende olduğu bir deneyim hedefliyoruz.</p>
               <Link href="/trust-and-safety" className="mt-4 inline-flex h-11 items-center gap-2 rounded-full bg-brand-500 px-6 text-xs font-extrabold text-white shadow-[var(--shadow-pink)] hover:bg-brand-600">
-                Güven ve Güvenlik <ArrowRight className="size-4" aria-hidden />
+                Güven ve Güvenlik <ArrowRight className="rtl:-scale-x-100 size-4" aria-hidden />
               </Link>
             </div>
             <ul className="grid gap-3 sm:grid-cols-2">

@@ -85,17 +85,17 @@ export function StudioSettings(p: SettingsProps) {
         <Card>
           <CardHeader title="AI ikizi fiyatlandırması" hint="Kaydettiğin anda yeni sohbetlerde geçerli olur; inceleme gerekmez." />
           <div className="grid gap-4 sm:grid-cols-2">
-            <Field label="Mesaj başı kredi" htmlFor="pr-msg" hint={`0 – ${p.maxMessageCredits} (platform üst sınırı)`} error={firstError(pricing.fieldErrors, "messageCredits") ?? (overCap ? `En fazla ${p.maxMessageCredits} kredi` : null)}>
-              <Input id="pr-msg" type="number" min={0} max={p.maxMessageCredits} value={price.messageCredits} onChange={(e) => setPrice((s) => ({ ...s, messageCredits: e.target.value }))} />
+            <Field label="Mesaj başı kredi" htmlFor="pe-msg" hint={`0 – ${p.maxMessageCredits} (platform üst sınırı)`} error={firstError(pricing.fieldErrors, "messageCredits") ?? (overCap ? `En fazla ${p.maxMessageCredits} kredi` : null)}>
+              <Input id="pe-msg" type="number" min={0} max={p.maxMessageCredits} value={price.messageCredits} onChange={(e) => setPrice((s) => ({ ...s, messageCredits: e.target.value }))} />
             </Field>
-            <Field label="Günlük ücretsiz mesaj" htmlFor="pr-free" hint="Hayran başına · 0 – 50" error={firstError(pricing.fieldErrors, "freeMessagesPerDay")}>
-              <Input id="pr-free" type="number" min={0} max={50} value={price.freeMessagesPerDay} onChange={(e) => setPrice((s) => ({ ...s, freeMessagesPerDay: e.target.value }))} />
+            <Field label="Günlük ücretsiz mesaj" htmlFor="pe-free" hint="Hayran başına · 0 – 50" error={firstError(pricing.fieldErrors, "freeMessagesPerDay")}>
+              <Input id="pe-free" type="number" min={0} max={50} value={price.freeMessagesPerDay} onChange={(e) => setPrice((s) => ({ ...s, freeMessagesPerDay: e.target.value }))} />
             </Field>
-            <Field label="Sesli görüşme (kredi/dk)" htmlFor="pr-voice" error={firstError(pricing.fieldErrors, "voicePerMinuteCredits")}>
-              <Input id="pr-voice" type="number" min={0} max={1000} value={price.voicePerMinuteCredits} onChange={(e) => setPrice((s) => ({ ...s, voicePerMinuteCredits: e.target.value }))} />
+            <Field label="Sesli görüşme (kredi/dk)" htmlFor="pe-voice" error={firstError(pricing.fieldErrors, "voicePerMinuteCredits")}>
+              <Input id="pe-voice" type="number" min={0} max={1000} value={price.voicePerMinuteCredits} onChange={(e) => setPrice((s) => ({ ...s, voicePerMinuteCredits: e.target.value }))} />
             </Field>
-            <Field label="Görüntülü görüşme (kredi/dk)" htmlFor="pr-video" error={firstError(pricing.fieldErrors, "videoPerMinuteCredits")}>
-              <Input id="pr-video" type="number" min={0} max={1000} value={price.videoPerMinuteCredits} onChange={(e) => setPrice((s) => ({ ...s, videoPerMinuteCredits: e.target.value }))} />
+            <Field label="Görüntülü görüşme (kredi/dk)" htmlFor="pe-video" error={firstError(pricing.fieldErrors, "videoPerMinuteCredits")}>
+              <Input id="pe-video" type="number" min={0} max={1000} value={price.videoPerMinuteCredits} onChange={(e) => setPrice((s) => ({ ...s, videoPerMinuteCredits: e.target.value }))} />
             </Field>
           </div>
           <p className="mt-3 text-[10px] text-muted">Sesli ve görüntülü görüşme ücretleri, ilgili özellikler sağlayıcı bağlanıp açıldığında geçerli olur.</p>

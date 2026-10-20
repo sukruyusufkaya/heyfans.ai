@@ -111,7 +111,7 @@ export default async function CategoryDetailPage({ params }: Props) {
               <Link key={c.slug} href={`/categories/${c.slug}`} className="hf-card group flex flex-col overflow-hidden transition-shadow hover:shadow-[var(--shadow-card-hover)]">
                 <span className="relative block aspect-[16/10]">
                   <CreatorPhoto src={c.coverUrl} name={c.name} rounded="rounded-none" showMonogram={false} />
-                  <span className="absolute left-2.5 top-2.5 grid size-8 place-items-center rounded-lg bg-white text-brand-500 shadow">
+                  <span className="absolute start-2.5 top-2.5 grid size-8 place-items-center rounded-lg bg-white text-brand-500 shadow">
                     <CategoryIcon name={c.icon} className="size-4" />
                   </span>
                 </span>
@@ -121,7 +121,7 @@ export default async function CategoryDetailPage({ params }: Props) {
                     <span className="block text-[10px] text-muted">{formatNumber(c.creatorCount)} içerik üreticisi</span>
                   </span>
                   <span className="grid size-7 shrink-0 place-items-center rounded-full bg-brand-500 text-white">
-                    <ArrowRight className="size-3.5" aria-hidden />
+                    <ArrowRight className="rtl:-scale-x-100 size-3.5" aria-hidden />
                   </span>
                 </span>
               </Link>

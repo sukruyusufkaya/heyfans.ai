@@ -5,9 +5,9 @@
  * Fuşya: #EC0088 (referanslarda #E90086–#F00088 aralığı), koyu yan menü: #191623 → #12101B.
  */
 @theme {
-  --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
-  --font-display: var(--font-jakarta), var(--font-inter), ui-sans-serif, system-ui, sans-serif;
-  --font-script: var(--font-caveat), "Segoe Script", cursive;
+  --font-sans: var(--font-inter), var(--font-arabic), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+  --font-display: var(--font-jakarta), var(--font-inter), var(--font-arabic), ui-sans-serif, system-ui, sans-serif;
+  --font-script: var(--font-caveat), var(--font-arabic), "Segoe Script", cursive;
 
   --color-brand-50: #fff5fa;
   --color-brand-100: #fff0f9;
@@ -159,4 +159,14 @@
 .hf-float-delay { animation: hf-float 7s ease-in-out 1.2s infinite; }
 @media (prefers-reduced-motion: reduce) {
   .hf-float, .hf-float-delay { animation: none; }
+}
+
+/* Arapça (sağdan sola): Latin yazı tipleri Arapça glif içermez → Noto Sans Arabic devreye girer.
+   El yazısı vurgu (Caveat) ve sıkı harf aralığı Arapçada okunmaz; düz başlık yazısına dönülür. */
+:root:lang(ar) {
+  --font-display: var(--font-arabic), var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-script: var(--font-arabic), var(--font-inter), sans-serif;
+}
+:lang(ar) [class*="tracking-"] {
+  letter-spacing: normal;
 }

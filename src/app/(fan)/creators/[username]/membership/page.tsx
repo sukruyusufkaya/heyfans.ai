@@ -43,7 +43,7 @@ export default async function MembershipPage({ params, searchParams }: { params:
       </div>
 
       <Card className="flex flex-col items-center gap-5 text-center">
-        <div className="flex flex-col items-center gap-3 sm:flex-row sm:text-left">
+        <div className="flex flex-col items-center gap-3 sm:flex-row sm:text-start">
           <Link href={`/creators/${data.creator.username}`} aria-label={`${data.creator.displayName} profili`}>
             <Avatar src={data.creator.avatarUrl} name={data.creator.displayName} size={60} />
           </Link>
@@ -56,9 +56,9 @@ export default async function MembershipPage({ params, searchParams }: { params:
             </p>
           </div>
           {data.creator.isSample ? (
-            <SampleProfileLabel size="md" className="sm:ml-3" />
+            <SampleProfileLabel size="md" className="sm:ms-3" />
           ) : (
-            <Badge tone="pink" size="lg" className="sm:ml-3">
+            <Badge tone="pink" size="lg" className="sm:ms-3">
               Üreticiye özel üyelik
             </Badge>
           )}

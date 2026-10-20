@@ -1,4 +1,5 @@
 import { Schema } from "mongoose";
+import { LOCALES, type Locale } from "@/i18n/config";
 import { baseOptions, defineModel, type ObjectId } from "./_shared";
 
 export const USER_ROLES = ["fan", "creator", "admin"] as const;
@@ -37,6 +38,8 @@ export interface IUser {
   signupIntent?: "fan" | "creator" | null;
   /** Kullanım Şartları + Gizlilik onayı (e-posta kaydında formda, Google/Apple kaydında /consent ekranında). */
   termsAcceptedAt?: Date | null;
+  /** Hesap dili (kayıtta konuma göre atanır, dil seçiciyle değişir). E-postalar ve bildirimler bu dilde gönderilir. */
+  locale?: Locale | null;
   twoFactorEnabled?: boolean;
   birthDate?: Date | null;
   lastSeenAt?: Date | null;
@@ -58,6 +61,7 @@ const UserSchema = new Schema<IUser>(
     statusReason: { type: String, default: null, maxlength: 1000 },
     signupIntent: { type: String, enum: ["fan", "creator", null], default: null },
     termsAcceptedAt: { type: Date, default: null },
+    locale: { type: String, enum: [...LOCALES, null], default: null },
     twoFactorEnabled: { type: Boolean, default: false },
     birthDate: { type: Date, default: null },
     lastSeenAt: { type: Date, default: null },
@@ -81,7 +85,7 @@ export interface IUserPreferences {
   personalizationConsent: boolean;
   aiMemoryEnabled: boolean;
   marketingConsent: boolean;
-  locale: "tr" | "en";
+  locale: Locale;
   notifications: {
     email: boolean;
     push: boolean;
@@ -103,7 +107,7 @@ const UserPreferencesSchema = new Schema<IUserPreferences>(
     personalizationConsent: { type: Boolean, default: false },
     aiMemoryEnabled: { type: Boolean, default: false },
     marketingConsent: { type: Boolean, default: false },
-    locale: { type: String, enum: ["tr", "en"], default: "tr" },
+    locale: { type: String, enum: LOCALES, default: "tr" },
     notifications: {
       email: { type: Boolean, default: true },
       push: { type: Boolean, default: false },

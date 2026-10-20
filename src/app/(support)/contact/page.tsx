@@ -75,7 +75,7 @@ export default async function ContactPage({ searchParams }: { searchParams: Prom
               <h2 className="mt-4 text-lg font-extrabold text-brand-600">Önce Yardım Merkezi</h2>
               <p className="mt-1.5 text-xs leading-relaxed text-ink-soft">En sık sorulan soruların yanıtları ve ayrıntılı rehberler göz atmaya değer.</p>
               <Link href="/help" className="mt-4 inline-flex h-10 items-center gap-2 rounded-full bg-white px-5 text-xs font-extrabold text-brand-600 shadow-sm hover:bg-brand-50">
-                Yardımı Keşfet <ArrowRight className="size-3.5" aria-hidden />
+                Yardımı Keşfet <ArrowRight className="rtl:-scale-x-100 size-3.5" aria-hidden />
               </Link>
             </aside>
             <aside className="rounded-[16px] bg-night p-6 text-white shadow-[var(--shadow-card)]">
@@ -85,7 +85,7 @@ export default async function ContactPage({ searchParams }: { searchParams: Prom
               <h2 className="mt-4 text-lg font-extrabold">Acil güvenlik bildirimi</h2>
               <p className="mt-1.5 text-xs leading-relaxed text-night-text">Kimliğe bürünme, izinsiz içerik ve olası ihlaller için ayrı bildirim kanalı.</p>
               <Link href="/trust-and-safety#bildir" className="mt-4 inline-flex h-10 items-center gap-2 rounded-full bg-brand-500 px-5 text-xs font-extrabold text-white hover:bg-brand-600">
-                Bildirimi Başlat <ArrowRight className="size-3.5" aria-hidden />
+                Bildirimi Başlat <ArrowRight className="rtl:-scale-x-100 size-3.5" aria-hidden />
               </Link>
               <p className="mt-4 text-[10px] leading-relaxed text-night-muted">Hayati tehlike durumunda önce 112 Acil Çağrı Merkezi&apos;ni ara.</p>
             </aside>
@@ -107,7 +107,7 @@ function ChannelBody({ icon: Icon, title, text, hint }: { icon: typeof Mail; tit
         <span className="mt-0.5 block text-[11px] leading-snug text-muted">{text}</span>
         {hint && <span className="mt-0.5 block truncate text-[11px] font-bold text-brand-600">{hint}</span>}
       </span>
-      <ArrowRight className="size-4 shrink-0 text-brand-500 transition-transform group-hover:translate-x-0.5" aria-hidden />
+      <ArrowRight className="rtl:-scale-x-100 size-4 shrink-0 text-brand-500 transition-transform group-hover:translate-x-0.5" aria-hidden />
     </>
   );
 }

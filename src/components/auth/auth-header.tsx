@@ -1,10 +1,9 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ChevronDown, Globe } from "lucide-react";
 import { LogoLink } from "@/components/brand/logo";
 import { Button } from "@/components/ui/button";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/overlays";
+import { LanguageSwitcher } from "@/components/i18n/language-switcher";
 
 function ctaFor(pathname: string, accountHref: string | null): { label: string; href: string } {
   if (pathname.startsWith("/login")) return { label: "Hesap Oluştur", href: "/register" };
@@ -23,19 +22,7 @@ export function AuthHeader({ accountHref }: { accountHref: string | null }) {
       <div className="flex h-[68px] items-center justify-between gap-4 px-4 sm:px-8 lg:h-[82px] lg:px-[73px]">
         <LogoLink dot />
         <div className="flex items-center gap-1.5 sm:gap-4">
-          <DropdownMenu>
-            <DropdownMenuTrigger
-              className="flex items-center gap-1.5 rounded-full px-2.5 py-1.5 text-xs font-bold text-ink-soft hover:bg-soft"
-              aria-label="Dil seçimi: Türkçe"
-            >
-              <Globe className="size-4" aria-hidden />
-              <span className="hidden sm:inline">Türkçe</span>
-              <ChevronDown className="size-3 text-muted" aria-hidden />
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="min-w-40">
-              <DropdownMenuItem>Türkçe</DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <LanguageSwitcher />
           <Link href="/help" className="hidden rounded-full px-2 py-1.5 text-xs font-bold text-ink-soft hover:text-brand-600 sm:inline">
             Yardım Merkezi
           </Link>

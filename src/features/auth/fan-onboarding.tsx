@@ -149,7 +149,7 @@ export function FanOnboarding({ categories, initial, next, firstName }: { catego
                       role="checkbox"
                       aria-checked={on}
                       onClick={() => toggle(interests, setInterests, c.slug)}
-                      className={cn("overflow-hidden rounded-xl border bg-white text-left transition-all", on ? "border-2 border-brand-500 shadow-[0_8px_22px_-10px_rgba(236,0,136,0.45)]" : "border-line hover:border-brand-200")}
+                      className={cn("overflow-hidden rounded-xl border bg-white text-start transition-all", on ? "border-2 border-brand-500 shadow-[0_8px_22px_-10px_rgba(236,0,136,0.45)]" : "border-line hover:border-brand-200")}
                     >
                       <span className="block h-[64px] sm:h-[78px]">
                         <CreatorPhoto name={c.name} rounded="rounded-none" showMonogram={false} />
@@ -186,7 +186,7 @@ export function FanOnboarding({ categories, initial, next, firstName }: { catego
                     role="checkbox"
                     aria-checked={on}
                     onClick={() => toggle(vibes, setVibes, v.key)}
-                    className={cn("flex min-h-[92px] flex-col justify-between rounded-xl border p-3.5 text-left transition-all", on ? "border-2 border-brand-500 bg-brand-50 p-[13px]" : "border-line bg-white hover:border-brand-200")}
+                    className={cn("flex min-h-[92px] flex-col justify-between rounded-xl border p-3.5 text-start transition-all", on ? "border-2 border-brand-500 bg-brand-50 p-[13px]" : "border-line bg-white hover:border-brand-200")}
                   >
                     <span className="flex items-center justify-between">
                       <span className="text-[13px] font-extrabold text-ink">{v.label}</span>
@@ -276,7 +276,7 @@ export function FanOnboarding({ categories, initial, next, firstName }: { catego
         <div className="flex items-center gap-3">
           {step > 0 && (
             <Button type="button" variant="secondary" size="lg" className="h-[54px] rounded-[10px]" onClick={() => go(step - 1)} disabled={pending}>
-              <ArrowLeft aria-hidden /> Geri
+              <ArrowLeft className="rtl:-scale-x-100" aria-hidden /> Geri
             </Button>
           )}
           <button type="button" onClick={onSkip} disabled={pending} className="text-[13px] font-semibold text-muted hover:text-ink-soft disabled:opacity-60">
@@ -284,7 +284,7 @@ export function FanOnboarding({ categories, initial, next, firstName }: { catego
           </button>
         </div>
         <Button type="button" size="lg" onClick={onNext} disabled={!canContinue} loading={pending} className="h-[54px] min-w-[170px] rounded-[10px] bg-gradient-to-r from-brand-500 to-brand-600 text-[14px]">
-          {step === 3 ? "HEYFANS'a Başla" : "Devam Et"} <ArrowRight className="size-[18px]" aria-hidden />
+          {step === 3 ? "HEYFANS'a Başla" : "Devam Et"} <ArrowRight className="rtl:-scale-x-100 size-[18px]" aria-hidden />
         </Button>
       </div>
     </div>

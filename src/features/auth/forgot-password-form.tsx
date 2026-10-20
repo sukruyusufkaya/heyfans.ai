@@ -50,7 +50,7 @@ export function ForgotPasswordForm({ showDevOutbox }: { showDevOutbox: boolean }
         </p>
         <p className="mx-auto mt-3 max-w-[380px] text-xs text-muted">Gelen kutunda göremezsen istenmeyen (spam) klasörünü de kontrol et.</p>
         {formError && (
-          <FormAlert className="mt-4 text-left">
+          <FormAlert className="mt-4 text-start">
             <p>{formError}</p>
           </FormAlert>
         )}

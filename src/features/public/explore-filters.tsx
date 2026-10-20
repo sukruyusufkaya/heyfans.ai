@@ -74,7 +74,7 @@ export function ExploreFilters({ categories, values, activeCount }: { categories
 
         <fieldset className="border-t border-line-soft pt-3">
           <legend className="mb-2 text-xs font-black text-ink">Kategoriler</legend>
-          <ul className="grid max-h-64 gap-0.5 overflow-y-auto pr-1 scrollbar-thin">
+          <ul className="grid max-h-64 gap-0.5 overflow-y-auto pe-1 scrollbar-thin">
             {categories.map((c) => (
               <li key={c.slug}>
                 <label className={rowClass}>

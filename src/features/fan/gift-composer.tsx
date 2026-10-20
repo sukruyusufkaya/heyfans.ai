@@ -104,7 +104,7 @@ export function GiftComposer({ catalog, creators, balance, initialCreator }: { c
                     onClick={() => setGiftKey(g.key)}
                     className={cn("relative flex flex-col items-center gap-2 rounded-2xl border p-4 transition-all", on ? "border-brand-400 bg-brand-50 shadow-[0_8px_20px_rgb(236_0_136/0.12)]" : "border-line-soft bg-[#fcfafd] hover:border-brand-200")}
                   >
-                    {on && <Check className="absolute right-2.5 top-2.5 size-4 text-brand-500" aria-hidden />}
+                    {on && <Check className="absolute end-2.5 top-2.5 size-4 text-brand-500" aria-hidden />}
                     <span className="grid size-12 place-items-center rounded-2xl bg-white text-brand-500 shadow-sm">
                       <Icon className="size-6" />
                     </span>
@@ -179,7 +179,7 @@ export function GiftComposer({ catalog, creators, balance, initialCreator }: { c
               </p>
             )}
             <Button size="lg" shape="pill" onClick={send} loading={busy} disabled={insufficient || cost <= 0 || (kind === "tip" && cost < 5) || !creator}>
-              <Send /> {kind === "gift" ? "Hediyeyi gönder" : "Bahşişi gönder"}
+              <Send className="rtl:-scale-x-100" /> {kind === "gift" ? "Hediyeyi gönder" : "Bahşişi gönder"}
             </Button>
             <p className="text-center text-[10px] text-muted">Gönderilen hediye ve bahşişler iade edilmez. Kredi düşümü ve işlem kaydı anında yapılır.</p>
           </div>

@@ -85,7 +85,7 @@ export function PlanManager({ plans, takenTiers }: { plans: PlanView[]; takenTie
             return (
               <li key={p.id}>
                 <Card className={cn("relative flex h-full flex-col", p.isPopular && "border-2 border-brand-500 bg-brand-50/60")}>
-                  {p.isPopular && <span className="absolute right-0 top-0 rounded-bl-xl rounded-tr-[14px] bg-brand-500 px-3 py-1.5 text-[9px] font-black uppercase tracking-wider text-white">En popüler</span>}
+                  {p.isPopular && <span className="absolute end-0 top-0 rounded-es-xl rounded-se-[14px] bg-brand-500 px-3 py-1.5 text-[9px] font-black uppercase tracking-wider text-white">En popüler</span>}
                   <span className="grid size-11 place-items-center rounded-[13px] bg-brand-100 text-brand-500">
                     <Icon className="size-5" aria-hidden />
                   </span>
@@ -93,7 +93,7 @@ export function PlanManager({ plans, takenTiers }: { plans: PlanView[]; takenTie
                   <p className="mt-1 min-h-8 text-[11px] text-muted">{p.description || `${TIER_NAME[p.tier]} kademesi`}</p>
                   <p className="mt-4 text-[30px] font-black tracking-[-0.04em]">
                     {price != null ? formatMoney(price) : <span className="text-[14px] font-bold text-muted">Yıllık fiyat yok</span>}
-                    {price != null && <span className="ml-1 text-[11px] font-semibold text-muted">/ {yearly ? "yıl" : "ay"}</span>}
+                    {price != null && <span className="ms-1 text-[11px] font-semibold text-muted">/ {yearly ? "yıl" : "ay"}</span>}
                   </p>
                   <ul className="mt-4 grid flex-1 content-start gap-2.5 border-t border-line-soft pt-4 text-[12px]">
                     {[...p.benefits, `İçerik erişimi: ${ACCESS_NAME[p.contentAccess]}`, p.unlimitedChat ? "Sınırsız AI sohbeti" : p.dailyChatAllowance ? `Günde ${p.dailyChatAllowance} ücretsiz AI mesajı` : null, p.customRequests ? "Özel talep hakkı" : null]
@@ -199,8 +199,8 @@ function PlanDialog({ editing, takenTiers, onClose }: { editing: PlanView | "new
     <Dialog open={editing !== null} onOpenChange={(o) => !o && onClose()}>
       <DialogContent title={plan ? "Planı düzenle" : "Yeni üyelik planı"} description="Fiyat değişikliği yalnız yeni aboneliklere uygulanır; mevcut aboneler kendi fiyatıyla devam eder." size="lg">
         <div className="grid gap-4 sm:grid-cols-2">
-          <Field label="Kademe" htmlFor="pl-tier" error={firstError(fieldErrors, "tier")}>
-            <NativeSelect id="pl-tier" value={tier} onChange={(e) => setTier(e.target.value as PlanView["tier"])} disabled={Boolean(plan)}>
+          <Field label="Kademe" htmlFor="ps-tier" error={firstError(fieldErrors, "tier")}>
+            <NativeSelect id="ps-tier" value={tier} onChange={(e) => setTier(e.target.value as PlanView["tier"])} disabled={Boolean(plan)}>
               {freeTiers.map((t) => (
                 <option key={t} value={t}>
                   {TIER_NAME[t]}
@@ -208,44 +208,44 @@ function PlanDialog({ editing, takenTiers, onClose }: { editing: PlanView | "new
               ))}
             </NativeSelect>
           </Field>
-          <Field label="Plan adı" htmlFor="pl-name" required error={firstError(fieldErrors, "name")}>
-            <Input id="pl-name" value={name} maxLength={60} onChange={(e) => setName(e.target.value)} placeholder="Örn. Premium" />
+          <Field label="Plan adı" htmlFor="ps-name" required error={firstError(fieldErrors, "name")}>
+            <Input id="ps-name" value={name} maxLength={60} onChange={(e) => setName(e.target.value)} placeholder="Örn. Premium" />
           </Field>
-          <Field label="Aylık fiyat (₺)" htmlFor="pl-m" required hint="₺19,90 – ₺10.000 · KDV dahil" error={firstError(fieldErrors, "priceMonthlyMinor")}>
-            <Input id="pl-m" inputMode="decimal" value={monthly} onChange={(e) => setMonthly(e.target.value.replace(/[^\d.,]/g, ""))} placeholder="199,90" />
+          <Field label="Aylık fiyat (₺)" htmlFor="ps-m" required hint="₺19,90 – ₺10.000 · KDV dahil" error={firstError(fieldErrors, "priceMonthlyMinor")}>
+            <Input id="ps-m" inputMode="decimal" value={monthly} onChange={(e) => setMonthly(e.target.value.replace(/[^\d.,]/g, ""))} placeholder="199,90" />
           </Field>
-          <Field label="Yıllık fiyat (₺)" htmlFor="pl-y" hint="İsteğe bağlı · aylıktan yüksek, 12 aylık toplamdan düşük" error={firstError(fieldErrors, "priceYearlyMinor")}>
-            <Input id="pl-y" inputMode="decimal" value={yearlyText} onChange={(e) => setYearlyText(e.target.value.replace(/[^\d.,]/g, ""))} placeholder="1999" />
+          <Field label="Yıllık fiyat (₺)" htmlFor="ps-y" hint="İsteğe bağlı · aylıktan yüksek, 12 aylık toplamdan düşük" error={firstError(fieldErrors, "priceYearlyMinor")}>
+            <Input id="ps-y" inputMode="decimal" value={yearlyText} onChange={(e) => setYearlyText(e.target.value.replace(/[^\d.,]/g, ""))} placeholder="1999" />
           </Field>
-          <Field label="Kısa açıklama" htmlFor="pl-desc" className="sm:col-span-2" error={firstError(fieldErrors, "description")}>
-            <Textarea id="pl-desc" value={description} maxLength={300} onChange={(e) => setDescription(e.target.value)} className="min-h-16" />
+          <Field label="Kısa açıklama" htmlFor="ps-desc" className="sm:col-span-2" error={firstError(fieldErrors, "description")}>
+            <Textarea id="ps-desc" value={description} maxLength={300} onChange={(e) => setDescription(e.target.value)} className="min-h-16" />
           </Field>
-          <Field label="Avantajlar" htmlFor="pl-ben" className="sm:col-span-2" hint="Enter ile ekle · en fazla 10" error={firstError(fieldErrors, "benefits")}>
-            <TagInput id="pl-ben" value={benefits} onChange={setBenefits} max={10} maxLength={120} placeholder="Örn. Özel fotoğraf ve video erişimi" />
+          <Field label="Avantajlar" htmlFor="ps-ben" className="sm:col-span-2" hint="Enter ile ekle · en fazla 10" error={firstError(fieldErrors, "benefits")}>
+            <TagInput id="ps-ben" value={benefits} onChange={setBenefits} max={10} maxLength={120} placeholder="Örn. Özel fotoğraf ve video erişimi" />
           </Field>
-          <Field label="İçerik erişimi" htmlFor="pl-ca">
-            <NativeSelect id="pl-ca" value={contentAccess} onChange={(e) => setContentAccess(e.target.value as PlanView["contentAccess"])}>
+          <Field label="İçerik erişimi" htmlFor="ps-ca">
+            <NativeSelect id="ps-ca" value={contentAccess} onChange={(e) => setContentAccess(e.target.value as PlanView["contentAccess"])}>
               <option value="none">Abonelere özel içerik yok</option>
               <option value="basic">Temel seviye içerikler</option>
               <option value="premium">Premium seviyeye kadar</option>
               <option value="vip">Tüm içerikler (VIP)</option>
             </NativeSelect>
           </Field>
-          <Field label="Günlük ücretsiz AI mesajı" htmlFor="pl-daily" hint="Sınırsız sohbet açıkken yok sayılır" error={firstError(fieldErrors, "dailyChatAllowance")}>
-            <Input id="pl-daily" type="number" min={0} max={1000} value={daily} disabled={unlimited} onChange={(e) => setDaily(e.target.value)} />
+          <Field label="Günlük ücretsiz AI mesajı" htmlFor="ps-daily" hint="Sınırsız sohbet açıkken yok sayılır" error={firstError(fieldErrors, "dailyChatAllowance")}>
+            <Input id="ps-daily" type="number" min={0} max={1000} value={daily} disabled={unlimited} onChange={(e) => setDaily(e.target.value)} />
           </Field>
           <div className="grid gap-1 sm:col-span-2">
-            <label htmlFor="pl-unl" className="flex items-center justify-between gap-4 border-b border-line-soft py-2.5 text-[12px] font-extrabold">
+            <label htmlFor="ps-unl" className="flex items-center justify-between gap-4 border-b border-line-soft py-2.5 text-[12px] font-extrabold">
               Sınırsız AI sohbeti
-              <Switch id="pl-unl" checked={unlimited} onCheckedChange={setUnlimited} />
+              <Switch id="ps-unl" checked={unlimited} onCheckedChange={setUnlimited} />
             </label>
-            <label htmlFor="pl-req" className="flex items-center justify-between gap-4 border-b border-line-soft py-2.5 text-[12px] font-extrabold">
+            <label htmlFor="ps-req" className="flex items-center justify-between gap-4 border-b border-line-soft py-2.5 text-[12px] font-extrabold">
               Özel talep hakkı
-              <Switch id="pl-req" checked={customReq} onCheckedChange={setCustomReq} />
+              <Switch id="ps-req" checked={customReq} onCheckedChange={setCustomReq} />
             </label>
-            <label htmlFor="pl-pop" className="flex items-center justify-between gap-4 py-2.5 text-[12px] font-extrabold">
+            <label htmlFor="ps-pop" className="flex items-center justify-between gap-4 py-2.5 text-[12px] font-extrabold">
               “En popüler” olarak işaretle
-              <Switch id="pl-pop" checked={popular} onCheckedChange={setPopular} />
+              <Switch id="ps-pop" checked={popular} onCheckedChange={setPopular} />
             </label>
           </div>
         </div>

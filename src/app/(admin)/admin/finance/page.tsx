@@ -47,7 +47,7 @@ export default async function AdminFinancePage({ searchParams }: { searchParams:
         <StatCard label={`Brüt İşlem Hacmi · ${RANGE_LABELS[range]}`} value={formatMoney(ov.gross, "TRY", { decimals: false })} icon={<Receipt />} tone="pink" delta={ov.grossDelta} foot={ov.grossDelta ? "önceki döneme göre" : `${formatNumber(ov.grossCount)} işlem`} />
         <StatCard label="Platform Payı" value={formatMoney(ov.platformFee, "TRY", { decimals: false })} icon={<Landmark />} tone="violet" delta={ov.platformDelta} foot={ov.platformDelta ? "hak ediş defterinden" : "hak ediş defterinden"} />
         <StatCard label="Creator Hakedişi" value={formatMoney(ov.creatorShare, "TRY", { decimals: false })} icon={<Coins />} tone="teal" delta={ov.creatorDelta} foot={ov.creatorDelta ? "önceki döneme göre" : "hak ediş defterinden"} />
-        <StatCard label="İade ve İtiraz" value={formatMoney(ov.refunds, "TRY", { decimals: false })} icon={<Undo2 />} tone="orange" delta={ov.refundDelta && { ...ov.refundDelta, direction: ov.refundDelta.direction === "up" ? "down" : ov.refundDelta.direction === "down" ? "up" : "flat" }} foot={`${formatNumber(ov.refundCount)} iade`} />
+        <StatCard label="İade ve İtiraz" value={formatMoney(ov.refunds, "TRY", { decimals: false })} icon={<Undo2 className="rtl:-scale-x-100" />} tone="orange" delta={ov.refundDelta && { ...ov.refundDelta, direction: ov.refundDelta.direction === "up" ? "down" : ov.refundDelta.direction === "down" ? "up" : "flat" }} foot={`${formatNumber(ov.refundCount)} iade`} />
       </KpiGrid>
       {ov.testCount > 0 && (
         <Notice tone="warn" className="-mt-2">
@@ -110,10 +110,10 @@ async function TransactionsTab({ sp, canRefund, keep }: { sp: SearchParams; canR
               <Th>İşlem no</Th>
               <Th>Tür / Ürün</Th>
               <Th>Kullanıcı</Th>
-              <Th className="text-right">Tutar</Th>
+              <Th className="text-end">Tutar</Th>
               <Th>Durum</Th>
               <Th>Tarih</Th>
-              <Th className="text-right">İşlem</Th>
+              <Th className="text-end">İşlem</Th>
             </tr>
           </thead>
           <tbody>
@@ -145,7 +145,7 @@ async function TransactionsTab({ sp, canRefund, keep }: { sp: SearchParams; canR
                     <span className="block max-w-[220px] truncate text-[10px] text-muted">{t.label}</span>
                   </Td>
                   <Td>{t.user}</Td>
-                  <Td className="text-right tabular-nums">
+                  <Td className="text-end tabular-nums">
                     <b className="text-ink">{formatMoney(t.amountMinor, t.currency)}</b>
                     {t.refundedMinor > 0 && <span className="block text-[10px] text-violet">iade: {formatMoney(t.refundedMinor, t.currency)}</span>}
                   </Td>
@@ -153,7 +153,7 @@ async function TransactionsTab({ sp, canRefund, keep }: { sp: SearchParams; canR
                     <StatusPill tone={TX_STATUS_TONES[t.status] ?? "gray"}>{TX_STATUS_LABELS[t.status] ?? t.status}</StatusPill>
                   </Td>
                   <Td className="whitespace-nowrap">{formatDateTime(t.createdAt)}</Td>
-                  <Td className="text-right">
+                  <Td className="text-end">
                     {canDo ? (
                       <ActionDialog
                         trigger={
@@ -217,11 +217,11 @@ async function PayoutsTab({ sp, canPayout, keep }: { sp: SearchParams; canPayout
           <thead>
             <tr>
               <Th>Creator</Th>
-              <Th className="text-right">Tutar</Th>
+              <Th className="text-end">Tutar</Th>
               <Th>Ödeme hesabı</Th>
               <Th>Durum</Th>
               <Th>Talep tarihi</Th>
-              <Th className="text-right">İşlem</Th>
+              <Th className="text-end">İşlem</Th>
             </tr>
           </thead>
           <tbody>
@@ -231,7 +231,7 @@ async function PayoutsTab({ sp, canPayout, keep }: { sp: SearchParams; canPayout
                   <b className="text-ink">{p.creator}</b>
                   {p.providerRef && <span className="block text-[10px] text-muted">Ref: {p.providerRef}</span>}
                 </Td>
-                <Td className="text-right tabular-nums">
+                <Td className="text-end tabular-nums">
                   <b>{formatMoney(p.amountMinor, p.currency)}</b>
                 </Td>
                 <Td>
@@ -250,7 +250,7 @@ async function PayoutsTab({ sp, canPayout, keep }: { sp: SearchParams; canPayout
                   <StatusPill tone={PAYOUT_STATUS_TONES[p.status] ?? "gray"}>{PAYOUT_STATUS_LABELS[p.status] ?? p.status}</StatusPill>
                 </Td>
                 <Td className="whitespace-nowrap">{formatDateTime(p.createdAt)}</Td>
-                <Td className="text-right">
+                <Td className="text-end">
                   {canPayout ? <PayoutActions id={p.id} status={p.status} amount={formatMoney(p.amountMinor, p.currency)} creator={p.creator} /> : <span className="text-[10px] text-muted">—</span>}
                 </Td>
               </tr>
@@ -346,7 +346,7 @@ async function AccountsTab({ canPayout }: { canPayout: boolean }) {
               <Th>IBAN</Th>
               <Th>Durum</Th>
               <Th>Eklenme</Th>
-              <Th className="text-right">İşlem</Th>
+              <Th className="text-end">İşlem</Th>
             </tr>
           </thead>
           <tbody>
@@ -364,7 +364,7 @@ async function AccountsTab({ canPayout }: { canPayout: boolean }) {
                   <StatusPill tone={PAYOUT_ACCOUNT_TONES[a.status] ?? "gray"}>{PAYOUT_ACCOUNT_LABELS[a.status] ?? a.status}</StatusPill>
                 </Td>
                 <Td className="whitespace-nowrap">{formatDateTime(a.createdAt)}</Td>
-                <Td className="text-right">
+                <Td className="text-end">
                   {canPayout ? (
                     <div className="flex justify-end gap-1.5">
                       <ActionDialog trigger={<Button size="xs">Doğrula</Button>} title="Ödeme hesabını doğrula" description={`${a.creator} · ${a.masked}. Hesap sahibinin kimliğiyle eşleştiğini kontrol ettiniz mi?`} action={verifyPayoutAccountAction} payload={{ accountId: a.id, status: "verified" }} reason={{ label: "Doğrulama notu", defaultValue: "Hesap sahibi adı, doğrulanmış creator kimliğiyle eşleşti." }} confirmLabel="Doğrula" />

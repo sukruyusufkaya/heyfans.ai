@@ -19,7 +19,7 @@ export function ResetLinkInvalid({ message }: { message: string }) {
         <LinkIcon aria-hidden />
       </IconBadge>
       <AuthHeading center eyebrow="BAĞLANTI SORUNU" title="Bağlantı" accent="geçersiz." />
-      <FormAlert className="mt-6 text-left">
+      <FormAlert className="mt-6 text-start">
         <p>{message}</p>
       </FormAlert>
       <div className="mt-6 space-y-3">

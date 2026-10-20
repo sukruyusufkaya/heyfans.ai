@@ -12,9 +12,9 @@ export const Input = React.forwardRef<HTMLInputElement, React.InputHTMLAttribute
     if (!leftIcon && !rightSlot) return <input ref={ref} className={cn(inputBase, "h-11", className)} {...props} />;
     return (
       <div className="relative">
-        {leftIcon && <span className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-muted [&_svg]:size-4">{leftIcon}</span>}
-        <input ref={ref} className={cn(inputBase, "h-11", leftIcon && "pl-10", rightSlot && "pr-11", className)} {...props} />
-        {rightSlot && <span className="absolute right-2 top-1/2 -translate-y-1/2">{rightSlot}</span>}
+        {leftIcon && <span className="pointer-events-none absolute start-3.5 top-1/2 -translate-y-1/2 text-muted [&_svg]:size-4">{leftIcon}</span>}
+        <input ref={ref} className={cn(inputBase, "h-11", leftIcon && "ps-10", rightSlot && "pe-11", className)} {...props} />
+        {rightSlot && <span className="absolute end-2 top-1/2 -translate-y-1/2">{rightSlot}</span>}
       </div>
     );
   },
@@ -31,7 +31,7 @@ export const NativeSelect = React.forwardRef<HTMLSelectElement, React.SelectHTML
     ref={ref}
     className={cn(
       inputBase,
-      "h-11 appearance-none bg-[url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%238e8593%22 stroke-width=%222%22><path d=%22m6 9 6 6 6-6%22/></svg>')] bg-[length:16px] bg-[right_12px_center] bg-no-repeat pr-9",
+      "h-11 appearance-none bg-[url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%238e8593%22 stroke-width=%222%22><path d=%22m6 9 6 6 6-6%22/></svg>')] bg-[length:16px] bg-[right_12px_center] bg-no-repeat pe-9",
       className,
     )}
     {...props}
@@ -69,7 +69,7 @@ export function Field({
       {label && (
         <Label htmlFor={htmlFor}>
           {label}
-          {required && <span className="ml-0.5 text-brand-500" aria-hidden>*</span>}
+          {required && <span className="ms-0.5 text-brand-500" aria-hidden>*</span>}
         </Label>
       )}
       {children}
@@ -114,7 +114,7 @@ export const Switch = React.forwardRef<React.ComponentRef<typeof SwitchPrimitive
       )}
       {...props}
     >
-      <SwitchPrimitive.Thumb className="block size-[18px] translate-x-[2px] rounded-full bg-white shadow transition-transform data-[state=checked]:translate-x-[18px]" />
+      <SwitchPrimitive.Thumb className="block size-[18px] translate-x-[2px] rounded-full bg-white shadow transition-transform data-[state=checked]:translate-x-[18px] rtl:-translate-x-[2px] rtl:data-[state=checked]:-translate-x-[18px]" />
     </SwitchPrimitive.Root>
   ),
 );

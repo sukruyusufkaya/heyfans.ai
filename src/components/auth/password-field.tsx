@@ -42,7 +42,7 @@ export function PasswordStrength({ value, id }: { value: string; id?: string }) 
           <span key={i} className={cn("h-1.5 rounded-full transition-colors", i <= score ? BAR_TONE[score] : "bg-[#f1e6f0]")} />
         ))}
       </div>
-      <span className="w-[88px] shrink-0 text-right text-[11px] font-bold text-muted-strong">{label}</span>
+      <span className="w-[88px] shrink-0 text-end text-[11px] font-bold text-muted-strong">{label}</span>
       <span className="sr-only">{value ? `Şifre gücü: ${label}` : ""}</span>
     </div>
   );

@@ -41,7 +41,7 @@ export default async function ContentPage({ params }: { params: Promise<{ id: st
   return (
     <div className="mx-auto max-w-[1180px]">
       <Link href={`/creators/${creator.username}/content`} className="mb-4 inline-flex items-center gap-1 text-xs font-extrabold text-muted-strong hover:text-brand-600">
-        <ChevronLeft className="size-4" /> {creator.displayName} galerisi
+        <ChevronLeft className="rtl:-scale-x-100 size-4" /> {creator.displayName} galerisi
       </Link>
 
       <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_340px]">
@@ -94,7 +94,7 @@ export default async function ContentPage({ params }: { params: Promise<{ id: st
             ) : (
               <div className="relative aspect-[16/8]">
                 <ContentCover src={post.coverUrl} title={post.title} type={post.type} />
-                <span className="absolute left-4 top-4 inline-flex items-center gap-1.5 rounded-full bg-black/40 px-3 py-1.5 text-[11px] font-bold text-white backdrop-blur">
+                <span className="absolute start-4 top-4 inline-flex items-center gap-1.5 rounded-full bg-black/40 px-3 py-1.5 text-[11px] font-bold text-white backdrop-blur">
                   <ContentTypeIcon type={post.type} className="size-3.5" /> {CONTENT_TYPE_LABELS[post.type] ?? post.type}
                 </span>
               </div>

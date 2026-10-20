@@ -102,7 +102,7 @@ export async function LegalDocument({
             <aside className="lg:sticky lg:top-24">
               <details className="hf-card group lg:hidden" open={false}>
                 <summary className="flex cursor-pointer list-none items-center justify-between px-5 py-4 text-xs font-black uppercase tracking-wider text-muted-strong">
-                  Sayfa içeriği <ChevronRight className="size-4 transition-transform group-open:rotate-90" aria-hidden />
+                  Sayfa içeriği <ChevronRight className="rtl:-scale-x-100 size-4 transition-transform group-open:rotate-90" aria-hidden />
                 </summary>
                 <SectionNav page={page} />
               </details>
@@ -163,7 +163,7 @@ function SectionNav({ page }: { page: NonNullable<LegalCms> }) {
         {page.sections.map((s) => (
           <li key={s.id}>
             <a href={`#${s.id}`} className="flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-xs font-bold text-ink-soft transition-colors hover:bg-brand-50 hover:text-brand-600">
-              <ChevronRight className="size-3.5 text-muted" aria-hidden /> {s.heading}
+              <ChevronRight className="rtl:-scale-x-100 size-3.5 text-muted" aria-hidden /> {s.heading}
             </a>
           </li>
         ))}

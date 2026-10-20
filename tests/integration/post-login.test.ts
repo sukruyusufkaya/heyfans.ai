@@ -13,7 +13,7 @@ afterAll(async () => {
 
 const sessionOf = async (id: string, over: Partial<SessionUser> = {}): Promise<SessionUser> => {
   const u = await User.findById(id).lean();
-  return { id, name: u!.name, email: u!.email, emailVerified: true, image: null, username: null, roles: ["fan"], adminRole: null, status: "active", twoFactorEnabled: false, signupIntent: "fan", ...over };
+  return { id, name: u!.name, email: u!.email, emailVerified: true, image: null, username: null, roles: ["fan"], adminRole: null, status: "active", twoFactorEnabled: false, signupIntent: "fan", locale: null, ...over };
 };
 
 describe("giriş sonrası yönlendirme · şart onayı (Google/Apple kaydı)", () => {

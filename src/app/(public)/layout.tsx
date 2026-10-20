@@ -6,6 +6,7 @@ import { MaintenanceScreen } from "@/components/layouts/maintenance-screen";
 import { getSession } from "@/lib/auth/session";
 import { maintenanceState } from "@/services/platform/guards";
 import { CONSENT_COOKIE, decodeConsent } from "@/features/support/consent";
+import { AreaMessages } from "@/i18n/area";
 
 export default async function PublicLayout({ children }: { children: React.ReactNode }) {
   const [session, jar] = await Promise.all([getSession(), cookies()]);
@@ -14,11 +15,13 @@ export default async function PublicLayout({ children }: { children: React.React
   const maintenance = await maintenanceState(session?.user);
   if (maintenance.blocked) return <MaintenanceScreen message={maintenance.message} />;
   return (
-    <>
-      <PublicHeader user={user} />
-      <main id="main">{children}</main>
-      <PublicFooter />
-      <CookieBanner decided={decided} />
-    </>
+    <AreaMessages area="public">
+      <>
+        <PublicHeader user={user} />
+        <main id="main">{children}</main>
+        <PublicFooter />
+        <CookieBanner decided={decided} />
+      </>
+    </AreaMessages>
   );
 }

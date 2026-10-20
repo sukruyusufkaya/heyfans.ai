@@ -22,7 +22,7 @@ export function SupportHero({
 }) {
   return (
     <section className={cn("hf-gradient-hero relative overflow-hidden border-b border-[#fbe3f1]", className)}>
-      <div aria-hidden className="pointer-events-none absolute -right-24 -top-44 size-[460px] rounded-full border-[60px] border-[#fbe3f1]/60" />
+      <div aria-hidden className="pointer-events-none absolute -end-24 -top-44 size-[460px] rounded-full border-[60px] border-[#fbe3f1]/60" />
       <div className="relative mx-auto flex max-w-[1440px] items-center justify-between gap-8 px-4 py-9 sm:px-6 lg:px-8 lg:py-12">
         <div className="min-w-0 max-w-3xl animate-fade-up">
           <p className="eyebrow mb-3">{eyebrow}</p>
@@ -54,7 +54,7 @@ export function Breadcrumbs({ items }: { items: { label: string; href?: string }
         </li>
         {items.map((it, i) => (
           <li key={it.label} className="flex items-center gap-1.5">
-            <ChevronRight className="size-3" aria-hidden />
+            <ChevronRight className="rtl:-scale-x-100 size-3" aria-hidden />
             {it.href && i < items.length - 1 ? (
               <Link href={it.href} className="hover:text-brand-600">
                 {it.label}

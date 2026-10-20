@@ -104,7 +104,7 @@ export default async function ExplorePage({ searchParams }: { searchParams: Prom
         }
         description="Yetenekli ve özel içerik üreticileriyle tanış. İlgi alanlarına uygun içerik üreticilerini keşfet, takip et ve onlarla daha yakın bir bağ kur."
         actions={
-          <Form action="/explore" role="search" className="flex w-full max-w-xl items-center gap-2 rounded-full border border-brand-150 bg-white p-1.5 pl-5 shadow-[var(--shadow-card)] focus-within:ring-4 focus-within:ring-brand-100">
+          <Form action="/explore" role="search" className="flex w-full max-w-xl items-center gap-2 rounded-full border border-brand-150 bg-white p-1.5 ps-5 shadow-[var(--shadow-card)] focus-within:ring-4 focus-within:ring-brand-100">
             <Search className="size-5 shrink-0 text-muted" aria-hidden />
             <label htmlFor="explore-q" className="sr-only">
               İçerik üreticisi adı, kategori veya ilgi alanı

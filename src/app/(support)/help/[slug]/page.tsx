@@ -84,7 +84,7 @@ export default async function HelpArticlePage({ params }: Props) {
                     <Link href={`/help/${r.slug}`} className="group flex items-center gap-2.5 rounded-lg px-2 py-2.5 text-xs font-bold text-ink-soft hover:bg-brand-50 hover:text-brand-600">
                       <FileText className="size-3.5 shrink-0 text-brand-500" aria-hidden />
                       <span className="flex-1">{r.title}</span>
-                      <ChevronRight className="size-3.5 text-muted" aria-hidden />
+                      <ChevronRight className="rtl:-scale-x-100 size-3.5 text-muted" aria-hidden />
                     </Link>
                   </li>
                 ))}
@@ -96,7 +96,7 @@ export default async function HelpArticlePage({ params }: Props) {
             <h2 className="mt-3 text-base font-extrabold text-brand-600">Yanıt bulamadın mı?</h2>
             <p className="mt-1.5 text-xs leading-relaxed text-ink-soft">Destek ekibi talebini inceleyerek sana yardımcı olsun.</p>
             <Link href="/contact" className="mt-4 inline-flex h-10 items-center gap-2 rounded-full bg-brand-500 px-5 text-xs font-extrabold text-white shadow-[var(--shadow-pink)] hover:bg-brand-600">
-              Destek Talebi Oluştur <ArrowRight className="size-3.5" aria-hidden />
+              Destek Talebi Oluştur <ArrowRight className="rtl:-scale-x-100 size-3.5" aria-hidden />
             </Link>
           </div>
         </aside>

@@ -113,7 +113,7 @@ export default async function ChatInboxPage({ searchParams }: { searchParams: Pr
                   <p className="mt-0.5 text-[11px] font-semibold text-success">● {selected.creator.isSample ? "Örnek profil · AI ikizi" : "Yetkilendirilmiş AI ikizi"}</p>
                 </div>
                 <Link href={`/chat/${selected.creator.username}`} className="inline-flex h-10 items-center gap-2 rounded-full bg-brand-500 px-5 text-xs font-extrabold text-white shadow-[var(--shadow-pink)] hover:bg-brand-600">
-                  Sohbeti aç <ArrowRight className="size-4" />
+                  Sohbeti aç <ArrowRight className="rtl:-scale-x-100 size-4" />
                 </Link>
               </div>
               <div className="min-h-0 flex-1 space-y-3 overflow-y-auto bg-[radial-gradient(circle_at_80%_10%,#fff3fa_0%,#fff_55%)] px-6 py-5 scrollbar-thin" aria-label="Son mesajlar">
@@ -126,8 +126,8 @@ export default async function ChatInboxPage({ searchParams }: { searchParams: Pr
                       <div
                         className={cn(
                           "max-w-[78%] whitespace-pre-wrap break-words rounded-2xl px-4 py-3 text-[13px] leading-relaxed",
-                          m.role === "user" && "rounded-br-md bg-brand-500 text-white",
-                          m.role === "ai" && "rounded-bl-md bg-[#f4f2f6] text-ink",
+                          m.role === "user" && "rounded-ee-md bg-brand-500 text-white",
+                          m.role === "ai" && "rounded-es-md bg-[#f4f2f6] text-ink",
                           m.role === "system" && "border border-[#f3dca8] bg-warning-soft text-xs text-ink-soft",
                         )}
                       >

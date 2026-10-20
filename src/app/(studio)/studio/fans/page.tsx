@@ -65,7 +65,7 @@ export default async function FansPage() {
                       <div className="h-full rounded-full bg-gradient-to-r from-brand-400 to-brand-500" style={{ width: `${(s.credits / maxCredits) * 100}%` }} />
                     </div>
                   </div>
-                  <div className="text-right">
+                  <div className="text-end">
                     <p className="text-[12px] font-black">{formatNumber(s.credits)} kredi</p>
                     <p className="text-[10px] text-muted">{s.count} destek</p>
                   </div>

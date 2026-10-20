@@ -186,10 +186,10 @@ export function CallClient({ username, kind, creator, ratePerMinute, initialBala
         {kind === "video" && (
           <>
             <video ref={remoteVideo} autoPlay playsInline className={cn("absolute inset-0 size-full object-cover", !live && "hidden")} />
-            <video ref={localVideo} autoPlay playsInline muted className={cn("absolute bottom-4 right-4 z-10 aspect-video w-32 rounded-xl border border-white/30 object-cover shadow-lg sm:w-44", (!live || !cameraOn) && "hidden")} />
+            <video ref={localVideo} autoPlay playsInline muted className={cn("absolute bottom-4 end-4 z-10 aspect-video w-32 rounded-xl border border-white/30 object-cover shadow-lg sm:w-44", (!live || !cameraOn) && "hidden")} />
           </>
         )}
-        <div className="absolute left-4 right-4 top-4 z-10 flex flex-wrap items-center justify-between gap-2">
+        <div className="absolute start-4 end-4 top-4 z-10 flex flex-wrap items-center justify-between gap-2">
           <span className="inline-flex items-center gap-1.5 rounded-full bg-white/15 px-3 py-1.5 text-[10px] font-extrabold backdrop-blur">
             <span className={cn("size-1.5 rounded-full", live ? "animate-pulse bg-[#2ee59d]" : "bg-white/50")} aria-hidden />
             {live ? "Canlı" : phase === "connecting" ? "Bağlanıyor…" : phase === "ended" ? "Görüşme bitti" : "Hazır"}

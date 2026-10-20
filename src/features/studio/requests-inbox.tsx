@@ -61,7 +61,7 @@ export function RequestsInbox({ items, creditValueMinor }: { items: RequestItem[
             const st = STATUS[r.status] ?? { label: r.status, tone: "gray" as const };
             return (
               <li key={r.id} className="border-b border-line-soft last:border-0">
-                <button type="button" onClick={() => setOpenId(r.id)} className="flex w-full items-center gap-3.5 p-4 text-left transition-colors hover:bg-brand-50/50 focus-visible:bg-brand-50/50">
+                <button type="button" onClick={() => setOpenId(r.id)} className="flex w-full items-center gap-3.5 p-4 text-start transition-colors hover:bg-brand-50/50 focus-visible:bg-brand-50/50">
                   <Avatar src={r.fan.image} name={r.fan.name} size={44} />
                   <span className="min-w-0 flex-1">
                     <span className="block truncate text-[13px] font-extrabold text-ink">{r.title}</span>
@@ -74,13 +74,13 @@ export function RequestsInbox({ items, creditValueMinor }: { items: RequestItem[
                       {TYPE[r.type] ?? r.type}
                     </Badge>
                   </span>
-                  <span className="shrink-0 text-right">
+                  <span className="shrink-0 text-end">
                     <span className="block text-[13px] font-black">{formatNumber(r.priceCredits)} kredi</span>
                     <Badge tone={st.tone} size="sm" className="mt-1">
                       {st.label}
                     </Badge>
                   </span>
-                  <ChevronRight className="size-4 shrink-0 text-muted/60" aria-hidden />
+                  <ChevronRight className="rtl:-scale-x-100 size-4 shrink-0 text-muted/60" aria-hidden />
                 </button>
               </li>
             );
@@ -116,7 +116,7 @@ function RequestDrawer({ request: r, onClose }: { request: RequestItem | null; o
       <DialogContent
         title={r ? `Talep · ${r.title}` : "Talep"}
         description={r ? `${r.fan.name} · ${formatDateTime(r.createdAt)}` : undefined}
-        className="left-auto right-0 top-0 h-dvh max-h-dvh w-full max-w-[480px] translate-x-0 translate-y-0 rounded-none border-y-0 border-r-0 sm:rounded-l-2xl"
+        className="left-auto right-0 top-0 h-dvh max-h-dvh w-full max-w-[480px] translate-x-0 translate-y-0 rounded-none border-y-0 border-e-0 sm:rounded-s-2xl"
       >
         {r && st && (
           <div className="grid gap-5">

@@ -22,7 +22,7 @@ export default function CommunityGuidelinesPage() {
           <p className="text-xs font-bold text-ink-soft">Topluluğumuzu birlikte koruyalım. Bir ihlal gördüğünde bildir.</p>
           <Button asChild shape="pill" size="md">
             <Link href="/trust-and-safety#bildir">
-              Bildirim Oluştur <ArrowRight />
+              Bildirim Oluştur <ArrowRight className="rtl:-scale-x-100" />
             </Link>
           </Button>
         </>

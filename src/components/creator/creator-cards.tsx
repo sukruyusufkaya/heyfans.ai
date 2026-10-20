@@ -29,10 +29,10 @@ export function CreatorTile({ creator, className, href }: { creator: CreatorCard
         <CreatorPhoto src={creator.avatarUrl ?? creator.coverUrl} name={creator.displayName} rounded="rounded-none" className="transition-transform duration-500 group-hover:scale-[1.04]" />
         <span className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black/70 via-black/25 to-transparent" aria-hidden />
       </Link>
-      <div className="pointer-events-none absolute right-2.5 top-2.5">
+      <div className="pointer-events-none absolute end-2.5 top-2.5">
         <OnlinePill online={creator.isOnline} />
       </div>
-      {creator.isSample && <SampleProfileLabel tone="white" className="pointer-events-none absolute left-2.5 top-2.5" />}
+      {creator.isSample && <SampleProfileLabel tone="white" className="pointer-events-none absolute start-2.5 top-2.5" />}
       <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-2 p-3">
         <div className="min-w-0 text-white">
           {creator.categories[0] && (
@@ -73,12 +73,12 @@ export function CreatorCardTall({
         <Link href={`/creators/${creator.username}`} aria-label={`${creator.displayName} profili`} className="block size-full">
           <CreatorPhoto src={creator.avatarUrl ?? creator.coverUrl} name={creator.displayName} rounded="rounded-none" />
         </Link>
-        <div className="absolute left-2.5 top-2.5 flex items-center gap-1.5">
+        <div className="absolute start-2.5 top-2.5 flex items-center gap-1.5">
           {creator.isSample && <SampleProfileLabel tone="white" />}
           <OnlinePill online={creator.isOnline} />
         </div>
-        <FavoriteButton targetId={creator.id} initial={Boolean(favorite)} authed={authed} className="absolute right-2.5 top-2.5" />
-        <div className="absolute bottom-2.5 left-2.5 flex gap-1.5">
+        <FavoriteButton targetId={creator.id} initial={Boolean(favorite)} authed={authed} className="absolute end-2.5 top-2.5" />
+        <div className="absolute bottom-2.5 start-2.5 flex gap-1.5">
           {creator.categories.slice(0, 2).map((c) => (
             <Badge key={c} tone="white" size="sm">
               {categoryLabel(c)}
@@ -95,7 +95,7 @@ export function CreatorCardTall({
         <div className="mt-auto pt-3">
           {cta === "profile" ? (
             <Link href={`/creators/${creator.username}`} className="flex h-9 items-center justify-center gap-1.5 rounded-full bg-brand-500 text-[11px] font-extrabold text-white shadow-[var(--shadow-pink)] hover:bg-brand-600">
-              Profili Gör <ArrowRight className="size-3.5" />
+              Profili Gör <ArrowRight className="rtl:-scale-x-100 size-3.5" />
             </Link>
           ) : (
             <Link
@@ -119,9 +119,9 @@ export function CreatorCardCompact({ creator, favorite, authed, badge, rank }: {
         <Link href={`/creators/${creator.username}`} className="block size-full" aria-label={`${creator.displayName} profili`}>
           <CreatorPhoto src={creator.avatarUrl ?? creator.coverUrl} name={creator.displayName} rounded="rounded-none" />
         </Link>
-        {badge && <Badge tone="solid" size="sm" className="absolute left-2 top-2">{badge}</Badge>}
-        {rank != null && <span className="absolute left-2 top-2 grid size-6 place-items-center rounded-full bg-brand-500 text-[11px] font-black text-white">{rank}</span>}
-        <FavoriteButton targetId={creator.id} initial={Boolean(favorite)} authed={authed} className="absolute right-2 top-2 size-7" />
+        {badge && <Badge tone="solid" size="sm" className="absolute start-2 top-2">{badge}</Badge>}
+        {rank != null && <span className="absolute start-2 top-2 grid size-6 place-items-center rounded-full bg-brand-500 text-[11px] font-black text-white">{rank}</span>}
+        <FavoriteButton targetId={creator.id} initial={Boolean(favorite)} authed={authed} className="absolute end-2 top-2 size-7" />
       </div>
       <div className="p-3">
         <Link href={`/creators/${creator.username}`} className="flex items-center gap-1 truncate text-[13px] font-extrabold hover:text-brand-600">
@@ -135,9 +135,9 @@ export function CreatorCardCompact({ creator, favorite, authed, badge, rank }: {
             </Badge>
           ))}
           {creator.isSample ? (
-            <SampleProfileLabel className="ml-auto" />
+            <SampleProfileLabel className="ms-auto" />
           ) : (
-            <Badge tone="pink" size="sm" className="ml-auto">
+            <Badge tone="pink" size="sm" className="ms-auto">
               {creator.startingPriceMinor ? `${formatMoney(creator.startingPriceMinor, "TRY", { decimals: false })}/ay` : "Ücretsiz"}
             </Badge>
           )}

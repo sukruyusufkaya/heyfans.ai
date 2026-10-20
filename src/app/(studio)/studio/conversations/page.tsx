@@ -78,11 +78,11 @@ export default async function ConversationsPage({ searchParams }: { searchParams
             <thead>
               <tr>
                 <Th>Hayran</Th>
-                <Th className="text-right">Mesaj</Th>
+                <Th className="text-end">Mesaj</Th>
                 <Th>Son etkinlik</Th>
                 <Th>Durum</Th>
-                <Th className="text-right">Güvenlik müdahalesi</Th>
-                <Th className="text-right">Harcanan kredi</Th>
+                <Th className="text-end">Güvenlik müdahalesi</Th>
+                <Th className="text-end">Harcanan kredi</Th>
               </tr>
             </thead>
             <tbody>
@@ -91,15 +91,15 @@ export default async function ConversationsPage({ searchParams }: { searchParams
                 return (
                   <tr key={r.id}>
                     <Td className="font-extrabold text-ink">{r.label}</Td>
-                    <Td className="text-right tabular-nums">{formatNumber(r.messageCount)}</Td>
+                    <Td className="text-end tabular-nums">{formatNumber(r.messageCount)}</Td>
                     <Td className="whitespace-nowrap">{formatDateTime(r.lastMessageAt)}</Td>
                     <Td>
                       <Badge tone={st.tone} size="sm">
                         {st.label}
                       </Badge>
                     </Td>
-                    <Td className="text-right tabular-nums">{r.interventions ? <b className="text-warning">{r.interventions}</b> : "—"}</Td>
-                    <Td className="text-right tabular-nums">{formatNumber(r.creditsSpent)}</Td>
+                    <Td className="text-end tabular-nums">{r.interventions ? <b className="text-warning">{r.interventions}</b> : "—"}</Td>
+                    <Td className="text-end tabular-nums">{formatNumber(r.creditsSpent)}</Td>
                   </tr>
                 );
               })}

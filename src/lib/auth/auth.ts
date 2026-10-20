@@ -9,6 +9,11 @@ import { env } from "@/config/env";
 import { connectDb } from "@/lib/db/mongo";
 import { sendAuthEmail } from "@/lib/email";
 import { onUserCreated } from "@/services/users/lifecycle";
+import { LOCALE_COOKIE } from "@/i18n/config";
+import { COUNTRY_HEADER, resolveLocale } from "@/i18n/resolve";
+
+const readCookie = (header: string | null | undefined, name: string) =>
+  header?.split(";").map((c) => c.trim().split("=")).find(([k]) => k === name)?.[1] ?? null;
 
 /** APP_URL kaynağı + (gerçek alan adlarında) www'li/www'siz eşi. localhost için yalnız kendisi. */
 export function appOrigins(appUrl: string): string[] {
@@ -47,7 +52,7 @@ function buildAuth(db: Db, client: MongoClient) {
       revokeSessionsOnPasswordReset: true,
       resetPasswordTokenExpiresIn: 60 * 30,
       sendResetPassword: async ({ user, url }) => {
-        await sendAuthEmail({ kind: "reset_password", to: user.email, name: user.name, url });
+        await sendAuthEmail({ kind: "reset_password", to: user.email, name: user.name, url, locale: (user as { locale?: string | null }).locale });
       },
     },
     emailVerification: {
@@ -55,7 +60,7 @@ function buildAuth(db: Db, client: MongoClient) {
       autoSignInAfterVerification: true,
       expiresIn: 60 * 60 * 24,
       sendVerificationEmail: async ({ user, url }) => {
-        await sendAuthEmail({ kind: "verify_email", to: user.email, name: user.name, url });
+        await sendAuthEmail({ kind: "verify_email", to: user.email, name: user.name, url, locale: (user as { locale?: string | null }).locale });
       },
     },
     socialProviders,
@@ -77,6 +82,7 @@ function buildAuth(db: Db, client: MongoClient) {
         acceptTerms: { type: "boolean", required: false, input: true },
         termsAcceptedAt: { type: "date", required: false, input: false },
         isDemo: { type: "boolean", required: false, input: false, defaultValue: false },
+        locale: { type: "string", required: false, input: false },
       },
     },
     databaseHooks: {
@@ -90,8 +96,15 @@ function buildAuth(db: Db, client: MongoClient) {
             if (ctx?.path === "/sign-up/email" && acceptTerms !== true) {
               throw new APIError("BAD_REQUEST", { message: "Kullanım Şartları ve Gizlilik Politikası onaylanmalı.", code: "TERMS_REQUIRED" });
             }
+            // Hesap dili: kullanıcının seçimi (çerez) → konum → tarayıcı dili. E-postalar ve bildirimler bu dilde gider.
+            const h = ctx?.request?.headers ?? ctx?.headers;
+            const locale = resolveLocale({
+              cookie: readCookie(h?.get("cookie"), LOCALE_COOKIE),
+              country: h?.get(COUNTRY_HEADER),
+              acceptLanguage: h?.get("accept-language"),
+            }).locale;
             return {
-              data: { ...rest, signupIntent: intent, roles: ["fan"], adminRole: null, status: "active", termsAcceptedAt: acceptTerms === true ? new Date() : null },
+              data: { ...rest, signupIntent: intent, roles: ["fan"], adminRole: null, status: "active", termsAcceptedAt: acceptTerms === true ? new Date() : null, locale },
             };
           },
           after: async (user) => {

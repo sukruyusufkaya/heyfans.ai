@@ -26,7 +26,10 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:e2e": "playwright test",
-    "test:all": "npm run typecheck && npm run lint && npm run test && npm run test:e2e"
+    "test:all": "npm run typecheck && npm run lint && npm run test && npm run test:e2e",
+    "i18n:extract": "tsx scripts/i18n/extract.ts extract",
+    "i18n:check": "tsx scripts/i18n/extract.ts check",
+    "i18n:status": "tsx scripts/i18n/extract.ts status"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1152.0",
@@ -36,6 +39,7 @@
     "better-auth": "1.7.11",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "intl-messageformat": "^12.1.4",
     "livekit-client": "^2.23.0",
     "livekit-server-sdk": "^2.19.1",
     "lucide-react": "^1.59.0",

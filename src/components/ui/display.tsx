@@ -56,7 +56,7 @@ export function Avatar({
       )}
       {online !== undefined && (
         <span
-          className={cn("absolute bottom-0 right-0 rounded-full border-2 border-white", online ? "bg-success" : "bg-[#c9c1cc]")}
+          className={cn("absolute bottom-0 end-0 rounded-full border-2 border-white", online ? "bg-success" : "bg-[#c9c1cc]")}
           style={{ width: Math.max(8, size * 0.24), height: Math.max(8, size * 0.24) }}
           aria-label={online ? "Çevrimiçi" : "Çevrimdışı"}
         />
@@ -190,11 +190,11 @@ export function Pagination({ page, pageCount, hrefFor, className }: { page: numb
     <nav aria-label="Sayfalama" className={cn("flex items-center justify-center gap-1.5", className)}>
       {page > 1 ? (
         <Link href={hrefFor(page - 1)} className={cn(item, "text-muted-strong hover:bg-soft")} aria-label="Önceki sayfa">
-          <ChevronLeft className="size-4" />
+          <ChevronLeft className="rtl:-scale-x-100 size-4" />
         </Link>
       ) : (
         <span className={cn(item, "text-muted/40")} aria-hidden>
-          <ChevronLeft className="size-4" />
+          <ChevronLeft className="rtl:-scale-x-100 size-4" />
         </span>
       )}
       {pages.map((p) => (
@@ -204,11 +204,11 @@ export function Pagination({ page, pageCount, hrefFor, className }: { page: numb
       ))}
       {page < pageCount ? (
         <Link href={hrefFor(page + 1)} className={cn(item, "text-muted-strong hover:bg-soft")} aria-label="Sonraki sayfa">
-          <ChevronRight className="size-4" />
+          <ChevronRight className="rtl:-scale-x-100 size-4" />
         </Link>
       ) : (
         <span className={cn(item, "text-muted/40")} aria-hidden>
-          <ChevronRight className="size-4" />
+          <ChevronRight className="rtl:-scale-x-100 size-4" />
         </span>
       )}
     </nav>
@@ -219,7 +219,7 @@ export function Pagination({ page, pageCount, hrefFor, className }: { page: numb
 export function DataTable({ className, children }: { className?: string; children: React.ReactNode }) {
   return (
     <div className={cn("-mx-1 overflow-x-auto px-1 scrollbar-thin", className)}>
-      <table className="w-full min-w-[640px] border-collapse text-left text-xs">{children}</table>
+      <table className="w-full min-w-[640px] border-collapse text-start text-xs">{children}</table>
     </div>
   );
 }

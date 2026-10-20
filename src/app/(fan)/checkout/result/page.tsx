@@ -69,10 +69,10 @@ export default async function CheckoutResultPage({ searchParams }: { searchParam
         </h1>
         <p className="mx-auto mt-2 max-w-sm text-xs leading-relaxed text-muted-strong">{text}</p>
 
-        <dl className="mt-6 grid gap-3 rounded-2xl border border-line-soft bg-[#fbf9fc] p-4 text-left text-xs">
+        <dl className="mt-6 grid gap-3 rounded-2xl border border-line-soft bg-[#fbf9fc] p-4 text-start text-xs">
           <div className="flex items-start justify-between gap-4">
             <dt className="text-muted">Ürün</dt>
-            <dd className="text-right font-extrabold">{tx.item.label}</dd>
+            <dd className="text-end font-extrabold">{tx.item.label}</dd>
           </div>
           <div className="flex items-center justify-between">
             <dt className="text-muted">Tür</dt>

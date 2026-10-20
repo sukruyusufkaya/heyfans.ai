@@ -91,7 +91,7 @@ export default async function AnalyticsPage({ searchParams }: { searchParams: Pr
                       <span className="font-semibold text-ink-soft">{f.label}</span>
                       <b>
                         {formatNumber(f.value)}
-                        {i > 0 && views > 0 && <span className="ml-1.5 font-semibold text-muted">· %{pctOf(f.value, views).toLocaleString("tr-TR", { maximumFractionDigits: 1 })}</span>}
+                        {i > 0 && views > 0 && <span className="ms-1.5 font-semibold text-muted">· %{pctOf(f.value, views).toLocaleString("tr-TR", { maximumFractionDigits: 1 })}</span>}
                       </b>
                     </div>
                     <Progress value={i === 0 ? (views > 0 ? 100 : 0) : pctOf(f.value, views)} tone={i === 0 ? "pink" : i === 1 ? "violet" : "teal"} label={f.label} />

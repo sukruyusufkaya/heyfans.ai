@@ -107,11 +107,11 @@ export default async function ContentLibraryPage({ searchParams }: { searchParam
                 <Card padded={false} className="overflow-hidden">
                   <div className="relative aspect-[4/3] bg-soft">
                     <StudioCover src={cover} title={item.title} type={item.type} />
-                    <Badge tone="white" size="sm" className="absolute left-3 top-3">
+                    <Badge tone="white" size="sm" className="absolute start-3 top-3">
                       {CONTENT_TYPE_LABELS[item.type] ?? item.type}
                     </Badge>
                     {item.isAiGenerated && (
-                      <Badge tone="violet" size="sm" className="absolute right-3 top-3">
+                      <Badge tone="violet" size="sm" className="absolute end-3 top-3">
                         AI
                       </Badge>
                     )}

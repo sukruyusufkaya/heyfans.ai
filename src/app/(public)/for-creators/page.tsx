@@ -77,7 +77,7 @@ export default async function ForCreatorsPage() {
         }
         note="Kendi kurallarınla, kendi başarınla"
         art={
-          <div className="relative mx-auto max-w-md lg:ml-auto">
+          <div className="relative mx-auto max-w-md lg:ms-auto">
             <Card className="shadow-xl">
               <div className="mb-3 flex items-center justify-between gap-3">
                 <p className="text-xs font-black uppercase tracking-wider text-brand-500">Örnek senaryo</p>
@@ -146,7 +146,7 @@ export default async function ForCreatorsPage() {
           </h2>
           <p className="mt-2 text-xs leading-relaxed text-ink-soft">Sen dinlenirken bile AI ikizin hayranlarınla sohbet eder, soruları yanıtlar ve gelirini artırır. Sen yönetirsin: kişilik, sınırlar, bilgi kaynakları ve fiyat.</p>
           <div className="mt-4 grid gap-2.5">
-            <div className="max-w-[88%] rounded-2xl rounded-bl-sm bg-white p-3 text-xs text-ink-soft shadow-sm">
+            <div className="max-w-[88%] rounded-2xl rounded-es-sm bg-white p-3 text-xs text-ink-soft shadow-sm">
               <AiTwinLabel className="mb-1.5" />
               <p>Merhaba! Bugün sana nasıl yardımcı olabilirim?</p>
             </div>
@@ -160,7 +160,7 @@ export default async function ForCreatorsPage() {
           </ul>
           <p className="mt-3 text-[10px] text-muted">Örnek ifade — gerçek bir konuşma değildir.</p>
           <Link href={APPLY_HREF} className="mt-4 inline-flex h-11 items-center gap-2 rounded-full bg-brand-500 px-6 text-xs font-extrabold text-white shadow-[var(--shadow-pink)] hover:bg-brand-600">
-            AI İkizini Hemen Oluştur <ArrowRight className="size-4" aria-hidden />
+            AI İkizini Hemen Oluştur <ArrowRight className="rtl:-scale-x-100 size-4" aria-hidden />
           </Link>
         </section>
       </Section>
@@ -170,7 +170,7 @@ export default async function ForCreatorsPage() {
         <ol className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
           {STEPS.map((s, i) => (
             <li key={s.title} className="hf-card relative p-5">
-              <span className="absolute right-4 top-4 font-display text-4xl font-black text-brand-100" aria-hidden>
+              <span className="absolute end-4 top-4 font-display text-4xl font-black text-brand-100" aria-hidden>
                 {i + 1}
               </span>
               <span className="grid size-12 place-items-center rounded-full bg-brand-100 text-brand-500">

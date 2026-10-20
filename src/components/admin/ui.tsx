@@ -129,14 +129,14 @@ export function FilterForm({
           {placeholder}
         </label>
         <div className="relative">
-          <Search className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-muted" aria-hidden />
+          <Search className="pointer-events-none absolute start-3.5 top-1/2 size-4 -translate-y-1/2 text-muted" aria-hidden />
           <input
             id={`f-${qName}`}
             name={qName}
             defaultValue={q ?? ""}
             placeholder={placeholder}
             maxLength={100}
-            className="h-10 w-full rounded-[10px] border border-line bg-white pl-10 pr-3 text-[12px] text-ink placeholder:text-[#b2a6b3] focus:border-brand-300 focus:outline-none focus:ring-4 focus:ring-brand-100"
+            className="h-10 w-full rounded-[10px] border border-line bg-white ps-10 pe-3 text-[12px] text-ink placeholder:text-[#b2a6b3] focus:border-brand-300 focus:outline-none focus:ring-4 focus:ring-brand-100"
           />
         </div>
       </div>
@@ -170,7 +170,7 @@ export function DetailRow({ label, children, className }: { label: React.ReactNo
   return (
     <div className={cn("flex items-center justify-between gap-3 border-b border-line-soft py-2.5 text-xs last:border-0", className)}>
       <span className="text-muted">{label}</span>
-      <span className="min-w-0 text-right font-bold text-ink">{children}</span>
+      <span className="min-w-0 text-end font-bold text-ink">{children}</span>
     </div>
   );
 }

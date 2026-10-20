@@ -96,7 +96,7 @@ export default async function TrendingPage() {
                 >
                   <div className="relative aspect-[4/5] overflow-hidden rounded-xl">
                     <CreatorPhoto src={c.avatarUrl ?? c.coverUrl} name={c.displayName} rounded="rounded-xl" />
-                    <span className="absolute left-2 top-2 grid size-6 place-items-center rounded-full bg-brand-500 text-[11px] font-black text-white">{i + 1}</span>
+                    <span className="absolute start-2 top-2 grid size-6 place-items-center rounded-full bg-brand-500 text-[11px] font-black text-white">{i + 1}</span>
                   </div>
                   <p className="mt-2 truncate text-xs font-extrabold">{c.displayName}</p>
                   <p className="text-[10px] text-muted">{formatCompact(c.followers)} takipçi</p>
@@ -123,12 +123,12 @@ export default async function TrendingPage() {
                 <li key={c.id} className="hf-card flex flex-col overflow-hidden transition-shadow hover:shadow-[var(--shadow-card-hover)]">
                   <Link href={`/creators/${c.username}`} className="relative block aspect-[4/5]" aria-label={`${i + 1}. sıra: ${c.displayName}`}>
                     <CreatorPhoto src={c.avatarUrl ?? c.coverUrl} name={c.displayName} rounded="rounded-none" />
-                    <span className="absolute left-2.5 top-2.5 grid size-7 place-items-center rounded-full bg-brand-500 text-xs font-black text-white shadow">{i + 1}</span>
-                    <Badge tone={label.tone} size="sm" className="absolute right-2.5 top-2.5">
+                    <span className="absolute start-2.5 top-2.5 grid size-7 place-items-center rounded-full bg-brand-500 text-xs font-black text-white shadow">{i + 1}</span>
+                    <Badge tone={label.tone} size="sm" className="absolute end-2.5 top-2.5">
                       <Flame aria-hidden /> {label.text}
                     </Badge>
                     {c.isOnline && (
-                      <span className="absolute bottom-2.5 left-2.5 inline-flex items-center gap-1 rounded-full bg-black/55 px-2 py-1 text-[9px] font-bold text-white backdrop-blur">
+                      <span className="absolute bottom-2.5 start-2.5 inline-flex items-center gap-1 rounded-full bg-black/55 px-2 py-1 text-[9px] font-bold text-white backdrop-blur">
                         <span className="size-1.5 rounded-full bg-[#2ee59d]" /> Çevrimiçi
                       </span>
                     )}
@@ -142,7 +142,7 @@ export default async function TrendingPage() {
                       <MessageCircle className="size-3.5 text-brand-500" aria-hidden /> {formatCompact(c.chats)} sohbet <span className="font-normal text-muted">(7 gün)</span>
                     </p>
                     <Link href={`/creators/${c.username}`} className="mt-3 flex h-9 items-center justify-center gap-1.5 rounded-full bg-brand-500 text-[11px] font-extrabold text-white shadow-[var(--shadow-pink)] hover:bg-brand-600">
-                      Profili Gör <ArrowRight className="size-3.5" />
+                      Profili Gör <ArrowRight className="rtl:-scale-x-100 size-3.5" />
                     </Link>
                   </div>
                 </li>
@@ -173,7 +173,7 @@ export default async function TrendingPage() {
                     </Link>
                     <p className="text-[11px] text-muted">{formatCompact(c.followers)} takipçi</p>
                   </div>
-                  <div className="hidden text-right sm:block">
+                  <div className="hidden text-end sm:block">
                     <p className="text-[11px] font-black text-success">+{formatNumber(c.newFollowers)}</p>
                     {c.growthPct !== null && <p className="text-[10px] font-bold text-success">↑ %{formatNumber(c.growthPct)}</p>}
                   </div>
@@ -204,7 +204,7 @@ export default async function TrendingPage() {
                   <div className="min-w-0 flex-1">
                     <p className="flex items-center gap-1.5 truncate text-[13px] font-extrabold">
                       {c.displayName} {c.verified && <Verified className="size-3.5" />}
-                      {c.isOnline && <span className="ml-auto text-[9px] font-bold text-success">Canlı</span>}
+                      {c.isOnline && <span className="ms-auto text-[9px] font-bold text-success">Canlı</span>}
                     </p>
                     <p className="text-[11px] text-muted">{formatCompact(c.chats)} sohbet</p>
                     <Progress value={(c.chats / maxChats) * 100} className="mt-1.5" label={`${c.displayName} sohbet oranı`} />
@@ -262,7 +262,7 @@ export default async function TrendingPage() {
                     <span className="block text-[10px] text-white/85">{formatNumber(c.liveTwinCount)} AI ikizi</span>
                   </span>
                   <span className="grid size-8 shrink-0 place-items-center rounded-full bg-white text-brand-500">
-                    <ArrowRight className="size-4" aria-hidden />
+                    <ArrowRight className="rtl:-scale-x-100 size-4" aria-hidden />
                   </span>
                 </span>
               </Link>

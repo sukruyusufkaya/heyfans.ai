@@ -64,7 +64,7 @@ export default async function CookiesPage() {
               <h2 className="mt-4 text-xl font-extrabold text-brand-600">Çerez nedir?</h2>
               <p className="mt-2 text-sm leading-relaxed text-ink-soft">Çerezler, cihazında saklanabilen küçük tanımlayıcılardır. Her çerezin amacı, saklama süresi ve sağlayıcısı politikada açıkça gösterilmelidir.</p>
               <Link href="/privacy" className="mt-4 inline-flex h-10 items-center gap-2 rounded-full bg-white px-5 text-xs font-extrabold text-brand-600 shadow-sm hover:bg-brand-50">
-                Gizlilik Politikası <ArrowRight className="size-3.5" aria-hidden />
+                Gizlilik Politikası <ArrowRight className="rtl:-scale-x-100 size-3.5" aria-hidden />
               </Link>
             </aside>
             <aside className="hf-card p-6">

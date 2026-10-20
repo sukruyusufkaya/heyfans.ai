@@ -386,7 +386,7 @@ function Wizard({ view, categories, consentTexts }: { view: CreatorOnboardingVie
       <div className="mt-7 flex flex-wrap items-center justify-between gap-3 border-t border-line pt-5">
         {index > 0 || q > 0 ? (
           <Button type="button" variant="secondary" size="lg" className="h-[54px] rounded-[10px]" onClick={back} disabled={pending}>
-            <ArrowLeft aria-hidden /> Geri
+            <ArrowLeft className="rtl:-scale-x-100" aria-hidden /> Geri
           </Button>
         ) : (
           <span className="text-xs text-muted">Her adımın sonunda ilerlemen kaydedilir; kaldığın yerden devam edebilirsin.</span>
@@ -398,7 +398,7 @@ function Wizard({ view, categories, consentTexts }: { view: CreatorOnboardingVie
             </Button>
           )}
           <Button type="submit" size="lg" loading={pending} disabled={group.key === "review" && missing.length > 0} className="h-[54px] min-w-[200px] rounded-[10px] bg-gradient-to-r from-brand-500 to-brand-600 text-[14px]">
-            {cta} <ArrowRight className="size-[18px]" aria-hidden />
+            {cta} <ArrowRight className="rtl:-scale-x-100 size-[18px]" aria-hidden />
           </Button>
         </div>
       </div>
@@ -422,7 +422,7 @@ export function CreatorStartGate({ error }: { error?: string | null }) {
       </h1>
       <p className="mt-3 text-[15px] leading-relaxed text-muted-strong">Profilini kur, kimliğini doğrulat ve AI ikizini yetkilendir. Hayran hesabın aynen kalır; istediğin zaman her iki tarafı kullanabilirsin.</p>
       {formError && (
-        <FormAlert className="mt-5 text-left">
+        <FormAlert className="mt-5 text-start">
           <p>{formError}</p>
         </FormAlert>
       )}
@@ -440,7 +440,7 @@ export function CreatorStartGate({ error }: { error?: string | null }) {
             })
           }
         >
-          Yolculuğa Başla <ArrowRight className="size-[18px]" aria-hidden />
+          Yolculuğa Başla <ArrowRight className="rtl:-scale-x-100 size-[18px]" aria-hidden />
         </Button>
         <Link href="/app" className="block text-[13px] font-semibold text-muted hover:text-ink-soft">
           Şimdilik hayran olarak devam et
@@ -495,7 +495,7 @@ function RejectedPanel({ note }: { note: string | null }) {
     <StatusShell icon={<XCircle aria-hidden />} tone="bg-danger-soft text-danger" eyebrow="Başvuru durumu" title="Başvurun" accent="onaylanmadı.">
       <p>Ekibimiz başvurunu bu aşamada onaylamadı.</p>
       {note && (
-        <FormAlert className="mt-4 text-left">
+        <FormAlert className="mt-4 text-start">
           <p className="font-extrabold">Yönetici notu</p>
           <p className="mt-0.5 font-medium">{note}</p>
         </FormAlert>

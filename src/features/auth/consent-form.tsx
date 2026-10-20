@@ -67,7 +67,7 @@ export function ConsentForm({ name, next }: { name: string; next: string | null 
           }}
           className="mx-auto flex items-center gap-1.5 text-[13px] font-semibold text-muted hover:text-ink-soft"
         >
-          <LogOut className="size-4" aria-hidden /> Vazgeç ve çıkış yap
+          <LogOut className="rtl:-scale-x-100 size-4" aria-hidden /> Vazgeç ve çıkış yap
         </button>
       </form>
     </div>

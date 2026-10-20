@@ -45,7 +45,7 @@ export default async function EarningsPage({ searchParams }: { searchParams: Pro
           <>
             <Button asChild variant="outline">
               <Link href="/studio/payouts">
-                <Send /> Ödemeler
+                <Send className="rtl:-scale-x-100" /> Ödemeler
               </Link>
             </Button>
           </>
@@ -55,7 +55,7 @@ export default async function EarningsPage({ searchParams }: { searchParams: Pro
       <section aria-label="Bakiye" className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <StatCard label="Kullanılabilir bakiye" icon={<Wallet />} value={formatMoney(b.available)} foot="Olgunlaşmış, ödeme talep edilebilir" />
         <StatCard label="Bekleyen (olgunlaşmamış)" icon={<Clock />} tone="orange" value={formatMoney(b.pending)} foot={`${e.revenue.holdDays} gün bekleme süresi`} />
-        <StatCard label="Ödeme sürecinde" icon={<Send />} tone="violet" value={formatMoney(b.inPayout)} />
+        <StatCard label="Ödeme sürecinde" icon={<Send className="rtl:-scale-x-100" />} tone="violet" value={formatMoney(b.inPayout)} />
         <StatCard label="Ödenen toplam" icon={<Landmark />} tone="green" value={formatMoney(b.paidOut)} />
       </section>
 
@@ -103,11 +103,11 @@ export default async function EarningsPage({ searchParams }: { searchParams: Pro
               <tr>
                 <Th>Tarih</Th>
                 <Th>Kaynak</Th>
-                <Th className="text-right">Brüt</Th>
-                <Th className="text-right">Kesintiler</Th>
-                <Th className="text-right">Net</Th>
-                <Th className="text-right">Platform payı</Th>
-                <Th className="text-right">Senin payın</Th>
+                <Th className="text-end">Brüt</Th>
+                <Th className="text-end">Kesintiler</Th>
+                <Th className="text-end">Net</Th>
+                <Th className="text-end">Platform payı</Th>
+                <Th className="text-end">Senin payın</Th>
                 <Th>Durum</Th>
               </tr>
             </thead>
@@ -121,11 +121,11 @@ export default async function EarningsPage({ searchParams }: { searchParams: Pro
                       <p className="font-extrabold text-ink">{SOURCE_LABELS[r.sourceType]}</p>
                       <p className="max-w-[220px] truncate text-[10px] text-muted">{r.description}</p>
                     </Td>
-                    <Td className="text-right tabular-nums">{money(r.grossMinor)}</Td>
-                    <Td className="text-right tabular-nums">{money(r.processingFeeMinor + r.taxMinor)}</Td>
-                    <Td className="text-right tabular-nums">{money(r.netMinor)}</Td>
-                    <Td className="text-right tabular-nums">{money(r.platformFeeMinor)}</Td>
-                    <Td className="text-right font-extrabold tabular-nums">{money(r.creatorShareMinor)}</Td>
+                    <Td className="text-end tabular-nums">{money(r.grossMinor)}</Td>
+                    <Td className="text-end tabular-nums">{money(r.processingFeeMinor + r.taxMinor)}</Td>
+                    <Td className="text-end tabular-nums">{money(r.netMinor)}</Td>
+                    <Td className="text-end tabular-nums">{money(r.platformFeeMinor)}</Td>
+                    <Td className="text-end font-extrabold tabular-nums">{money(r.creatorShareMinor)}</Td>
                     <Td>
                       {r.reversesEarningId ? (
                         <Badge tone="danger" size="sm">

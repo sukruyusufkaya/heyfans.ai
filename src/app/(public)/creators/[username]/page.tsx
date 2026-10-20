@@ -130,7 +130,7 @@ export default async function CreatorProfilePage({ params, searchParams }: Props
             <span className="block size-full overflow-hidden rounded-full border-[5px] border-white bg-white shadow-xl">
               <CreatorPhoto src={creator.avatarUrl} name={creator.displayName} rounded="rounded-full" priority />
             </span>
-            {creator.isOnline && <span className="absolute bottom-2 right-2 size-5 rounded-full border-[3px] border-white bg-success" role="img" aria-label="Çevrimiçi" />}
+            {creator.isOnline && <span className="absolute bottom-2 end-2 size-5 rounded-full border-[3px] border-white bg-success" role="img" aria-label="Çevrimiçi" />}
           </div>
 
           <div className="min-w-0 flex-1 lg:pt-[96px]">

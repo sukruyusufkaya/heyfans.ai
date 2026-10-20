@@ -48,7 +48,7 @@ export default async function CopyrightPage() {
                 <li key={s.title} className="flex items-start gap-3.5 py-3.5">
                   <span className="relative grid size-10 shrink-0 place-items-center rounded-xl bg-brand-100 text-brand-500">
                     <s.icon className="size-[18px]" aria-hidden />
-                    <span className="absolute -left-1.5 -top-1.5 grid size-4 place-items-center rounded-full bg-brand-500 text-[9px] font-black text-white">{i + 1}</span>
+                    <span className="absolute -start-1.5 -top-1.5 grid size-4 place-items-center rounded-full bg-brand-500 text-[9px] font-black text-white">{i + 1}</span>
                   </span>
                   <div>
                     <h3 className="text-[13px] font-extrabold">{s.title}</h3>
@@ -83,7 +83,7 @@ export default async function CopyrightPage() {
               <h2 className="mt-3 text-lg font-extrabold text-brand-600">Creator hakları</h2>
               <p className="mt-1.5 text-xs leading-relaxed text-ink-soft">Ses, yüz ve kişisel içeriklerin kullanım kapsamı creator tarafından onaylanmalıdır.</p>
               <Link href="/creator-agreement" className="mt-4 inline-flex h-10 items-center gap-2 rounded-full bg-white px-5 text-xs font-extrabold text-brand-600 shadow-sm hover:bg-brand-50">
-                Hakları İncele <ArrowRight className="size-3.5" aria-hidden />
+                Hakları İncele <ArrowRight className="rtl:-scale-x-100 size-3.5" aria-hidden />
               </Link>
             </aside>
             <aside className="hf-card p-6">
@@ -93,7 +93,7 @@ export default async function CopyrightPage() {
               <h2 className="mt-3 text-base font-extrabold">Yardım mı gerekli?</h2>
               <p className="mt-1.5 text-xs leading-relaxed text-muted-strong">Uygun başvuru kategorisini bulmana yardımcı olalım.</p>
               <Link href="/help" className="mt-4 inline-flex h-9 items-center gap-1.5 rounded-full border border-line px-4 text-xs font-extrabold hover:border-brand-300 hover:text-brand-600">
-                Destek Merkezi <ArrowRight className="size-3.5" aria-hidden />
+                Destek Merkezi <ArrowRight className="rtl:-scale-x-100 size-3.5" aria-hidden />
               </Link>
             </aside>
           </div>

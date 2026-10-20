@@ -49,7 +49,7 @@ export function RequestPayoutForm({ availableMinor, minMinor, canRequest, reason
           </div>
         </Field>
         <Button type="submit" disabled={!canRequest || invalid} loading={pending}>
-          <Send /> Ödeme talebi gönder
+          <Send className="rtl:-scale-x-100" /> Ödeme talebi gönder
         </Button>
       </form>
       <p className="mt-3 text-[10px] text-muted">Tutar, komisyon ve vergiler kesinleştikten sonra ödeme onayına sunulur. Ödeme yalnız doğrulanmış hesaba yapılır.</p>

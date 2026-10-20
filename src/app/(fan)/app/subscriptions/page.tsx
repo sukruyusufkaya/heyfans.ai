@@ -61,7 +61,7 @@ function SubCard({ s }: { s: SubscriptionView }) {
       </div>
       <div className="flex shrink-0 flex-col items-start gap-2.5 sm:items-end">
         {s.periodEnd && (
-          <div className="sm:text-right">
+          <div className="sm:text-end">
             <p className="text-[9px] font-black tracking-[0.14em] text-muted">{ending ? "BİTİŞ TARİHİ" : "SONRAKİ YENİLEME"}</p>
             <p className="text-xs font-extrabold">{formatDate(s.periodEnd)}</p>
           </div>
@@ -161,7 +161,7 @@ export default async function SubscriptionsPage({ searchParams }: { searchParams
                       <tr>
                         <Th>Tarih</Th>
                         <Th>Üyelik</Th>
-                        <Th className="text-right">Tutar</Th>
+                        <Th className="text-end">Tutar</Th>
                         <Th>Durum</Th>
                       </tr>
                     </thead>
@@ -170,7 +170,7 @@ export default async function SubscriptionsPage({ searchParams }: { searchParams
                         <tr key={p.id}>
                           <Td className="whitespace-nowrap">{formatDateTime(p.createdAt)}</Td>
                           <Td className="font-extrabold text-ink">{p.label}</Td>
-                          <Td className="text-right font-extrabold tabular-nums">{formatMoney(p.amountMinor, p.currency)}</Td>
+                          <Td className="text-end font-extrabold tabular-nums">{formatMoney(p.amountMinor, p.currency)}</Td>
                           <Td>
                             <span className="inline-flex items-center gap-1.5">
                               <Badge tone={p.status === "succeeded" ? "green" : p.status === "failed" ? "danger" : "gray"} size="sm">

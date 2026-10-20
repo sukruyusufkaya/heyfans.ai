@@ -41,7 +41,7 @@ export default async function WalletPage({ searchParams }: { searchParams: Promi
 
       <div className="grid gap-4 lg:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)]">
         <section aria-label="Bakiye" className="relative overflow-hidden rounded-[18px] bg-[linear-gradient(120deg,#1a0b20_0%,#42103a_55%,#8a0f60_100%)] p-6 text-white shadow-[0_18px_35px_rgb(50_23_38/0.15)] sm:p-7">
-          <span aria-hidden className="pointer-events-none absolute -right-10 -top-10 size-56 rounded-full bg-brand-500/30 blur-3xl" />
+          <span aria-hidden className="pointer-events-none absolute -end-10 -top-10 size-56 rounded-full bg-brand-500/30 blur-3xl" />
           <p className="relative text-[10px] font-black tracking-[0.18em] text-[#ff99ce]">KULLANILABİLİR BAKİYE</p>
           <p className="relative mt-3 flex items-baseline gap-2.5 text-[44px] font-black leading-none tracking-[-0.05em]">
             {formatNumber(w.summary.balance)} <span className="text-lg font-extrabold tracking-normal text-white/80">kredi</span>
@@ -68,7 +68,7 @@ export default async function WalletPage({ searchParams }: { searchParams: Promi
           <CardHeader title="Bu ayki kullanım" hint={monthName} />
           <p className="flex items-baseline gap-2 text-[30px] font-black tracking-[-0.04em]">
             {formatNumber(w.month.netSpent)} <span className="text-sm font-extrabold text-muted">kredi</span>
-            <Badge tone="pink" size="sm" className="ml-auto">
+            <Badge tone="pink" size="sm" className="ms-auto">
               Bu ay
             </Badge>
           </p>
@@ -153,8 +153,8 @@ export default async function WalletPage({ searchParams }: { searchParams: Promi
           className="mb-4"
           items={[
             { href: hrefFor("all"), label: "Tüm işlemler", active: sp.filter === "all" },
-            { href: hrefFor("in"), label: <><ArrowDownLeft /> Girenler</>, active: sp.filter === "in" },
-            { href: hrefFor("out"), label: <><ArrowUpRight /> Çıkanlar</>, active: sp.filter === "out" },
+            { href: hrefFor("in"), label: <><ArrowDownLeft className="rtl:-scale-x-100" /> Girenler</>, active: sp.filter === "in" },
+            { href: hrefFor("out"), label: <><ArrowUpRight className="rtl:-scale-x-100" /> Çıkanlar</>, active: sp.filter === "out" },
           ]}
         />
         {w.ledger.rows.length ? (
@@ -165,8 +165,8 @@ export default async function WalletPage({ searchParams }: { searchParams: Promi
                   <tr>
                     <Th>Tarih</Th>
                     <Th>İşlem</Th>
-                    <Th className="text-right">Miktar</Th>
-                    <Th className="text-right">Bakiye</Th>
+                    <Th className="text-end">Miktar</Th>
+                    <Th className="text-end">Bakiye</Th>
                     <Th>Durum</Th>
                   </tr>
                 </thead>
@@ -178,15 +178,15 @@ export default async function WalletPage({ searchParams }: { searchParams: Promi
                         <span className="font-extrabold text-ink">{r.label}</span>
                         <span className="block max-w-[320px] truncate text-[10px] text-muted">{r.description}</span>
                       </Td>
-                      <Td className={cn("text-right font-extrabold tabular-nums", r.amount > 0 ? "text-success" : "text-ink")}>
+                      <Td className={cn("text-end font-extrabold tabular-nums", r.amount > 0 ? "text-success" : "text-ink")}>
                         {r.amount > 0 ? "+" : "−"}
                         {formatNumber(Math.abs(r.amount))} kredi
                       </Td>
-                      <Td className="text-right tabular-nums text-muted-strong">{formatNumber(r.balanceAfter)}</Td>
+                      <Td className="text-end tabular-nums text-muted-strong">{formatNumber(r.balanceAfter)}</Td>
                       <Td>
                         <span className="inline-flex items-center gap-1.5">
                           <Badge tone={STATUS[r.status].tone} size="sm">
-                            {r.status !== "completed" && <Undo2 />} {STATUS[r.status].label}
+                            {r.status !== "completed" && <Undo2 className="rtl:-scale-x-100" />} {STATUS[r.status].label}
                           </Badge>
                           {r.isDemo && <Badge tone="warn" size="sm">Demo</Badge>}
                         </span>
@@ -200,7 +200,7 @@ export default async function WalletPage({ searchParams }: { searchParams: Promi
               {w.ledger.rows.map((r) => (
                 <li key={r.id} className="flex items-center gap-3 rounded-xl border border-line-soft p-3">
                   <span className={cn("grid size-9 shrink-0 place-items-center rounded-full", r.amount > 0 ? "bg-success-soft text-success" : "bg-soft text-muted-strong")}>
-                    {r.amount > 0 ? <ArrowDownLeft className="size-4" /> : <ArrowUpRight className="size-4" />}
+                    {r.amount > 0 ? <ArrowDownLeft className="rtl:-scale-x-100 size-4" /> : <ArrowUpRight className="rtl:-scale-x-100 size-4" />}
                   </span>
                   <span className="min-w-0 flex-1">
                     <span className="block truncate text-xs font-extrabold">{r.label}</span>

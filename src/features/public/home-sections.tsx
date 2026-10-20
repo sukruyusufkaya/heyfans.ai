@@ -100,7 +100,7 @@ function Phone({ children, className, size = "md", label }: { children: React.Re
 }
 
 function Bubble({ from, children }: { from: "ai" | "user"; children: React.ReactNode }) {
-  return <p className={cn("max-w-[86%] rounded-2xl px-2.5 py-1.5 text-[9px] leading-snug", from === "ai" ? "self-start rounded-bl-sm bg-soft text-ink-soft" : "self-end rounded-br-sm bg-brand-500 text-white")}>{children}</p>;
+  return <p className={cn("max-w-[86%] rounded-2xl px-2.5 py-1.5 text-[9px] leading-snug", from === "ai" ? "self-start rounded-es-sm bg-soft text-ink-soft" : "self-end rounded-ee-sm bg-brand-500 text-white")}>{children}</p>;
 }
 
 function ChatHeader({ p }: { p?: Person }) {
@@ -122,8 +122,8 @@ function ChatInput() {
   return (
     <div className="mt-2 flex h-8 items-center gap-2 rounded-full border border-line bg-soft px-2.5 text-[8px] text-muted">
       Mesajını yaz…
-      <span className="ml-auto grid size-5 place-items-center rounded-full bg-brand-500 text-white">
-        <Send className="size-2.5" />
+      <span className="ms-auto grid size-5 place-items-center rounded-full bg-brand-500 text-white">
+        <Send className="rtl:-scale-x-100 size-2.5" />
       </span>
     </div>
   );
@@ -161,7 +161,7 @@ export function HomeHero({
   const lead = pick(people, 0);
   return (
     <section className="relative overflow-hidden bg-[radial-gradient(120%_80%_at_0%_0%,#fff0f8_0%,#ffffff_45%),radial-gradient(60%_60%_at_100%_10%,#f6e9ff_0%,transparent_60%)]">
-      <div aria-hidden className="pointer-events-none absolute -left-40 top-24 size-[460px] rounded-full bg-brand-200/30 blur-3xl" />
+      <div aria-hidden className="pointer-events-none absolute -start-40 top-24 size-[460px] rounded-full bg-brand-200/30 blur-3xl" />
       <div className="relative mx-auto grid max-w-[1440px] items-center gap-10 px-4 pb-8 pt-10 sm:px-6 lg:grid-cols-[0.92fr_1.18fr] lg:px-8 lg:pb-10 lg:pt-14">
         <div className="relative z-10 animate-fade-up">
           <span className="inline-flex items-center gap-2 rounded-full border border-brand-150 bg-white/90 px-3.5 py-1.5 text-[11px] font-bold text-brand-600 shadow-sm">
@@ -177,7 +177,7 @@ export function HomeHero({
           <p className="mt-6 max-w-[520px] text-[16px] leading-relaxed text-ink-soft sm:text-[18px]">{description}</p>
           <div className="mt-8 flex flex-wrap gap-3">
             <Link href={primary.href} className="group inline-flex h-[52px] items-center gap-2 rounded-full bg-gradient-to-r from-brand-500 to-[#d4007c] px-7 text-sm font-extrabold text-white shadow-[0_14px_30px_-10px_rgba(236,0,136,0.65)] transition hover:brightness-110">
-              {primary.label} <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" />
+              {primary.label} <ArrowRight className="rtl:-scale-x-100 size-4 transition-transform group-hover:translate-x-0.5" />
             </Link>
             <Link href={secondary.href} className="inline-flex h-[52px] items-center gap-2.5 rounded-full border border-brand-150 bg-white px-6 text-sm font-extrabold text-ink shadow-sm transition hover:border-brand-300">
               <span className="grid size-7 place-items-center rounded-full bg-ink text-white">
@@ -207,7 +207,7 @@ export function HomeHero({
 
         {/* Kolaj: eğik creator panelleri + uygulama görünümleri */}
         <div className="relative h-[380px] sm:h-[480px] lg:h-[600px]" aria-hidden>
-          <div className="absolute inset-y-0 left-[2%] right-[30%] hidden -skew-x-[8deg] grid-cols-3 gap-3 sm:grid lg:right-[26%]">
+          <div className="absolute inset-y-0 start-[2%] end-[30%] hidden -skew-x-[8deg] grid-cols-3 gap-3 sm:grid lg:end-[26%]">
             {cols.map((col, ci) => (
               <div key={ci} className={cn("flex flex-col gap-3", ci === 1 ? "-translate-y-8" : ci === 2 ? "translate-y-10" : "")}>
                 {col.map((p, ri) => {
@@ -219,7 +219,7 @@ export function HomeHero({
                       </div>
                       <span className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/55 to-transparent" />
                       {cat && (
-                        <span className="absolute bottom-2.5 left-3 inline-flex skew-x-[8deg] items-center gap-1.5 rounded-full bg-white/20 px-2.5 py-1 text-[10px] font-extrabold text-white ring-1 ring-white/30 backdrop-blur-md">
+                        <span className="absolute bottom-2.5 start-3 inline-flex skew-x-[8deg] items-center gap-1.5 rounded-full bg-white/20 px-2.5 py-1 text-[10px] font-extrabold text-white ring-1 ring-white/30 backdrop-blur-md">
                           <CategoryIcon name={catIcons[cat] ?? "sparkles"} className="size-3" /> {categoryLabel(cat)}
                         </span>
                       )}
@@ -240,10 +240,10 @@ export function HomeHero({
               );
             })}
           </div>
-          <span className="pointer-events-none absolute inset-y-0 left-0 hidden w-24 bg-gradient-to-r from-white to-transparent lg:block" />
+          <span className="pointer-events-none absolute inset-y-0 start-0 hidden w-24 bg-gradient-to-r from-white to-transparent lg:block" />
 
           {/* Uygulama ana ekranı */}
-          <Phone label="Uygulama ana ekranı" className="hf-float absolute right-[16%] top-[8%] z-10 hidden md:block">
+          <Phone label="Uygulama ana ekranı" className="hf-float absolute end-[16%] top-[8%] z-10 hidden md:block">
             <div className="mb-2 flex items-center justify-between">
               <LogoMark className="h-5" />
               <span className="flex gap-1.5 text-muted">
@@ -288,7 +288,7 @@ export function HomeHero({
           </Phone>
 
           {/* Sohbet ekranı */}
-          <Phone label="AI ikizi sohbet ekranı" className="hf-float-delay absolute -right-1 top-[30%] z-20 hidden lg:block" size="sm">
+          <Phone label="AI ikizi sohbet ekranı" className="hf-float-delay absolute -end-1 top-[30%] z-20 hidden lg:block" size="sm">
             <ChatHeader p={lead} />
             <div className="flex flex-col gap-1.5">
               <Bubble from="ai">Selam! Seni görmek çok güzel 💕 Bugün ne yapmak istersin?</Bubble>
@@ -356,10 +356,10 @@ export function JourneySection({ people }: { people: Person[] }) {
       visual: (
         <div className="relative h-full overflow-hidden rounded-xl">
           <CreatorPhoto src={pick(people, 2)?.avatarUrl} name="Creator" rounded="rounded-none" showMonogram={false} />
-          <span className="absolute inset-y-0 right-0 w-1/2 bg-gradient-to-l from-[#8b3dff]/70 via-brand-500/40 to-transparent mix-blend-multiply" />
-          <span className="absolute inset-y-3 left-1/2 w-px bg-white/80" />
-          <span className="absolute bottom-2 left-2 rounded-full bg-black/45 px-2 py-0.5 text-[8px] font-extrabold text-white">Gerçek creator</span>
-          <span className="absolute bottom-2 right-2 inline-flex items-center gap-1 rounded-full bg-white/90 px-2 py-0.5 text-[8px] font-extrabold text-violet">
+          <span className="absolute inset-y-0 end-0 w-1/2 bg-gradient-to-l from-[#8b3dff]/70 via-brand-500/40 to-transparent mix-blend-multiply" />
+          <span className="absolute inset-y-3 start-1/2 w-px bg-white/80" />
+          <span className="absolute bottom-2 start-2 rounded-full bg-black/45 px-2 py-0.5 text-[8px] font-extrabold text-white">Gerçek creator</span>
+          <span className="absolute bottom-2 end-2 inline-flex items-center gap-1 rounded-full bg-white/90 px-2 py-0.5 text-[8px] font-extrabold text-violet">
             <Sparkles className="size-2.5" /> AI ikizi
           </span>
         </div>
@@ -441,8 +441,8 @@ export function JourneySection({ people }: { people: Person[] }) {
               {s.visual}
             </div>
             {i < steps.length - 1 && (
-              <span className="absolute -right-3 top-1/2 z-10 hidden size-6 -translate-y-1/2 place-items-center rounded-full bg-white text-brand-500 shadow ring-1 ring-brand-100 lg:grid" aria-hidden>
-                <ArrowRight className="size-3.5" />
+              <span className="absolute -end-3 top-1/2 z-10 hidden size-6 -translate-y-1/2 place-items-center rounded-full bg-white text-brand-500 shadow ring-1 ring-brand-100 lg:grid" aria-hidden>
+                <ArrowRight className="rtl:-scale-x-100 size-3.5" />
               </span>
             )}
           </li>
@@ -592,7 +592,7 @@ export function FanExperienceSection({ people, catIcons }: { people: Person[]; c
           </p>
           <div className="relative aspect-[4/3] overflow-hidden rounded-lg">
             <CreatorPhoto src={pick(people, 7)?.coverUrl} name="Paylaşım" rounded="rounded-none" showMonogram={false} />
-            <span className="absolute bottom-1 left-1 rounded-full bg-black/50 px-1.5 py-0.5 text-[6.5px] font-bold text-white">Kamera arkası</span>
+            <span className="absolute bottom-1 start-1 rounded-full bg-black/50 px-1.5 py-0.5 text-[6.5px] font-bold text-white">Kamera arkası</span>
           </div>
           <div className="flex items-center gap-1.5 rounded-lg bg-soft px-1.5 py-1">
             <span className="size-5 overflow-hidden rounded-full">
@@ -618,7 +618,7 @@ export function FanExperienceSection({ people, catIcons }: { people: Person[]; c
             <li key={s.title} className="flex snap-center flex-col items-center text-center">
               <div className="mb-4 flex items-center gap-2">
                 <StepNo n={i + 1} className="size-7 text-xs" />
-                <span className="text-left">
+                <span className="text-start">
                   <span className="block text-[13px] font-extrabold text-ink">{s.title}</span>
                   <span className="block text-[11px] text-muted-strong">{s.text}</span>
                 </span>
@@ -663,8 +663,8 @@ export function CreatorAdvantageSection({ people }: { people: Person[] }) {
   ];
   return (
     <section className="relative overflow-hidden bg-night py-16 text-white lg:py-24">
-      <div aria-hidden className="pointer-events-none absolute -right-32 -top-32 size-[520px] rounded-full bg-brand-500/25 blur-[120px]" />
-      <div aria-hidden className="pointer-events-none absolute -bottom-40 left-1/4 size-[460px] rounded-full bg-[#8b3dff]/20 blur-[120px]" />
+      <div aria-hidden className="pointer-events-none absolute -end-32 -top-32 size-[520px] rounded-full bg-brand-500/25 blur-[120px]" />
+      <div aria-hidden className="pointer-events-none absolute -bottom-40 start-1/4 size-[460px] rounded-full bg-[#8b3dff]/20 blur-[120px]" />
       <div className="relative mx-auto grid max-w-[1440px] gap-12 px-4 sm:px-6 lg:grid-cols-[0.9fr_1fr_0.95fr] lg:items-center lg:px-8">
         <div>
           <p className="flex items-center gap-3 text-[11px] font-black uppercase tracking-[0.22em] text-white/60">
@@ -681,7 +681,7 @@ export function CreatorAdvantageSection({ people }: { people: Person[] }) {
           <div className="relative mt-8 h-[260px] max-w-[340px] overflow-hidden rounded-[28px] ring-1 ring-white/15" aria-hidden>
             <CreatorPhoto src={hero?.avatarUrl ?? hero?.coverUrl} name={hero?.displayName ?? "Creator"} rounded="rounded-none" showMonogram={false} />
             <span className="absolute inset-0 bg-gradient-to-t from-night/80 via-transparent to-transparent" />
-            <span className="absolute bottom-4 left-4 right-4 flex items-center justify-between">
+            <span className="absolute bottom-4 start-4 end-4 flex items-center justify-between">
               <span className="rounded-full bg-white/15 px-3 py-1.5 text-[11px] font-extrabold backdrop-blur-md">Senin kitlen</span>
               <span className="flex gap-1.5">
                 {(["instagram", "tiktok", "youtube", "x"] as const).map((p) => (
@@ -708,7 +708,7 @@ export function CreatorAdvantageSection({ people }: { people: Person[] }) {
           ))}
           <li>
             <Link href="/register?intent=creator" className="mt-2 inline-flex h-12 items-center gap-2 rounded-full bg-gradient-to-r from-brand-500 to-[#d4007c] px-7 text-sm font-extrabold text-white shadow-[0_14px_30px_-10px_rgba(236,0,136,0.7)] hover:brightness-110">
-              Creator olarak başvur <ArrowRight className="size-4" />
+              Creator olarak başvur <ArrowRight className="rtl:-scale-x-100 size-4" />
             </Link>
           </li>
         </ol>
@@ -881,7 +881,7 @@ export function CompareSection({ people }: { people: Person[] }) {
       <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8">
         <SectionHead n="07" eyebrow="Neden HEYFANS" title="Gerçek creator'lar, yetkili AI ikizleri" accent="ve tamamen etkileşimli deneyimler." text="Creator ekonomisinin ve yapay zekânın en iyi yanlarını; gerçek creator'lara, özgün deneyimlere ve tam kontrole odaklanarak bir araya getiriyoruz." align="split" />
         <div className="overflow-x-auto rounded-[24px] border border-line bg-white shadow-[0_30px_60px_-40px_rgba(43,10,40,0.35)]">
-          <table className="w-full min-w-[860px] border-collapse text-left">
+          <table className="w-full min-w-[860px] border-collapse text-start">
             <caption className="sr-only">HEYFANS ve diğer platform türlerinin karşılaştırması</caption>
             <thead>
               <tr className="text-[12px]">
@@ -989,7 +989,7 @@ export function TrustSection() {
         ))}
       </ul>
       <div className="mt-6 grid overflow-hidden rounded-[24px] border border-line bg-white lg:grid-cols-[1.1fr_2fr]">
-        <div className="relative flex items-center gap-4 bg-gradient-to-r from-brand-500 to-[#a1007c] px-6 py-6 text-white [clip-path:polygon(0_0,94%_0,100%_50%,94%_100%,0_100%)] lg:pr-14">
+        <div className="relative flex items-center gap-4 bg-gradient-to-r from-brand-500 to-[#a1007c] px-6 py-6 text-white [clip-path:polygon(0_0,94%_0,100%_50%,94%_100%,0_100%)] lg:pe-14">
           <ShieldCheck className="size-10 shrink-0" />
           <div>
             <p className="font-display text-[20px] font-extrabold">Taahhüdümüz</p>
@@ -1019,14 +1019,14 @@ export function FinalCta({ people, title, text }: { people: Person[]; title: str
   return (
     <section className="mx-auto max-w-[1440px] px-4 pb-16 sm:px-6 lg:px-8">
       <div className="relative overflow-hidden rounded-[32px] bg-gradient-to-br from-[#2b0f2f] via-[#6b0f52] to-brand-500 px-6 py-12 text-white sm:px-12 lg:py-16">
-        <div aria-hidden className="pointer-events-none absolute -right-24 -top-24 size-[380px] rounded-full bg-[#ff69b8]/30 blur-[100px]" />
+        <div aria-hidden className="pointer-events-none absolute -end-24 -top-24 size-[380px] rounded-full bg-[#ff69b8]/30 blur-[100px]" />
         <div className="relative grid items-center gap-10 lg:grid-cols-[1.2fr_1fr]">
           <div>
             <h2 className="font-display text-[34px] font-extrabold leading-[1.02] tracking-[-0.045em] sm:text-[48px]">{title}</h2>
             {text && <p className="mt-4 max-w-xl text-[16px] leading-relaxed text-white/80">{text}</p>}
             <div className="mt-8 flex flex-wrap gap-3">
               <Link href="/register" className="inline-flex h-[52px] items-center gap-2 rounded-full bg-white px-7 text-sm font-extrabold text-brand-600 shadow-lg hover:bg-brand-50">
-                Hayran olarak katıl <ArrowRight className="size-4" />
+                Hayran olarak katıl <ArrowRight className="rtl:-scale-x-100 size-4" />
               </Link>
               <Link href="/register?intent=creator" className="inline-flex h-[52px] items-center gap-2 rounded-full border border-white/40 px-7 text-sm font-extrabold text-white hover:bg-white/10">
                 <Crown className="size-4" /> Creator olarak başvur
@@ -1036,7 +1036,7 @@ export function FinalCta({ people, title, text }: { people: Person[]; title: str
           <div className="relative hidden h-[260px] lg:block" aria-hidden>
             {[0, 1, 2, 3].map((i) => {
               const p = pick(people, i + 2);
-              const pos = ["left-[4%] top-[10%] rotate-[-8deg]", "left-[28%] top-0 rotate-[4deg] z-10", "left-[54%] top-[14%] rotate-[-3deg]", "left-[76%] top-[4%] rotate-[7deg]"][i];
+              const pos = ["start-[4%] top-[10%] rotate-[-8deg]", "start-[28%] top-0 rotate-[4deg] z-10", "start-[54%] top-[14%] rotate-[-3deg]", "start-[76%] top-[4%] rotate-[7deg]"][i];
               return (
                 <div key={i} className={cn("absolute h-[200px] w-[150px] overflow-hidden rounded-[22px] border-4 border-white/80 shadow-2xl", pos)}>
                   <CreatorPhoto src={p?.avatarUrl ?? p?.coverUrl} name={p?.displayName ?? "Creator"} rounded="rounded-none" showMonogram={false} />

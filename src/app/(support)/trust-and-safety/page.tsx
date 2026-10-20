@@ -110,7 +110,7 @@ export default async function TrustAndSafetyPage() {
               <DraftNotice page={page} />
             </div>
             <Link href="/community-guidelines" className="mt-4 inline-flex items-center gap-1.5 text-xs font-extrabold text-brand-600 hover:underline">
-              Topluluk Kuralları <ArrowRight className="size-3.5" aria-hidden />
+              Topluluk Kuralları <ArrowRight className="rtl:-scale-x-100 size-3.5" aria-hidden />
             </Link>
           </section>
         </div>

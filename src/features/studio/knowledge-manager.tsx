@@ -119,7 +119,7 @@ export function KnowledgeManager({ sources, enabled, aiAvailable }: { sources: K
                 <Th>Tür</Th>
                 <Th>Eklenme</Th>
                 <Th>Durum</Th>
-                <Th className="text-right">Parça</Th>
+                <Th className="text-end">Parça</Th>
                 <Th>Kullan</Th>
                 <Th className="relative">
                   <span className="sr-only">İşlemler</span>
@@ -154,7 +154,7 @@ export function KnowledgeManager({ sources, enabled, aiAvailable }: { sources: K
                         {st.label}
                       </Badge>
                     </Td>
-                    <Td className="text-right tabular-nums">{s.status === "indexed" ? formatNumber(s.chunkCount) : "—"}</Td>
+                    <Td className="text-end tabular-nums">{s.status === "indexed" ? formatNumber(s.chunkCount) : "—"}</Td>
                     <Td>
                       <Switch
                         checked={approved}

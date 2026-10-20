@@ -6,6 +6,7 @@ import { env } from "@/config/env";
 import { getAuth } from "@/lib/auth/auth";
 import { ObjectId } from "mongodb";
 import { connectDb } from "@/lib/db/mongo";
+import { isLocale, type Locale } from "@/i18n/config";
 import { can, ForbiddenError, UnauthorizedError, type Permission } from "@/lib/permissions";
 import { User, type AdminRole, type UserRole, type UserStatus } from "@/models/identity";
 
@@ -21,6 +22,8 @@ export interface SessionUser {
   status: UserStatus;
   twoFactorEnabled: boolean;
   signupIntent: "fan" | "creator";
+  /** Hesap dili; yoksa konum/tarayıcıya göre seçilir. */
+  locale: Locale | null;
 }
 
 export interface AppSession {
@@ -42,6 +45,7 @@ function normalize(raw: Record<string, unknown>): SessionUser {
     status: ((raw.status as UserStatus) ?? "active") as UserStatus,
     twoFactorEnabled: Boolean(raw.twoFactorEnabled),
     signupIntent: raw.signupIntent === "creator" ? "creator" : "fan",
+    locale: isLocale(raw.locale) ? raw.locale : null,
   };
 }
 
@@ -58,7 +62,7 @@ export const getSession = cache(async (): Promise<AppSession | null> => {
   const user = normalize(result.user as unknown as Record<string, unknown>);
   if (ObjectId.isValid(user.id)) {
     await connectDb();
-    const fresh = await User.findById(user.id, { status: 1, roles: 1, adminRole: 1, twoFactorEnabled: 1, name: 1, image: 1, username: 1 }).lean();
+    const fresh = await User.findById(user.id, { status: 1, roles: 1, adminRole: 1, twoFactorEnabled: 1, name: 1, image: 1, username: 1, locale: 1 }).lean();
     if (!fresh) return null;
     user.status = fresh.status;
     user.roles = fresh.roles;
@@ -67,6 +71,7 @@ export const getSession = cache(async (): Promise<AppSession | null> => {
     user.name = fresh.name;
     user.image = fresh.image ?? null;
     user.username = fresh.username ?? null;
+    user.locale = isLocale(fresh.locale) ? fresh.locale : null;
   }
   if (user.status !== "active") return null;
   return { user, sessionId: result.session.id };

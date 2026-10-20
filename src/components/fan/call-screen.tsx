@@ -44,7 +44,7 @@ export function CallScreen({ kind, data }: { kind: "voice" | "video"; data: Avai
                 <p className="flex items-center gap-2 text-xs font-extrabold text-ink">
                   <Info className="size-4 text-warning" aria-hidden /> Neden kullanılamıyor?
                 </p>
-                <ul className="mt-2 list-disc space-y-1 pl-5 text-xs leading-relaxed text-ink-soft">
+                <ul className="mt-2 list-disc space-y-1 ps-5 text-xs leading-relaxed text-ink-soft">
                   {data.reasons.map((r) => (
                     <li key={r}>{r}</li>
                   ))}

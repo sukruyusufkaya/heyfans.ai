@@ -33,7 +33,7 @@ export function TwinControls({
       disabled={!hasPersonaConsent}
       trigger={
         <Button variant={primary ? "primary" : "outline"} size="sm" disabled={!hasPersonaConsent}>
-          <Send /> {label}
+          <Send className="rtl:-scale-x-100" /> {label}
         </Button>
       }
     >

@@ -74,7 +74,7 @@ export function AgeVerification({ state, recordedAt, next, todayIso }: AgeFormPr
           <ShieldAlert aria-hidden />
         </IconBadge>
         <AuthHeading center eyebrow="YAŞ SINIRI" title="Üzgünüz," accent="henüz olmaz." />
-        <FormAlert className="mt-6 text-left">
+        <FormAlert className="mt-6 text-start">
           <p>HEYFANS yalnızca 18 yaşını doldurmuş kişiler içindir. Bu nedenle hesabın askıya alındı ve oturumun kapatıldı.</p>
         </FormAlert>
         <p className="mt-4 text-xs leading-relaxed text-muted-strong">Doğum tarihi bilgin saklanmadı. Hesabınla ilgili bir yanlışlık olduğunu düşünüyorsan destek ekibimizle iletişime geçebilirsin.</p>
@@ -108,7 +108,7 @@ export function AgeVerification({ state, recordedAt, next, todayIso }: AgeFormPr
         <div className="mt-5">
         </div>
         {formError && (
-          <FormAlert className="mt-4 text-left">
+          <FormAlert className="mt-4 text-start">
             <p>{formError}</p>
           </FormAlert>
         )}

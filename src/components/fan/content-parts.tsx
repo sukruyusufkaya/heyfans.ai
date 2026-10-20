@@ -79,7 +79,7 @@ export function PostCard({ post, favorite, authed = true }: { post: PostView; fa
             </span>
           </span>
         ) : (
-          <span className="absolute left-3 top-3 inline-flex items-center gap-1.5 rounded-full bg-black/40 px-2.5 py-1 text-[10px] font-bold text-white backdrop-blur">
+          <span className="absolute start-3 top-3 inline-flex items-center gap-1.5 rounded-full bg-black/40 px-2.5 py-1 text-[10px] font-bold text-white backdrop-blur">
             <ContentTypeIcon type={post.type} className="size-3" /> {CONTENT_TYPE_LABELS[post.type] ?? post.type}
           </span>
         )}
@@ -91,7 +91,7 @@ export function PostCard({ post, favorite, authed = true }: { post: PostView; fa
         <span className="inline-flex items-center gap-1.5">
           <MessageCircle className="size-3.5" aria-hidden /> {formatCompact(post.comments)} yorum
         </span>
-        <span className="ml-auto flex flex-wrap items-center gap-3">
+        <span className="ms-auto flex flex-wrap items-center gap-3">
           <Link href={`/chat/${post.creator.username}`} className="font-extrabold text-brand-500 hover:underline">
             AI ikiziyle sohbet et →
           </Link>
@@ -119,7 +119,7 @@ export function ContentTile({ post, favorite, big, authed = true }: { post: Post
         <Link href={`/content/${post.id}`} className="block size-full" aria-label={`${post.title}${post.locked ? " (kilitli)" : ""}`}>
           <ContentCover src={post.coverUrl} title={post.title} type={post.type} locked={post.locked} className="transition-transform duration-500 group-hover:scale-[1.03]" />
         </Link>
-        <span className="pointer-events-none absolute left-2.5 top-2.5">
+        <span className="pointer-events-none absolute start-2.5 top-2.5">
           {post.locked ? (
             <Badge tone="solid" size="sm">
               <Lock /> {post.lockReason === "sample" ? "Örnek içerik" : post.access === "purchase" ? "Satın alınabilir" : post.access === "followers" ? "Takipçilere özel" : "Üyelere özel"}
@@ -130,7 +130,7 @@ export function ContentTile({ post, favorite, big, authed = true }: { post: Post
             </Badge>
           )}
         </span>
-        <FavoriteButton targetType="content" targetId={post.id} initial={Boolean(favorite)} authed={authed} className="absolute right-2.5 top-2.5" />
+        <FavoriteButton targetType="content" targetId={post.id} initial={Boolean(favorite)} authed={authed} className="absolute end-2.5 top-2.5" />
         {post.locked && (
           <span className="pointer-events-none absolute inset-0 grid place-items-center">
             <span className="grid size-11 place-items-center rounded-full bg-white/85 text-brand-500 shadow">

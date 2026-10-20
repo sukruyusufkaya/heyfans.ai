@@ -103,7 +103,7 @@ export function RegisterForm({ flags, defaultIntent, next }: { flags: SocialFlag
                     <span className="mt-1 block text-xs leading-snug text-muted-strong">{text}</span>
                   </span>
                   {active && (
-                    <span className="absolute right-3 top-3 grid size-5 place-items-center rounded-full bg-brand-500 text-white" aria-hidden>
+                    <span className="absolute end-3 top-3 grid size-5 place-items-center rounded-full bg-brand-500 text-white" aria-hidden>
                       <Check className="size-3" strokeWidth={3.5} />
                     </span>
                   )}

@@ -296,7 +296,7 @@ export function TestLab({
               {msgs.map((m) => (
                 <li key={m.id} className={cn("flex gap-2.5", m.role === "user" && "justify-end")}>
                   {m.role !== "user" && <Avatar src={avatarUrl} name={creatorName} size={30} className="mt-1" ring={false} />}
-                  <div className={cn("max-w-[82%] rounded-2xl px-4 py-2.5 text-[12.5px] leading-relaxed", m.role === "user" ? "rounded-br-sm bg-brand-500 text-white" : m.role === "system" ? "rounded-bl-sm border border-[#f9d9aa] bg-[#fff7e9] text-[#8a5200]" : "rounded-bl-sm bg-soft text-ink-soft")}>
+                  <div className={cn("max-w-[82%] rounded-2xl px-4 py-2.5 text-[12.5px] leading-relaxed", m.role === "user" ? "rounded-ee-sm bg-brand-500 text-white" : m.role === "system" ? "rounded-es-sm border border-[#f9d9aa] bg-[#fff7e9] text-[#8a5200]" : "rounded-es-sm bg-soft text-ink-soft")}>
                     {m.probe && <span className={cn("mb-1 block text-[9px] font-black uppercase tracking-wider", m.role === "user" ? "text-white/80" : "text-brand-500")}>Senaryo · {m.probe}</span>}
                     <span className="whitespace-pre-wrap">{m.body || (m.streaming ? <Loader2 className="size-4 animate-spin" aria-label="Yanıt yazılıyor" /> : "")}</span>
                     {m.role !== "user" && !m.streaming && (
@@ -339,7 +339,7 @@ export function TestLab({
               className="max-h-32 min-h-11 flex-1 resize-none rounded-2xl border border-line bg-white px-4 py-3 text-[13px] outline-none placeholder:text-[#b2a6b3] focus:border-brand-300 focus:ring-4 focus:ring-brand-100 disabled:bg-soft"
             />
             <Button type="submit" size="icon" disabled={disabled || sending || !input.trim()} aria-label="Gönder">
-              {sending ? <Loader2 className="animate-spin" /> : <SendHorizontal />}
+              {sending ? <Loader2 className="animate-spin" /> : <SendHorizontal className="rtl:-scale-x-100" />}
             </Button>
           </form>
         </Card>

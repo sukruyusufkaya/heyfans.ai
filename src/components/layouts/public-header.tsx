@@ -2,11 +2,11 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
-import { ChevronDown, Globe, Menu, Search, X } from "lucide-react";
+import { Menu, Search, X } from "lucide-react";
 import { LogoLink } from "@/components/brand/logo";
 import { Avatar } from "@/components/ui/display";
 import { Button } from "@/components/ui/button";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/overlays";
+import { LanguageSwitcher } from "@/components/i18n/language-switcher";
 import { isActive, PUBLIC_NAV, type NavItem } from "@/config/navigation";
 import { cn } from "@/lib/utils";
 
@@ -60,7 +60,7 @@ export function PublicHeader({ user, extraNav }: { user: HeaderUser | null; extr
             );
           })}
         </nav>
-        <div className="ml-auto flex items-center gap-2.5 xl:ml-0">
+        <div className="ms-auto flex items-center gap-2.5 xl:ms-0">
           <form onSubmit={submit} role="search" className="hidden lg:block">
             <label htmlFor="global-search" className="sr-only">
               İçerik üreticilerinde ara
@@ -76,16 +76,9 @@ export function PublicHeader({ user, extraNav }: { user: HeaderUser | null; extr
               />
             </div>
           </form>
-          <DropdownMenu>
-            <DropdownMenuTrigger className="hidden items-center gap-1 rounded-full px-2 py-1.5 text-xs font-extrabold text-ink-soft hover:bg-soft sm:flex" aria-label="Dil seçimi">
-              <Globe className="size-4" /> TR <ChevronDown className="size-3" />
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="min-w-36">
-              <DropdownMenuItem>Türkçe</DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <LanguageSwitcher className="hidden sm:flex" />
           {user ? (
-            <Link href={panelHref} className="flex items-center gap-2 rounded-full border border-line py-1 pl-1 pr-3 text-xs font-extrabold text-ink hover:border-brand-200">
+            <Link href={panelHref} className="flex items-center gap-2 rounded-full border border-line py-1 ps-1 pe-3 text-xs font-extrabold text-ink hover:border-brand-200">
               <Avatar src={user.image} name={user.name} size={28} ring={false} />
               <span className="hidden sm:inline">Panelim</span>
             </Link>

@@ -42,7 +42,7 @@ export default async function GiftsPage({ searchParams }: { searchParams: Promis
                 <tr>
                   <Th>İçerik üreticisi</Th>
                   <Th>Hediye</Th>
-                  <Th className="text-right">Kredi</Th>
+                  <Th className="text-end">Kredi</Th>
                   <Th>Tarih</Th>
                   <Th>Durum</Th>
                 </tr>
@@ -60,7 +60,7 @@ export default async function GiftsPage({ searchParams }: { searchParams: Promis
                       {h.kind === "gift" ? (nameOf.get(h.giftKey ?? "") ?? "Hediye") : "Bahşiş"}
                       {h.message && <span className="block max-w-[220px] truncate text-[10px] text-muted">“{h.message}”</span>}
                     </Td>
-                    <Td className="text-right font-extrabold tabular-nums">{formatNumber(h.credits)}</Td>
+                    <Td className="text-end font-extrabold tabular-nums">{formatNumber(h.credits)}</Td>
                     <Td className="whitespace-nowrap">{formatDate(h.createdAt)}</Td>
                     <Td>
                       <span className="inline-flex items-center gap-1.5">

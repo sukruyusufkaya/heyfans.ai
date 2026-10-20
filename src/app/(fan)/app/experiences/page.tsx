@@ -102,7 +102,7 @@ export default async function ExperiencesPage({ searchParams }: { searchParams: 
                     balance={wallet.balance}
                     defaultType={t.type}
                     trigger={
-                      <button type="button" className="flex w-full flex-col items-start gap-2 rounded-2xl border border-line-soft bg-[#fcfafd] p-4 text-left transition-colors hover:border-brand-300 hover:bg-brand-50">
+                      <button type="button" className="flex w-full flex-col items-start gap-2 rounded-2xl border border-line-soft bg-[#fcfafd] p-4 text-start transition-colors hover:border-brand-300 hover:bg-brand-50">
                         <span className="grid size-9 place-items-center rounded-xl bg-brand-100 text-brand-500">
                           <t.icon className="size-[18px]" aria-hidden />
                         </span>

@@ -56,8 +56,8 @@ export default async function FanHomePage() {
           aria-label="Öne çıkan"
           className="relative flex min-h-[250px] flex-col justify-center overflow-hidden rounded-[21px] bg-[linear-gradient(110deg,#1a0b20_0%,#330c2a_52%,#7a0f57_100%)] p-7 text-white shadow-[0_18px_35px_rgb(50_23_38/0.15)] sm:p-9"
         >
-          <span aria-hidden className="pointer-events-none absolute -right-16 -top-16 size-72 rounded-full bg-brand-500/30 blur-3xl" />
-          <span aria-hidden className="pointer-events-none absolute -bottom-24 right-1/4 size-64 rounded-full bg-violet/30 blur-3xl" />
+          <span aria-hidden className="pointer-events-none absolute -end-16 -top-16 size-72 rounded-full bg-brand-500/30 blur-3xl" />
+          <span aria-hidden className="pointer-events-none absolute -bottom-24 end-1/4 size-64 rounded-full bg-violet/30 blur-3xl" />
           <div className="relative">
             <span className="text-[11px] font-extrabold tracking-wide text-[#ff99ce]">✦ SENİN İÇİN ÖZEL</span>
             <h2 className="mt-4 text-[28px] font-black leading-[1.1] tracking-[-0.04em] sm:text-[33px]">
@@ -67,7 +67,7 @@ export default async function FanHomePage() {
             </h2>
             <p className="mt-4 max-w-sm text-xs leading-relaxed text-[#eedeea]">Favori içerik üreticilerinin onaylı AI ikizleriyle sohbet et, sana özel anları keşfet.</p>
             <Link href="/explore" className="mt-6 inline-flex h-11 items-center gap-2 rounded-full bg-brand-500 px-6 text-xs font-extrabold text-white shadow-[var(--shadow-pink)] hover:bg-brand-600">
-              AI ikizlerini keşfet <ArrowRight className="size-4" />
+              AI ikizlerini keşfet <ArrowRight className="rtl:-scale-x-100 size-4" />
             </Link>
           </div>
         </section>
@@ -96,7 +96,7 @@ export default async function FanHomePage() {
           subtitle={home.personalized ? "İlgi alanlarına göre seçildi." : "Popüler ikizler. Önerileri kişiselleştirmek için ilgi alanlarını seç."}
           action={
             <Link href="/explore" className="inline-flex items-center gap-1 text-xs font-extrabold text-brand-500 hover:underline">
-              Tümünü gör <ArrowRight className="size-3.5" />
+              Tümünü gör <ArrowRight className="rtl:-scale-x-100 size-3.5" />
             </Link>
           }
         />
@@ -120,7 +120,7 @@ export default async function FanHomePage() {
               title="İlgi alanlarına göre keşfet"
               action={
                 <Link href="/app/personalization" className="inline-flex items-center gap-1 text-xs font-extrabold text-brand-500 hover:underline">
-                  Düzenle <ArrowRight className="size-3.5" />
+                  Düzenle <ArrowRight className="rtl:-scale-x-100 size-3.5" />
                 </Link>
               }
             />
@@ -145,7 +145,7 @@ export default async function FanHomePage() {
               title="Son sohbetlerin"
               action={
                 <Link href="/chat" className="inline-flex items-center gap-1 text-xs font-extrabold text-brand-500 hover:underline">
-                  Tümü <ArrowRight className="size-3.5" />
+                  Tümü <ArrowRight className="rtl:-scale-x-100 size-3.5" />
                 </Link>
               }
             />
@@ -178,7 +178,7 @@ export default async function FanHomePage() {
             title="Yeni paylaşımlar"
             action={
               <Link href="/app/following" className="inline-flex items-center gap-1 text-xs font-extrabold text-brand-500 hover:underline">
-                Gör <ArrowRight className="size-3.5" />
+                Gör <ArrowRight className="rtl:-scale-x-100 size-3.5" />
               </Link>
             }
           />

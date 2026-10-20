@@ -150,7 +150,7 @@ export function NewRequestDialog({
                 Taslak olarak kaydet
               </Button>
               <Button onClick={() => save(true)} loading={busy === "submit"} disabled={busy !== null || tooExpensive}>
-                <Send /> Talebi gönder
+                <Send className="rtl:-scale-x-100" /> Talebi gönder
               </Button>
             </div>
           </div>
@@ -262,7 +262,7 @@ export function RequestRow({ r }: { r: RequestView }) {
               <div className="flex flex-wrap justify-end gap-2.5 border-t border-line-soft pt-4">
                 {r.status === "draft" && (
                   <Button onClick={async () => (await act("submit")) && setOpen(false)} loading={busy}>
-                    <Send /> Talebi gönder ({formatNumber(r.priceCredits)} kredi bloke edilir)
+                    <Send className="rtl:-scale-x-100" /> Talebi gönder ({formatNumber(r.priceCredits)} kredi bloke edilir)
                   </Button>
                 )}
                 {canCancel && (

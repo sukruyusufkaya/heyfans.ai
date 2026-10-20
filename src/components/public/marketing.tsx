@@ -28,7 +28,7 @@ export function PublicHero({
 }) {
   return (
     <section className="hf-gradient-hero relative overflow-hidden border-b border-[#fbe3f1]">
-      <div aria-hidden className="pointer-events-none absolute -right-24 -top-40 size-[520px] rounded-full border-[70px] border-[#fbe3f1]/60" />
+      <div aria-hidden className="pointer-events-none absolute -end-24 -top-40 size-[520px] rounded-full border-[70px] border-[#fbe3f1]/60" />
       <div className={cn("relative mx-auto grid max-w-[1440px] items-center gap-8 px-4 sm:px-6 lg:grid-cols-[1.05fr_1fr] lg:px-8", compact ? "py-10" : "py-10 lg:py-14")}>
         <div className="animate-fade-up">
           {breadcrumb}
@@ -45,7 +45,7 @@ export function PublicHero({
         {art && (
           <div className="relative min-h-[260px] lg:min-h-[400px]">
             {note && (
-              <p aria-hidden className="absolute -top-2 left-0 z-10 hidden max-w-[180px] -rotate-6 font-script text-2xl leading-tight text-brand-400 lg:block">
+              <p aria-hidden className="absolute -top-2 start-0 z-10 hidden max-w-[180px] -rotate-6 font-script text-2xl leading-tight text-brand-400 lg:block">
                 {note} <Heart className="inline size-5" />
               </p>
             )}
@@ -65,7 +65,7 @@ export function HeroStats({ items }: { items: { icon: React.ReactNode; value: st
     <div>
       <dl className="flex flex-wrap gap-x-7 gap-y-4">
         {shown.map((s, i) => (
-          <div key={s.label} className={cn("flex items-center gap-3", i > 0 && "sm:border-l sm:border-brand-150 sm:pl-7")}>
+          <div key={s.label} className={cn("flex items-center gap-3", i > 0 && "sm:border-s sm:border-brand-150 sm:ps-7")}>
             <span className="text-brand-500 [&_svg]:size-6">{s.icon}</span>
             <div>
               <dt className="sr-only">{s.label}</dt>
@@ -82,7 +82,7 @@ export function HeroStats({ items }: { items: { icon: React.ReactNode; value: st
 export function PrimaryCta({ href, children, className }: { href: string; children: React.ReactNode; className?: string }) {
   return (
     <Link href={href} className={cn("inline-flex h-12 items-center gap-2 rounded-full bg-brand-500 px-7 text-sm font-extrabold text-white shadow-[var(--shadow-pink)] transition hover:bg-brand-600", className)}>
-      {children} <ArrowRight className="size-4" />
+      {children} <ArrowRight className="rtl:-scale-x-100 size-4" />
     </Link>
   );
 }
@@ -115,7 +115,7 @@ export function PhoneChatMockup({ creatorName, avatarUrl, lines, className }: { 
       </div>
       <div className="flex flex-col gap-2">
         {lines.map((l, i) => (
-          <p key={i} className={cn("max-w-[85%] rounded-2xl px-3 py-2 text-[10px] leading-snug", l.from === "ai" ? "self-start rounded-bl-sm bg-soft text-ink-soft" : "self-end rounded-br-sm bg-brand-500 text-white")}>
+          <p key={i} className={cn("max-w-[85%] rounded-2xl px-3 py-2 text-[10px] leading-snug", l.from === "ai" ? "self-start rounded-es-sm bg-soft text-ink-soft" : "self-end rounded-ee-sm bg-brand-500 text-white")}>
             {l.text}
           </p>
         ))}
@@ -127,8 +127,8 @@ export function PhoneChatMockup({ creatorName, avatarUrl, lines, className }: { 
       </div>
       <div className="mt-3 flex h-9 items-center gap-2 rounded-full border border-line bg-soft px-3 text-[9px] text-muted">
         Mesajını yaz…
-        <span className="ml-auto grid size-6 place-items-center rounded-full bg-brand-500 text-white">
-          <Send className="size-3" />
+        <span className="ms-auto grid size-6 place-items-center rounded-full bg-brand-500 text-white">
+          <Send className="rtl:-scale-x-100 size-3" />
         </span>
       </div>
     </div>
@@ -146,9 +146,9 @@ export function PolaroidStack({ people, caption }: { people: { name: string; ima
           className={cn(
             "absolute w-[42%] max-w-[190px] rounded-md bg-white p-2 pb-7 shadow-xl",
             rot[i],
-            i === 0 && "right-[4%] top-[2%]",
-            i === 1 && "right-[30%] top-[22%]",
-            i === 2 && "right-[2%] top-[46%]",
+            i === 0 && "end-[4%] top-[2%]",
+            i === 1 && "end-[30%] top-[22%]",
+            i === 2 && "end-[2%] top-[46%]",
           )}
         >
           <div className="aspect-[4/5] overflow-hidden rounded-sm">
@@ -172,7 +172,7 @@ export function CtaBand({ title, text, href, label, className }: { title: React.
           {text && <p className="mt-1 text-sm text-white/85">{text}</p>}
         </div>
         <Link href={href} className="inline-flex h-11 shrink-0 items-center gap-2 rounded-full bg-white px-6 text-sm font-extrabold text-brand-600 shadow hover:bg-brand-50">
-          {label} <ArrowRight className="size-4" />
+          {label} <ArrowRight className="rtl:-scale-x-100 size-4" />
         </Link>
       </div>
     </section>
@@ -190,7 +190,7 @@ export function Section({ children, className, id }: { children: React.ReactNode
 export function SeeAll({ href, label = "Tümünü Gör" }: { href: string; label?: string }) {
   return (
     <Link href={href} className="inline-flex items-center gap-1 text-xs font-extrabold text-brand-500 hover:text-brand-600">
-      {label} <ArrowRight className="size-3.5" />
+      {label} <ArrowRight className="rtl:-scale-x-100 size-3.5" />
     </Link>
   );
 }

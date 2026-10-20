@@ -27,10 +27,10 @@ export function ChatInfoPanel({ creator, twin }: Props) {
       <article className="hf-card overflow-hidden">
         <div className="relative aspect-[16/10]">
           <CreatorPhoto src={creator.avatarUrl ?? creator.coverUrl} name={creator.displayName} rounded="rounded-none" />
-          <span className="absolute left-3 top-3">
+          <span className="absolute start-3 top-3">
             <AiTwinLabel size="md" className="bg-white/90" />
           </span>
-          {creator.isSample && <SampleProfileLabel size="md" tone="white" className="absolute right-3 top-3" />}
+          {creator.isSample && <SampleProfileLabel size="md" tone="white" className="absolute end-3 top-3" />}
         </div>
         <div className="p-5">
           <Link href={`/creators/${creator.username}`} className="flex items-center gap-1.5 text-xl font-black tracking-[-0.03em] hover:text-brand-600">
@@ -65,7 +65,7 @@ export function ChatInfoPanel({ creator, twin }: Props) {
                   {l.hint && <span className="block text-[10px] text-muted">{l.hint}</span>}
                 </span>
                 {l.hint === "Şu an kapalı" && <Badge tone="gray" size="sm">Kapalı</Badge>}
-                <ChevronRight className="size-4 text-muted" aria-hidden />
+                <ChevronRight className="rtl:-scale-x-100 size-4 text-muted" aria-hidden />
               </Link>
             </li>
           ))}

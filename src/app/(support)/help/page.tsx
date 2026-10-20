@@ -37,7 +37,7 @@ export default async function HelpCenterPage({ searchParams }: { searchParams: P
   return (
     <>
       <SupportHero eyebrow="Yardım Merkezi / Destek" title="Her sorunun bir" highlight="cevabı var." description="HEYFANS'ı keşfetmek, hesap işlemleri, AI ikizleri ve ödemeler hakkında aradığın yanıtlara kolayca ulaş.">
-        <Form action="/help" role="search" className="flex w-full max-w-xl items-center gap-2 rounded-full border border-line bg-white p-1.5 pl-5 shadow-[var(--shadow-card)] focus-within:ring-4 focus-within:ring-brand-100">
+        <Form action="/help" role="search" className="flex w-full max-w-xl items-center gap-2 rounded-full border border-line bg-white p-1.5 ps-5 shadow-[var(--shadow-card)] focus-within:ring-4 focus-within:ring-brand-100">
           <Search className="size-[18px] shrink-0 text-muted" aria-hidden />
           <label htmlFor="help-q" className="sr-only">
             Yardım merkezinde ara
@@ -78,7 +78,7 @@ export default async function HelpCenterPage({ searchParams }: { searchParams: P
                     <span className="mt-4 text-sm font-extrabold">{c.label}</span>
                     <span className="mt-1 text-[11px] leading-snug text-muted">{c.description}</span>
                     <span className="mt-auto flex items-center gap-1 pt-4 text-[11px] font-extrabold text-brand-500">
-                      {counts[c.key] ?? 0} makale <ArrowRight className="size-3 transition-transform group-hover:translate-x-0.5" aria-hidden />
+                      {counts[c.key] ?? 0} makale <ArrowRight className="rtl:-scale-x-100 size-3 transition-transform group-hover:translate-x-0.5" aria-hidden />
                     </span>
                   </Link>
                 </li>
@@ -118,7 +118,7 @@ export default async function HelpCenterPage({ searchParams }: { searchParams: P
                         {searching && <span className="mt-0.5 block truncate text-[11px] text-muted">{a.summary}</span>}
                       </span>
                       {searching && <span className="hidden shrink-0 rounded-full bg-soft px-2.5 py-1 text-[10px] font-bold text-muted-strong sm:inline">{helpCategoryLabel(a.category)}</span>}
-                      <ChevronRight className="size-4 shrink-0 text-muted" aria-hidden />
+                      <ChevronRight className="rtl:-scale-x-100 size-4 shrink-0 text-muted" aria-hidden />
                     </Link>
                   </li>
                 ))}
@@ -146,7 +146,7 @@ export default async function HelpCenterPage({ searchParams }: { searchParams: P
             <h2 className="mt-5 font-display text-2xl font-extrabold tracking-tight text-brand-600">Yanıt bulamadın mı?</h2>
             <p className="mt-2 text-sm leading-relaxed text-ink-soft">Sorunu bize ilet. Destek ekibi talebini inceleyerek sana yardımcı olsun.</p>
             <Link href="/contact" className="mt-6 inline-flex h-12 items-center gap-2 self-start rounded-full bg-brand-500 px-7 text-sm font-extrabold text-white shadow-[var(--shadow-pink)] hover:bg-brand-600">
-              Destek Talebi Oluştur <ArrowRight className="size-4" aria-hidden />
+              Destek Talebi Oluştur <ArrowRight className="rtl:-scale-x-100 size-4" aria-hidden />
             </Link>
           </aside>
         </div>

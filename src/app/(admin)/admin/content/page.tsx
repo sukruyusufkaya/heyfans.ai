@@ -157,10 +157,10 @@ async function FeaturedTab({ canManage }: { canManage: boolean }) {
           <thead>
             <tr>
               <Th>Creator</Th>
-              <Th className="text-right">Takipçi</Th>
+              <Th className="text-end">Takipçi</Th>
               <Th>Durum</Th>
               <Th>Sıra</Th>
-              <Th className="text-right">İşlem</Th>
+              <Th className="text-end">İşlem</Th>
             </tr>
           </thead>
           <tbody>
@@ -175,7 +175,7 @@ async function FeaturedTab({ canManage }: { canManage: boolean }) {
                     </span>
                   </div>
                 </Td>
-                <Td className="text-right tabular-nums">{formatNumber(c.followers)}</Td>
+                <Td className="text-end tabular-nums">{formatNumber(c.followers)}</Td>
                 <Td>
                   <StatusPill tone={c.status === "approved" ? "green" : "warn"}>{c.status === "approved" ? "Aktif" : "Aktif değil — vitrinde görünmez"}</StatusPill>
                 </Td>
@@ -186,7 +186,7 @@ async function FeaturedTab({ canManage }: { canManage: boolean }) {
                     c.rank
                   )}
                 </Td>
-                <Td className="text-right">
+                <Td className="text-end">
                   {canManage && (
                     <ActionButton action={setCreatorFeaturedAction} payload={{ creatorId: c.id, featured: false, rank: 0 }} variant="ghost" size="xs">
                       Kaldır
@@ -231,9 +231,9 @@ async function CategoriesTab({ canManage }: { canManage: boolean }) {
               <Th>Sıra</Th>
               <Th>Kategori</Th>
               <Th>Simge</Th>
-              <Th className="text-right">Creator</Th>
+              <Th className="text-end">Creator</Th>
               <Th>Durum</Th>
-              <Th className="text-right">İşlem</Th>
+              <Th className="text-end">İşlem</Th>
             </tr>
           </thead>
           <tbody>
@@ -245,11 +245,11 @@ async function CategoriesTab({ canManage }: { canManage: boolean }) {
                   <small className="text-[10px] text-muted">/{c.slug}</small>
                 </Td>
                 <Td>{c.icon}</Td>
-                <Td className="text-right tabular-nums">{c.creators}</Td>
+                <Td className="text-end tabular-nums">{c.creators}</Td>
                 <Td>
                   <StatusPill tone={c.isActive ? "green" : "gray"}>{c.isActive ? "Aktif" : "Pasif"}</StatusPill>
                 </Td>
-                <Td className="text-right">
+                <Td className="text-end">
                   {canManage ? (
                     <div className="flex justify-end gap-1.5">
                       <ActionDialog trigger={<Button size="xs" variant="secondary">Düzenle</Button>} title={`${c.name} — düzenle`} action={saveCategoryAction} payload={{ id: c.id, slug: c.slug }} fields={baseFields(c)} reason={false} confirmLabel="Kaydet" />
@@ -335,7 +335,7 @@ async function CampaignsTab({ canManage }: { canManage: boolean }) {
                   {c.status === "draft" && (
                     <ActionDialog trigger={<Button size="xs" variant="danger-soft">Sil</Button>} title="Taslak kampanyayı sil" action={deleteCampaignAction} payload={{ id: c.id }} reason={{ label: "Silme gerekçesi" }} confirmLabel="Sil" tone="danger" />
                   )}
-                  {c.isDemo && <StatusPill size="sm" tone="warn" className="ml-auto self-center">Demo</StatusPill>}
+                  {c.isDemo && <StatusPill size="sm" tone="warn" className="ms-auto self-center">Demo</StatusPill>}
                 </div>
               )}
             </article>
@@ -366,7 +366,7 @@ async function LegalTab({ isSuper }: { isSuper: boolean }) {
               <Th>Yayın</Th>
               <Th>Hukuki inceleme</Th>
               <Th>Güncelleme</Th>
-              <Th className="text-right">İşlem</Th>
+              <Th className="text-end">İşlem</Th>
             </tr>
           </thead>
           <tbody>
@@ -387,7 +387,7 @@ async function LegalTab({ isSuper }: { isSuper: boolean }) {
                   </StatusPill>
                 </Td>
                 <Td className="whitespace-nowrap">{formatDateTime(p.updatedAt)}</Td>
-                <Td className="text-right">
+                <Td className="text-end">
                   <LegalPageEditor
                     isSuper={isSuper}
                     page={{ id: p.id, slug: p.slug, kind: p.kind, title: p.title, summary: p.summary, sections: p.sections, status: p.status, legalReview: p.legalReview, version: p.version, effectiveOn: istDate(p.effectiveDate) }}
@@ -433,10 +433,10 @@ async function HelpTab() {
             <tr>
               <Th>Makale</Th>
               <Th>Kategori</Th>
-              <Th className="text-right">Görüntüleme</Th>
-              <Th className="text-right">Faydalı</Th>
+              <Th className="text-end">Görüntüleme</Th>
+              <Th className="text-end">Faydalı</Th>
               <Th>Durum</Th>
-              <Th className="text-right">İşlem</Th>
+              <Th className="text-end">İşlem</Th>
             </tr>
           </thead>
           <tbody>
@@ -447,14 +447,14 @@ async function HelpTab() {
                   <small className="text-[10px] text-muted">/{a.slug}</small>
                 </Td>
                 <Td>{HELP_CATEGORY_LABELS[a.category] ?? a.category}</Td>
-                <Td className="text-right tabular-nums">{formatNumber(a.views)}</Td>
-                <Td className="text-right tabular-nums">
+                <Td className="text-end tabular-nums">{formatNumber(a.views)}</Td>
+                <Td className="text-end tabular-nums">
                   {a.helpful}/{a.helpful + a.notHelpful}
                 </Td>
                 <Td>
                   <StatusPill tone={a.isPublished ? "green" : "gray"}>{a.isPublished ? "Yayında" : "Taslak"}</StatusPill>
                 </Td>
-                <Td className="text-right">
+                <Td className="text-end">
                   <div className="flex justify-end gap-1.5">
                     <ActionDialog trigger={<Button size="xs" variant="secondary">Düzenle</Button>} title={`${a.title} — düzenle`} action={saveHelpArticleAction} payload={{ id: a.id, slug: a.slug }} fields={fieldsFor(a)} reason={false} confirmLabel="Kaydet" size="lg" />
                     <ActionDialog trigger={<Button size="xs" variant="danger-soft">Sil</Button>} title="Makaleyi sil" description={a.title} action={deleteHelpArticleAction} payload={{ id: a.id }} reason={{ label: "Silme gerekçesi" }} confirmLabel="Sil" tone="danger" />

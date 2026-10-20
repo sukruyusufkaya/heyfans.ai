@@ -130,7 +130,7 @@ export function StepTwin({ view, draft, set, errors, consentText }: StepProps & 
               <AiTwinLabel />
             </div>
             {draft.shortBio && <p className="mt-1 text-[11px] text-muted-strong">{draft.shortBio}</p>}
-            <div className="mt-3 rounded-2xl rounded-tl-sm bg-brand-100 px-3.5 py-2.5 text-xs leading-relaxed text-ink">{draft.greeting || "Karşılama mesajın burada görünecek."}</div>
+            <div className="mt-3 rounded-2xl rounded-ss-sm bg-brand-100 px-3.5 py-2.5 text-xs leading-relaxed text-ink">{draft.greeting || "Karşılama mesajın burada görünecek."}</div>
             <p className="mt-2 text-[10px] text-muted">Bu yanıtlar yapay zekâ tarafından üretilir.</p>
           </div>
         </div>

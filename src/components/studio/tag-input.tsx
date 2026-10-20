@@ -45,7 +45,7 @@ export function TagInput({
   return (
     <div className={cn(inputBase, "flex min-h-11 flex-wrap items-center gap-1.5 px-2.5 py-2", disabled && "bg-soft", className)}>
       {value.map((t) => (
-        <span key={t} className="inline-flex max-w-full items-center gap-1 rounded-full bg-brand-100 py-1 pl-2.5 pr-1.5 text-[11px] font-bold text-brand-600">
+        <span key={t} className="inline-flex max-w-full items-center gap-1 rounded-full bg-brand-100 py-1 ps-2.5 pe-1.5 text-[11px] font-bold text-brand-600">
           <span className="truncate">{t}</span>
           {!disabled && (
             <button type="button" onClick={() => onChange(value.filter((x) => x !== t))} className="grid size-4 place-items-center rounded-full hover:bg-brand-200" aria-label={`${t} etiketini kaldır`}>

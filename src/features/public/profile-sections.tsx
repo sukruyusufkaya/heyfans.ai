@@ -38,7 +38,7 @@ export function TwinTeaserCard({ creator, ai }: { creator: PublicCreatorProfile;
             </p>
           </div>
           <div className="mt-4 grid flex-1 content-start gap-2.5">
-            <div className="max-w-[92%] rounded-2xl rounded-bl-sm bg-white p-3 text-xs leading-relaxed text-ink-soft shadow-sm">
+            <div className="max-w-[92%] rounded-2xl rounded-es-sm bg-white p-3 text-xs leading-relaxed text-ink-soft shadow-sm">
               <AiTwinLabel className="mb-1.5" />
               <p>{twin.greeting ?? `Merhaba! Ben ${twin.name ?? creator.displayName}. Seninle sohbet etmek için sabırsızlanıyorum.`}</p>
             </div>
@@ -54,7 +54,7 @@ export function TwinTeaserCard({ creator, ai }: { creator: PublicCreatorProfile;
             >
               <span className="text-muted">Mesajını yaz…</span>
               <span className="grid size-7 place-items-center rounded-full bg-brand-500 text-white">
-                <Send className="size-3.5" aria-hidden />
+                <Send className="rtl:-scale-x-100 size-3.5" aria-hidden />
               </span>
             </Link>
           ) : (
@@ -249,7 +249,7 @@ export function PostGrid({ posts, className, sample }: { posts: PublicPost[]; cl
               <span className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/65 to-transparent" aria-hidden />
               {lock && (
                 <>
-                  <Badge tone="solid" size="sm" className="absolute right-2 top-2">
+                  <Badge tone="solid" size="sm" className="absolute end-2 top-2">
                     <Lock aria-hidden /> Özel
                   </Badge>
                   <span className="absolute inset-0 grid place-items-center p-3 text-center">
@@ -268,7 +268,7 @@ export function PostGrid({ posts, className, sample }: { posts: PublicPost[]; cl
                   <span className="inline-flex items-center gap-1">
                     <MessageCircle className="size-3" aria-hidden /> {formatCompact(p.comments)}
                   </span>
-                  <Icon className="ml-auto size-3.5" aria-label={TYPE_LABELS[p.type]} />
+                  <Icon className="ms-auto size-3.5" aria-label={TYPE_LABELS[p.type]} />
                 </span>
               </span>
             </Link>
@@ -282,7 +282,7 @@ export function PostGrid({ posts, className, sample }: { posts: PublicPost[]; cl
 export function SeeAllLink({ href, children }: { href: string; children: React.ReactNode }) {
   return (
     <Link href={href} className="inline-flex items-center gap-1 text-xs font-extrabold text-brand-500 hover:text-brand-600">
-      {children} <ArrowRight className="size-3.5" aria-hidden />
+      {children} <ArrowRight className="rtl:-scale-x-100 size-3.5" aria-hidden />
     </Link>
   );
 }

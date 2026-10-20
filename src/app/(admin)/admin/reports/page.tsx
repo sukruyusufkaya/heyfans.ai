@@ -148,7 +148,7 @@ async function ReportsTab({ sp, page, q, sel, canManage, canModeration, counts }
                   <Th>Öncelik</Th>
                   <Th>Durum</Th>
                   <Th>Tarih</Th>
-                  <Th className="text-right">İşlem</Th>
+                  <Th className="text-end">İşlem</Th>
                 </tr>
               </thead>
               <tbody>
@@ -167,7 +167,7 @@ async function ReportsTab({ sp, page, q, sel, canManage, canModeration, counts }
                         <StatusPill tone={REPORT_STATUS_TONES[r.status] ?? "gray"}>{REPORT_STATUS_LABELS[r.status] ?? r.status}</StatusPill>
                       </Td>
                       <Td className="whitespace-nowrap">{formatDateTime(r.createdAt)}</Td>
-                      <Td className="text-right">
+                      <Td className="text-end">
                         <Button asChild size="xs" variant={on ? "primary" : "secondary"}>
                           <Link href={hrefFor({ sel: r.id, page: page > 1 ? page : null })} scroll={false} aria-label={`${r.reportNo} raporunu aç`}>
                             Aç
@@ -285,7 +285,7 @@ async function AppealsTab({ sp, page, sel, canManage, counts }: { sp: SearchPara
                   <Th>İtiraz eden</Th>
                   <Th>Durum</Th>
                   <Th>Tarih</Th>
-                  <Th className="text-right">İşlem</Th>
+                  <Th className="text-end">İşlem</Th>
                 </tr>
               </thead>
               <tbody>
@@ -302,7 +302,7 @@ async function AppealsTab({ sp, page, sel, canManage, counts }: { sp: SearchPara
                         <StatusPill tone={APPEAL_STATUS_TONES[a.status] ?? "gray"}>{APPEAL_STATUS_LABELS[a.status] ?? a.status}</StatusPill>
                       </Td>
                       <Td className="whitespace-nowrap">{formatDateTime(a.createdAt)}</Td>
-                      <Td className="text-right">
+                      <Td className="text-end">
                         <Button asChild size="xs" variant={on ? "primary" : "secondary"}>
                           <Link href={hrefFor({ sel: a.id, page: page > 1 ? page : null })} scroll={false} aria-label={`${a.appealNo} itirazını aç`}>
                             Aç
@@ -402,7 +402,7 @@ async function SupportTab({ sp, page, q, sel, canManage, counts }: { sp: SearchP
                   <Th>Kategori</Th>
                   <Th>Öncelik</Th>
                   <Th>Durum</Th>
-                  <Th className="text-right">İşlem</Th>
+                  <Th className="text-end">İşlem</Th>
                 </tr>
               </thead>
               <tbody>
@@ -421,7 +421,7 @@ async function SupportTab({ sp, page, q, sel, canManage, counts }: { sp: SearchP
                       <Td>
                         <StatusPill tone={TICKET_STATUS_TONES[t.status] ?? "gray"}>{TICKET_STATUS_LABELS[t.status] ?? t.status}</StatusPill>
                       </Td>
-                      <Td className="text-right">
+                      <Td className="text-end">
                         <Button asChild size="xs" variant={on ? "primary" : "secondary"}>
                           <Link href={hrefFor({ sel: t.id, page: page > 1 ? page : null })} scroll={false} aria-label={`${t.ticketNo} talebini aç`}>
                             Aç

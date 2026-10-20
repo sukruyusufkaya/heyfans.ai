@@ -86,7 +86,7 @@ export default async function AdminModerationPage({ searchParams }: { searchPara
                     <Th>İçerik türü</Th>
                     <Th>Risk</Th>
                     <Th>Durum</Th>
-                    <Th className="text-right">İşlem</Th>
+                    <Th className="text-end">İşlem</Th>
                   </tr>
                 </thead>
                 <tbody>
@@ -112,7 +112,7 @@ export default async function AdminModerationPage({ searchParams }: { searchPara
                         <Td>
                           <StatusPill tone={CASE_STATUS_TONES[c.status] ?? "gray"}>{CASE_STATUS_LABELS[c.status] ?? c.status}</StatusPill>
                         </Td>
-                        <Td className="text-right">
+                        <Td className="text-end">
                           <Button asChild size="xs" variant={on ? "primary" : "secondary"}>
                             <Link href={hrefFor({ sel: c.id, page: page > 1 ? page : null })} scroll={false} aria-label={`${c.caseNo} vakasını incele`}>
                               İncele

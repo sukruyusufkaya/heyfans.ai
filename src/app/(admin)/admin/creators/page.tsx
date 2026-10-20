@@ -90,9 +90,9 @@ export default async function AdminCreatorsPage({ searchParams }: { searchParams
                     <Th>Creator</Th>
                     <Th>Doğrulama</Th>
                     <Th>Konum</Th>
-                    <Th className="text-right">Takipçi</Th>
+                    <Th className="text-end">Takipçi</Th>
                     <Th>Durum</Th>
-                    <Th className="text-right">İşlem</Th>
+                    <Th className="text-end">İşlem</Th>
                   </tr>
                 </thead>
                 <tbody>
@@ -107,8 +107,8 @@ export default async function AdminCreatorsPage({ searchParams }: { searchParams
                             <span className="min-w-0">
                               <b className="block truncate text-ink">
                                 {c.displayName}
-                                {c.featured && <Star className="ml-1 inline size-3 fill-orange text-orange" aria-label="Öne çıkan" />}
-                                {c.isSample && <SampleProfileLabel className="ml-1.5 align-middle" />}
+                                {c.featured && <Star className="ms-1 inline size-3 fill-orange text-orange" aria-label="Öne çıkan" />}
+                                {c.isSample && <SampleProfileLabel className="ms-1.5 align-middle" />}
                               </b>
                               <small className="block truncate text-[10px] text-muted">@{c.username}</small>
                             </span>
@@ -118,11 +118,11 @@ export default async function AdminCreatorsPage({ searchParams }: { searchParams
                           <StatusPill tone={idl.tone}>{idl.text}</StatusPill>
                         </Td>
                         <Td>{c.location ?? "—"}</Td>
-                        <Td className="text-right tabular-nums">{formatNumber(c.followers)}</Td>
+                        <Td className="text-end tabular-nums">{formatNumber(c.followers)}</Td>
                         <Td>
                           <StatusPill tone={CREATOR_STATUS_TONES[c.status] ?? "gray"}>{CREATOR_STATUS_LABELS[c.status] ?? c.status}</StatusPill>
                         </Td>
-                        <Td className="text-right">
+                        <Td className="text-end">
                           <Button asChild size="xs" variant={on ? "primary" : "secondary"}>
                             <Link href={hrefFor({ sel: c.id, page: page > 1 ? page : null })} scroll={false} aria-label={`${c.displayName} başvurusunu incele`}>
                               İncele
@@ -205,7 +205,7 @@ export default async function AdminCreatorsPage({ searchParams }: { searchParams
                         <SocialIcon platform={l.platform} className="size-4 shrink-0 text-ink" />
                         <span className="min-w-0 flex-1">
                           <b className="text-ink">{socialLabel(l.platform)}</b>
-                          {l.primary && <span className="ml-1.5 font-bold text-brand-600">ana platform</span>}
+                          {l.primary && <span className="ms-1.5 font-bold text-brand-600">ana platform</span>}
                           <span className="block truncate text-muted">
                             {l.url ? (
                               <a href={l.url} target="_blank" rel="noopener noreferrer nofollow" className="hover:text-brand-600 hover:underline">
@@ -267,7 +267,7 @@ export default async function AdminCreatorsPage({ searchParams }: { searchParams
                         <li key={c.id} className="flex items-center justify-between gap-2 text-[11px]">
                           <span className="text-ink-soft">
                             {CONSENT_LABELS[c.kind] ?? c.kind}
-                            <small className="ml-1 text-muted">v{c.textVersion}</small>
+                            <small className="ms-1 text-muted">v{c.textVersion}</small>
                           </span>
                           <StatusPill size="sm" tone={active ? "green" : "gray"}>
                             {active ? `Geçerli · ${formatDate(c.grantedAt)}` : `Geri çekildi · ${formatDate(c.revokedAt)}`}

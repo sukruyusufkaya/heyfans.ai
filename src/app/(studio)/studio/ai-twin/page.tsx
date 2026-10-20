@@ -81,7 +81,7 @@ export default async function TwinPage() {
             <div className="relative aspect-[4/3]">
               <CreatorPhoto src={creator.avatarUrl ?? creator.coverUrl} name={creator.displayName} rounded="rounded-none" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" aria-hidden />
-              <div className="absolute right-3.5 top-3.5">
+              <div className="absolute end-3.5 top-3.5">
                 <TwinStatusBadge status={twin.status} size="md" />
               </div>
               <div className="absolute inset-x-0 bottom-0 p-5 text-white">
@@ -136,7 +136,7 @@ export default async function TwinPage() {
                     <span className="block text-[12px] font-extrabold leading-snug text-ink">{s.title}</span>
                     <span className="block text-[10px] leading-snug text-muted">{s.hint}</span>
                   </span>
-                  <ChevronRight className="size-4 shrink-0 text-muted/60 group-hover:text-brand-500" aria-hidden />
+                  <ChevronRight className="rtl:-scale-x-100 size-4 shrink-0 text-muted/60 group-hover:text-brand-500" aria-hidden />
                 </Link>
               ))}
             </div>

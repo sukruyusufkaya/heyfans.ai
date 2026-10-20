@@ -58,7 +58,7 @@ function Journey({ title, subtitle, icon: Icon, steps, cta, href }: { title: str
       <ol className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
         {steps.map((s, i) => (
           <li key={s.title} className="relative rounded-2xl bg-white p-4 text-center shadow-sm">
-            <span className="absolute left-3 top-3 grid size-6 place-items-center rounded-full bg-brand-500 text-[11px] font-black text-white">{i + 1}</span>
+            <span className="absolute start-3 top-3 grid size-6 place-items-center rounded-full bg-brand-500 text-[11px] font-black text-white">{i + 1}</span>
             <span className="mx-auto grid size-12 place-items-center rounded-full bg-brand-100 text-brand-500">
               <s.icon className="size-5" aria-hidden />
             </span>
@@ -68,7 +68,7 @@ function Journey({ title, subtitle, icon: Icon, steps, cta, href }: { title: str
         ))}
       </ol>
       <Link href={href} className="mx-auto mt-5 flex h-12 w-full max-w-xs items-center justify-center gap-2 rounded-full bg-brand-500 text-sm font-extrabold text-white shadow-[var(--shadow-pink)] hover:bg-brand-600">
-        {cta} <ArrowRight className="size-4" aria-hidden />
+        {cta} <ArrowRight className="rtl:-scale-x-100 size-4" aria-hidden />
       </Link>
     </section>
   );
@@ -93,7 +93,7 @@ export default async function HowItWorksPage() {
         art={
           <div className="relative flex h-full items-center justify-center gap-4 lg:justify-end">
             <PhoneChatMockup
-              className="relative z-10 lg:mr-[26%]"
+              className="relative z-10 lg:me-[26%]"
               creatorName={lead?.displayName ?? "İçerik Üreticisi"}
               avatarUrl={lead?.avatarUrl}
               lines={[
@@ -102,7 +102,7 @@ export default async function HowItWorksPage() {
                 { from: "ai", text: "Evet, bu akşam özel bir içerik yayınlıyorum." },
               ]}
             />
-            <div className="absolute right-0 top-0 hidden h-full w-[34%] xl:block">
+            <div className="absolute end-0 top-0 hidden h-full w-[34%] xl:block">
               <PolaroidStack people={featured.slice(1, 3).map((c) => ({ name: c.displayName, image: c.avatarUrl }))} caption="Sadece senin için" />
             </div>
             <p className="absolute -bottom-1 left-1/2 hidden -translate-x-1/2 text-[10px] text-muted lg:block">Örnek ekran — gerçek bir konuşma değildir</p>

@@ -113,7 +113,7 @@ export default async function SettingsPage({ searchParams }: { searchParams: Pro
                       <Th>Tarih</Th>
                       <Th>Ürün</Th>
                       <Th>Tür</Th>
-                      <Th className="text-right">Tutar</Th>
+                      <Th className="text-end">Tutar</Th>
                       <Th>Durum</Th>
                     </tr>
                   </thead>
@@ -123,7 +123,7 @@ export default async function SettingsPage({ searchParams }: { searchParams: Pro
                         <Td className="whitespace-nowrap">{formatDateTime(p.createdAt)}</Td>
                         <Td className="font-extrabold text-ink">{p.label}</Td>
                         <Td>{TX_KIND_LABELS[p.kind]}</Td>
-                        <Td className="text-right font-extrabold tabular-nums">
+                        <Td className="text-end font-extrabold tabular-nums">
                           {formatMoney(p.amountMinor, p.currency)}
                           {p.refundedMinor > 0 && <span className="block text-[10px] font-bold text-muted">İade: {formatMoney(p.refundedMinor, p.currency)}</span>}
                         </Td>

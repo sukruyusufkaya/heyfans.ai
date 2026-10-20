@@ -103,9 +103,9 @@ export default async function AdminAiTwinsPage({ searchParams }: { searchParams:
                     <Th>AI ikizi / Creator</Th>
                     <Th>Sürüm</Th>
                     <Th>Durum</Th>
-                    <Th className="text-right">Sohbet</Th>
-                    <Th className="text-right">Kalite</Th>
-                    <Th className="text-right">İşlem</Th>
+                    <Th className="text-end">Sohbet</Th>
+                    <Th className="text-end">Kalite</Th>
+                    <Th className="text-end">İşlem</Th>
                   </tr>
                 </thead>
                 <tbody>
@@ -128,7 +128,7 @@ export default async function AdminAiTwinsPage({ searchParams }: { searchParams:
                         <Td>
                           <StatusPill tone="gray">v{t.version}</StatusPill>
                           {t.hasPending && (
-                            <StatusPill tone="warn" size="sm" className="ml-1.5">
+                            <StatusPill tone="warn" size="sm" className="ms-1.5">
                               Onay bekliyor
                             </StatusPill>
                           )}
@@ -136,9 +136,9 @@ export default async function AdminAiTwinsPage({ searchParams }: { searchParams:
                         <Td>
                           <StatusPill tone={TWIN_STATUS_TONES[t.status] ?? "gray"}>{TWIN_STATUS_LABELS[t.status]}</StatusPill>
                         </Td>
-                        <Td className="text-right tabular-nums">{t.conversations ? formatNumber(t.conversations) : "—"}</Td>
-                        <Td className="text-right tabular-nums">{t.quality === null ? "—" : `%${Math.round(t.quality)}`}</Td>
-                        <Td className="text-right">
+                        <Td className="text-end tabular-nums">{t.conversations ? formatNumber(t.conversations) : "—"}</Td>
+                        <Td className="text-end tabular-nums">{t.quality === null ? "—" : `%${Math.round(t.quality)}`}</Td>
+                        <Td className="text-end">
                           <Button asChild size="xs" variant={on ? "primary" : "secondary"}>
                             <Link href={hrefFor({ sel: t.id, page: page > 1 ? page : null })} scroll={false} aria-label={`${t.name} ikizini yönet`}>
                               Yönet

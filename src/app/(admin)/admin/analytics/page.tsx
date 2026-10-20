@@ -119,7 +119,7 @@ export default async function AdminAnalyticsPage({ searchParams }: { searchParam
             <table className="w-full min-w-[640px] border-separate border-spacing-1 text-center text-[11px]">
               <thead>
                 <tr>
-                  <th scope="col" className="px-2 py-1.5 text-left text-[10px] font-black uppercase tracking-wider text-muted">
+                  <th scope="col" className="px-2 py-1.5 text-start text-[10px] font-black uppercase tracking-wider text-muted">
                     Kayıt haftası
                   </th>
                   <th scope="col" className="px-2 py-1.5 text-[10px] font-black uppercase tracking-wider text-muted">
@@ -135,7 +135,7 @@ export default async function AdminAnalyticsPage({ searchParams }: { searchParam
               <tbody>
                 {d.cohorts.map((c) => (
                   <tr key={c.label}>
-                    <th scope="row" className="whitespace-nowrap px-2 py-1.5 text-left text-[11px] font-extrabold text-ink">
+                    <th scope="row" className="whitespace-nowrap px-2 py-1.5 text-start text-[11px] font-extrabold text-ink">
                       {c.label}
                     </th>
                     <td className="px-2 py-1.5 font-bold text-muted-strong">{c.size}</td>
@@ -173,8 +173,8 @@ export default async function AdminAnalyticsPage({ searchParams }: { searchParam
             <thead>
               <tr>
                 <Th>Olay</Th>
-                <Th className="text-right">Adet</Th>
-                <Th className="text-right">Önceki döneme göre</Th>
+                <Th className="text-end">Adet</Th>
+                <Th className="text-end">Önceki döneme göre</Th>
               </tr>
             </thead>
             <tbody>
@@ -183,8 +183,8 @@ export default async function AdminAnalyticsPage({ searchParams }: { searchParam
                   <Td>
                     <b className="text-ink">{EVENT_LABELS[e.type] ?? e.type}</b>
                   </Td>
-                  <Td className="text-right tabular-nums">{formatNumber(e.count)}</Td>
-                  <Td className="text-right">
+                  <Td className="text-end tabular-nums">{formatNumber(e.count)}</Td>
+                  <Td className="text-end">
                     {e.delta ? (
                       <StatusPill size="sm" tone={e.delta.direction === "up" ? "green" : e.delta.direction === "down" ? "danger" : "gray"}>
                         {e.delta.value}

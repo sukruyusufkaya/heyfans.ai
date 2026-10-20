@@ -113,7 +113,7 @@ export function ConsoleShell(props: ConsoleShellProps) {
                       <Icon className="size-[17px] shrink-0 opacity-90" aria-hidden />
                       {(isMobile || !collapsed) && <span className="truncate">{item.label}</span>}
                       {count > 0 && (isMobile || !collapsed) && (
-                        <span className={cn("ml-auto rounded-full px-1.5 py-0.5 text-[9px] font-black", active ? "bg-white/25 text-white" : "bg-[#f5e1ef] text-[#d00075]")}>{count}</span>
+                        <span className={cn("ms-auto rounded-full px-1.5 py-0.5 text-[9px] font-black", active ? "bg-white/25 text-white" : "bg-[#f5e1ef] text-[#d00075]")}>{count}</span>
                       )}
                     </Link>
                   </li>
@@ -146,12 +146,12 @@ export function ConsoleShell(props: ConsoleShellProps) {
           <span>{props.rootCrumb}</span>
           {current && (
             <>
-              <ChevronRight className="size-3" aria-hidden />
+              <ChevronRight className="rtl:-scale-x-100 size-3" aria-hidden />
               <b className="truncate text-brand-500">{current}</b>
             </>
           )}
         </nav>
-        <div className="ml-auto flex items-center gap-3.5">
+        <div className="ms-auto flex items-center gap-3.5">
           <form action={props.searchAction} method="get" role="search" className="hidden xl:block">
             <div className="flex h-[38px] w-[290px] items-center gap-2.5 rounded-full border border-[#eeeaf1] bg-[#f6f5f8] px-4 focus-within:border-brand-300">
               <Search className="size-3.5 text-[#a99fae]" aria-hidden />
@@ -161,10 +161,10 @@ export function ConsoleShell(props: ConsoleShellProps) {
           {props.headerStatus}
           <Link href={props.notificationsHref} className="relative text-[#585060] hover:text-brand-500" aria-label="Bildirimler">
             <Bell className="size-5" />
-            {(props.unreadNotifications ?? 0) > 0 && <i className="absolute -right-0.5 -top-0.5 size-2 rounded-full bg-brand-500 ring-2 ring-white" />}
+            {(props.unreadNotifications ?? 0) > 0 && <i className="absolute -end-0.5 -top-0.5 size-2 rounded-full bg-brand-500 ring-2 ring-white" />}
           </Link>
           <DropdownMenu>
-            <DropdownMenuTrigger className="flex items-center gap-2.5 rounded-full text-left" aria-label="Hesap menüsü">
+            <DropdownMenuTrigger className="flex items-center gap-2.5 rounded-full text-start" aria-label="Hesap menüsü">
               <Avatar src={props.user.image} name={props.user.name} size={36} />
               <span className="hidden text-[11px] font-extrabold leading-tight 2xl:block">
                 {props.user.name}
@@ -180,7 +180,7 @@ export function ConsoleShell(props: ConsoleShellProps) {
               ))}
               <DropdownMenuSeparator />
               <DropdownMenuItem onSelect={signOut} className="text-danger data-[highlighted]:bg-danger-soft data-[highlighted]:text-danger">
-                <LogOut /> Çıkış yap
+                <LogOut className="rtl:-scale-x-100" /> Çıkış yap
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -195,9 +195,9 @@ export function ConsoleShell(props: ConsoleShellProps) {
       {mobileOpen && (
         <div className="fixed inset-0 z-50 lg:hidden" role="dialog" aria-modal="true" aria-label="Menü">
           <button type="button" className="absolute inset-0 bg-night-deep/50" aria-label="Menüyü kapat" onClick={() => setMobileOpen(false)} />
-          <div className="absolute inset-y-0 left-0 w-[280px] max-w-[85vw]">
+          <div className="absolute inset-y-0 start-0 w-[280px] max-w-[85vw]">
             {sidebar(true)}
-            <button type="button" onClick={() => setMobileOpen(false)} className="absolute right-3 top-4 grid size-8 place-items-center rounded-full bg-white/10 text-white" aria-label="Kapat">
+            <button type="button" onClick={() => setMobileOpen(false)} className="absolute end-3 top-4 grid size-8 place-items-center rounded-full bg-white/10 text-white" aria-label="Kapat">
               <X className="size-4" />
             </button>
           </div>

@@ -63,7 +63,7 @@ function ContactFormInner({ categories, defaults, defaultCategory, defaultSubjec
           incele.
         </p>
         <SubmitButton pending={pending}>
-          Mesajımı Gönder <Send aria-hidden />
+          Mesajımı Gönder <Send className="rtl:-scale-x-100" aria-hidden />
         </SubmitButton>
       </div>
     </form>

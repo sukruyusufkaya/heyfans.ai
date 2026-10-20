@@ -83,7 +83,7 @@ export default async function PayoutsPage() {
             <thead>
               <tr>
                 <Th>Tarih</Th>
-                <Th className="text-right">Tutar</Th>
+                <Th className="text-end">Tutar</Th>
                 <Th>Durum</Th>
                 <Th>Zaman çizelgesi</Th>
                 <Th>Not / referans</Th>
@@ -95,7 +95,7 @@ export default async function PayoutsPage() {
                 return (
                   <tr key={r._id.toString()}>
                     <Td className="whitespace-nowrap">{formatDate(r.createdAt)}</Td>
-                    <Td className="text-right font-extrabold tabular-nums">{formatMoney(r.amount.amountMinor)}</Td>
+                    <Td className="text-end font-extrabold tabular-nums">{formatMoney(r.amount.amountMinor)}</Td>
                     <Td>
                       <Badge tone={st.tone} size="sm">
                         {st.label}

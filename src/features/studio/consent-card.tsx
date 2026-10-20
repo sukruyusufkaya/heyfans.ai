@@ -91,7 +91,7 @@ export function ConsentCard({
               </Button>
             }
           >
-            <blockquote className="rounded-xl border-l-4 border-brand-400 bg-brand-50 p-3 text-[12px] leading-relaxed text-ink-soft">{text}</blockquote>
+            <blockquote className="rounded-xl border-s-4 border-brand-400 bg-brand-50 p-3 text-[12px] leading-relaxed text-ink-soft">{text}</blockquote>
           </ConfirmDialog>
         )}
         {locked && !granted && lockedReason && <p className="text-[11px] font-semibold text-warning">{lockedReason}</p>}

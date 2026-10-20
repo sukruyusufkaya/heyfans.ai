@@ -240,7 +240,7 @@ function RolesTab() {
         <table className="w-full min-w-[860px] border-collapse text-xs">
           <thead>
             <tr>
-              <th scope="col" className="sticky left-0 z-10 border-b border-line bg-white px-3 py-2.5 text-left text-[10px] font-black uppercase tracking-wider text-muted">
+              <th scope="col" className="sticky start-0 z-10 border-b border-line bg-white px-3 py-2.5 text-start text-[10px] font-black uppercase tracking-wider text-muted">
                 Yetki / Rol
               </th>
               {ADMIN_ROLES.map((r) => (
@@ -265,15 +265,15 @@ function RoleGroup({ group }: { group: (typeof PERMISSION_GROUPS)[number] }) {
   return (
     <>
       <tr>
-        <th scope="colgroup" colSpan={ADMIN_ROLES.length + 1} className="bg-soft px-3 py-2 text-left text-[10px] font-black uppercase tracking-wider text-brand-600">
+        <th scope="colgroup" colSpan={ADMIN_ROLES.length + 1} className="bg-soft px-3 py-2 text-start text-[10px] font-black uppercase tracking-wider text-brand-600">
           {group.label}
         </th>
       </tr>
       {group.perms.map((p) => (
         <tr key={p.key}>
-          <th scope="row" className="sticky left-0 border-b border-line-soft bg-white px-3 py-2.5 text-left font-bold text-ink-soft">
+          <th scope="row" className="sticky start-0 border-b border-line-soft bg-white px-3 py-2.5 text-start font-bold text-ink-soft">
             {p.label}
-            <code className="ml-2 text-[9px] font-medium text-muted">{p.key}</code>
+            <code className="ms-2 text-[9px] font-medium text-muted">{p.key}</code>
           </th>
           {ADMIN_ROLES.map((r) => {
             const has = (ADMIN_ROLE_PERMISSIONS[r] as string[]).includes(p.key);
