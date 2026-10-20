@@ -56,7 +56,8 @@ async function main() {
   await mongoose.disconnect();
 }
 
-main().catch((err) => {
+// Bağlantı havuzu açık kalıp süreci bekletmesin diye açıkça çıkılır.
+main().then(() => process.exit(0)).catch((err) => {
   console.error("Hata:", err.message);
   process.exit(1);
 });

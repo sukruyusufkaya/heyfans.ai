@@ -143,6 +143,9 @@ async function create() {
     console.log(`✓ Süper Yönetici — ${adminEmail}`);
   }
 
+  // Gerçek (demo olmayan) yöneticiler de özette listelenir; parolaları hiçbir yerde tutulmaz.
+  const realAdmins = await User.find({ roles: "admin", isDemo: { $ne: true } }, { email: 1, adminRole: 1 }).sort({ createdAt: 1 }).lean();
+
   writeFileSync(SECRETS_FILE, JSON.stringify(secrets, null, 2) + "\n", "utf8");
   const base = e.APP_URL.replace(/\/$/, "");
   const lines = [
@@ -153,7 +156,7 @@ async function create() {
     "",
     "| Rol | E-posta | Parola | Başlangıç | Ne için |",
     "|---|---|---|---|---|",
-    ...(adminEmail ? [`| **Süper Yönetici** | ${adminEmail} | (sizin belirlediğiniz parola) | ${base}/admin | Tüm yönetim yetkileri |`] : []),
+    ...realAdmins.map((u) => `| **${ADMIN_ROLE_LABELS[u.adminRole as keyof typeof ADMIN_ROLE_LABELS] ?? "Yönetici"}** | ${u.email} | (hesap sahibinin belirlediği parola) | ${base}/admin | ${u.adminRole === "super_admin" ? "Tüm yönetim yetkileri" : "Rolünün yetkileri"} |`),
     ...rows.map(({ a, password }) => `| ${a.title} | ${a.email} | \`${password}\` | ${base}${a.start} | ${a.note}${a.kind === "creator" && creatorSkipped ? " ⚠ Bu veritabanında creator profili oluşturulamadı (selinkaya kullanıcı adı dolu); yerel demo verisinde creator için melis@heyfans.local kullanın." : ""} |`),
     "",
     "Notlar:",
