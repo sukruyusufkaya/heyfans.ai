@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { redirect } from "next/navigation";
 import { ShieldCheck } from "lucide-react";
 import { AuthShell, AuthVisual, VisualNote } from "@/components/auth/auth-shell";
 import { env } from "@/config/env";
@@ -6,6 +7,7 @@ import { firstParam, safeNext } from "@/features/auth/next-url";
 import { linkErrorMessage } from "@/features/auth/messages";
 import { VerifyPending, VerifySuccess } from "@/features/auth/verify-panel";
 import { getSession } from "@/lib/auth/session";
+import { resolvePostLoginDestination } from "@/services/auth/post-login";
 import { getT } from "@/i18n/server";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -28,7 +30,9 @@ export default async function VerifyPage({ searchParams }: { searchParams: Promi
     content = <VerifyPending email={email} next={next} showDevOutbox={showDevOutbox} errorMessage={errorSource ? t(errorSource) : null} />;
   } else if (verified) {
     const session = await getSession();
-    content = <VerifySuccess signedIn={!!session} next={next} />;
+    // Doğrulama bağlantısı oturumu açar: ara ekran göstermeden yolculuğun sıradaki adımına geç.
+    if (session) redirect(await resolvePostLoginDestination(session.user, next));
+    content = <VerifySuccess signedIn={false} next={next} />;
   } else {
     content = <VerifyPending email={email} next={next} showDevOutbox={showDevOutbox} />;
   }

@@ -129,6 +129,7 @@ export function AuthShell({
   inner = false,
   align = "center",
   contentWidth = "max-w-[460px]",
+  fitViewport = false,
 }: {
   mode: "cards" | "merged";
   ratio: ShellRatio;
@@ -138,6 +139,8 @@ export function AuthShell({
   align?: "center" | "start";
   /** `cards` kipinde form sütununun azami genişliği. */
   contentWidth?: string;
+  /** `merged` kipinde sabit asgari yükseklik yerine içeriğin (ör. ekrana sığan sohbet) yüksekliği kullanılır. */
+  fitViewport?: boolean;
 }) {
   const alignment = align === "center" ? "justify-center" : "justify-start";
   if (mode === "cards") {
@@ -152,7 +155,7 @@ export function AuthShell({
   }
   return (
     <div className="mx-auto w-full max-w-[1600px] px-4 py-6 sm:px-6 lg:px-[42px] lg:py-8">
-      <div className={cn("grid overflow-clip rounded-[28px] border border-line bg-white lg:min-h-[794px]", COLS[ratio], OUTER_SHADOW)}>
+      <div className={cn("grid overflow-clip rounded-[28px] border border-line bg-white", fitViewport ? "lg:min-h-[600px]" : "lg:min-h-[794px]", COLS[ratio], OUTER_SHADOW)}>
         <div className="hidden lg:flex [&>div]:w-full">{visual}</div>
         <section className={cn("flex min-w-0 flex-col p-4 sm:p-8 lg:p-10", alignment)}>
           {inner ? (

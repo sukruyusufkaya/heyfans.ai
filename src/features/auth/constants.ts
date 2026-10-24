@@ -26,50 +26,31 @@ export const FAN_STEPS = [
 
 export const MIN_FAN_INTERESTS = 3;
 
-/** Creator karşılama: ekranda 7 adım (ilk üçü soru soru), arka uçta adım anahtarlarına eşlenir. */
-export const CREATOR_GROUPS = [
-  { key: "profile", label: m("Profil"), backend: ["account"] },
-  { key: "contact", label: m("İletişim"), backend: ["contact"] },
-  { key: "social", label: m("Sosyal medya"), backend: ["social"] },
-  { key: "verify", label: m("Doğrula"), backend: ["verify"] },
-  { key: "twin", label: m("AI İkizi"), backend: ["twin"] },
-  { key: "customize", label: m("Özelleştir"), backend: ["persona", "knowledge", "likeness", "boundaries"] },
-  { key: "review", label: m("İncele"), backend: ["preview", "submit"] },
-] as const;
-export type CreatorGroupKey = (typeof CREATOR_GROUPS)[number]["key"];
+/**
+ * Creator karşılama asistanı: sohbette sorulan adımlar (dizi sırası = soru sırası).
+ * Hepsi yanıtlandığında (isteğe bağlılar "geç" ile yanıtlanmış sayılır) özet ve başvuru gönderimi gelir.
+ */
+export const ASSISTANT_STEPS = ["birthDate", "displayName", "username", "avatar", "cover", "categories", "socials", "bio", "location", "tone", "greeting", "topics", "contact", "legalName", "consents"] as const;
+export type AssistantStep = (typeof ASSISTANT_STEPS)[number];
+export const isAssistantStep = (s: string): s is AssistantStep => (ASSISTANT_STEPS as readonly string[]).includes(s);
 
-/** Soru soru ilerleyen adımların soruları (her ekranda tek soru). */
-export const CREATOR_QUESTIONS = {
-  profile: ["identity", "categories", "about"],
-  contact: ["phone", "preference"],
-  social: ["instagram", "tiktok", "youtube", "x", "twitch", "kick", "website", "primary"],
+/** Konuşma tonu → AI ikizinin kişilik ayarları (ince ayar sonradan Creator Studio'dan yapılır). */
+export const TONE_PRESETS = {
+  warm: { label: m("Samimi ve sıcak"), hint: m("Yakın, içten, destekleyici"), emoji: "😊", persona: { warmth: 85, formality: 20, humor: 45, energy: 55 } },
+  fun: { label: m("Eğlenceli ve esprili"), hint: m("Şakacı, neşeli, rahat"), emoji: "🎉", persona: { warmth: 70, formality: 15, humor: 85, energy: 75 } },
+  energetic: { label: m("Enerjik ve motive edici"), hint: m("Coşkulu, ilham veren"), emoji: "⚡", persona: { warmth: 70, formality: 25, humor: 55, energy: 90 } },
+  calm: { label: m("Sakin ve bilgili"), hint: m("Dingin, açıklayıcı, net"), emoji: "🌿", persona: { warmth: 60, formality: 55, humor: 25, energy: 35 } },
 } as const;
-export type QuestionGroupKey = keyof typeof CREATOR_QUESTIONS;
-export const isQuestionGroup = (k: string): k is QuestionGroupKey => k in CREATOR_QUESTIONS;
+export type ToneKey = keyof typeof TONE_PRESETS;
+export const TONE_KEYS = Object.keys(TONE_PRESETS) as [ToneKey, ...ToneKey[]];
 
-/** Ekrandaki bir adım, ilgili arka uç adımları kaydedildiğinde "tamamlandı" sayılır (sunucu ve istemci ortak kullanır). */
-export function creatorGroupDone(key: CreatorGroupKey, completed: ReadonlySet<string>): boolean {
-  switch (key) {
-    case "profile":
-      return completed.has("account");
-    case "contact":
-      return completed.has("contact");
-    case "social":
-      return completed.has("social");
-    case "verify":
-      return completed.has("verify");
-    case "twin":
-      return completed.has("twin");
-    case "customize":
-      return completed.has("persona") && completed.has("boundaries");
-    case "review":
-      return completed.has("submit");
-  }
-}
-
-/** Başvuru gönderilmeden önce tamamlanmış olması gereken arka uç adımları (servis ile aynı). */
-export const CREATOR_REQUIRED_STEPS = ["account", "contact", "social", "verify", "twin", "persona", "boundaries"] as const;
-
+/** Asistanın önerdiği ilk karşılama mesajı (creator düzenleyebilir). Ek üretmemek için ad cümleye eksiz yerleşir. */
+export const GREETING_TEMPLATES: Record<ToneKey, string> = {
+  warm: m("Selam, hoş geldin! Ben {name}, daha doğrusu AI ikizi. Seninle tanıştığıma çok sevindim; bugün neler konuşalım?"),
+  fun: m("Heyy, selam! {name} burada, AI ikizi versiyonuyla. Eğlenceli bir sohbete hazır mısın?"),
+  energetic: m("Selam! Ben {name}, AI ikizi olarak buradayım. Bugün seni ne heyecanlandırıyor? Hadi başlayalım!"),
+  calm: m("Merhaba, hoş geldin. Ben {name}, AI ikizi olarak sorularını yanıtlamak için buradayım. Neyi merak ediyorsun?"),
+};
 
 export const EMOJI_OPTIONS = [
   { value: "none", label: m("Hiç") },
@@ -77,9 +58,9 @@ export const EMOJI_OPTIONS = [
   { value: "medium", label: m("Orta") },
   { value: "high", label: m("Çok") },
 ] as const;
+export type EmojiUsage = (typeof EMOJI_OPTIONS)[number]["value"];
+export const EMOJI_KEYS = EMOJI_OPTIONS.map((o) => o.value) as [EmojiUsage, ...EmojiUsage[]];
 
-export const MESSAGE_LENGTH_OPTIONS = [
-  { value: "short", label: m("Kısa"), hint: m("1-2 cümle") },
-  { value: "medium", label: m("Orta"), hint: m("3-4 cümle") },
-  { value: "long", label: m("Uzun"), hint: m("Ayrıntılı") },
-] as const;
+/** AI ikizinin konuşmayacağı konular için hazır seçenekler (creator kendi konusunu da ekleyebilir). */
+export const BLOCKED_TOPIC_OPTIONS = [m("Siyaset"), m("Din"), m("Özel hayatım ve ilişkilerim"), m("Ailem"), m("Sağlık ve tıbbi tavsiye"), m("Para ve yatırım tavsiyesi")];
+export const MAX_BLOCKED_TOPICS = 12;

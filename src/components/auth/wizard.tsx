@@ -42,63 +42,6 @@ export function CircleStepper({ steps, current, done }: { steps: readonly Wizard
   );
 }
 
-/** İçerik üreticisi karşılama: hap şeklinde adımlar; tamamlanmış/ulaşılabilir adımlara geri dönülebilir. */
-export function PillStepper({
-  steps,
-  current,
-  done,
-  reachable,
-  onSelect,
-}: {
-  steps: readonly WizardStep[];
-  current: number;
-  done: number[];
-  reachable: number;
-  onSelect: (index: number) => void;
-}) {
-  const t = useT();
-  const listRef = React.useRef<HTMLOListElement>(null);
-  // Dar ekranda yatay kaydırılan adım şeridinde geçerli adımı görünür tut (yalnız şerit içinde kaydırır).
-  React.useEffect(() => {
-    const list = listRef.current;
-    const active = list?.querySelector<HTMLElement>('[aria-current="step"]');
-    if (!list || !active) return;
-    list.scrollTo({ left: active.offsetLeft - (list.clientWidth - active.offsetWidth) / 2, behavior: "smooth" });
-  }, [current]);
-  return (
-    <ol ref={listRef} className="relative flex items-center gap-1.5 overflow-x-auto pb-1 no-scrollbar sm:gap-0" aria-label={t("Başvuru adımları")}>
-      {steps.map((s, i) => {
-        const active = i === current;
-        const complete = done.includes(i) && !active;
-        const enabled = i <= reachable;
-        return (
-          <React.Fragment key={s.key}>
-            <li className="shrink-0">
-              <button
-                type="button"
-                onClick={() => enabled && onSelect(i)}
-                disabled={!enabled}
-                aria-current={active ? "step" : undefined}
-                className={cn(
-                  "inline-flex h-10 items-center gap-1.5 rounded-full px-3.5 text-xs font-extrabold transition-colors sm:px-4",
-                  active ? "bg-brand-500 text-white shadow-[var(--shadow-pink)]" : complete ? "bg-brand-100 text-brand-600 hover:bg-brand-150" : enabled ? "bg-soft text-ink-soft hover:bg-brand-50" : "bg-soft text-muted",
-                  !enabled && "cursor-not-allowed",
-                )}
-              >
-                {complete ? <Check className="size-3.5" strokeWidth={3} aria-hidden /> : <span>{i + 1}</span>}
-                {t(s.label)}
-                {" "}
-                <span className="sr-only">{active ? t("(geçerli adım)") : complete ? t("(tamamlandı)") : ""}</span>
-              </button>
-            </li>
-            {i < steps.length - 1 && <span className="mx-1 hidden h-px min-w-4 flex-1 bg-line sm:block" aria-hidden />}
-          </React.Fragment>
-        );
-      })}
-    </ol>
-  );
-}
-
 /** Adım başlığına odak taşır (ekran okuyucu + klavye için); adım değişince çalışır. */
 export function useStepFocus(step: unknown) {
   const ref = React.useRef<HTMLHeadingElement>(null);

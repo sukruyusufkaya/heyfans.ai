@@ -39,7 +39,7 @@ Son güncelleme: 2026-10-19 · Rotalar: 74/74 + 9 yardımcı (`/checkout/test/[i
 | 13 | Şifremi Unuttum | `/forgot-password` | Tested | Gerçek e-posta sağlayıcısı yok (outbox) |
 | 14 | Hesap Doğrulama | `/verify` | Tested | 〃 |
 | 15 | Hayran Karşılama | `/onboarding/fan` | Tested | |
-| 16 | İçerik Üreticisi Karşılama | `/onboarding/creator` | Tested | 7 adım, ilk üçü soru soru (telefon şifreli; sosyal hesaplar tek tek, D-38). KYC, SMS ve sosyal OAuth sağlayıcısı yok (admin incelemesi) |
+| 16 | İçerik Üreticisi Karşılama | `/onboarding/creator` | Tested | Sohbet asistanı: 15 soru, 18+ beyanı ve fotoğraf yükleme sohbette (D-41; telefon şifreli, D-38). KYC, SMS ve sosyal OAuth sağlayıcısı yok (admin incelemesi) |
 | 17 | Yaş Doğrulama | `/age-verification` | Tested | Yalnız beyan (düşük güvence); referans tasarım yoktu |
 | 18 | Hayran Ana Paneli | `/app` | Tested | |
 | 19 | Takip Ettiklerim | `/app/following` | Tested | |

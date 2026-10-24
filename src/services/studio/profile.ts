@@ -35,7 +35,8 @@ export const profileSchema = z.object({
 });
 export type ProfileInput = z.infer<typeof profileSchema>;
 
-async function resolveImage(ownerId: ReturnType<typeof oid>, id: string, purpose: "avatar" | "cover") {
+/** Kullanıcının yüklediği, hazır profil/kapak görseli ve genel adresi (karşılama asistanı da kullanır). */
+export async function resolveImage(ownerId: ReturnType<typeof oid>, id: string, purpose: "avatar" | "cover") {
   const asset = await MediaAsset.findOne({ _id: oid(id), ownerId, purpose, status: "ready" }).lean();
   if (!asset) throw new AppError("Görsel bulunamadı veya henüz hazır değil.", "asset_invalid");
   return { asset, url: await mediaUrl(asset) };

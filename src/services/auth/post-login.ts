@@ -8,7 +8,7 @@ import { AgeVerificationRecord, User, UserPreferences } from "@/models/identity"
 
 /**
  * Girişten (veya e-posta doğrulamasından) sonra kullanıcının gideceği yeri belirler.
- * Sıra: admin → şart onayı yok (Google/Apple kaydı) → yaş beyanı yok → creator başvurusu açık → hayran karşılaması → creator paneli → hayran paneli.
+ * Sıra: admin → şart onayı yok (Google/Apple kaydı) → creator başvurusu açık (yaş beyanı asistanda alınır) → yaş beyanı yok → hayran karşılaması → creator paneli → hayran paneli.
  * Şart onayı ve kayıt niyeti oturum çerezi önbelleğinden değil, veritabanından okunur (onaydan hemen sonra döngü olmaz).
  * `next` yalnız aynı origin'e ait göreli yol ise ve tüm ön koşullar sağlandıysa kullanılır.
  *
@@ -31,13 +31,14 @@ export async function resolvePostLoginDestination(user: SessionUser, nextRaw?: s
     UserPreferences.findOne({ userId: uid }, { fanOnboarding: 1 }).lean(),
   ]);
 
+  // Creator yolculuğu: başvuru tamamlanmadıysa/incelemedeyse/reddedildiyse karşılama sayfası durumu gösterir.
+  // Karşılama asistanı 18+ beyanını ilk sorusu olarak alır; bu yüzden creator'lar ayrı yaş sayfasına gönderilmez.
+  if (profile && profile.status !== "approved" && profile.status !== "suspended") return "/onboarding/creator";
+  if (!profile && intent === "creator" && !isCreator) return "/onboarding/creator?start=1";
+
   // Kimliği yönetici incelemesiyle doğrulanmış (onaylı) creator'lar 18+ kontrolünden zaten geçmiştir.
   const adultByCreator = profile?.status === "approved" && profile.verification?.identity === "verified";
   if (!adult && !adultByCreator) return withNext("/age-verification", next);
-
-  // Creator yolculuğu: başvuru tamamlanmadıysa/incelemedeyse/reddedildiyse karşılama sayfası durumu gösterir.
-  if (profile && profile.status !== "approved" && profile.status !== "suspended") return "/onboarding/creator";
-  if (!profile && intent === "creator" && !isCreator) return "/onboarding/creator?start=1";
 
   if (!isCreator) {
     const fo = prefs?.fanOnboarding;

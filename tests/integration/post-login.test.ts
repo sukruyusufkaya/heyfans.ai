@@ -38,6 +38,14 @@ describe("giriş sonrası yönlendirme · şart onayı (Google/Apple kaydı)", (
     expect(await resolvePostLoginDestination(await sessionOf(id, { signupIntent: "fan" }))).toBe("/onboarding/creator?start=1");
   });
 
+  it("creator, yaş beyanı olmadan da doğrudan karşılama asistanına gider (18+ sorusu sohbette)", async () => {
+    const id = await makeUser(["fan"], { termsAcceptedAt: new Date(), signupIntent: "creator" });
+    expect(await resolvePostLoginDestination(await sessionOf(id, { signupIntent: "creator" }))).toBe("/onboarding/creator?start=1");
+    // Hayran niyetiyle kayıtta yaş sayfası aynen kalır.
+    const fan = await makeUser(["fan"], { termsAcceptedAt: new Date() });
+    expect(await resolvePostLoginDestination(await sessionOf(fan))).toBe("/age-verification");
+  });
+
   it("yöneticiler şart kapısına takılmaz", async () => {
     const id = await makeUser(["fan", "admin"], { adminRole: "support_agent" });
     expect(await resolvePostLoginDestination(await sessionOf(id, { roles: ["fan", "admin"], adminRole: "support_agent" }))).toBe("/admin");

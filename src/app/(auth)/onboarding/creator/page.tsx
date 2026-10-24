@@ -1,14 +1,12 @@
 import type { Metadata } from "next";
-import { redirect } from "next/navigation";
 import { Check, Crown } from "lucide-react";
 import { AuthShell, AuthVisual, VisualPill } from "@/components/auth/auth-shell";
 import { CreatorOnboarding, CreatorStartGate } from "@/features/auth/creator-onboarding";
-import { firstParam, withNext } from "@/features/auth/next-url";
+import { firstParam } from "@/features/auth/next-url";
 import { requireUser } from "@/lib/auth/session";
 import { AppError } from "@/lib/errors";
 import { CONSENT_TEXTS } from "@/services/ai-twins/lifecycle";
-import { getAgeStatus } from "@/services/auth/age";
-import { getCreatorOnboardingView } from "@/services/auth/creator-onboarding";
+import { getCreatorAssistantView } from "@/services/auth/creator-assistant";
 import { listCategories } from "@/services/creators/public";
 import { startCreatorOnboarding } from "@/services/creators/onboarding";
 import { getT } from "@/i18n/server";
@@ -26,28 +24,28 @@ export default async function CreatorOnboardingPage({ searchParams }: { searchPa
   const sp = await searchParams;
   const { user } = await requireUser("/onboarding/creator");
 
-  // İçerik üreticisi olmak 18+ gerektirir: yaş beyanı yoksa önce onu al.
-  const age = await getAgeStatus(user.id);
-  if (age.state !== "declared_adult") redirect(withNext("/age-verification", "/onboarding/creator"));
-
-  let view = await getCreatorOnboardingView(user.id);
+  // 18+ beyanı ayrı sayfada değil, asistanın ilk sorusunda alınır (beyan yoksa sohbet doğum tarihiyle başlar).
+  let view = await getCreatorAssistantView(user.id);
   let startError: string | null = null;
   // Kayıtta "İçerik Üreticisiyim" seçen (veya ?start=1 ile gelen) kullanıcı için profil otomatik açılır; diğerleri açık onay verir.
   if (!view && (user.signupIntent === "creator" || firstParam(sp.start) === "1")) {
     try {
       await startCreatorOnboarding(user.id);
-      view = await getCreatorOnboardingView(user.id);
+      view = await getCreatorAssistantView(user.id);
     } catch (err) {
       startError = err instanceof AppError ? t(err.template, err.params) : t("Başvuru şu anda başlatılamadı. Lütfen tekrar dene.");
     }
   }
   const categories = view ? await listCategories() : [];
+  const now = new Date();
+  const todayIso = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
 
   return (
     <AuthShell
       mode="merged"
       ratio="creator"
       align={view && view.status === "onboarding" ? "start" : "center"}
+      fitViewport={view?.status === "onboarding"}
       visual={
         <AuthVisual
           art="portrait"
@@ -71,8 +69,11 @@ export default async function CreatorOnboardingPage({ searchParams }: { searchPa
       {view ? (
         <CreatorOnboarding
           view={view}
+          firstName={user.name.trim().split(/\s+/)[0] ?? ""}
           categories={categories.map((c) => ({ slug: c.slug, name: t(c.name), icon: c.icon }))}
-          consentTexts={{ persona: t(CONSENT_TEXTS.ai_twin_persona.text), knowledge: t(CONSENT_TEXTS.knowledge_use.text), voice: t(CONSENT_TEXTS.voice_likeness.text) }}
+          personaConsentText={t(CONSENT_TEXTS.ai_twin_persona.text)}
+          knowledgeConsentText={t(CONSENT_TEXTS.knowledge_use.text)}
+          todayIso={todayIso}
         />
       ) : (
         <CreatorStartGate error={startError} />

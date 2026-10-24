@@ -58,6 +58,28 @@ export function VerifyPending({ email: initialEmail, next, showDevOutbox, errorM
   const cooldown = useCooldown(`hf.verify.cooldown.${email.toLowerCase()}`, 60);
   const callbackURL = `/verify?verified=1${next ? `&next=${encodeURIComponent(next)}` : ""}`;
 
+  // Bağlantı aynı tarayıcıda başka sekmede açılınca oturum oluşur: bu sekme de beklemeden yolculuğa devam eder.
+  React.useEffect(() => {
+    let stopped = false;
+    async function check() {
+      if (stopped || document.visibilityState !== "visible") return;
+      const { data } = await authClient.getSession().catch(() => ({ data: null }));
+      if (stopped || !data?.session) return;
+      stopped = true;
+      const result = await postLoginRedirect(next).catch(() => null);
+      window.location.assign(result?.ok ? result.data.to : callbackURL);
+    }
+    const timer = window.setInterval(check, 5000);
+    window.addEventListener("focus", check);
+    document.addEventListener("visibilitychange", check);
+    return () => {
+      stopped = true;
+      window.clearInterval(timer);
+      window.removeEventListener("focus", check);
+      document.removeEventListener("visibilitychange", check);
+    };
+  }, [next, callbackURL]);
+
   async function resend(target: string) {
     setNotice(null);
     setSending(true);

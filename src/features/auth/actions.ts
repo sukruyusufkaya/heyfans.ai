@@ -17,7 +17,7 @@ const nextSchema = z.string().max(500).nullish();
 
 /**
  * Giriş / e-posta doğrulaması sonrası yönlendirme kararı. İstemci dönen yola gider.
- * Sıra: admin → /admin · yaş beyanı yok → /age-verification · creator başvurusu açık → /onboarding/creator
+ * Sıra: admin → /admin · creator başvurusu açık → /onboarding/creator (yaş beyanı asistanda) · yaş beyanı yok → /age-verification
  *       · hayran karşılaması bitmedi → /onboarding/fan · creator → /studio · aksi halde `next` veya /app.
  */
 export async function postLoginRedirect(next?: string | null): Promise<ActionResult<{ to: string }>> {
